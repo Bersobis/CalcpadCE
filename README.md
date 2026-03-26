@@ -16,7 +16,7 @@ Calcpad is free software for mathematical and engineering calculations. It repre
 * custom functions of multiple parameters f(x; y; z; …);
 * powerful numerical methods for root and extremum finding, numerical integration and differentiation;
 * finite sum, product and iteration procedures, Fourier series and FFT;
-* modules, macros and string variables;
+* modules, macros, string variables, string tables and string functions;
 * reading and writing data from/to text, CSV and Excel files;
 * program flow control with conditions and loops;
 * "titles" and 'text' comments in quotes;
@@ -441,7 +441,57 @@ You can add or omit as many "#else if's" as needed. Only one "#else" is allowed.
 &emsp;&emsp;&emsp;*content line 1*  
 &emsp;&emsp;&emsp;*content line 2*  
 &emsp;&emsp;&emsp;...  
-&emsp;&emsp;#end def  
+&emsp;&emsp;#end def
+* String variables and string tables:
+&emsp;String variable declaration:
+&emsp;&emsp;#string *name$* = *expression* - assigns a string value to a string variable;
+&emsp;String table declaration:
+&emsp;&emsp;#table *name$* = \[*'a'*; *'b'* | *'c'*; *'d'*\] - creates a string table from a literal;
+&emsp;&emsp;#table *name$* = **table$**(m; n) - creates an empty string table with m rows and n columns;
+&emsp;String table element access:
+&emsp;&emsp;*name$*(i; j) - returns the element at row i, column j;
+&emsp;String table element assignment:
+&emsp;&emsp;*name$*(i; j) = *'value'* - sets the element at row i, column j;
+&emsp;String variable output:
+&emsp;&emsp;*name$* - outputs the string value or renders the table as Html;
+* String functions (names end with $):
+&emsp;One argument:
+&emsp;&emsp;**len$**(s$) - returns the length of string s$;
+&emsp;&emsp;**trim$**(s$) - trims whitespace from both ends;
+&emsp;&emsp;**ltrim$**(s$) - trims whitespace from the left;
+&emsp;&emsp;**rtrim$**(s$) - trims whitespace from the right;
+&emsp;&emsp;**ucase$**(s$) - converts to upper case;
+&emsp;&emsp;**lcase$**(s$) - converts to lower case;
+&emsp;&emsp;**string$**(x) - converts a number, vector, or matrix to a string (without units);
+&emsp;&emsp;**tableToStringArray$**(tbl$) - converts an entire table to a nested JSON string array;
+&emsp;&emsp;**typeOf$**(expr) - returns the type of an expression as a string (value, complex, vector, matrix, string, table, or undefined);
+&emsp;&emsp;**transposeT$**(tbl$) - transposes a table (swaps rows and columns);
+&emsp;&emsp;**val$**(s$) - parses a numeric value from a string;
+&emsp;&emsp;**space$**(n) - returns a string of n spaces;
+&emsp;Two arguments:
+&emsp;&emsp;**left$**(s$; n) - returns the first n characters;
+&emsp;&emsp;**right$**(s$; n) - returns the last n characters;
+&emsp;&emsp;**compare$**(a$; b$) - compares two strings, returns -1, 0, or 1;
+&emsp;&emsp;**find$**(needle$; haystack$) - returns the 1-based index(es) of all occurrences;
+&emsp;&emsp;**parsejson$**(json$; path$) - parses a JSON string and extracts a value at the given path;
+&emsp;&emsp;**string$**(x; 'true') - converts a number, vector, or matrix to a string including units;
+&emsp;&emsp;**rowT$**(tbl$; n) - extracts row n from a table as a 1-row table;
+&emsp;&emsp;**colT$**(tbl$; n) - extracts column n from a table as a 1-column table;
+&emsp;&emsp;**rowToStringArray$**(tbl$; n) - extracts row n as a JSON string array;
+&emsp;&emsp;**colToStringArray$**(tbl$; n) - extracts column n as a JSON string array;
+&emsp;Three or more arguments:
+&emsp;&emsp;**mid$**(s$; start; count) - returns count characters starting at position start (1-based);
+&emsp;&emsp;**replace$**(s$; old$; new$) - replaces all occurrences of old$ with new$;
+&emsp;&emsp;**instr$**(start; s$; search$) - returns the 1-based position of search$ in s$ starting from start;
+&emsp;&emsp;**split$**(s$; rowSep$; colSep$) - splits a string into a table (use in #table declaration);
+&emsp;&emsp;**join$**(tbl$; rowSep$; colSep$) - joins a table into a string;
+&emsp;&emsp;**subTable$**(tbl$; r1; c1; r2; c2) - extracts a rectangular sub-table;
+&emsp;&emsp;**extractRowsT$**(tbl$; \[indices\]) - extracts multiple rows by index;
+&emsp;&emsp;**extractColsT$**(tbl$; \[indices\]) - extracts multiple columns by index;
+&emsp;Variadic:
+&emsp;&emsp;**concat$**(a$; b$; ...) - concatenates multiple strings;
+&emsp;&emsp;**augmentT$**(tbl1$; tbl2$; ...) - concatenates tables horizontally (side by side);
+&emsp;&emsp;**stackT$**(tbl1$; tbl2$; ...) - concatenates tables vertically (stacked);
 * Import/Export of external data:  
 &emsp;Text/CSV files:  
 &emsp;&emsp;#read M from filename.txt@R1C1:R2C2 TYPE=R SEP=',' - read matrix M from a text/CSV file;  
@@ -450,10 +500,15 @@ You can add or omit as many "#else if's" as needed. Only one "#else" is allowed.
 &emsp;Excel files (xlsx and xlsm):  
 &emsp;&emsp;#read M from filename.xlsx@Sheet1!A1:B2 TYPE=R - read matrix M from an Excel file;  
 &emsp;&emsp;#write M to filename.xlsx@Sheet1!A1:B2 TYPE=N - write matrix M to an Excel file;  
-&emsp;&emsp;#append M to filename.xlsx@Sheet1!A1:B2 TYPE=N - append matrix M to an Excel file (same as write);  
-&emsp;Sheet, range, TYPE and SEP can be omitted.  
-&emsp;For #read command, TYPE can be either of [R|D|C|S|U|L|V].  
-&emsp;For #write and #append commands, TYPE can be Y or N.  
+&emsp;&emsp;#append M to filename.xlsx@Sheet1!A1:B2 TYPE=N - append matrix M to an Excel file (same as write);
+&emsp;String tables and string variables:
+&emsp;&emsp;#read tbl$ from filename.csv TYPE=T SEP=',' - read a string table from a text/CSV file;
+&emsp;&emsp;#write tbl$ to filename.csv TYPE=T SEP=',' - write a string table to a text/CSV file;
+&emsp;&emsp;#read str$ from filename.txt TYPE=X - read entire file contents into a string variable;
+&emsp;&emsp;#write str$ to filename.txt TYPE=X - write a string variable to a text file;
+&emsp;Sheet, range, TYPE and SEP can be omitted.
+&emsp;For #read command, TYPE can be either of [R|D|C|S|U|L|V|T|X].
+&emsp;For #write and #append commands, TYPE can be [Y|N|T|X].  
 * Write protection: #const - declares a constant (readonly) variable or function;  
 * Output control:  
 &emsp;#hide - hide the report contents;  

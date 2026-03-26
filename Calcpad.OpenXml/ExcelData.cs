@@ -106,19 +106,35 @@ namespace Calcpad.OpenXml
 
         }
 
+        public static bool IsExcelFile(string ext) =>
+            ext.Equals("xlsx", StringComparison.OrdinalIgnoreCase) ||
+            ext.Equals("xlsm", StringComparison.OrdinalIgnoreCase);
+
         public static string[][] Read(string filepath, string sheetName, string rangeStart, string rangeEnd)
         {
-            using SpreadsheetDocument document = SpreadsheetDocument.Open(filepath, false); // Open in read-only mode
-            WorkbookPart wbPart = document.WorkbookPart ?? 
+            using SpreadsheetDocument document = SpreadsheetDocument.Open(filepath, false);
+            return ReadFromDocument(document, sheetName, rangeStart, rangeEnd);
+        }
+
+        public static string[][] ReadFromMemory(byte[] contentBytes, string sheetName, string rangeStart, string rangeEnd)
+        {
+            using var stream = new MemoryStream(contentBytes);
+            using SpreadsheetDocument document = SpreadsheetDocument.Open(stream, false);
+            return ReadFromDocument(document, sheetName, rangeStart, rangeEnd);
+        }
+
+        private static string[][] ReadFromDocument(SpreadsheetDocument document, string sheetName, string rangeStart, string rangeEnd)
+        {
+            WorkbookPart wbPart = document.WorkbookPart ??
                 throw new InvalidOperationException("The Excel workbook is missing or not initialized.");
-            
+
             WorksheetPart wsPart = null;
             Sheet sheet = null;
             if (!string.IsNullOrEmpty(sheetName))
                 sheet = wbPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName) ??
                     throw new InvalidOperationException($"Worksheet \"{sheetName}\" not found.");
             else
-                sheet = wbPart.Workbook.Descendants<Sheet>().FirstOrDefault() ?? 
+                sheet = wbPart.Workbook.Descendants<Sheet>().FirstOrDefault() ??
                     throw new InvalidOperationException("This Excel workbook doesn not contain worksheets.");
 
             var sheetID = sheet?.Id?.Value ?? string.Empty;

@@ -9,21 +9,51 @@ namespace Calcpad.Core
     {
         private static class DataExchange
         {
-            internal static string[][] Read(ReadWriteOptions options)
+            internal static string[][] Read(ReadWriteOptions options, ClientFileCache clientFileCache = null)
             {
                 var fileName = $"{options.Path}.{options.Ext}";
                 if (fileName == ".")
-                    throw Exceptions.MissingFileName(); 
-                
+                    throw Exceptions.MissingFileName();
+
                 var fullPath = options.FullPath;
-                if (!File.Exists(fullPath))
+                var fileExists = File.Exists(fullPath);
+
+                if (!fileExists && clientFileCache != null)
+                {
+                    if (clientFileCache.TryGetErrorMultiKey(fullPath, fileName, out var cachedError))
+                        throw new MathParserException(cachedError);
+
+                    try
+                    {
+                        // Excel files need raw bytes; CSV/text files need a UTF-8 string
+                        if (options.IsExcel)
+                        {
+                            if (!ExcelData.IsExcelFile(options.Ext.ToString()))
+                                throw Exceptions.FileFormatNotSupported(options.Ext.ToString());
+
+                            if (clientFileCache.TryGetBytes(fullPath, out var cachedBytes) ||
+                                clientFileCache.TryGetBytes(fileName, out cachedBytes))
+                                return ReadExcelFromMemory(options, cachedBytes);
+                        }
+                        else if (clientFileCache.TryGetContentMultiKey(fullPath, fileName, out var cachedContent))
+                        {
+                            return ReadCSVFromString(options, cachedContent);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        throw new MathParserException(e.Message);
+                    }
+                }
+
+                if (!fileExists)
                     throw Exceptions.FileNotFound(fileName);
 
                 try
                 {
                     if (options.IsExcel)
                     {
-                        if (!options.Ext.Equals("xlsx", StringComparison.OrdinalIgnoreCase) && !options.Ext.Equals("xlsm", StringComparison.OrdinalIgnoreCase))
+                        if (!ExcelData.IsExcelFile(options.Ext.ToString()))
                             throw Exceptions.FileFormatNotSupported(options.Ext.ToString());
 
                         return ReadExcel(options);
@@ -33,7 +63,28 @@ namespace Calcpad.Core
                 catch (Exception e)
                 {
                     throw new MathParserException(e.Message);
-                }    
+                }
+            }
+
+            private static string[][] ReadCSVFromString(ReadWriteOptions options, string content)
+            {
+                int i = 0;
+                var (start, end) = ParseBounds(options.Start, options.End);
+                var lines = new List<string>();
+                using var reader = new StringReader(content);
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    ++i;
+                    if (i >= start.row)
+                    {
+                        if (end.row > 0 && i > end.row)
+                            break;
+
+                        lines.Add(line);
+                    }
+                }
+                return FormatCSVData(options, lines, start, end);
             }
 
             private static string[][] ReadCSV(ReadWriteOptions options)
@@ -54,10 +105,15 @@ namespace Calcpad.Core
                         lines.Add(line);
                     }
                 }
+                return FormatCSVData(options, lines, start, end);
+            }
+
+            private static string[][] FormatCSVData(ReadWriteOptions options, List<string> lines, (int row, int col) start, (int row, int col) end)
+            {
                 string[][] data = new string[lines.Count][];
                 var j0 = Math.Max(0, start.col - 1);
                 var n = lines.Count;
-                for (i = 0; i < n; ++i)
+                for (int i = 0; i < n; ++i)
                 {
                     if (start.col == 0 && end.col == 0)
                         data[i] = lines[i].Split(options.Separator, StringSplitOptions.TrimEntries);
@@ -131,6 +187,71 @@ namespace Calcpad.Core
                 return ExcelData.Read(options.FullPath, sheet, start, end);
             }
 
+            private static string[][] ReadExcelFromMemory(ReadWriteOptions options, byte[] contentBytes)
+            {
+                var sheet = options.Sheet.ToString();
+                var start = options.Start.ToString();
+                var end = options.End.ToString();
+                return ExcelData.ReadFromMemory(contentBytes, sheet, start, end);
+            }
+
+            internal static string ReadString(ReadWriteOptions options, ClientFileCache clientFileCache = null)
+            {
+                var fileName = $"{options.Path}.{options.Ext}";
+                if (fileName == ".")
+                    throw Exceptions.MissingFileName();
+
+                var fullPath = options.FullPath;
+                var fileExists = File.Exists(fullPath);
+
+                if (!fileExists && clientFileCache != null)
+                {
+                    if (clientFileCache.TryGetErrorMultiKey(fullPath, fileName, out var cachedError))
+                        throw new MathParserException(cachedError);
+
+                    if (clientFileCache.TryGetContentMultiKey(fullPath, fileName, out var cachedContent))
+                        return NormalizeLinesToSeparator(cachedContent);
+                }
+
+                if (!fileExists)
+                    throw Exceptions.FileNotFound(fileName);
+
+                try
+                {
+                    var content = File.ReadAllText(fullPath);
+                    return NormalizeLinesToSeparator(content);
+                }
+                catch (Exception e)
+                {
+                    throw new MathParserException(e.Message);
+                }
+            }
+
+            internal static void WriteString(ReadWriteOptions options, string content)
+            {
+                var fileName = $"{options.Path}.{options.Ext}";
+                if (fileName == ".")
+                    throw Exceptions.MissingFileName();
+
+                var fullPath = options.FullPath;
+                var dir = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(dir))
+                    throw Exceptions.PathNotFound(dir);
+
+                try
+                {
+                    var text = content.Replace("|", Environment.NewLine);
+                    if (options.Append)
+                        File.AppendAllText(fullPath, text);
+                    else
+                        File.WriteAllText(fullPath, text);
+                }
+                catch (Exception e)
+                {
+                    throw new MathParserException(e.Message);
+                }
+            }
+
             internal static void Write(ReadWriteOptions options, string[][] data)
             {
                 var fileName = $"{options.Path}.{options.Ext}";
@@ -146,7 +267,7 @@ namespace Calcpad.Core
                 {
                     if (options.IsExcel)
                     {
-                        if (!options.Ext.Equals("xlsx", StringComparison.OrdinalIgnoreCase) && !options.Ext.Equals("xlsm", StringComparison.OrdinalIgnoreCase))
+                        if (!ExcelData.IsExcelFile(options.Ext.ToString()))
                             throw Exceptions.FileFormatNotSupported(options.Ext.ToString());
 
                         WriteExcel(options, data);
@@ -195,5 +316,8 @@ namespace Calcpad.Core
                 ExcelData.Write(options.FullPath, sheet, start, end, matrix, options.Append);
             }
         }
+
+        private static string NormalizeLinesToSeparator(string content)
+            => content.Replace("\r\n", "|").Replace("\n", "|").Replace("\r", "|");
     }
 }

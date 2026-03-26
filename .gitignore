@@ -348,3 +348,22 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Node.js build output
+dist/
+**/out/
+
+# VS Code extension
+*.vsix
+**/.vscode-test/
+
+# Test coverage
+**/.nyc_output/
+**/coverage/
+
+# Neutralino desktop build artifacts
+Calcpad.Web/frontend/calcpad-desktop/extensions/server/*
+!Calcpad.Web/frontend/calcpad-desktop/extensions/server/.gitkeep
+Calcpad.Web/frontend/calcpad-desktop/resources/
+Calcpad.Web/frontend/calcpad-desktop/.tmp/
+Calcpad.Web/frontend/calcpad-desktop/bin/

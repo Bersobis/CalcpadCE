@@ -1,0 +1,464 @@
+using System.Reflection;
+using PuppeteerSharp;
+using PuppeteerSharp.Media;
+using PdfSharp.Drawing;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using CalcpadPdfOptions = Calcpad.Server.Models.Pdf.PdfOptions;
+
+namespace Calcpad.Server.Services
+{
+    /// <summary>
+    /// Font resolver that maps any font request to embedded Segoe WP fonts from PdfSharp.WPFonts.
+    /// Required for PDFsharp on Linux where system fonts aren't auto-discovered.
+    /// </summary>
+    internal class EmbeddedFontResolver : IFontResolver
+    {
+        private const string Regular = "SegoeWP";
+        private const string Bold = "SegoeWP-Bold";
+
+        private static readonly Assembly _wpFontsAssembly =
+            Assembly.Load("PdfSharp.WPFonts");
+
+        public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic)
+        {
+            return new FontResolverInfo(isBold ? Bold : Regular);
+        }
+
+        public byte[]? GetFont(string faceName)
+        {
+            var resourceName = $"PdfSharp.WPFonts.Fonts.{faceName}.ttf";
+            using var stream = _wpFontsAssembly.GetManifestResourceStream(resourceName);
+            if (stream == null) return null;
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
+        }
+    }
+
+    public class PdfGeneratorService : IAsyncDisposable
+    {
+        private IBrowser? _browser;
+        private readonly SemaphoreSlim _browserLock = new(1, 1);
+        private readonly IConfiguration _config;
+        private static string? _cachedChromiumPath;
+
+        static PdfGeneratorService()
+        {
+            if (GlobalFontSettings.FontResolver == null)
+                GlobalFontSettings.FontResolver = new EmbeddedFontResolver();
+        }
+
+        public PdfGeneratorService(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public async Task<byte[]> GeneratePdfAsync(string html, CalcpadPdfOptions? options = null, string? browserPath = null)
+        {
+            options ??= new CalcpadPdfOptions();
+
+            // Step 1: Generate basic PDF with PuppeteerSharp
+            var basicPdf = await GenerateBasicPdfAsync(html, options, browserPath);
+
+            // Step 2: Enhance with PDFsharp (headers, footers, backgrounds)
+            if (options.EnableHeader || options.EnableFooter || !string.IsNullOrEmpty(options.BackgroundPdf))
+            {
+                return EnhancePdf(basicPdf, options);
+            }
+
+            return basicPdf;
+        }
+
+        private async Task<byte[]> GenerateBasicPdfAsync(string html, CalcpadPdfOptions options, string? browserPath)
+        {
+            var browser = await GetOrCreateBrowserAsync(browserPath);
+            var page = await browser.NewPageAsync();
+
+            try
+            {
+                await page.SetContentAsync(html, new NavigationOptions
+                {
+                    WaitUntil = [WaitUntilNavigation.Networkidle0]
+                });
+
+                var pdfOptions = new PuppeteerSharp.PdfOptions
+                {
+                    Format = ParsePaperFormat(options.Format),
+                    Landscape = options.Orientation == "landscape",
+                    PrintBackground = options.PrintBackground,
+                    Scale = (decimal)options.Scale,
+                    MarginOptions = new MarginOptions
+                    {
+                        Top = options.MarginTop,
+                        Right = options.MarginRight,
+                        Bottom = options.MarginBottom,
+                        Left = options.MarginLeft
+                    },
+                    DisplayHeaderFooter = false
+                };
+
+                return await page.PdfDataAsync(pdfOptions);
+            }
+            finally
+            {
+                await page.CloseAsync();
+            }
+        }
+
+        private async Task<IBrowser> GetOrCreateBrowserAsync(string? browserPath)
+        {
+            if (_browser is { IsClosed: false })
+                return _browser;
+
+            await _browserLock.WaitAsync();
+            try
+            {
+                if (_browser is { IsClosed: false })
+                    return _browser;
+
+                // Clean up stale browser
+                if (_browser != null)
+                {
+                    try { await _browser.CloseAsync(); } catch { }
+                    _browser = null;
+                }
+
+                var executablePath = await ResolveBrowserPathAsync(browserPath);
+                FileLogger.LogInfo("Launching browser", executablePath);
+
+                try
+                {
+                    _browser = await Puppeteer.LaunchAsync(new LaunchOptions
+                    {
+                        Headless = true,
+                        ExecutablePath = executablePath,
+                        Args = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"]
+                    });
+                }
+                catch (Exception ex)
+                {
+                    FileLogger.LogWarning("Browser launch failed, falling back to ChromeHeadlessShell download", ex.Message);
+                    var fallbackPath = await DownloadChromiumAsync();
+                    _browser = await Puppeteer.LaunchAsync(new LaunchOptions
+                    {
+                        Headless = true,
+                        ExecutablePath = fallbackPath,
+                        Args = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"]
+                    });
+                }
+
+                return _browser;
+            }
+            finally
+            {
+                _browserLock.Release();
+            }
+        }
+
+        /// <summary>
+        /// Resolves a Chromium-based browser executable. Checks (in order):
+        /// 1. Explicitly configured path (parameter, appsettings, env var)
+        /// 2. Well-known system browser locations (Edge, Chrome)
+        /// 3. BrowserFetcher download of ChromeHeadlessShell
+        /// </summary>
+        private async Task<string> ResolveBrowserPathAsync(string? browserPath)
+        {
+            // 1. Try configured/detected browser path
+            var path = NullIfEmpty(browserPath)
+                ?? NullIfEmpty(_config["BrowserPath"])
+                ?? Environment.GetEnvironmentVariable("BROWSER_PATH");
+
+            if (!string.IsNullOrEmpty(path))
+                return path;
+
+            // 2. Try well-known system browser locations
+            var systemBrowser = FindSystemBrowser();
+            if (systemBrowser != null)
+            {
+                FileLogger.LogInfo("Auto-detected system browser", systemBrowser);
+                return systemBrowser;
+            }
+
+            // 3. Fallback: download ChromeHeadlessShell
+            return await DownloadChromiumAsync();
+        }
+
+        private static string? FindSystemBrowser()
+        {
+            string[] candidates;
+
+            if (OperatingSystem.IsWindows())
+            {
+                var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                var programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+                candidates =
+                [
+                    Path.Combine(programFiles, "Microsoft", "Edge", "Application", "msedge.exe"),
+                    Path.Combine(programFilesX86, "Microsoft", "Edge", "Application", "msedge.exe"),
+                    Path.Combine(localAppData, "Microsoft", "Edge", "Application", "msedge.exe"),
+                    Path.Combine(programFiles, "Google", "Chrome", "Application", "chrome.exe"),
+                    Path.Combine(programFilesX86, "Google", "Chrome", "Application", "chrome.exe"),
+                    Path.Combine(localAppData, "Google", "Chrome", "Application", "chrome.exe"),
+                ];
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                candidates =
+                [
+                    "/usr/bin/chromium",
+                    "/usr/bin/chromium-browser",
+                    "/usr/bin/google-chrome",
+                    "/usr/bin/google-chrome-stable",
+                    "/snap/bin/chromium",
+                ];
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                candidates =
+                [
+                    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+                    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+                ];
+            }
+            else
+            {
+                return null;
+            }
+
+            foreach (var candidate in candidates)
+            {
+                if (File.Exists(candidate))
+                    return candidate;
+            }
+
+            return null;
+        }
+
+        private async Task<string> DownloadChromiumAsync()
+        {
+            if (_cachedChromiumPath != null && File.Exists(_cachedChromiumPath))
+                return _cachedChromiumPath;
+
+            var baseDir = AppContext.BaseDirectory;
+            var downloadDir = Path.Combine(baseDir, "chromium");
+
+            FileLogger.LogInfo("Downloading ChromeHeadlessShell", downloadDir);
+
+            var fetcher = new BrowserFetcher(new BrowserFetcherOptions
+            {
+                Path = downloadDir,
+                Browser = SupportedBrowser.ChromeHeadlessShell
+            });
+
+            var installed = fetcher.GetInstalledBrowsers().FirstOrDefault();
+            if (installed == null)
+            {
+                installed = await fetcher.DownloadAsync();
+                FileLogger.LogInfo("ChromeHeadlessShell download complete", installed.GetExecutablePath());
+            }
+
+            _cachedChromiumPath = installed.GetExecutablePath();
+            return _cachedChromiumPath;
+        }
+
+        private static string? NullIfEmpty(string? value) =>
+            string.IsNullOrEmpty(value) ? null : value;
+
+        private static PaperFormat ParsePaperFormat(string? format) => format?.ToUpperInvariant() switch
+        {
+            "LETTER" => PaperFormat.Letter,
+            "LEGAL" => PaperFormat.Legal,
+            "TABLOID" => PaperFormat.Tabloid,
+            "LEDGER" => PaperFormat.Ledger,
+            "A0" => PaperFormat.A0,
+            "A1" => PaperFormat.A1,
+            "A2" => PaperFormat.A2,
+            "A3" => PaperFormat.A3,
+            "A4" => PaperFormat.A4,
+            "A5" => PaperFormat.A5,
+            "A6" => PaperFormat.A6,
+            _ => PaperFormat.A4
+        };
+
+        #region PDFsharp Enhancement
+
+        private byte[] EnhancePdf(byte[] pdfBytes, CalcpadPdfOptions options)
+        {
+            using var inputStream = new MemoryStream(pdfBytes);
+            var document = PdfReader.Open(inputStream, PdfDocumentOpenMode.Modify);
+
+            // Add background first (drawn behind content)
+            if (!string.IsNullOrEmpty(options.BackgroundPdf) && File.Exists(options.BackgroundPdf))
+            {
+                AddBackground(document, options.BackgroundPdf);
+            }
+
+            // Add headers and footers on top
+            for (int i = 0; i < document.PageCount; i++)
+            {
+                var page = document.Pages[i];
+                using var gfx = XGraphics.FromPdfPage(page, XGraphicsPdfPageOptions.Append);
+
+                double width = page.Width.Point;
+                double height = page.Height.Point;
+
+                if (options.EnableHeader)
+                    DrawHeader(gfx, width, height, options);
+
+                if (options.EnableFooter)
+                    DrawFooter(gfx, width, height, i + 1, document.PageCount, options);
+            }
+
+            using var outputStream = new MemoryStream();
+            document.Save(outputStream, false);
+            return outputStream.ToArray();
+        }
+
+        private void DrawHeader(XGraphics gfx, double width, double height, CalcpadPdfOptions options)
+        {
+            var font = new XFont("Helvetica", 10);
+            var boldFont = new XFont("Helvetica", 12, XFontStyleEx.Bold);
+            var smallFont = new XFont("Helvetica", 8);
+            var darkBrush = XBrushes.Black;
+            var grayBrush = new XSolidBrush(XColor.FromArgb(77, 77, 77));
+            var lightGrayBrush = new XSolidBrush(XColor.FromArgb(128, 128, 128));
+            var linePen = new XPen(XColor.FromArgb(179, 179, 179), 0.5);
+
+            const double margin = 20;
+            double headerY = margin;
+
+            // Separator line below header text
+            double lineY = headerY + 25;
+            gfx.DrawLine(linePen, margin, lineY, width - margin, lineY);
+
+            // Document title (top-left, bold)
+            if (!string.IsNullOrEmpty(options.DocumentTitle))
+            {
+                gfx.DrawString(options.DocumentTitle, boldFont, darkBrush,
+                    new XPoint(margin, headerY + 12));
+
+                // Subtitle
+                if (!string.IsNullOrEmpty(options.DocumentSubtitle))
+                {
+                    gfx.DrawString(options.DocumentSubtitle, font, grayBrush,
+                        new XPoint(margin, headerY + 23));
+                }
+            }
+
+            // Header center text
+            if (!string.IsNullOrEmpty(options.HeaderCenter))
+            {
+                var size = gfx.MeasureString(options.HeaderCenter, font);
+                gfx.DrawString(options.HeaderCenter, font, grayBrush,
+                    new XPoint((width - size.Width) / 2, headerY + 12));
+            }
+
+            // Timestamp (top-right)
+            var timestampFormat = string.IsNullOrEmpty(options.DateTimeFormat) ? "g" : options.DateTimeFormat;
+            var timestamp = DateTime.Now.ToString(timestampFormat);
+            var timestampSize = gfx.MeasureString(timestamp, smallFont);
+            gfx.DrawString(timestamp, smallFont, lightGrayBrush,
+                new XPoint(width - margin - timestampSize.Width, headerY + 12));
+        }
+
+        private void DrawFooter(XGraphics gfx, double width, double height,
+            int pageNumber, int totalPages, CalcpadPdfOptions options)
+        {
+            var font = new XFont("Helvetica", 8);
+            var centerFont = new XFont("Helvetica", 10);
+            var grayBrush = new XSolidBrush(XColor.FromArgb(77, 77, 77));
+            var linePen = new XPen(XColor.FromArgb(179, 179, 179), 0.5);
+
+            const double margin = 20;
+            double footerY = height - margin - 20;
+
+            // Separator line above footer
+            double lineY = footerY - 5;
+            gfx.DrawLine(linePen, margin, lineY, width - margin, lineY);
+
+            // Left side: Author / Company
+            double leftY = footerY + 8;
+            if (!string.IsNullOrEmpty(options.Author))
+            {
+                gfx.DrawString($"Author: {options.Author}", font, grayBrush,
+                    new XPoint(margin, leftY));
+                leftY += 10;
+            }
+            if (!string.IsNullOrEmpty(options.Company))
+            {
+                gfx.DrawString(options.Company, font, grayBrush,
+                    new XPoint(margin, leftY));
+            }
+
+            // Center: Custom footer text
+            if (!string.IsNullOrEmpty(options.FooterCenter))
+            {
+                var size = gfx.MeasureString(options.FooterCenter, centerFont);
+                gfx.DrawString(options.FooterCenter, centerFont, grayBrush,
+                    new XPoint((width - size.Width) / 2, footerY + 8));
+            }
+
+            // Right side: Page numbers
+            var pageText = $"Page {pageNumber} of {totalPages}";
+            var pageSize = gfx.MeasureString(pageText, font);
+            double rightY = footerY + 8;
+            gfx.DrawString(pageText, font, grayBrush,
+                new XPoint(width - margin - pageSize.Width, rightY));
+
+            if (!string.IsNullOrEmpty(options.Project))
+            {
+                rightY += 10;
+                var projectText = $"Project: {options.Project}";
+                var projectSize = gfx.MeasureString(projectText, font);
+                gfx.DrawString(projectText, font, grayBrush,
+                    new XPoint(width - margin - projectSize.Width, rightY));
+            }
+        }
+
+        private void AddBackground(PdfDocument document, string backgroundPdfPath)
+        {
+            try
+            {
+                var bgForm = XPdfForm.FromFile(backgroundPdfPath);
+
+                for (int i = 0; i < document.PageCount; i++)
+                {
+                    var page = document.Pages[i];
+                    using var gfx = XGraphics.FromPdfPage(page, XGraphicsPdfPageOptions.Prepend);
+                    gfx.DrawImage(bgForm, 0, 0, page.Width.Point, page.Height.Point);
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogWarning("Failed to add background PDF", ex.Message);
+            }
+        }
+
+        #endregion
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_browser != null)
+            {
+                try
+                {
+                    var process = _browser.Process;
+                    await _browser.CloseAsync();
+                    // Ensure the browser process is fully terminated so it doesn't hold file locks
+                    if (process is { HasExited: false })
+                    {
+                        process.Kill(entireProcessTree: true);
+                        process.WaitForExit(3000);
+                    }
+                }
+                catch { }
+                _browser = null;
+            }
+        }
+    }
+}

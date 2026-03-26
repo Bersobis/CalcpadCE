@@ -98,6 +98,7 @@ namespace Calcpad.Core
                 var isInput = false;
                 var isSubscript = false;
                 var bracketCounter = 0;
+                var parenDepth = 0;
                 var tokenLiteral = new TextSpan(expression);
                 var unitsLiteral = new TextSpan(expression);
                 var textSpan = new TextSpan(expression);
@@ -320,9 +321,14 @@ namespace Calcpad.Core
                             }
                             else
                             {
+                                if (tt == TokenTypes.BracketLeft)
+                                    parenDepth++;
+                                else if (tt == TokenTypes.BracketRight)
+                                    parenDepth--;
+
                                 if (tt == TokenTypes.Operator)
                                 {
-                                    if (c == '=' || c == '←')
+                                    if ((c == '=' || c == '←') && parenDepth == 0)
                                     {
                                         if (!allowAssignment || _parser._assignmentIndex > 0)
                                             throw Exceptions.ImproperAssignment();
@@ -340,7 +346,7 @@ namespace Calcpad.Core
 
                                                 if (vt.Variable.IsReadOnly)
                                                     throw Exceptions.CannotModifyConstant(vt.Content);
-                                                
+
                                                 vt.Variable.IsReadOnly = _parser.IsConst;
                                             }
                                         }

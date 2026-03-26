@@ -49,6 +49,9 @@ namespace Calcpad.Core
             Append,
             Phasor,
             Complex,
+            String,
+            Table,
+            Ui,
             SkipLine
         }
         private enum KeywordResult  
@@ -213,6 +216,13 @@ namespace Calcpad.Core
                 case Keyword.Complex:
                     _parser.Phasor = false;
                     break;
+                case Keyword.String:
+                    return ParseKeywordString(s);
+                case Keyword.Table:
+                    return ParseKeywordTable(s);
+                case Keyword.Ui:
+                    ParseKeywordUi(s);
+                    return KeywordResult.None;
                 default:
                     if (keyword != Keyword.Global && keyword != Keyword.Local)
                         return KeywordResult.None;
@@ -628,21 +638,95 @@ namespace Calcpad.Core
                 _isMarkdownOn = true;
         }
 
+        private KeywordResult ParseKeywordString(ReadOnlySpan<char> s) =>
+            ParseKeywordStringOrTable(s, "string", 7, (varName, rhs) =>
+            {
+                _stringVariables[varName] = EvaluateStringExpression(rhs);
+                _tableVariables.Remove(varName);
+                _stringVariablesDirty = true;
+            });
+
+        private KeywordResult ParseKeywordTable(ReadOnlySpan<char> s) =>
+            ParseKeywordStringOrTable(s, "table", 6, (varName, rhs) =>
+            {
+                _tableVariables[varName] = EvaluateTableExpression(rhs);
+                _stringVariables.Remove(varName);
+                _tableVariablesDirty = true;
+            });
+
+        private KeywordResult ParseKeywordStringOrTable(
+            ReadOnlySpan<char> s, string keyword, int keywordLength,
+            Action<string, ReadOnlySpan<char>> evaluateAndStore)
+        {
+            var content = s.Length > keywordLength ? s[keywordLength..].Trim() : [];
+            if (content.IsEmpty)
+            {
+                AppendError(s.ToString(), $"Expected {keyword} variable declaration after #{keyword}.", _currentLine);
+                return KeywordResult.Continue;
+            }
+
+            var eqPos = content.IndexOf('=');
+            if (eqPos < 0)
+            {
+                AppendError(s.ToString(), $"Expected '=' in {keyword} variable declaration.", _currentLine);
+                return KeywordResult.Continue;
+            }
+
+            var varName = content[..eqPos].Trim().ToString();
+            if (varName.Length < 2 || varName[^1] != '$')
+            {
+                AppendError(s.ToString(), $"{char.ToUpper(keyword[0])}{keyword[1..]} variable name must end with '$'.", _currentLine);
+                return KeywordResult.Continue;
+            }
+
+            var rhs = content[(eqPos + 1)..].Trim();
+
+            if (_calculate && _condition.IsSatisfied)
+                evaluateAndStore(varName, rhs);
+
+            if (_isVisible && !_calculate)
+            {
+                _sb.Append($"<p{HtmlId}><span class=\"cond\">#{keyword}</span> {System.Web.HttpUtility.HtmlEncode(varName)} = {System.Web.HttpUtility.HtmlEncode(rhs.ToString())}</p>");
+            }
+
+            return KeywordResult.Continue;
+        }
+
         private void ParseKeywordRead(ReadOnlySpan<char> s)
         {
             if (_calculate)
             {
                 if (_condition.IsSatisfied)
                 {
-                    var options = new ReadWriteOptions(s, 0);
+                    var sourceDir = !string.IsNullOrEmpty(Settings.SourceFilePath)
+                        ? System.IO.Path.GetDirectoryName(Settings.SourceFilePath) : null;
+                    var options = new ReadWriteOptions(s, 0, sourceDir);
                     if (options.Name.IsEmpty)
                         return;
 
-                    var data = DataExchange.Read(options);
-                    if (options.Type == 'V')
-                        _parser.SetVector(options.Name, data, options.IsHp);
+                    if (options.Type == 'X')
+                    {
+                        var varName = options.Name.ToString();
+                        var content = DataExchange.ReadString(options, Settings.ClientFileCache);
+                        _stringVariables[varName] = content;
+                        _tableVariables.Remove(varName);
+                        _stringVariablesDirty = true;
+                    }
                     else
-                        _parser.SetMatrix(options.Name, data, options.Type, options.IsHp);
+                    {
+                        var data = DataExchange.Read(options, Settings.ClientFileCache);
+                        if (options.Type == 'T')
+                        {
+                            var varName = options.Name.ToString();
+                            _tableVariables[varName] = JaggedToRectangular(data);
+                            _stringVariables.Remove(varName);
+                            _tableVariablesDirty = true;
+                        }
+                        else if (options.Type == 'V')
+                            _parser.SetVector(options.Name, data, options.IsHp);
+                        else
+                            _parser.SetMatrix(options.Name, data, options.Type, options.IsHp);
+                    }
 
                     if (_isVisible)
                         ReportDataExchageResult(options, "read from");
@@ -658,12 +742,34 @@ namespace Calcpad.Core
             {
                 if (_condition.IsSatisfied)
                 {
-                    var options = new ReadWriteOptions(s, keyword - Keyword.Read);
+                    var sourceDir = !string.IsNullOrEmpty(Settings.SourceFilePath)
+                        ? System.IO.Path.GetDirectoryName(Settings.SourceFilePath) : null;
+                    var options = new ReadWriteOptions(s, keyword - Keyword.Read, sourceDir);
                     if (options.Name.IsEmpty)
                         return;
 
-                    var m = _parser.GetMatrix(options.Name.ToString(), options.Type);
-                    DataExchange.Write(options, m);
+                    if (options.Type == 'X')
+                    {
+                        var varName = options.Name.ToString();
+                        if (!_stringVariables.TryGetValue(varName, out var content))
+                            throw new MathParserException($"String variable \"{varName}\" does not exist.");
+                        DataExchange.WriteString(options, content);
+                    }
+                    else
+                    {
+                        string[][] m;
+                        if (options.Type == 'T')
+                        {
+                            var varName = options.Name.ToString();
+                            if (!_tableVariables.TryGetValue(varName, out var table))
+                                throw new MathParserException($"Table variable \"{varName}\" does not exist.");
+                            m = RectangularToJagged(table);
+                        }
+                        else
+                            m = _parser.GetMatrix(options.Name.ToString(), options.Type);
+
+                        DataExchange.Write(options, m);
+                    }
                     if (_isVisible)
                         ReportDataExchageResult(options, keyword == Keyword.Write ? "written to" : "appended to");
                 }
@@ -672,11 +778,41 @@ namespace Calcpad.Core
                 _sb.Append($"<p><span{HtmlId} class=\"cond\">#write</span> {s[6..]}</p>");
         }
 
+        private static string[,] JaggedToRectangular(string[][] jagged)
+        {
+            int rows = jagged.Length;
+            int cols = 0;
+            for (int i = 0; i < rows; i++)
+                if (jagged[i] != null && jagged[i].Length > cols)
+                    cols = jagged[i].Length;
+
+            var result = new string[rows, cols];
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < (jagged[i]?.Length ?? 0); j++)
+                    result[i, j] = jagged[i][j];
+
+            return result;
+        }
+
+        private static string[][] RectangularToJagged(string[,] rect)
+        {
+            int rows = rect.GetLength(0);
+            int cols = rect.GetLength(1);
+            var result = new string[rows][];
+            for (int i = 0; i < rows; i++)
+            {
+                result[i] = new string[cols];
+                for (int j = 0; j < cols; j++)
+                    result[i][j] = rect[i, j] ?? string.Empty;
+            }
+            return result;
+        }
+
         private void ReportDataExchageResult(ReadWriteOptions options, string command)
         {
             var url = $"file:///{options.FullPath.Replace('\\', '/')}";
             _sb.Append($"<p{HtmlId}>")
-               .Append($"Matrix <span class=\"eq\">{new HtmlWriter(Settings.Math, false).FormatVariable(options.Name.ToString(), string.Empty, true)}</span>")
+               .Append($"{(options.Type == 'X' ? "String" : options.Type == 'T' ? "Table" : "Matrix")} <span class=\"eq\">{new HtmlWriter(Settings.Math, false).FormatVariable(options.Name.ToString(), string.Empty, true)}</span>")
                .Append($" was successfully {command} <a href=\"{url}\">{options.Path}.{options.Ext}</a>");
             if (options.IsExcel)
             {

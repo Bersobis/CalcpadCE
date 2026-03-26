@@ -2,6 +2,7 @@
 using Markdig.Renderers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -149,6 +150,14 @@ namespace Calcpad.Core
                     else if (result == KeywordResult.Break)
                         break;
 
+                    // Handle table element assignment at the line level
+                    if (_calculate && _condition.IsSatisfied && TryParseTableElementAssignment(textSpan))
+                        continue;
+
+                    // Handle string variable reassignment at the line level (like keywords)
+                    if (_calculate && _condition.IsSatisfied && TryParseStringReassignment(textSpan))
+                        continue;
+
                     _parser.IsCalculation = _isVal != -1;
                     if ((textSpan[0] != '$' || !ParsePlot(textSpan)) &&
                         ParseCondition(textSpan, keyword))
@@ -158,7 +167,8 @@ namespace Calcpad.Core
                             tokens = _lineCache[_currentLine].Tokens;
                         else
                         {
-                            var skipChars = keyword == Keyword.Const ? 7 : _condition.KeywordLength;
+                            var skipChars = keyword == Keyword.Ui ? _uiSkipChars :
+                                keyword == Keyword.Const ? 7 : _condition.KeywordLength;
                             tokens = GetTokens(textSpan[skipChars..]);
                             if (_isMarkdownOn)
                                 ParseMarkdown(tokens);
@@ -367,6 +377,8 @@ namespace Calcpad.Core
                         if (_isVal != 1)
                         {
                             htmlId = HtmlId;
+                            if (_pendingUi != null && Settings.EnableUi)
+                                htmlId += GetUiAttributes(_currentLine);
                             AppendHtmlLineStart(lineType, isIndent);
                         }
                         if (lineType == TokenTypes.Html && !string.IsNullOrEmpty(htmlId))
@@ -375,9 +387,23 @@ namespace Calcpad.Core
                         if (kwdLength > 0)
                             _sb.Append(_condition.ToHtml());
 
+                        var sbLenBefore = _sb.Length;
                         ParseTokens(tokens, true, getXml);
-                        if (_isVal != 1)
+                        if (_sb.Length == sbLenBefore && _isVal != 1)
+                        {
+                            // Nothing was output — roll back the opening tag
+                            _sb.Length = htmlId is not null ? sbLenBefore - htmlId.Length - 3 : sbLenBefore;
+                            --_htmlLines;
+                        }
+                        else if (_isVal != 1)
                             AppendHtmlLineEnd(lineType, keyword == Keyword.If);
+
+                        // Append datagrid div AFTER the </p> so it's a sibling, not nested inside
+                        if (_pendingUi != null && Settings.EnableUi && _pendingUi.Type == "datagrid")
+                        {
+                            _sb.AppendLine(InjectUiDatagrid(string.Empty, _currentLine));
+                            ResetUiState();
+                        }
                     }
                 }
                 else
@@ -438,11 +464,16 @@ namespace Calcpad.Core
                 _sb.Clear();
                 _condition = new();
                 _loops.Clear();
+                _stringVariables.Clear();
+                _stringVariablesDirty = false;
+                _tableVariables.Clear();
+                _tableVariablesDirty = false;
                 _isVal = 0;
                 _parser.SetVariable("Units", new RealValue(UnitsFactor()));
                 _previousKeyword = Keyword.None;
                 _isMarkdownOn = false;
                 OpenXmlExpressions.Clear();
+                ResetUiState();
             }
             else
             {
@@ -507,6 +538,8 @@ namespace Calcpad.Core
         private void ParseTokens(List<Token> tokens, bool isOutput, bool getXml)
         {
             var isLoop = _loops.Count > 0 && _calculate && _isVal > -1;
+            _stringVariablesDirty = false;
+            _tableVariablesDirty = false;
             for (int i = 0, count = tokens.Count; i < count; ++i)
             {
                 var token = tokens[i];
@@ -514,10 +547,64 @@ namespace Calcpad.Core
                 {
                     try
                     {
+                        var expressionText = token.Value;
+
+                        // Check if expression is a bare table variable reference
+                        if (_tableVariables.Count > 0 && IsTableVariableReference(expressionText))
+                        {
+                            if (isOutput && _calculate)
+                                _sb.Append(RenderTableAsHtml(_tableVariables[expressionText.Trim()]));
+                            continue;
+                        }
+
+                        // Check if expression is a bare string variable reference
+                        if (_stringVariables.Count > 0 && IsStringVariableReference(expressionText))
+                        {
+                            if (isOutput && _calculate)
+                                _sb.Append(HttpUtility.HtmlEncode(_stringVariables[expressionText.Trim()]));
+                            continue;
+                        }
+
+                        // Pre-process: expand string functions and variables before MathParser
+                        var hadStringFunctions = expressionText.Contains("$(");
+                        if (_stringVariables.Count > 0 || _tableVariables.Count > 0 || hadStringFunctions)
+                            expressionText = PreProcessExpression(expressionText);
+
+                        // If the expression was entirely a string function and the result
+                        // is not a valid math expression, output it directly as text
+                        if (hadStringFunctions && !expressionText.Contains("$(") &&
+                            IsStringResult(token.Value, expressionText))
+                        {
+                            if (isOutput && _calculate)
+                                _sb.Append(HttpUtility.HtmlEncode(expressionText));
+                            continue;
+                        }
+
                         var cacheID = token.CacheID;
+
+                        // Invalidate cache if string/table variables changed and expression references them
+                        if (cacheID >= 0 && _stringVariablesDirty && ExpressionReferencesStringVariable(token.Value))
+                            cacheID = -1;
+                        if (cacheID >= 0 && _tableVariablesDirty && ExpressionReferencesTableVariable(token.Value))
+                            cacheID = -1;
                         if (cacheID < 0)
                         {
-                            _parser.Parse(token.Value);
+                            if (_pendingUi != null && Settings.EnableUi)
+                            {
+                                // Capture matrix/vector values for datagrid before override
+                                if (_pendingUi.Type == "datagrid")
+                                    CaptureDatagridValues(expressionText);
+
+                                var overridden = ApplyUiOverride(expressionText.AsSpan());
+                                if (overridden != null)
+                                {
+                                    expressionText = overridden;
+                                    // Re-capture values from the overridden expression
+                                    if (_pendingUi.Type == "datagrid")
+                                        CaptureDatagridValues(expressionText);
+                                }
+                            }
+                            _parser.Parse(expressionText);
                             if (isLoop)
                                 tokens[i].CacheID = _parser.WriteEquationToCache(isOutput);
                         }
@@ -536,6 +623,11 @@ namespace Calcpad.Core
                             else
                             {
                                 var html = _parser.ToHtml();
+                                if (_pendingUi != null && Settings.EnableUi && _pendingUi.Type != "datagrid")
+                                {
+                                    html = InjectUiInput(html, _currentLine);
+                                    ResetUiState();
+                                }
                                 if (getXml && Settings.Math.FormatEquations)
                                 {
                                     var xml = _parser.ToXml();
@@ -565,7 +657,13 @@ namespace Calcpad.Core
                     }
                 }
                 else if (isOutput)
-                    _sb.Append(token.Value);
+                {
+                    // Expand string variables in text tokens too
+                    var text = token.Value;
+                    if (_stringVariables.Count > 0 && _calculate)
+                        text = ExpandStringVariables(text);
+                    _sb.Append(text);
+                }
             }
         }
 

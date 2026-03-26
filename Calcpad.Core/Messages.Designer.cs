@@ -340,6 +340,15 @@ namespace Calcpad.Core {
         }
         
         // / <summary>
+        // /   Looks up a localized string similar to Duplicate argument for parameter &quot;{0}&quot;..
+        // / </summary>
+        public static string Duplicate_argument_0 {
+            get {
+                return ResourceManager.GetString("Duplicate_argument_0", resourceCulture);
+            }
+        }
+
+        // / <summary>
         // /   Looks up a localized string similar to Duplicate macro name: &quot;{0}&quot;..
         // / </summary>
         public static string Duplicate_macro_name_0 {
@@ -896,7 +905,25 @@ namespace Calcpad.Core {
                 return ResourceManager.GetString("Macro_not_defined_0", resourceCulture);
             }
         }
-        
+
+        // / <summary>
+        // /   Looks up a localized string similar to Required parameter &quot;{0}&quot; cannot follow an optional parameter..
+        // / </summary>
+        public static string Required_parameter_after_optional_0 {
+            get {
+                return ResourceManager.GetString("Required_parameter_after_optional_0", resourceCulture);
+            }
+        }
+
+        // / <summary>
+        // /   Looks up a localized string similar to Unknown keyword argument: &quot;{0}&quot;..
+        // / </summary>
+        public static string Unknown_keyword_argument_0 {
+            get {
+                return ResourceManager.GetString("Unknown_keyword_argument_0", resourceCulture);
+            }
+        }
+
         // / <summary>
         // /   Looks up a localized string similar to Matrix dimensions do not match..
         // / </summary>

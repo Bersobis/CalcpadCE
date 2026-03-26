@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(dotnet build:*)",
+      "Bash(tree:*)",
+      "Bash(git log --all --oneline --grep=\"TOC\\\\|table of contents\\\\|collapsible\\\\|outline\" -i)",
+      "Bash(git log --diff-filter=D --summary)",
+      "WebSearch"
+    ]
+  }
+}
