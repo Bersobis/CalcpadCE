@@ -45,6 +45,7 @@ export class UiInputModel {
     /**
      * Load overrides from a persisted HTML comment, resolving source lines
      * from variable definitions returned by the definitions API.
+     * Replaces all entries (used on initial load).
      */
     loadFromPersisted(overrides: Record<string, string>, variables: VariableDefinition[]): void {
         this.entries.clear();
@@ -55,6 +56,34 @@ export class UiInputModel {
                 currentValue: value,
                 sourceLine: varMap.get(varName) ?? -1
             });
+        }
+    }
+
+    /**
+     * Merge persisted overrides without replacing existing in-memory values.
+     * Only adds entries for variables that don't already have a user-set value.
+     * Updates source line numbers for all known variables.
+     */
+    mergeFromPersisted(overrides: Record<string, string>, variables: VariableDefinition[]): void {
+        const varMap = new Map(variables.map(v => [v.name, v.lineNumber]));
+
+        // Update source lines for existing entries
+        for (const [varName, entry] of this.entries) {
+            const line = varMap.get(varName);
+            if (line !== undefined) {
+                entry.sourceLine = line;
+            }
+        }
+
+        // Add persisted values only for variables not already in memory
+        for (const [varName, value] of Object.entries(overrides)) {
+            if (!this.entries.has(varName)) {
+                this.entries.set(varName, {
+                    variableName: varName,
+                    currentValue: value,
+                    sourceLine: varMap.get(varName) ?? -1
+                });
+            }
         }
     }
 }

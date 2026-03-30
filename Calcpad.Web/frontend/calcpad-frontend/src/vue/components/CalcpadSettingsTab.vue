@@ -489,6 +489,7 @@ watch(
     libraryPath.value = newValue
   }
 )
+
 </script>
 
 <style scoped>

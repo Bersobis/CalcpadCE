@@ -367,6 +367,9 @@
   <data name="Duplicate_macro_name_0" xml:space="preserve">
     <value>宏名称重复： "{0}".</value>
   </data>
+  <data name="Macro_name_0_is_a_built_in_string_function" xml:space="preserve">
+    <value>Macro name "{0}" is a built-in string function.</value>
+  </data>
   <data name="Missing_delimiter_0_in_plot_command" xml:space="preserve">
     <value>&lt;span class = "err"&gt;绘图命令 "{1}" 中缺少分隔符"{0}".&lt;/span&gt;</value>
   </data>

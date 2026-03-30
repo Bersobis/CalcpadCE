@@ -134,6 +134,7 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
                     await libraryPathConfig.update('libraryPath', data.path, vscode.ConfigurationTarget.Global);
                     break;
 
+
                 case 'updatePdfSettings':
                     const pdfConfig = vscode.workspace.getConfiguration('calcpad');
                     for (const [key, value] of Object.entries(data.settings)) {

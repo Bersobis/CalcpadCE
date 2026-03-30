@@ -413,7 +413,7 @@
         },
         {
           "command": "vscode-calcpad.viewWebviewSource",
-          "when": "webviewId == htmlPreview || webviewId == htmlPreviewUnwrapped",
+          "when": "webviewId == htmlPreview || webviewId == htmlPreviewUnwrapped || webviewId == htmlPreviewUi",
           "group": "navigation"
         }
       ],
@@ -434,6 +434,11 @@
           "command": "vscode-calcpad.printToPdf",
           "when": "resourceLangId == calcpad || resourceLangId == plaintext",
           "group": "calcpad@1"
+        },
+        {
+          "command": "vscode-calcpad.viewWebviewSource",
+          "when": "resourceLangId == calcpad || resourceLangId == plaintext",
+          "group": "calcpad@2"
         }
       ]
     },

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 
@@ -138,11 +139,16 @@ namespace Calcpad.Core
                 if (uiType == null)
                 {
                     // No explicit type — infer from expression
-                    uiType = rhs.IndexOf('[') >= 0 ? "datagrid" : "entry";
+                    uiType = IsDatagridRhs(rhs) ? "datagrid" : "entry";
                 }
                 // Fill in missing rows/columns for datagrid from the expression
                 if (uiType == "datagrid" && (uiRows == 0 || uiColumns == 0))
-                    AutoDetectGridSize(rhs, ref uiRows, ref uiColumns);
+                {
+                    if (rhs.Length >= 2 && rhs[0] == '[' && rhs[^1] == ']')
+                        AutoDetectGridSize(rhs, ref uiRows, ref uiColumns);
+                    else
+                        AutoDetectGridSizeFromFunction(rhs, ref uiRows, ref uiColumns);
+                }
             }
 
             uiType ??= "entry";
@@ -176,6 +182,63 @@ namespace Calcpad.Core
                 Keys = uiKeys,
                 Values = uiValues
             };
+        }
+
+        /// <summary>
+        /// Determines if a RHS expression represents a vector/matrix value
+        /// (bracket literal or vector/matrix function call).
+        /// </summary>
+        private static bool IsDatagridRhs(ReadOnlySpan<char> rhs)
+        {
+            // Case 1: Vector/matrix literal — trimmed RHS starts with '[' and ends with ']'
+            // This excludes e.g. "5'[test]'" where '[' appears inside a unit label
+            if (rhs.Length >= 2 && rhs[0] == '[' && rhs[^1] == ']')
+                return true;
+
+            // Case 2: vector(...) or matrix(...) function calls (with possible spaces before parenthesis)
+            if (StartsWithFunction(rhs, "vector") || StartsWithFunction(rhs, "matrix"))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Auto-detects rows and columns from a vector(n) or matrix(m;n) function call.
+        /// </summary>
+        private static void AutoDetectGridSizeFromFunction(ReadOnlySpan<char> rhs, ref int rows, ref int columns)
+        {
+            var parenStart = rhs.IndexOf('(');
+            var parenEnd = rhs.LastIndexOf(')');
+            if (parenStart < 0 || parenEnd <= parenStart)
+                return;
+
+            var args = rhs[(parenStart + 1)..parenEnd].Trim();
+
+            if (StartsWithFunction(rhs, "vector"))
+            {
+                // vector(n) → 1 row, n columns (displayed as a horizontal row)
+                if (int.TryParse(args, out var n) && n > 0)
+                {
+                    if (rows == 0) rows = 1;
+                    if (columns == 0) columns = n;
+                }
+            }
+            else if (StartsWithFunction(rhs, "matrix"))
+            {
+                // matrix(m;n) → m rows, n columns
+                var semicolonIdx = args.IndexOf(';');
+                if (semicolonIdx > 0)
+                {
+                    var mSpan = args[..semicolonIdx].Trim();
+                    var nSpan = args[(semicolonIdx + 1)..].Trim();
+                    if (int.TryParse(mSpan, out var m) && m > 0 &&
+                        int.TryParse(nSpan, out var n) && n > 0)
+                    {
+                        if (rows == 0) rows = m;
+                        if (columns == 0) columns = n;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -215,15 +278,15 @@ namespace Calcpad.Core
             }
             else
             {
-                // Vector: single column, rows = semicolons + 1
+                // Vector: single row, columns = semicolons + 1 (displayed horizontally)
                 int semicolons = 0;
                 foreach (var c in content)
                     if (c == ';') semicolons++;
 
                 if (rows == 0)
-                    rows = semicolons + 1;
+                    rows = 1;
                 if (columns == 0)
-                    columns = 1;
+                    columns = semicolons + 1;
             }
         }
 
@@ -380,6 +443,25 @@ namespace Calcpad.Core
         }
 
         /// <summary>
+        /// Strips the matrix/vector rendering from equation HTML for datagrid lines,
+        /// keeping only the LHS (e.g. "v =") so the datagrid table appears below.
+        /// </summary>
+        private static string StripDatagridRhs(string equationHtml)
+        {
+            // Find the " = " in the HTML (rendered as " = " with spaces)
+            var eqIndex = equationHtml.IndexOf(" = ", StringComparison.Ordinal);
+            if (eqIndex >= 0)
+                return equationHtml[..(eqIndex + 3)];
+
+            // Fallback: try just "="
+            eqIndex = equationHtml.IndexOf('=');
+            if (eqIndex >= 0)
+                return equationHtml[..(eqIndex + 1)] + " ";
+
+            return equationHtml;
+        }
+
+        /// <summary>
         /// Returns a datagrid div element. Called after the </p> line end
         /// so it's a block-level sibling, not nested inside inline elements.
         /// </summary>
@@ -407,22 +489,60 @@ namespace Calcpad.Core
         private string _pendingUiDataValues;
 
         /// <summary>
-        /// Captures matrix/vector values from an expression like "M = [1|2|3; 4|5|6]"
-        /// and stores them in _pendingUiDataValues in Calcpad format (| for columns, ; for rows).
+        /// Captures matrix/vector values from an expression.
+        /// Supports bracket literals like [1;2;3] or [1;2|3;4], and
+        /// function calls like vector(n) or matrix(m;n) (generates zeros).
         /// </summary>
         private void CaptureDatagridValues(string expressionText)
         {
             var eqIdx = expressionText.IndexOf('=');
             if (eqIdx < 0) return;
 
-            var rhs = expressionText[(eqIdx + 1)..];
+            var rhs = expressionText[(eqIdx + 1)..].Trim();
+
+            // Case 1: bracket literal [...]
             var bracketStart = rhs.IndexOf('[');
             var bracketEnd = rhs.LastIndexOf(']');
-            if (bracketStart < 0 || bracketEnd <= bracketStart) return;
+            if (bracketStart >= 0 && bracketEnd > bracketStart)
+            {
+                var content = rhs[(bracketStart + 1)..bracketEnd];
+                _pendingUiDataValues = content.Replace(" ", "");
+                return;
+            }
 
-            // Extract content between brackets, remove spaces for compact format
-            var content = rhs[(bracketStart + 1)..bracketEnd];
-            _pendingUiDataValues = content.Replace(" ", "");
+            // Case 2: vector(n) — generate n zeros as a single row
+            if (StartsWithFunction(rhs.AsSpan(), "vector"))
+            {
+                var parenStart = rhs.IndexOf('(');
+                var parenEnd = rhs.IndexOf(')');
+                if (parenStart >= 0 && parenEnd > parenStart)
+                {
+                    var inner = rhs[(parenStart + 1)..parenEnd].Trim();
+                    if (int.TryParse(inner, out var n) && n > 0)
+                        _pendingUiDataValues = string.Join(";", new string[n].Select(_ => "0"));
+                }
+                return;
+            }
+
+            // Case 3: matrix(m;n) — generate m rows of n zeros
+            if (StartsWithFunction(rhs.AsSpan(), "matrix"))
+            {
+                var parenStart = rhs.IndexOf('(');
+                var parenEnd = rhs.IndexOf(')');
+                if (parenStart >= 0 && parenEnd > parenStart)
+                {
+                    var inner = rhs[(parenStart + 1)..parenEnd].Trim();
+                    var semi = inner.IndexOf(';');
+                    if (semi > 0 &&
+                        int.TryParse(inner[..semi].Trim(), out var m) && m > 0 &&
+                        int.TryParse(inner[(semi + 1)..].Trim(), out var n) && n > 0)
+                    {
+                        var row = string.Join(";", new string[n].Select(_ => "0"));
+                        _pendingUiDataValues = string.Join("|", Enumerable.Repeat(row, m));
+                    }
+                }
+                return;
+            }
         }
 
         /// <summary>
@@ -494,6 +614,18 @@ namespace Calcpad.Core
 
         private static bool IsNumericChar(char c) =>
             c >= '0' && c <= '9' || c == '.' || c == '-' || c == '+' || c == 'e' || c == 'E';
+
+        /// <summary>
+        /// Checks if rhs starts with a function name followed by optional whitespace then '('.
+        /// Handles cases like "vector ( 4 )" where spaces appear before the parenthesis.
+        /// </summary>
+        private static bool StartsWithFunction(ReadOnlySpan<char> rhs, ReadOnlySpan<char> funcName)
+        {
+            if (!rhs.StartsWith(funcName, StringComparison.OrdinalIgnoreCase))
+                return false;
+            var rest = rhs[funcName.Length..].TrimStart();
+            return rest.Length > 0 && rest[0] == '(';
+        }
 
         private void ResetUiState()
         {

@@ -356,7 +356,16 @@ namespace Calcpad.Core {
                 return ResourceManager.GetString("Duplicate_macro_name_0", resourceCulture);
             }
         }
-        
+
+        // / <summary>
+        // /   Looks up a localized string similar to Macro name &quot;{0}&quot; is a built-in string function..
+        // / </summary>
+        public static string Macro_name_0_is_a_built_in_string_function {
+            get {
+                return ResourceManager.GetString("Macro_name_0_is_a_built_in_string_function", resourceCulture);
+            }
+        }
+
         // / <summary>
         // /   Looks up a localized string similar to Duplicate macro parameter names: {0} and {1}..
         // / </summary>

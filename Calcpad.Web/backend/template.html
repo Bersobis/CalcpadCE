@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>Calcpad</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <style>
@@ -531,6 +531,7 @@
             .side {
                 zoom: 0.8;
                 -moz-transform: scale(0.8);
+                transform: scale(0.8);
             }
 
             .no-print {
@@ -569,10 +570,10 @@
                 display: none;
                 opacity: 0;
                 transition: opacity 2s;
-                user-select: none;
                 -webkit-user-select: none;
                 -ms-user-select: none;
                 -moz-user-select: none;
+                user-select: none;
             }
 
             .value:hover:after {
@@ -660,10 +661,10 @@
             color: #888;
             text-decoration: none;
             font-size: 9pt;
-            user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            user-select: none;
         }
 
         .line-num:hover {
@@ -726,7 +727,6 @@
         .calcpad-ui-input {
             font-family: 'Georgia Pro', 'Century Schoolbook', 'Times New Roman', Times, serif;
             font-size: 11pt;
-            font-weight: bold;
             background-color: lightyellow;
             border: 0.5pt solid #CCC;
             border-radius: 0.35em;
@@ -734,7 +734,6 @@
             padding: 0.2em 0.4em;
             box-shadow: 0.06em 0.06em 0.5em #ddd;
             min-width: 3em;
-            max-width: 10em;
         }
 
         .calcpad-ui-input:focus {
@@ -751,7 +750,6 @@
         .calcpad-ui-dropdown {
             font-family: 'Georgia Pro', 'Century Schoolbook', 'Times New Roman', Times, serif;
             font-size: 11pt;
-            font-weight: bold;
             background-color: lightyellow;
             border: 0.5pt solid #CCC;
             border-radius: 0.35em;

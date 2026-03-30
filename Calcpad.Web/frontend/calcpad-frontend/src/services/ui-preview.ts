@@ -130,10 +130,8 @@ export function getUiEventScript(postMessageExpr: string, iframeMode: boolean = 
                         return row.split(';');
                     });
                 } else {
-                    // Vector: each ; separated value is a row with 1 column
-                    data = valuesStr.split(';').map(function(val) {
-                        return [val];
-                    });
+                    // Vector: single row with ; separated columns
+                    data = [valuesStr.split(';')];
                 }
             } else {
                 data = [];
@@ -207,9 +205,9 @@ export function getUiEventScript(postMessageExpr: string, iframeMode: boolean = 
             function emitGridChange() {
                 var gridData = worksheet.getData ? worksheet.getData() : [];
                 var calcpadValue;
-                if (cols === 1) {
-                    // Vector: [1; 2; 3] — each row has one element
-                    calcpadValue = '[' + gridData.map(function(r) { return r[0]; }).join('; ') + ']';
+                if (rows === 1) {
+                    // Vector: [1; 2; 3] — single row, ; joins elements
+                    calcpadValue = '[' + (gridData[0] || []).join('; ') + ']';
                 } else {
                     // Matrix: [1;2;3 | 4;5;6] — ; joins elements in a row, | joins rows
                     calcpadValue = '[' + gridData.map(function(r) { return r.join(';'); }).join(' | ') + ']';

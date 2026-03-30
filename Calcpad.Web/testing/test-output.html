@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <script src="file:////home/isaiahmartin/CalcpadVM/Calcpad.Cli/bin/Debug/net8.0/doc/jquery-3.6.3.min.js"></script>
     <style>
         body {
             font-size: 11pt;
@@ -99,41 +98,6 @@
                 min-width: 3em; 
             }
 
-            input[type="checkbox"],
-            input[type="radio"] {
-                --screen-scale-factor: 1.3;
-                zoom: var(--screen-scale-factor);
-                -moz-transform: scale(var(--screen-scale-factor));
-                -webkit-transform: scale(var(--screen-scale-factor));
-                transform: scale(var(--screen-scale-factor));
-                transform-origin: bottom;
-                position: relative;
-                bottom: 1pt;
-                margin-right: 1pt;
-            }
-
-                input[type="checkbox"].post:disabled:not(:checked),
-                input[type="checkbox"].post:disabled:not(:checked) + label,
-                input[type="radio"].post:disabled:not(:checked),
-                input[type="radio"].post:disabled:not(:checked) + label {
-                    display: none;
-                }
-
-            select.post:disabled {
-                font-size: 12pt;
-                border: none;
-                box-shadow: none;
-                color: red;
-                background: none;
-                appearance: none;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-            }
-
-                select.post:disabled::-ms-expand {
-                    display: none;
-                }
-
             input[type="text"]:focus {
                 box-shadow: 0.1em 0.1em 1em #ccc;
                 color: black;
@@ -219,7 +183,6 @@
             .matrix .tr:last-child .td:last-child {
                 border-bottom: solid 1pt black;
             }
-
 
         .r0, .r1, .r2, .r3,
         .o0, .o1, .o2, .o3,
@@ -674,191 +637,621 @@
                 background: none;
                 color: #09e;
             }
+
+        .code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 10pt;
+            background-color: #f8f8f8;
+            border: 1pt solid #ddd;
+            border-radius: 4pt;
+            padding: 1em;
+            margin: 1em 0;
+            overflow-x: auto;
+        }
+
+        .line-text {
+            margin: 0;
+            padding: 0;
+            line-height: 1.15em;
+            white-space: pre-wrap;
+        }
+
+        .line-num {
+            color: #888;
+            text-decoration: none;
+            font-size: 9pt;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .line-num:hover {
+            color: #0066bb;
+            background-color: transparent;
+        }
+
+        /* Syntax highlighting colors matching Calcpad.Wpf */
+        .code .comment {
+            color: #228B22; /* ForestGreen - text comments */
+        }
+
+        .code .include {
+            color: #FF1493; /* DeepPink - include comments */
+        }
+
+        .code .htmltag {
+            color: #9932CC; /* DarkOrchid - HTML tags in comments */
+        }
+
+        .code .keyword {
+            color: #FF00FF; /* Magenta - keywords like #if, #def */
+        }
+
+        .code .command {
+            color: #FF00FF; /* Magenta - commands like $plot */
+        }
+
+        .code .variable {
+            color: #0000FF; /* Blue - variables */
+        }
+
+        .code .function {
+            color: #0000FF; /* Blue - functions */
+            font-weight: bold;
+        }
+
+        .code .number {
+            color: #000000; /* Black - constants/numbers */
+        }
+
+        .code .operator {
+            color: #DAA520; /* Goldenrod - operators */
+        }
+
+        .code .units {
+            color: #008B8B; /* DarkCyan - units */
+        }
+
+        .code .bracket {
+            color: #FF1493; /* DeepPink - brackets */
+        }
+
+        .code .error {
+            color: #DC143C; /* Crimson - errors */
+            background-color: #FFE1E1; /* Light red background */
+        }
+
+        /* UI input fields (#UI keyword) */
+        .calcpad-ui-input {
+            font-family: 'Georgia Pro', 'Century Schoolbook', 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            font-weight: bold;
+            background-color: lightyellow;
+            border: 0.5pt solid #CCC;
+            border-radius: 0.35em;
+            text-align: right;
+            padding: 0.2em 0.4em;
+            box-shadow: 0.06em 0.06em 0.5em #ddd;
+            min-width: 3em;
+            max-width: 10em;
+        }
+
+        .calcpad-ui-input:focus {
+            box-shadow: 0.1em 0.1em 1em #ccc;
+            outline: 2px solid #06d;
+        }
+
+        .calcpad-ui-datagrid {
+            margin: 0.5em 0;
+            max-width: 100%;
+        }
+
+        /* UI dropdown select (#UI dropdown) */
+        .calcpad-ui-dropdown {
+            font-family: 'Georgia Pro', 'Century Schoolbook', 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            font-weight: bold;
+            background-color: lightyellow;
+            border: 0.5pt solid #CCC;
+            border-radius: 0.35em;
+            padding: 0.2em 0.4em;
+            box-shadow: 0.06em 0.06em 0.5em #ddd;
+            cursor: pointer;
+        }
+
+        .calcpad-ui-dropdown:focus {
+            box-shadow: 0.1em 0.1em 1em #ccc;
+            outline: 2px solid #06d;
+        }
+
+        /* UI radio button group (#UI radio) */
+        .calcpad-ui-radio {
+            display: inline-flex;
+            gap: 0.8em;
+            align-items: center;
+        }
+
+        .calcpad-ui-radio-label {
+            font-family: 'Georgia Pro', 'Century Schoolbook', 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25em;
+        }
+
+        /* UI checkbox (#UI checkbox) */
+        .calcpad-ui-checkbox {
+            width: 1.1em;
+            height: 1.1em;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        /* Dark theme styles */
+        .dark-theme {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .dark-theme .eq {
+            color: #d4d4d4;
+        }
+
+        .dark-theme .eq var {
+            color: #569cd6; /* Light blue for variables in dark mode */
+        }
+
+        .dark-theme .eq i {
+            color: #4ec9b0; /* Teal for functions in dark mode */
+        }
+
+        .dark-theme .cond {
+            color: #c586c0; /* Light magenta for conditions */
+        }
+
+        .dark-theme .err {
+            color: #f48771; /* Light red for errors */
+            background-color: #3d2426; /* Dark red background */
+        }
+
+        .dark-theme .ok {
+            color: #b5cea8; /* Light green for success */
+            background-color: #2d3f2d; /* Dark green background */
+        }
+
+        .dark-theme .ref {
+            color: #b5cea8; /* Light green */
+            background-color: #2d3f2d; /* Dark green background */
+        }
+
+        .dark-theme .value {
+            background-color: #1e3a5f; /* Dark blue background */
+        }
+
+        .dark-theme .errorHeader {
+            background-color: #8b1538; /* Dark red for error header */
+        }
+
+        .dark-theme .calcpad-ui-input {
+            background-color: #2a2a2a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .dark-theme .calcpad-ui-input:focus {
+            outline-color: #569cd6;
+            box-shadow: 0.1em 0.1em 1em #333;
+        }
+
+        .dark-theme .calcpad-ui-dropdown {
+            background-color: #2a2a2a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .dark-theme .calcpad-ui-dropdown:focus {
+            outline-color: #569cd6;
+            box-shadow: 0.1em 0.1em 1em #333;
+        }
+
+        .dark-theme .calcpad-ui-radio-label {
+            color: #d4d4d4;
+        }
+
+        .dark-theme .calcpad-ui-checkbox {
+            accent-color: #569cd6;
+        }
+
+        .dark-theme .roundBox {
+            background-color: #3d2426; /* Dark red background */
+            color: #f48771; /* Light red text */
+        }
+
+        .dark-theme .roundBox:hover {
+            background-color: #5d3437; /* Slightly lighter red on hover */
+        }
+
+        /* Dark theme code syntax highlighting */
+        .dark-theme .code {
+            background-color: #2d2d30;
+            border-color: #3e3e42;
+        }
+
+        .dark-theme .code .comment {
+            color: #6A9955; /* Green comments for dark mode */
+        }
+
+        .dark-theme .code .include {
+            color: #D7BA7D; /* Yellow/gold for includes in dark mode */
+        }
+
+        .dark-theme .code .htmltag {
+            color: #C586C0; /* Light purple for HTML tags in dark mode */
+        }
+
+        .dark-theme .code .keyword {
+            color: #C586C0; /* Light purple for keywords in dark mode */
+        }
+
+        .dark-theme .code .command {
+            color: #C586C0; /* Light purple for commands in dark mode */
+        }
+
+        .dark-theme .code .variable {
+            color: #9CDCFE; /* Light blue for variables in dark mode */
+        }
+
+        .dark-theme .code .function {
+            color: #DCDCAA; /* Light yellow for functions in dark mode */
+            font-weight: bold;
+        }
+
+        .dark-theme .code .number {
+            color: #B5CEA8; /* Light green for numbers in dark mode */
+        }
+
+        .dark-theme .code .operator {
+            color: #D4D4D4; /* Light gray for operators in dark mode */
+        }
+
+        .dark-theme .code .units {
+            color: #4EC9B0; /* Teal for units in dark mode */
+        }
+
+        .dark-theme .code .bracket {
+            color: #FFD700; /* Gold for brackets in dark mode */
+        }
+
+        .dark-theme .code .error {
+            color: #F48771; /* Light red for errors in dark mode */
+            background-color: #3D2426; /* Dark red background */
+        }
+
+        .dark-theme .line-num {
+            color: #858585; /* Darker gray for line numbers in dark mode */
+        }
+
+        .dark-theme .line-num:hover {
+            color: #569cd6; /* Light blue on hover in dark mode */
+        }
     </style>
-</head>
-<body>
-    <script>
-        var contextMenu = false;
-        function delayedLoad(path) { setTimeout(function () { document.write(path); }, 1000); }
-        function getVerticalPosition(line) { return document.querySelector("[data-text='" + line + "']").getBoundingClientRect().top; }
-		function isNumeric(s) {return s.match(/^-?\d+(?:\.\d+)?$/); }
-		
-        if (window.jQuery) {
-            function getHtmlWithInput() {
-                $("input[type=text]").each(function () {
-                    $(this).attr("value", $(this).val());
-                });
-                $("input[type=hidden]").each(function () {
-                    $(this).attr("value", $(this).val());
-                });
-                $("textarea").each(function () {
-                    $(this).html($(this).val());
-                });
-                $("input[type=radio]").each(function () {
-                    if (this.checked)
-                        $(this).attr("checked", "checked");
-                    else
-                        $(this).removeAttr("checked");
-                });
-                $("input[type=checkbox]").each(function () {
-                    if (this.checked)
-                        $(this).attr("checked", "checked");
-                    else
-                        $(this).removeAttr("checked");
-                });
-                $("select option").each(function () {
-                    if (this.selected) {
-                        $(this).attr("selected", "true");
-                    }
-                    else
-                        $(this).removeAttr("selected");
-                });
-                return document.body.outerHTML;
-            }
+<script>const vscode = acquireVsCodeApi();</script>
+        <script>
 
-            function getTargetId(element) {
-                var id = $(element).attr("name");
-                if (id != null && id.length > 0)
-                    return id;
+            // Intercept console methods and send to VS Code
+            (function() {
+                const originalConsole = {
+                    log: console.log,
+                    warn: console.warn,
+                    error: console.error,
+                    info: console.info,
+                    debug: console.debug
+                };
 
-                return $(element).data("target");
-            }
-
-            function getValue(id, source) {
-                var value = "";
-                var target = $("#" + id + " input");
-                var domObj = target.get(0);
-                if (domObj == null || domObj.Length == 0) {
-                    target = $("#" + id + " .eq u");
-                    target.each(function () {
-                        value += $(this).text() + ";";
-                    });
-                    $(source).prop('disabled', true);
-                }
-                else {
-                    target.each(function () {
-                        value += $(this).val() + ";";
-                    });
-                }
-                if (value.length > 1) {
-                    value = value.slice(0, -1);
-                }
-                return value;
-            }
-
-            $(document).ready(function () {
-
-                $("#Units").change(function () { $(".Units").text($(this).val()); });
-
-                $(".fold > :first-child").click(function () {
-                    if ($(this).parent().hasClass("fold")) {
-                        $(this).parent().removeClass("fold").addClass("unfold");
-                    }
-                    else {
-                        $(this).parent().removeClass("unfold").addClass("fold");
-                    }
-                });
-
-                $("select").each(function (index) {
-                    if ($(this).prop("id") != "Units") {
-                        var id = getTargetId(this);
-                        if (id != null && id.length > 0) {
-                            var value = getValue(id, this);
-                            $(this).val(value);
+                function sendConsoleMessage(level, args) {
+                    const message = Array.from(args).map(arg => {
+                        if (typeof arg === 'object') {
+                            try {
+                                return JSON.stringify(arg, null, 2);
+                            } catch (e) {
+                                return String(arg);
+                            }
                         }
-                    }
+                        return String(arg);
+                    }).join(' ');
 
-                });
+                    vscode.postMessage({
+                        type: 'consoleMessage',
+                        level: level,
+                        message: message
+                    });
+                }
 
-                $("select").change(function () {
-                    var id = getTargetId(this);
-                    if (id != null && id.length > 0) {
-                        var target = $("#" + id + " input");
-                        if (target != null) {
-                            var values = $(this).val().split(";");
-                            target.each(function (index) {
-                                $(this).val(values[index]);
+                console.log = function() {
+                    originalConsole.log.apply(console, arguments);
+                    sendConsoleMessage('log', arguments);
+                };
+
+                console.warn = function() {
+                    originalConsole.warn.apply(console, arguments);
+                    sendConsoleMessage('warn', arguments);
+                };
+
+                console.error = function() {
+                    originalConsole.error.apply(console, arguments);
+                    sendConsoleMessage('error', arguments);
+                };
+
+                console.info = function() {
+                    originalConsole.info.apply(console, arguments);
+                    sendConsoleMessage('info', arguments);
+                };
+
+                console.debug = function() {
+                    originalConsole.debug.apply(console, arguments);
+                    sendConsoleMessage('debug', arguments);
+                };
+            })();
+
+            // Catch uncaught errors and unhandled promise rejections
+            window.onerror = function(message, source, lineno, colno, error) {
+                const detail = error ? (error.message || String(error)) : message;
+                vscode.postMessage({ type: 'consoleMessage', level: 'error', message: '[Uncaught] ' + detail + ' (' + lineno + ':' + colno + ')' });
+            };
+            window.onunhandledrejection = function(event) {
+                const reason = event.reason;
+                const detail = reason ? (reason.message || String(reason)) : String(reason);
+                vscode.postMessage({ type: 'consoleMessage', level: 'error', message: '[Unhandled Rejection] ' + detail });
+            };
+
+            // Test console interception
+            console.log('CalcPad webview console interception initialized');
+
+            // Handle error link clicks
+            document.addEventListener('DOMContentLoaded', function() {
+                // Find all error links with data-text attributes
+                const errorLinks = document.querySelectorAll('a[data-text]');
+
+                errorLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const lineNumber = this.getAttribute('data-text');
+                        if (lineNumber) {
+                            vscode.postMessage({
+                                type: 'navigateToLine',
+                                line: parseInt(lineNumber, 10)
                             });
                         }
-                    }
-                });
-
-                $("input:radio, input:checkbox").each(function (index) {
-                    var id = getTargetId(this);
-                    if (id != null && id.length > 0) {
-                        var value = getValue(id, this);
-                        $(this).prop("checked", $(this).val() == value);
-                    }
-                });
-
-                $("input:radio, input:checkbox").change(function () {
-                    var id = getTargetId(this);
-                    if (id != null && id.length > 0) {
-                        var target = $("#" + id + " input");
-                        if (target != null) {
-                            if ($(this).prop("checked")) {
-                                var values = $(this).val().split(";");
-                                target.each(function (index) {
-                                    $(this).val(values[index]);
-                                });
-                            }
-                            else if ($(this).prop("type") == "checkbox") {
-                                target.each(function () {
-                                    $(this).val("0");
-                                });
-                            }
-                        }
-                    }
-                });
-
-                $(".line:not(style, script)").each(function () {
-                    var line = $(this).prop("id").split("-")[1];
-                    var $lineLink = $('<a class="lineLink" href="#0" data-text="' + line + '" title="Code line ' + line + '">&larr;</a>');
-                    $(this).append($lineLink);
-                    $lineLink.hide();
-                    $(this).hover(function () {
-                        $(".lineLink").hide();
-                        $lineLink.show();
-                    });
-                    $(window).scroll(function () {
-                        $lineLink.hide();
                     });
                 });
-
-                $("body").mouseleave(function () {
-                    $(".lineLink").hide();
-                });
-
-                $(".roundBox").click(function () {
-                    var line = $(this).data("line");
-                    var e = document.getElementById("line-" + line);
-                    if (e) {
-                        window.scrollTo(0, e.offsetTop - $(this).outerHeight() - 20);
-                    }
-                });
-                $(".money").each(function () { $(this).text(Number(($(this).text())).toFixed(2)); });
-				
-				$("input").change(function(){
-					var e = $(this);
-					var s = e.val();
-					if (isNumeric(s)) {
-					    e.css("color", "black");
-					    e.removeAttr("title");
-					} else {
-					    e.css("color", "red");
-                        e.attr("title", "Invalid number");
-					}
-				});
             });
+        </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jspreadsheet-ce/dist/jspreadsheet.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsuites/dist/jsuites.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/jsuites/dist/jsuites.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspreadsheet-ce/dist/index.min.js"></script></head>
+<body>
+    <!--{"uiOverrides":{"x":"8"}}--> 
+<p><span class="eq"><var>x</var> = <input type="text" class="calcpad-ui-input" value="5" data-ui-var="x" data-ui-line="1"></span></p>
+<p><span class="eq"><var><span class="vec">⃗</span>v</var> = <span class="b0">[</span>1; 2; 3; 4; 5; 6; 7; 8; 9; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1<span class="b0">]</span> = <b class="b0">[</b>1 2 3 4 5 6 7 8 9 1 1 1 1 1 1 1 1 1 1 1 <span title="1 elements skipped.">...</span> <b class="b0">]</b></span></p>
+<div class="calcpad-ui-datagrid" data-ui-var="v" data-ui-line="2" data-ui-rows="21" data-ui-columns="1" data-ui-values="1;2;3;4;5;6;7;8;9;1;1;1;1;1;1;1;1;1;1;1;1"></div>
+<p><span class="eq"><var><span class="vec">⃗</span>v2</var> = <b>vector</b> ( 4 )  = &lt;input type="text" class="calcpad-ui-input" value="<b class="b0">[</b>0 0 0 0<b class="b0">]</b>" data-ui-var="v2" data-ui-line="3"></span></p>
+<p><span class="eq"><b><var>m</var></b> = <span class="b0">[</span>1; 2 <span class="b0">|</span> 3; 4<span class="b0">]</span> = <span class="matrix">
+<span class="tr"><span class="td"></span><span class="td">1</span><span class="td">2</span><span class="td"></span></span>
+<span class="tr"><span class="td"></span><span class="td">3</span><span class="td">4</span><span class="td"></span></span>
+</span>
+</span></p>
+<div class="calcpad-ui-datagrid" data-ui-var="m" data-ui-line="4" data-ui-rows="2" data-ui-columns="2" data-ui-values="1;2|3;4"></div>
+<p><span class="eq"><b><var>m2</var></b> = <b>matrix</b> ( 3; 4 )  = &lt;input type="text" class="calcpad-ui-input" value="<span class="matrix">
+<span class="tr"><span class="td"></span><span class="td">0</span><span class="td">0</span><span class="td">0</span><span class="td">0</span><span class="td"></span></span>
+<span class="tr"><span class="td"></span><span class="td">0</span><span class="td">0</span><span class="td">0</span><span class="td">0</span><span class="td"></span></span>
+<span class="tr"><span class="td"></span><span class="td">0</span><span class="td">0</span><span class="td">0</span><span class="td">0</span><span class="td"></span></span>
+</span>" data-ui-var="m2" data-ui-line="5"></span></p>
+
+<div id="calcpad-save-ui-bar" style="position:fixed;top:0;right:0;z-index:9999;padding:6px 10px;">
+<button onclick="vscode.postMessage({type:'saveUiState'})" style="
+    background:#0078d4;color:#fff;border:none;border-radius:4px;padding:4px 12px;
+    font-size:12px;cursor:pointer;opacity:0.85;
+" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'"
+>Save UI State</button></div>
+        <script>
+            (function() {
+                // Remove VS Code's injected inline styles (--vscode-* variables) from <html>
+                document.documentElement.removeAttribute('style');
+                // Set explicit background to prevent the webview container's grey from showing through
+                document.documentElement.style.backgroundColor = '#ffffff';
+
+                // Set body classes to match the selected preview theme
+                document.body.classList.remove('vscode-light', 'vscode-dark', 'vscode-high-contrast');
+                document.body.classList.add('vscode-light');
+                document.body.setAttribute('data-vscode-theme-kind', 'vscode-light');
+                document.body.style.backgroundColor = '#ffffff';
+            })();
+        </script>
+    <script>
+(function() {
+    function sendMsg(type, varName, newValue, sourceLine) {
+        var msg = { type: type, varName: varName, newValue: newValue, sourceLine: sourceLine };
+        vscode.postMessage(msg);
+    }
+
+    // --- Entry inputs ---
+    document.querySelectorAll('.calcpad-ui-input').forEach(function(input) {
+        input.addEventListener('change', function() {
+            sendMsg('uiValueChange',
+                input.getAttribute('data-ui-var'),
+                input.value,
+                parseInt(input.getAttribute('data-ui-line') || '0'));
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { input.blur(); }
+        });
+    });
+
+    // --- Dropdown controls ---
+    document.querySelectorAll('.calcpad-ui-dropdown').forEach(function(select) {
+        select.addEventListener('change', function() {
+            sendMsg('uiValueChange',
+                select.getAttribute('data-ui-var'),
+                select.value,
+                parseInt(select.getAttribute('data-ui-line') || '0'));
+        });
+    });
+
+    // --- Radio button controls ---
+    document.querySelectorAll('.calcpad-ui-radio').forEach(function(group) {
+        var radios = group.querySelectorAll('input[type="radio"]');
+        radios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (radio.checked) {
+                    sendMsg('uiValueChange',
+                        group.getAttribute('data-ui-var'),
+                        radio.value,
+                        parseInt(group.getAttribute('data-ui-line') || '0'));
+                }
+            });
+        });
+    });
+
+    // --- Checkbox controls ---
+    document.querySelectorAll('.calcpad-ui-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            sendMsg('uiValueChange',
+                cb.getAttribute('data-ui-var'),
+                cb.checked ? '1' : '0',
+                parseInt(cb.getAttribute('data-ui-line') || '0'));
+        });
+    });
+
+    // --- Datagrid controls ---
+    // CDN scripts may still be loading when this runs in VS Code webviews.
+    // Poll for jspreadsheet availability with a timeout.
+    var datagridContainers = document.querySelectorAll('.calcpad-ui-datagrid');
+    if (datagridContainers.length > 0) {
+        console.log('[CalcPad UI] Found ' + datagridContainers.length + ' datagrid container(s)');
+        var attempts = 0;
+        var maxAttempts = 50; // 50 * 100ms = 5 seconds
+        function tryInitDatagrids() {
+            if (typeof jspreadsheet !== 'undefined') {
+                initAllDatagrids();
+            } else if (++attempts < maxAttempts) {
+                setTimeout(tryInitDatagrids, 100);
+            } else {
+                console.error('[CalcPad UI] jspreadsheet library not loaded after 5s. Check CDN availability.');
+                datagridContainers.forEach(function(container) {
+                    container.innerHTML = '<p style="color:red;font-size:10pt;">Datagrid library failed to load</p>';
+                });
+            }
         }
-        document.oncontextmenu = function () { contextMenu = true; };
-        document.onmousedown = function () { contextMenu = false; };
-    </script>
-<h3>Simple Test </h3>
-<hr/> 
-<p>Basic calculation: </p>
-<p><span class="eq"><var>a</var> = 10</span></p>
-<p><span class="eq"><var>b</var> = 5</span></p>
-<p><span class="eq"><var>sum</var> = <var>a</var> + <var>b</var> = 10 + 5 = 15</span></p>
-<p><span class="eq"><var>product</var> = <var>a</var> · <var>b</var> = 10 · 5 = 50</span></p>
- </body></html>
+        tryInitDatagrids();
+    }
+
+    function initAllDatagrids() {
+        console.log('[CalcPad UI] Initializing ' + datagridContainers.length + ' datagrid(s)');
+        datagridContainers.forEach(function(container) {
+            var rows = parseInt(container.getAttribute('data-ui-rows') || '3');
+            var cols = parseInt(container.getAttribute('data-ui-columns') || '1');
+            var valuesStr = container.getAttribute('data-ui-values') || '';
+            var varName = container.getAttribute('data-ui-var');
+            var sourceLine = parseInt(container.getAttribute('data-ui-line') || '0');
+
+            // Parse Calcpad format: | separates rows, ; separates elements within a row
+            var data;
+            if (valuesStr) {
+                if (valuesStr.indexOf('|') >= 0) {
+                    // Matrix: split by | for rows, then ; for columns
+                    data = valuesStr.split('|').map(function(row) {
+                        return row.split(';');
+                    });
+                } else {
+                    // Vector: single row with ; separated columns
+                    data = [valuesStr.split(';')];
+                }
+            } else {
+                data = [];
+                for (var r = 0; r < rows; r++) {
+                    var row = [];
+                    for (var c = 0; c < cols; c++) row.push('0');
+                    data.push(row);
+                }
+            }
+
+            // Read custom headers if provided
+            var colHeadersStr = container.getAttribute('data-ui-col-headers') || '';
+            var rowHeadersStr = container.getAttribute('data-ui-row-headers') || '';
+            var colHeaders = colHeadersStr ? colHeadersStr.split(',') : null;
+            var rowHeaders = rowHeadersStr ? rowHeadersStr.split(',') : null;
+
+            var colDefs = [];
+            for (var c = 0; c < cols; c++) {
+                var def = { width: 80 };
+                if (colHeaders && c < colHeaders.length) {
+                    def.title = colHeaders[c];
+                }
+                colDefs.push(def);
+            }
+
+            var worksheetConfig = {
+                data: data,
+                minDimensions: [cols, rows],
+                columns: colDefs,
+                tableOverflow: true,
+                tableWidth: Math.min(cols * 85 + 50, 600) + 'px',
+                tableHeight: Math.min(rows * 28 + 30, 400) + 'px'
+            };
+
+            // Apply custom row headers if provided
+            if (rowHeaders) {
+                worksheetConfig.rows = {};
+                for (var r = 0; r < rowHeaders.length; r++) {
+                    worksheetConfig.rows[r] = { title: rowHeaders[r] };
+                }
+            }
+
+            var grid = jspreadsheet(container, {
+                worksheets: [worksheetConfig]
+            });
+
+            // In v5, jspreadsheet() returns an array of worksheet instances
+            var worksheet = Array.isArray(grid) && grid.length > 0 ? grid[0] : grid;
+            container._grid = worksheet;
+
+            container.addEventListener('mouseup', function() {
+                setTimeout(function() { emitGridChange(); }, 50);
+            });
+
+            // Use MutationObserver to detect cell edits
+            var observer = new MutationObserver(function() {
+                emitGridChange();
+            });
+            var tbody = container.querySelector('tbody');
+            if (tbody) {
+                observer.observe(tbody, { childList: true, subtree: true, characterData: true });
+            }
+
+            // Also listen for blur on td elements (cell edit complete)
+            container.addEventListener('focusout', function(e) {
+                if (e.target && e.target.tagName === 'TD') {
+                    setTimeout(function() { emitGridChange(); }, 50);
+                }
+            });
+
+            function emitGridChange() {
+                var gridData = worksheet.getData ? worksheet.getData() : [];
+                var calcpadValue;
+                if (rows === 1) {
+                    // Vector: [1; 2; 3] — single row, ; joins elements
+                    calcpadValue = '[' + (gridData[0] || []).join('; ') + ']';
+                } else {
+                    // Matrix: [1;2;3 | 4;5;6] — ; joins elements in a row, | joins rows
+                    calcpadValue = '[' + gridData.map(function(r) { return r.join(';'); }).join(' | ') + ']';
+                }
+                sendMsg('uiValueChange', varName, calcpadValue, sourceLine);
+            }
+        });
+    }
+})();
+</script></body>
+</html>

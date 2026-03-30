@@ -727,10 +727,18 @@ namespace Calcpad.Core
                             else
                             {
                                 var html = _parser.ToHtml();
-                                if (_pendingUi != null && Settings.EnableUi && _pendingUi.Type != "datagrid")
+                                if (_pendingUi != null && Settings.EnableUi)
                                 {
-                                    html = InjectUiInput(html, _currentLine);
-                                    ResetUiState();
+                                    if (_pendingUi.Type == "datagrid")
+                                    {
+                                        // Strip matrix/vector output, keep only "v ="
+                                        html = StripDatagridRhs(html);
+                                    }
+                                    else
+                                    {
+                                        html = InjectUiInput(html, _currentLine);
+                                        ResetUiState();
+                                    }
                                 }
                                 if (getXml && Settings.Math.FormatEquations)
                                 {

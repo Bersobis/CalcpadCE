@@ -83,6 +83,68 @@ namespace Calcpad.Server.Services
                     WaitUntil = [WaitUntilNavigation.Networkidle0]
                 });
 
+                // Inject PDF-specific styles
+                await page.AddStyleTagAsync(new AddTagOptions
+                {
+                    Content = @"
+                        body {
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                        .calcpad-ui-datagrid td {
+                            background-color: LightYellow !important;
+                        }
+                    "
+                });
+
+                // Replace <input> elements with underlined text (matches WPF PDF output),
+                // then fit datagrid tables to page width with text wrapping
+                await page.EvaluateFunctionAsync(@"() => {
+                    // 1. Replace inputs with static underlined text
+                    document.querySelectorAll('input[type=""text""]').forEach(input => {
+                        const u = document.createElement('u');
+                        u.textContent = input.value || '\u00A0\u00A0\u00A0';
+                        u.style.backgroundColor = 'LightYellow';
+                        input.parentNode.replaceChild(u, input);
+                    });
+
+                    // 2. Fit datagrid tables to page width
+                    document.querySelectorAll('.calcpad-ui-datagrid').forEach(container => {
+                        // Remove jspreadsheet overflow constraints so full table is visible
+                        var content = container.querySelector('.jss_content');
+                        if (content) {
+                            content.style.overflow = 'visible';
+                            content.style.maxWidth = 'none';
+                            content.style.maxHeight = 'none';
+                        }
+                        var wrapper = container.querySelector('.jss');
+                        if (wrapper) {
+                            wrapper.style.overflow = 'visible';
+                            wrapper.style.maxWidth = 'none';
+                        }
+
+                        var table = container.querySelector('table');
+                        if (!table) return;
+
+                        // Distribute column widths evenly across available page width
+                        var pageWidth = document.body.clientWidth || 700;
+                        table.style.tableLayout = 'fixed';
+                        table.style.width = pageWidth + 'px';
+
+                        // Allow text wrapping within cells
+                        var cells = table.querySelectorAll('td, th');
+                        cells.forEach(function(cell) {
+                            cell.style.width = '';
+                            cell.style.minWidth = '0';
+                            cell.style.padding = '2px 6px';
+                            cell.style.whiteSpace = 'normal';
+                            cell.style.wordWrap = 'break-word';
+                            cell.style.overflowWrap = 'break-word';
+                            cell.style.fontSize = '10pt';
+                        });
+                    });
+                }");
+
                 var pdfOptions = new PuppeteerSharp.PdfOptions
                 {
                     Format = ParsePaperFormat(options.Format),

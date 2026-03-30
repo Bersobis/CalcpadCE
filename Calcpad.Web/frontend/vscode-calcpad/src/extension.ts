@@ -1096,19 +1096,15 @@ function schedulePreviewUpdate() {
             // Update the source editor reference when updating preview
             previewSourceEditor = activeEditor;
             if (activePreviewType === 'ui') {
-                // Source changed — reload persisted overrides from the file
+                // Source changed — merge persisted overrides without discarding in-memory user changes
                 try {
                     const defs = await definitionsService.refreshDefinitions(activeEditor.document);
                     if (defs?.uiOverrides) {
-                        uiInputModel?.loadFromPersisted(defs.uiOverrides.overrides, defs.variables);
+                        uiInputModel?.mergeFromPersisted(defs.uiOverrides.overrides, defs.variables);
                         uiOverridesCommentLine = defs.uiOverrides.commentLine;
-                    } else {
-                        uiInputModel?.clear();
-                        uiOverridesCommentLine = undefined;
                     }
                 } catch {
-                    uiInputModel?.clear();
-                    uiOverridesCommentLine = undefined;
+                    // Keep existing in-memory overrides on error
                 }
                 await updateUiPreviewContent(activePreviewPanel as vscode.WebviewPanel, activeEditor.document.getText(), activeEditor.document.uri);
             } else {

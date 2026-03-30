@@ -85,6 +85,8 @@ namespace Calcpad.Server.Services
                 Units          = base_.Units,
                 ClientFileCache = base_.ClientFileCache,
                 SourceFilePath = base_.SourceFilePath,
+                EnableUi       = base_.EnableUi,
+                UiOverrides    = base_.UiOverrides,
                 Math = new MathSettings
                 {
                     Decimals                = math.Decimals,

@@ -23,6 +23,7 @@
 - Fix line links to use source line mapping - this may be fixed? If I run into it again, give test case
 - Add prettify command that does the same thing as eat space and auto-indenting. However, the automatic behavior is not preferred as it caused various bugs in Wpf.
 - Add intermediate step that changes the display name of a variable by using find and replace on the HTML content. This will need some processing of complex characters, for example _ turns into a subscript in the HTML. Read how Calcpad.Core handles this and reverse-engineer it. This can use a displayName property in an HTML comment above the variable definition line. Alternatively, have a variable mapping object as part of the settings and have it change the variable name at the HTML output step in Calcpad.Core.
+- Have variables use the tokenizer for recognition when you highlight text when clicking, commas are not handled properly currently.
 
 ### Bugs
 

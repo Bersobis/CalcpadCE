@@ -490,6 +490,11 @@ namespace Calcpad.Core
 
             void AddMacro(ReadOnlySpan<char> lineContent, string name, Macro macro)
             {
+                if (StringCalculator.IsFunction(name))
+                {
+                    AppendError(lineContent, string.Format(Messages.Macro_name_0_is_a_built_in_string_function, name));
+                    return;
+                }
                 if (!Macros.TryAdd(name, macro))
                     AppendError(lineContent, string.Format(Messages.Duplicate_macro_name_0, name));
             }
@@ -594,7 +599,22 @@ namespace Calcpad.Core
                             break;
 
                     if (macro.IsEmpty)
+                    {
+                        bool isStringFunc = false;
+                        for (int k = 0; k <= mlen; ++k)
+                            if (StringCalculator.IsFunction(macroName[k..]))
+                            {
+                                isStringFunc = true;
+                                break;
+                            }
+                        if (isStringFunc)
+                        {
+                            stringBuilder.Append(textSpan.Cut());
+                            textSpan.Reset(i);
+                            continue;
+                        }
                         throw Exceptions.UndefinedMacro(macroName);
+                    }
                     else if (j > 0)
                         stringBuilder.Append(macroName[..j]);
 
