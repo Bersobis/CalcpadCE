@@ -290,6 +290,24 @@ namespace Calcpad.Highlighter.ContentResolution
         }
 
         /// <summary>
+        /// Tests whether a trimmed line span is a #local directive.
+        /// Matches Core's Validator.IsKeyword(line, "#local").
+        /// </summary>
+        private static bool IsLocalDirective(ReadOnlySpan<char> trimmedSpan)
+        {
+            return trimmedSpan.StartsWith("#local", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Tests whether a trimmed line span is a #global directive.
+        /// Matches Core's Validator.IsKeyword(line, "#global").
+        /// </summary>
+        private static bool IsGlobalDirective(ReadOnlySpan<char> trimmedSpan)
+        {
+            return trimmedSpan.StartsWith("#global", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
         /// Extracts the raw filename from an #include directive.
         /// Matches Core's MacroParser.ParseInclude: finds first comment marker ('/") or
         /// field parameter (#), takes text from position 8 to that marker, trims whitespace.
@@ -352,11 +370,29 @@ namespace Calcpad.Highlighter.ContentResolution
                 includedLines.Add(span.ToString());
             var includedStage1 = ProcessStage1(includedLines);
 
-            // Process each line, recursing for nested #include
+            // Process each line, filtering #local sections and recursing for nested #include.
+            // Matches Core's CalcpadReader.Include: #local sections are excluded from includes.
+            var isLocal = false;
+
             for (int j = 0; j < includedStage1.Lines.Count; j++)
             {
                 var line = includedStage1.Lines[j];
                 var trimmedSpan = line.AsSpan().Trim();
+
+                if (IsLocalDirective(trimmedSpan))
+                {
+                    isLocal = true;
+                    continue;
+                }
+
+                if (IsGlobalDirective(trimmedSpan))
+                {
+                    isLocal = false;
+                    continue;
+                }
+
+                if (isLocal)
+                    continue;
 
                 if (IsIncludeDirective(trimmedSpan))
                 {

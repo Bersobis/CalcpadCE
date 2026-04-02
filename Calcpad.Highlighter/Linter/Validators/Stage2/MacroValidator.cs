@@ -199,6 +199,14 @@ namespace Calcpad.Highlighter.Linter.Validators.Stage2
                         continue;
                     }
 
+                    // Check param ends with $
+                    if (!paramName.EndsWith('$'))
+                    {
+                        result.AddError(stage2Line, 0, line.Length, "CPD-2203",
+                            "'" + paramName + "'", LineStage.Stage2);
+                        continue;
+                    }
+
                     // Check param starts with letter
                     if (paramName.Length > 0 && !char.IsLetter(paramName[0]) && paramName[0] != '_')
                     {

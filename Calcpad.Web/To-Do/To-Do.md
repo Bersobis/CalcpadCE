@@ -3,12 +3,14 @@
 ## General
 
 - Add better documentation for using vs code features
+- Investigate AWSSDK.S3 and rustfs to replace MinIO
 
 ## calcpad-frontend
 - Finish enhanced PDF generation
 	- Custom header/footers
 	- Custom svg backgrounds
 	- Custom fields with
+	- Add batch plot with running or restarting page numbers
 
 
 ## vscode-calcpad
@@ -29,7 +31,7 @@
 
 ### Testing
 - Make refresh button check if the server is down and restart it if it crashes. See if it is possible to put the server in a try/catch loop and send the crash message to the client output. Have this on 3 retries before requiring a manual refresh and give the user a pop-up so they know it crashed due to something in their file.
-- Give a warning for inserting base64 over a certain filesize. Have the linter truncate base64 before processing.
+- Fix base64 syntax highlighting by sending the last characters that close the img tag.
 - Add button that auto-downloads the .NET runtime into the extension folder with slim build options if the user doesn't want to install the .NET runtimes locally
 - Make sure long API calls are awaited and do not freeze the UI
 - Check if the cache needs cleared on intervals

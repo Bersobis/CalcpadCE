@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -128,7 +129,6 @@ namespace Calcpad.OpenXml
             WorkbookPart wbPart = document.WorkbookPart ??
                 throw new InvalidOperationException("The Excel workbook is missing or not initialized.");
 
-            WorksheetPart wsPart = null;
             Sheet sheet = null;
             if (!string.IsNullOrEmpty(sheetName))
                 sheet = wbPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName) ??
@@ -138,10 +138,43 @@ namespace Calcpad.OpenXml
                     throw new InvalidOperationException("This Excel workbook doesn not contain worksheets.");
 
             var sheetID = sheet?.Id?.Value ?? string.Empty;
-            wsPart = (WorksheetPart)wbPart.GetPartById(sheetID);
+            var wsPart = (WorksheetPart)wbPart.GetPartById(sheetID);
+
+            // Cache shared string table as indexed array — O(1) per lookup
+            var stringTablePart = wbPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+            string[] sharedStrings = stringTablePart?.SharedStringTable
+                .Elements<SharedStringItem>()
+                .Select(s => s.InnerText)
+                .ToArray();
+
+            // Single pass: extract cell values as strings and compute max row/col.
+            // Uses Elements<Row>/Elements<Cell> (direct children) instead of
+            // Descendants<Cell> (full tree walk). Stores only string values,
+            // not Cell DOM objects, so the DOM can be collected sooner.
+            var cellValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            int maxRow = 0;
+            int maxCol = 0;
+            var sheetData = wsPart.Worksheet.GetFirstChild<SheetData>();
+            foreach (var row in sheetData.Elements<Row>())
+            {
+                if (row.RowIndex?.Value != null)
+                {
+                    var rowIdx = (int)row.RowIndex.Value;
+                    if (rowIdx > maxRow) maxRow = rowIdx;
+                }
+                foreach (var cell in row.Elements<Cell>())
+                {
+                    var cellRef = cell.CellReference?.Value;
+                    if (cellRef == null) continue;
+
+                    var colNum = CellRef.GetColNumberFromCellRef(cellRef);
+                    if (colNum > maxCol) maxCol = colNum;
+
+                    cellValues[cellRef] = ExtractCellValue(cell, sharedStrings);
+                }
+            }
+
             var range = new CellRange(rangeStart, rangeEnd);
-            var maxRow = (int)wsPart.Worksheet.Descendants<Row>().LastOrDefault()?.RowIndex.Value;
-            var maxCol = wsPart.Worksheet.Descendants<Cell>().Max(c => CellRef.GetColNumberFromCellRef(c.CellReference?.Value));
             range.Normalize(1, 1, maxRow, maxCol);
             var rowCount = range.RowCount;
             var colCount = range.ColCount;
@@ -156,7 +189,7 @@ namespace Calcpad.OpenXml
                 current.Col = range.Start.Col;
                 for (int j = 0; j < colCount; ++j)
                 {
-                    rowData[j] = GetCellValue(wbPart, wsPart, current.ToString());
+                    rowData[j] = cellValues.TryGetValue(current.ToString(), out var v) ? v : string.Empty;
                     ++current.Col;
                 }
                 data[i] = rowData;
@@ -165,24 +198,23 @@ namespace Calcpad.OpenXml
             return data;
         }
 
-        private static string GetCellValue(WorkbookPart wbPart, WorksheetPart wsPart, string cellRef)
+        /// <summary>
+        /// Extracts the display value from a Cell as a string.
+        /// Called once per cell during the single-pass index build.
+        /// </summary>
+        private static string ExtractCellValue(Cell cell, string[] sharedStrings)
         {
-            Cell cell = wsPart.Worksheet.Descendants<Cell>().FirstOrDefault(c => c.CellReference == cellRef);
-            if (cell is null)
-                return string.Empty;
-
             string value = cell.InnerText;
             if (cell.DataType?.Value == CellValues.SharedString)
             {
-                var stringTable = wbPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
-                if (stringTable is not null)
-                    return stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
+                if (sharedStrings != null && int.TryParse(value, out var index) && index >= 0 && index < sharedStrings.Length)
+                    return sharedStrings[index];
             }
-            else if(cell.CellFormula is not null)
+            else if (cell.CellFormula is not null)
             {
-                value = cell.CellValue?.InnerText;
-                if (!string.IsNullOrEmpty(value))
-                    return value;
+                var cv = cell.CellValue?.InnerText;
+                if (!string.IsNullOrEmpty(cv))
+                    return cv;
             }
             return value;
         }

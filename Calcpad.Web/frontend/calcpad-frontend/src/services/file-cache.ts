@@ -2,6 +2,10 @@ import * as path from 'path';
 import type { ClientFileCache } from '../types/api';
 import type { ILogger, IFileSystem } from '../types/interfaces';
 
+/** Maximum file size (bytes) that will be cached and sent to the server.
+ *  Files larger than this are skipped — Core falls back to reading from disk. */
+const MAX_CACHE_FILE_SIZE_BYTES = 1_048_576; // 1 MB
+
 /**
  * Expand environment variables in a path.
  * Handles both Windows (%VAR%) and Unix ($VAR) syntax.
@@ -183,6 +187,14 @@ export async function buildClientFileCache(
             const exists = await fileSystem.exists(resolvedPath);
             if (exists) {
                 const fileContent = await fileSystem.readFile(resolvedPath);
+                if (fileContent.length > MAX_CACHE_FILE_SIZE_BYTES) {
+                    const sizeMB = (fileContent.length / 1_048_576).toFixed(1);
+                    logger?.appendLine(
+                        logPrefix + ' Skipped (too large): ' + resolvedPath +
+                        ' (' + sizeMB + ' MB, limit is 1 MB)'
+                    );
+                    continue;
+                }
                 contentString = Buffer.from(fileContent).toString('utf-8');
                 logger?.appendLine(logPrefix + ' Found: ' + resolvedPath);
             } else {

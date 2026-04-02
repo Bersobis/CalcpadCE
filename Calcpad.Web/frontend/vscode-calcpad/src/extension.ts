@@ -1555,6 +1555,12 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         }
 
+        // Clear server-side caches (remote content + disk file cache)
+        const cacheCleared = await apiClient.refreshCache();
+        outputChannel.appendLine(cacheCleared
+            ? '[Refresh] Server cache cleared'
+            : '[Refresh] Failed to clear server cache');
+
         const activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
             // Re-lint and refresh definitions

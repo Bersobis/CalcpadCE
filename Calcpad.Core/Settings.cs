@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Calcpad.Core
@@ -42,12 +43,12 @@ namespace Calcpad.Core
     /// <summary>
     /// Cache of file contents using parallel arrays. Index positions match
     /// across Filenames, Contents, Errors, and DiskGuids.
-    /// Entries larger than 1 MB are offloaded to disk when DiskCacheFolder is set.
+    /// Entries larger than 50 KB are offloaded to disk when DiskCacheFolder is set.
     /// </summary>
     [Serializable()]
     public class ClientFileCache
     {
-        private const int DiskThresholdBytes = 1_048_576; // 1 MB
+        private const int DiskThresholdBytes = 51_200; // 50 KB
         private const string CacheFileExtension = ".cache";
 
         public string[] Filenames { get; set; } = Array.Empty<string>();
@@ -153,7 +154,7 @@ namespace Calcpad.Core
         }
 
         /// <summary>
-        /// Adds an entry, offloading to disk if content exceeds 1 MB and DiskCacheFolder is set.
+        /// Adds an entry, offloading to disk if content exceeds 50 KB and DiskCacheFolder is set.
         /// </summary>
         public void AddEntry(string filename, byte[] content, string error)
         {
@@ -162,7 +163,7 @@ namespace Calcpad.Core
 
             if (content != null && content.Length > DiskThresholdBytes && DiskCacheFolder != null)
             {
-                guidEntry = WriteToDiskNewGuid(content);
+                guidEntry = WriteToDisk(filename, content);
                 contentEntry = null;
             }
             else
@@ -177,18 +178,33 @@ namespace Calcpad.Core
             DiskGuids = [.. DiskGuids, guidEntry];
         }
 
-        private string WriteToDiskNewGuid(byte[] bytes)
+        /// <summary>
+        /// Derives a deterministic cache key from a filename so the same file
+        /// always maps to the same .cache file (overwriting instead of duplicating).
+        /// </summary>
+        private static string GetDiskCacheKey(string filename) =>
+            Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(filename)))[..32];
+
+        private string WriteToDisk(string filename, byte[] bytes)
         {
-            var guid = Guid.NewGuid().ToString("N");
-            var path = Path.Combine(DiskCacheFolder, guid + CacheFileExtension);
-            Directory.CreateDirectory(DiskCacheFolder);
-            File.WriteAllBytes(path, bytes);
-            return guid;
+            var cacheKey = GetDiskCacheKey(filename);
+            var path = Path.Combine(DiskCacheFolder, cacheKey + CacheFileExtension);
+            if (File.Exists(path))
+            {
+                // Already cached — just touch to prevent cleanup
+                try { File.SetLastWriteTimeUtc(path, DateTime.UtcNow); } catch { }
+            }
+            else
+            {
+                Directory.CreateDirectory(DiskCacheFolder);
+                File.WriteAllBytes(path, bytes);
+            }
+            return cacheKey;
         }
 
         private void WriteToDisk(int index, byte[] bytes)
         {
-            DiskGuids[index] = WriteToDiskNewGuid(bytes);
+            DiskGuids[index] = WriteToDisk(Filenames[index], bytes);
         }
     }
 

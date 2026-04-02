@@ -5,7 +5,8 @@
 // Client File Cache Types
 // ============================================
 
-// Simple dictionary mapping filename -> base64-encoded content
+// Simple dictionary mapping filename -> base64-encoded content.
+// Files larger than 1 MB are not cached — Core reads them from disk instead.
 export type ClientFileCache = Record<string, string>;
 
 // ============================================

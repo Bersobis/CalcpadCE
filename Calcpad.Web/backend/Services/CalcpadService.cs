@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
+using System.Text;
 using Calcpad.Core;
 using Calcpad.Server.Controllers;
 
@@ -42,8 +44,23 @@ namespace Calcpad.Server.Services
         private static readonly ConcurrentDictionary<string, byte[]> _remoteContentCache
             = new(StringComparer.OrdinalIgnoreCase);
 
-        /// <summary>Clears all cached remote content.</summary>
-        public static void ClearRemoteContentCache() => _remoteContentCache.Clear();
+        /// <summary>Clears all cached remote content and disk-cached files.</summary>
+        public static void ClearRemoteContentCache()
+        {
+            _remoteContentCache.Clear();
+            ClearDiskCache();
+        }
+
+        /// <summary>Deletes all .cache files from the disk cache folder.</summary>
+        public static void ClearDiskCache()
+        {
+            var folder = DiskCacheCleanupService.CacheFolder;
+            if (!Directory.Exists(folder)) return;
+            foreach (var file in Directory.EnumerateFiles(folder, "*.cache"))
+            {
+                try { File.Delete(file); } catch { }
+            }
+        }
 
         /// <summary>Removes a specific entry from the remote content cache.</summary>
         public static void RemoveFromRemoteContentCache(string key) => _remoteContentCache.TryRemove(key, out _);
@@ -784,15 +801,23 @@ tan_angle = tan(angle°)";
                 errors[i] = fetchErrors != null && fetchErrors.TryGetValue(key, out var e) ? e : null;
 
                 var bytes = clientFileCache != null && clientFileCache.TryGetValue(key, out var b) ? b : null;
-                if (bytes != null && bytes.Length > 1_048_576)
+                if (bytes != null && bytes.Length > 51_200) // 50 KB
                 {
-                    // Offload large entry to disk
-                    var guid = Guid.NewGuid().ToString("N");
-                    var path = Path.Combine(cacheFolder, guid + ".cache");
-                    Directory.CreateDirectory(cacheFolder);
-                    File.WriteAllBytes(path, bytes);
+                    // Use deterministic key so the same file always maps to the same cache file
+                    var cacheKey = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(key)))[..32];
+                    var cachePath = Path.Combine(cacheFolder, cacheKey + ".cache");
+                    if (File.Exists(cachePath))
+                    {
+                        // Already cached — just touch to prevent cleanup
+                        try { File.SetLastWriteTimeUtc(cachePath, DateTime.UtcNow); } catch { }
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(cacheFolder);
+                        File.WriteAllBytes(cachePath, bytes);
+                    }
                     contents[i] = null;
-                    diskGuids[i] = guid;
+                    diskGuids[i] = cacheKey;
                 }
                 else
                 {

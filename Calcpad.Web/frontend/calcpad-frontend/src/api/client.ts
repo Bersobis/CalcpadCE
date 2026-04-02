@@ -84,6 +84,20 @@ export class CalcpadApiClient {
         }
     }
 
+    public async refreshCache(): Promise<boolean> {
+        try {
+            const response = await fetch(this.baseUrl + '/api/calcpad/refresh-cache', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}',
+                signal: AbortSignal.timeout(5000),
+            });
+            return response.ok;
+        } catch {
+            return false;
+        }
+    }
+
     public async checkHealth(): Promise<boolean> {
         try {
             const response = await fetch(this.baseUrl + '/api/calcpad/snippets', {
