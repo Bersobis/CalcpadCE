@@ -948,17 +948,17 @@ Calcpad includes a library with common math functions, ready to use:
 
 - Aggregate and interpolation:
 
-> **min**(*A*; ⃗*b*; *c*…) - the smallest of multiple values;  
-> **max**(*A*; ⃗*b*; *c*…) - the greatest of multiple values;  
-> **sum**(*A*; ⃗*b*; *c*…) - sum of multiple values;  
-> **sumsq**(*A*; ⃗*b*; *c*…) - sum of squares;  
-> **srss**(*A*; ⃗*b*; *c*…) - square root of sum of squares;  
-> **average**(*A*; ⃗*b*; *c*…) - average of multiple values;  
-> **product**(*A*; ⃗*b*; *c*…) - product of multiple values;  
-> **mean**(*A*; ⃗*b*; *c*…) - geometric mean;  
-> **take**(*n*; *A*; ⃗*b*; *c*…) - returns the n-th element from the list;  
-> **line**(*x*; *A*; ⃗*b*; *c*…) - performs linear interpolation among the specified values for *x*;  
-> **spline**(*x*; *A*; ⃗*b*; *c*…) - performs Hermite spline interpolation;
+> **min**(*A*; $\vec{b}$; *c*…) - the smallest of multiple values;  
+> **max**(*A*; $\vec{b}$; *c*…) - the greatest of multiple values;  
+> **sum**(*A*; $\vec{b}$; *c*…) - sum of multiple values;  
+> **sumsq**(*A*; $\vec{b}$; *c*…) - sum of squares;  
+> **srss**(*A*; $\vec{b}$; *c*…) - square root of sum of squares;  
+> **average**(*A*; $\vec{b}$; *c*…) - average of multiple values;  
+> **product**(*A*; $\vec{b}$; *c*…) - product of multiple values;  
+> **mean**(*A*; $\vec{b}$; *c*…) - geometric mean;  
+> **take**(*n*; *A*; $\vec{b}$; *c*…) - returns the n-th element from the list;  
+> **line**(*x*; *A*; $\vec{b}$; *c*…) - performs linear interpolation among the specified values for *x*;  
+> **spline**(*x*; *A*; $\vec{b}$; *c*…) - performs Hermite spline interpolation;
 
 - Conditional and logical:
 
@@ -990,52 +990,52 @@ Calcpad includes a library with common math functions, ready to use:
 
 - Structural:
 
-> **len**(⃗*v*) - returns the length of vector ⃗*v*;  
-> **size**(⃗*v*) - the actual size of vector ⃗*v* (the index of the last non-zero element);  
-> **resize**(⃗*v*; *n*) - sets a new length *n* of vector ⃗*v*;  
-> **fill**(⃗*v*; *x*) - fills vector ⃗*v* with value *x*;  
-> **join**(*A*; ⃗*b*; *c*…) - creates a vector by joining the arguments: matrices, vectors and scalars;  
-> **slice**(⃗*v*; *i*1; *i*2) - returns the part of vector ⃗*v*, bounded by indexes *i*1 and *i*2, inclusively;  
-> **first**(⃗*v*; *n*) - the first *n* elements of vector ⃗*v*;  
-> **last**(⃗*v*; *n*) - the last *n* elements of vector ⃗*v*;  
-> **extract**(⃗*v*; ⃗*i*) - extracts the elements from ⃗*v* which indexes are contained in ⃗*i*;
+> **len**($\vec{v}$) - returns the length of vector $\vec{v}$;  
+> **size**($\vec{v}$) - the actual size of vector $\vec{v}$ (the index of the last non-zero element);  
+> **resize**($\vec{v}$; *n*) - sets a new length *n* of vector $\vec{v}$;  
+> **fill**($\vec{v}$; *x*) - fills vector $\vec{v}$ with value *x*;  
+> **join**(*A*; $\vec{b}$; *c*…) - creates a vector by joining the arguments: matrices, vectors and scalars;  
+> **slice**($\vec{v}$; *i*1; *i*2) - returns the part of vector $\vec{v}$, bounded by indexes *i*1 and *i*2, inclusively;  
+> **first**($\vec{v}$; *n*) - the first *n* elements of vector $\vec{v}$;  
+> **last**($\vec{v}$; *n*) - the last *n* elements of vector $\vec{v}$;  
+> **extract**($\vec{v}$; $\vec{i}$) - extracts the elements from $\vec{v}$ which indexes are contained in $\vec{i}$;
 
 - Data:
 
-> **sort**(⃗*v*) - sorts the elements of vector ⃗*v* in ascending order;  
-> **rsort**(⃗*v*) - sorts the elements of vector ⃗*v* in descending order;  
-> **order**(⃗*v*) - the indexes of vector ⃗*v* by ascending order of its elements;  
-> **revorder**(⃗*v*) - the indexes of vector ⃗*v* by descending order of its elements;  
-> **reverse**(⃗*v*) - a vector containing the elements of ⃗*v* in reverse order;  
-> **count**(⃗*v*; *x*; *i*) - number of elements of vector ⃗*v*, after the *i*-th one, that are equal to *x*;  
-> **search**(⃗*v*; *x*; *i*) - the index of the first element in ⃗*v*, after the *i*-th one, that is equal to *x*;  
-> **find**(⃗*v*; *x*; *i*) or  
-> **find_eq**(⃗*v*; *x*; *i*) - the indexes of all elements in ⃗*v*, after the *i*-th one that are = *x*;  
-> **find_ne**(⃗*v*; *x*; *i*) - the indexes of all elements in ⃗*v*, after the *i*-th one that are ≠ *x*;  
-> **find_lt**(⃗*v*; *x*; *i*) - the indexes of all elements in ⃗*v*, after the *i*-th one that are \< *x*;  
-> **find_le**(⃗*v*; *x*; *i*) - the indexes of all elements in ⃗*v*, after the *i*-th one that are ≤ *x*;  
-> **find_gt**(⃗*v*; *x*; *i*) - the indexes of all elements in ⃗*v*, after the *i*-th one that are \> *x*;  
-> **find_ge**(⃗*v*; *x*; *i*) - the indexes of all elements in ⃗*v*, after the *i*-th one that are ≥ *x*;
+> **sort**($\vec{v}$) - sorts the elements of vector $\vec{v}$ in ascending order;  
+> **rsort**($\vec{v}$) - sorts the elements of vector $\vec{v}$ in descending order;  
+> **order**($\vec{v}$) - the indexes of vector $\vec{v}$ by ascending order of its elements;  
+> **revorder**($\vec{v}$) - the indexes of vector $\vec{v}$ by descending order of its elements;  
+> **reverse**($\vec{v}$) - a vector containing the elements of $\vec{v}$ in reverse order;  
+> **count**($\vec{v}$; *x*; *i*) - number of elements of vector $\vec{v}$, after the *i*-th one, that are equal to *x*;  
+> **search**($\vec{v}$; *x*; *i*) - the index of the first element in $\vec{v}$, after the *i*-th one, that is equal to *x*;  
+> **find**($\vec{v}$; *x*; *i*) or  
+> **find_eq**($\vec{v}$; *x*; *i*) - the indexes of all elements in $\vec{v}$, after the *i*-th one that are = *x*;  
+> **find_ne**($\vec{v}$; *x*; *i*) - the indexes of all elements in $\vec{v}$, after the *i*-th one that are ≠ *x*;  
+> **find_lt**($\vec{v}$; *x*; *i*) - the indexes of all elements in $\vec{v}$, after the *i*-th one that are \< *x*;  
+> **find_le**($\vec{v}$; *x*; *i*) - the indexes of all elements in $\vec{v}$, after the *i*-th one that are ≤ *x*;  
+> **find_gt**($\vec{v}$; *x*; *i*) - the indexes of all elements in $\vec{v}$, after the *i*-th one that are \> *x*;  
+> **find_ge**($\vec{v}$; *x*; *i*) - the indexes of all elements in $\vec{v}$, after the *i*-th one that are ≥ *x*;
 >
-> **lookup**(⃗*a*; ⃗*b*; *x*) or  
-> **lookup_eq**(⃗*a*; ⃗*b*; *x*) - all elements in ⃗*a* for which the respective elements in ⃗*b* are = *x*;  
-> **lookup_ne**(⃗*a*; ⃗*b*; *x*) - all elements in ⃗*a* for which the respective elements in ⃗*b* are ≠ *x*;  
-> **lookup_lt**(⃗*a*; ⃗*b*; *x*) - all elements in ⃗*a* for which the respective elements in ⃗*b* are \< *x*;  
-> **lookup_le**(⃗*a*; ⃗*b*; *x*) - all elements in ⃗*a* for which the respective elements in ⃗*b* are ≤ *x*;  
-> **lookup_gt**(⃗*a*; ⃗*b*; *x*) - all elements in ⃗*a* for which the respective elements in ⃗*b* are \> *x*;  
-> **lookup_ge**(⃗*a*; ⃗*b*; *x*) - all elements in ⃗*a* for which the respective elements in ⃗*b* are ≥ *x*;
+> **lookup**($\vec{a}$; $\vec{b}$; *x*) or  
+> **lookup_eq**($\vec{a}$; $\vec{b}$; *x*) - all elements in $\vec{a}$ for which the respective elements in $\vec{b}$ are = *x*;  
+> **lookup_ne**($\vec{a}$; $\vec{b}$; *x*) - all elements in $\vec{a}$ for which the respective elements in $\vec{b}$ are ≠ *x*;  
+> **lookup_lt**($\vec{a}$; $\vec{b}$; *x*) - all elements in $\vec{a}$ for which the respective elements in $\vec{b}$ are \< *x*;  
+> **lookup_le**($\vec{a}$; $\vec{b}$; *x*) - all elements in $\vec{a}$ for which the respective elements in $\vec{b}$ are ≤ *x*;  
+> **lookup_gt**($\vec{a}$; $\vec{b}$; *x*) - all elements in $\vec{a}$ for which the respective elements in $\vec{b}$ are \> *x*;  
+> **lookup_ge**($\vec{a}$; $\vec{b}$; *x*) - all elements in $\vec{a}$ for which the respective elements in $\vec{b}$ are ≥ *x*;
 
 - Math:  
-  **norm_1**(⃗*v*) - L1 (Manhattan) norm of vector ⃗*v*;  
-  **norm**(⃗*v*) or **norm_2**(⃗*v*) or **norm_e**(⃗*v*) - L2 (Euclidean) norm of vector ⃗*v*;  
-  **norm_p**(⃗*v*; *p*) - Lp norm of vector ⃗*v*;  
-  **norm_i**(⃗*v*) - L∞ (infinity) norm of vector *⃗v*;
+  **norm_1**($\vec{v}$) - L1 (Manhattan) norm of vector $\vec{v}$;  
+  **norm**($\vec{v}$) or **norm_2**($\vec{v}$) or **norm_e**($\vec{v}$) - L2 (Euclidean) norm of vector $\vec{v}$;  
+  **norm_p**($\vec{v}$; *p*) - Lp norm of vector $\vec{v}$;  
+  **norm_i**($\vec{v}$) - L∞ (infinity) norm of vector *⃗v*;
 
-> **unit**(⃗*v*) - the normalized vector ⃗*v* (with L2 norm = 1);
+> **unit**($\vec{v}$) - the normalized vector $\vec{v}$ (with L2 norm = 1);
 >
-> **dot**(⃗*a*; ⃗*b*) - scalar product of two vectors ⃗*a* and ⃗*b*;
+> **dot**($\vec{a}$; $\vec{b}$) - scalar product of two vectors $\vec{a}$ and $\vec{b}$;
 >
-> **cross**(⃗*a*; ⃗*b*) - cross product of two vectors ⃗*a* and ⃗*b* (with length 2 or 3);
+> **cross**($\vec{a}$; $\vec{b}$) - cross product of two vectors $\vec{a}$ and $\vec{b}$ (with length 2 or 3);
 
 - Matrix:
 
@@ -1055,11 +1055,11 @@ Calcpad includes a library with common math functions, ready to use:
     **ltriang_hp**(*n*) - creates a *n*⨯*n* high-performance lower triangular matrix;  
     **symmetric_hp**(*n*) - creates a *n*⨯*n* high-performance symmetric matrix;
 
-> **vec2diag**(⃗*v*) - creates a diagonal matrix from the elements of vector ⃗*v*;  
-> **vec2row**(⃗*v*) - creates a row matrix from the elements of vector ⃗*v*;  
-> **vec2col**(⃗*v*) - creates a column matrix from the elements of vector ⃗*v*;  
-> **join_cols**(⃗*c*1; ⃗*c*2; ⃗*c*3 ...) - creates a new matrix by joining column vectors;  
-> **join_rows**(⃗*r*1; ⃗*r*2; ⃗*r*3 ...) - creates a new matrix by joining row vectors;
+> **vec2diag**($\vec{v}$) - creates a diagonal matrix from the elements of vector $\vec{v}$;  
+> **vec2row**($\vec{v}$) - creates a row matrix from the elements of vector $\vec{v}$;  
+> **vec2col**($\vec{v}$) - creates a column matrix from the elements of vector $\vec{v}$;  
+> **join_cols**($\vec{c}$1; $\vec{c}$2; $\vec{c}$3 ...) - creates a new matrix by joining column vectors;  
+> **join_rows**($\vec{r}$1; $\vec{r}$2; $\vec{r}$3 ...) - creates a new matrix by joining row vectors;
 >
 > **augment**(*A*; *B*; *C* ...) - creates a new matrix by appending matrices *A*; *B*; *C* side by side;  
 > **stack**(*A*; *B*; *C* ...) - creates a new matrix by stacking matrices *A*; *B*; *C* one below the other;
@@ -1079,7 +1079,7 @@ Calcpad includes a library with common math functions, ready to use:
   are contained in vector *i*;  
   **extract_cols**(*M*; *j*) - extracts the columns from matrix *M* whose indexes  
   are contained in vector *j*;  
-  **diag2vec**(⃗*v*) - extracts the diagonal elements of matrix *M* to a vector;
+  **diag2vec**($\vec{v}$) - extracts the diagonal elements of matrix *M* to a vector;
 
 > **submatrix**(*M*; *i*1; *i*2; *j*1; *j*2) - extracts a submatrix of *M*, bounded by  
 > rows *i*1 and *i*2 and columns *j*1 and *j*2, incl.;
@@ -1900,7 +1900,7 @@ Vectors with length that is greater than 100 are created as "large". Externally 
 
 <img src="./media/image29.png" style="width:5.36042in;height:1.08819in" alt="Картина, която съдържа текст, екранна снимка, линия, Шрифт Описанието е генерирано автоматично" />
 
-A vector is defined with its full "mathematical" length, but no memory is initially reserved for it. This length can be obtained by the **len**(⃗*v*) function. The greatest index of a non-zero element defines the internal size of a vector. It is returned by the **size**(⃗*v*) function. The rest of the elements are known to be zero, so Calcpad does not need to store them in memory. Instead, it returns directly zero, if such an element is accessed.
+A vector is defined with its full "mathematical" length, but no memory is initially reserved for it. This length can be obtained by the **len**($\vec{v}$) function. The greatest index of a non-zero element defines the internal size of a vector. It is returned by the **size**($\vec{v}$) function. The rest of the elements are known to be zero, so Calcpad does not need to store them in memory. Instead, it returns directly zero, if such an element is accessed.
 
 This allows the software to work efficiently with vectors that are not entirely filled. Such vectors are very common in engineering as is the load vector in finite element analyses. However, Calcpad reserves a little bit more memory above the size, that is called "capacity". This is because resizing a vector is computationally expensive. Since we normally assign elements in a loop, in this way we avoid resizing the vector on each iteration.
 
@@ -1908,7 +1908,7 @@ This allows the software to work efficiently with vectors that are not entirely 
 
 Vectors can be defined by using the following syntax:
 
-   ⃗*a* = \[ *a*1; *a*2; *a*3; ... ; *a*i; ... ; *a*n \]
+   $\vec{a}$ = \[ *a*1; *a*2; *a*3; ... ; *a*i; ... ; *a*n \]
 
 The values of the separate elements can be specified by expressions that include variables, operators, functions, etc. For example:
 
@@ -1935,10 +1935,10 @@ You can access individual elements of a vector for reading and writing by using 
 
   *a* = \[2; 4; 6; 8; 10\]  
   *a*.2' = 4  
-  *k* = 3', '*a*.*k*' = ⃗*a*3 = 6  
-  *a*.(2\**k* - 1)' = ⃗*a*5 = 10
+  *k* = 3', '*a*.*k*' = $\vec{a}$3 = 6  
+  *a*.(2\**k* - 1)' = $\vec{a}$5 = 10
 
-If an index value is less than 1 or greater than the vector length **len**(⃗*a*), the program will return an error: Index out of range. You can use indexing to initialize vectors inside loops (block or inline). For that purpose, you must include the loop counter into the index. For example:
+If an index value is less than 1 or greater than the vector length **len**($\vec{a}$), the program will return an error: Index out of range. You can use indexing to initialize vectors inside loops (block or inline). For that purpose, you must include the loop counter into the index. For example:
 
   *a* = **vector**(6)','*b* = **vector**(6)  
   'Block loop  
@@ -1950,27 +1950,27 @@ If an index value is less than 1 or greater than the vector length **len**(⃗*a
 
 The above code will produce the following two vectors:
 
-> ⃗*a* = \[1 4 9 16 25 36\] and  
-> ⃗*b* = \[0 1 4 9 16 25\].
+> $\vec{a}$ = \[1 4 9 16 25 36\] and  
+> $\vec{b}$ = \[0 1 4 9 16 25\].
 
 #### Structural functions
 
 This includes all functions that read or modify the structure of the vector. It means that the result does not depend on the content, i.e. the values of elements. The following functions are available in Calcpad:
 
-  **len**(⃗*a*)
+  **len**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - vector.
+    *Parameters*:  $\vec{a}$ - vector.
 
-    *Return value*: (scalar) the length of vector ⃗*a*.  
+    *Return value*: (scalar) the length of vector $\vec{a}$.  
     *Notes*:     Represents the full length of the vector (in respect to element count).  
     *Example*:   **len**(\[1; 0; 2; 3\])' = 4
 
-  **size**(⃗*a*)
+  **size**($\vec{a}$)
 
-    *Parameters*: ⃗*a* - vector.  
-    *Return value*: (scalar) the internal size of vector ⃗*a*.
+    *Parameters*: $\vec{a}$ - vector.  
+    *Return value*: (scalar) the internal size of vector $\vec{a}$.
 
-    *Notes*: If ⃗*a* is a large vector, returns the index of the last non-zero element, else -  
+    *Notes*: If $\vec{a}$ is a large vector, returns the index of the last non-zero element, else -  
 returns the vector length.  
     *Example*: *a* = **vector**(200)  
 *a*.35 = 1  
@@ -1978,20 +1978,20 @@ returns the vector length.
 **size**(*a*)' = 35  
 **size**(\[1; 2; 3; 0; 0\])' = 5
 
-  **resize**(⃗*a*; *n*)
+  **resize**($\vec{a}$; *n*)
 
-    *Parameters*: ⃗*a* - vector;  
-*n* - (positive integer) the new length of vector ⃗*a*.  
-    *Return value*: the resized vector ⃗*a*.
+    *Parameters*: $\vec{a}$ - vector;  
+*n* - (positive integer) the new length of vector $\vec{a}$.  
+    *Return value*: the resized vector $\vec{a}$.
 
-    *Notes*: Sets a new length *n* of vector ⃗*a* by modifying the vector in place and  
+    *Notes*: Sets a new length *n* of vector $\vec{a}$ by modifying the vector in place and  
 returns a reference to the same vector as a result.
 
     *Example*: *a* = \[1; 2; 3; 4; 5\]  
 *b* = **resize**(*a*; 3)' = \[1 2 3\]  
 *a*' = \[1 2 3\]
 
-  **join**(*A*; ⃗*b*; *c*…)
+  **join**(*A*; $\vec{b}$; *c*…)
 
     *Parameters*: a list of matrices, vectors and scalars.  
     *Return value*: a new vector, obtained by joining the arguments in the list.  
@@ -2003,46 +2003,46 @@ place.
 *b* = \[7; 8; 9\]  
 *c* = **join**(0; *A*; 5; 6; *b*)' = \[0 1 2 3 4 5 6 7 8 9\]
 
-  **slice**(⃗*a*; *i*1; *i*2)
+  **slice**($\vec{a}$; *i*1; *i*2)
 
-    *Parameters*: ⃗*a* - vector;
+    *Parameters*: $\vec{a}$ - vector;
 
 *i*1 - (positive integer) starting index;
 
 *i*2 - (positive integer) ending index.
 
-    *Return value*: a new vector, containing the part of vector ⃗*a* bounded by indexes *i*1 and *i*2, inclusively.
+    *Return value*: a new vector, containing the part of vector $\vec{a}$ bounded by indexes *i*1 and *i*2, inclusively.
 
     *Notes*:     It is not required that *i*1 ≤ *i*2. If an index is greater than the vector length, then all remaining elements are returned to the end.  
     *Example*: **slice**(\[1; 2; 3; 4; 5; 6; 7; 8\]; 3; 7)' = \[3 4 5 6 7\]  
 **slice**(\[1; 2; 3; 4; 5; 6; 7; 8\]; 6; 10)' = \[6 7 8\]
 
-  **first**(⃗*a*; *n*)
+  **first**($\vec{a}$; *n*)
 
-    *Parameters*: ⃗*a* - vector;  
+    *Parameters*: $\vec{a}$ - vector;  
 *n* - (positive integer) the number of elements to return.  
-    *Return value*: a vector containing the first *n* elements of ⃗*a*.  
+    *Return value*: a vector containing the first *n* elements of $\vec{a}$.  
     *Notes*: If *n* is greater than the length of ⃗ *a*, then all elements are returned.  
 Unlike **resize** the original vector is not modified.  
     *Example*: **first**(\[0; 1; 2; 3; 4; 5\]; 3)' = \[0 1 2\]  
 **first**(\[0; 1; 2; 3; 4; 5\]; 10)' = \[0 1 2 3 4 5\]
 
-  **last**(⃗*a*; *n*)
+  **last**($\vec{a}$; *n*)
 
-    *Parameters*:  ⃗*a* - vector;  
+    *Parameters*:  $\vec{a}$ - vector;  
 *n* - (positive integer) the number of elements to return.  
-    *Return value*: a vector containing the last *n* elements of ⃗*a*.  
-    *Notes*: If *n* is greater than the length of ⃗*a*, then all elements are returned.  
+    *Return value*: a vector containing the last *n* elements of $\vec{a}$.  
+    *Notes*: If *n* is greater than the length of $\vec{a}$, then all elements are returned.  
     *Example*: **last**(\[0; 1; 2; 3; 4; 5\]; 3)' = \[3 4 5\]  
 **last**(\[0; 1; 2; 3; 4; 5\]; 10)' = \[0 1 2 3 4 5\]
 
-  **extract**(⃗*a*; ⃗*i*)
+  **extract**($\vec{a}$; $\vec{i}$)
 
-    *Parameters*:  ⃗*a* - a vector containing the elements to be extracted;  
-⃗*i* - a vector with the indexes of the elements to be extracted from ⃗*a*.  
-    *Return value*: a vector with the extracted elements from ⃗*a* which indexes are provided in ⃗*i*.  
-    *Notes*:     All indexes in ⃗*i* must be positive integers. If an index is greater than the  
-length of vector ⃗*a*, an "Index out of range" error is returned.  
+    *Parameters*:  $\vec{a}$ - a vector containing the elements to be extracted;  
+$\vec{i}$ - a vector with the indexes of the elements to be extracted from $\vec{a}$.  
+    *Return value*: a vector with the extracted elements from $\vec{a}$ which indexes are provided in $\vec{i}$.  
+    *Notes*:     All indexes in $\vec{i}$ must be positive integers. If an index is greater than the  
+length of vector $\vec{a}$, an "Index out of range" error is returned.  
     *Example*: *a* = \[0; 1; 2; 3; 4; 5; 6\]  
 **extract**(a; \[2; 4; 6\])' = \[1 3 5\]
 
@@ -2050,84 +2050,84 @@ length of vector ⃗*a*, an "Index out of range" error is returned.
 
 This kind of functions treat the vector contents as numerical data. They are related mainly to sorting, ordering, searching and counting. Unlike structural functions, the result depends on the element values. You can use the following functions:
 
-  **sort**(⃗*a*)
+  **sort**($\vec{a}$)
 
-    *Parameters*: ⃗*a* - input vector.  
-    *Return value*: a vector containing the elements of ⃗*a*, sorted in ascending order.  
-    *Notes*: The original content of ⃗*a* is not modified.  
+    *Parameters*: $\vec{a}$ - input vector.  
+    *Return value*: a vector containing the elements of $\vec{a}$, sorted in ascending order.  
+    *Notes*: The original content of $\vec{a}$ is not modified.  
     *Example*: *a* = \[4; 0; 2; 3; -1; 1\]  
 *b* = **sort**(*a*)' = \[-1 0 1 2 3 4\]  
 *a*' = \[4 0 2 3 -1 1\]
 
-  **rsort**(⃗*a*)
+  **rsort**($\vec{a}$)
 
-    *Parameters*: ⃗*a* - input vector.
+    *Parameters*: $\vec{a}$ - input vector.
 
-    *Return value*: a vector containing the elements of ⃗*a*, sorted in descending order.  
+    *Return value*: a vector containing the elements of $\vec{a}$, sorted in descending order.  
     *Notes*: Similar to **sort**, the original content of *⃗a* remains unchanged.  
     *Example*: **rsort**(\[4; 0; 2; 3; -1; 1\])' = 4 3 2 1 0 -1\]
 
-  **order**(⃗*a*)
+  **order**($\vec{a}$)
 
-    *Parameters*: ⃗*a* - input vector.  
-    *Return value*: a vector with indexes, ordered by the elements of ⃗*a*, ascendingly.  
-    *Notes*: Each index in the output vector ⃗*i* shows which element in ⃗*a* should be placed at the current position to obtain a sorted sequence.  
-You can do that by calling **extract**(⃗*a*; ⃗*i*).  
+    *Parameters*: $\vec{a}$ - input vector.  
+    *Return value*: a vector with indexes, ordered by the elements of $\vec{a}$, ascendingly.  
+    *Notes*: Each index in the output vector $\vec{i}$ shows which element in $\vec{a}$ should be placed at the current position to obtain a sorted sequence.  
+You can do that by calling **extract**($\vec{a}$; $\vec{i}$).  
     *Example*: *a* = \[4; 0; 2; 3; -1; 1\]  
 *i* = **order**(*a*)' = \[5 2 6 3 4 1\]  
 *b* = **extract**(*a*; *i*)' = \[-1 0 1 2 3 4\]
 
-  **revorder**(⃗*a*)
+  **revorder**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - input vector.  
-    *Return value*: a vector with indexes, ordered by the elements of ⃗*a*, descending.  
+    *Parameters*:  $\vec{a}$ - input vector.  
+    *Return value*: a vector with indexes, ordered by the elements of $\vec{a}$, descending.  
     *Notes*:     The same considerations as for the **order** function apply.  
     *Example*:   **revorder**(\[4; 0; 2; 3; -1; 1\])' = \[1 4 3 6 2 5\]
 
-  **reverse**(⃗*a*)
+  **reverse**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - input vector.  
-    *Return value*: a vector containing the elements of ⃗*a* in reverse order.  
-    *Notes*:     The original content of ⃗*a* remains unchanged.  
+    *Parameters*:  $\vec{a}$ - input vector.  
+    *Return value*: a vector containing the elements of $\vec{a}$ in reverse order.  
+    *Notes*:     The original content of $\vec{a}$ remains unchanged.  
     *Example*:   **reverse**(\[1; 2; 3; 4; 5\])' = \[5 4 3 2 1\]
 
-  **count**(⃗*a*; *x*; *i*)
+  **count**($\vec{a}$; *x*; *i*)
 
-    *Parameters*:  ⃗*a* - vector;  
+    *Parameters*:  $\vec{a}$ - vector;  
 *x* - (scalar) the value to count;  
 *i* - (positive integer) the index to start with.  
-    *Return value*: (scalar) the number of elements in ⃗*a*, after the i-th one, that are equal to *x*.  
-    *Notes*:     If *i* is greater than the length of ⃗*a*, then zero is returned.  
+    *Return value*: (scalar) the number of elements in $\vec{a}$, after the i-th one, that are equal to *x*.  
+    *Notes*:     If *i* is greater than the length of $\vec{a}$, then zero is returned.  
     *Example*:   **count**(\[0; 1; 2; 1; 4; 1\]; 1; 4)' = 2
 
-  **search**(⃗*a*; *x*; *i*)
+  **search**($\vec{a}$; *x*; *i*)
 
-    *Parameters*:  ⃗*a* - vector;  
+    *Parameters*:  $\vec{a}$ - vector;  
 *x* - (scalar) the value to search for;  
 *i* - (positive integer) the index to start with.  
-    *Return value*: (scalar) the index of the first element in ⃗*a*, after the i-th, that is equal to *x*.  
-    *Notes*: If *i* is greater than the length of ⃗*a* or the value is not found, zero is returned.  
+    *Return value*: (scalar) the index of the first element in $\vec{a}$, after the i-th, that is equal to *x*.  
+    *Notes*: If *i* is greater than the length of $\vec{a}$ or the value is not found, zero is returned.  
     *Example*: **search**(\[0; 1; 2; 1; 4; 1\]; 1; 3)' = 4  
 **search**(\[0; 1; 2; 1; 4; 1\]; 1; 7)' = 0
 
-  **find**(⃗*a*; *x*; *i*)
+  **find**($\vec{a}$; *x*; *i*)
 
-    *Parameters*:  ⃗*a* - vector;  
+    *Parameters*:  $\vec{a}$ - vector;  
 *x* - (scalar) the value to search for;  
 *i* - (positive integer) the index to start with.  
-    *Return value*: a vector with the indexes of all elements in ⃗*a*, after the i-th, that are equal to *x*.  
-    *Notes*: If *i* is greater than the length of ⃗*a* or the value is not found, an empty vector is returned (with zero length).  
+    *Return value*: a vector with the indexes of all elements in $\vec{a}$, after the i-th, that are equal to *x*.  
+    *Notes*: If *i* is greater than the length of $\vec{a}$ or the value is not found, an empty vector is returned (with zero length).  
     *Example*: **find**(\[0; 1; 2; 1; 4; 1\]; 1; 2)' = \[2 4 6\]  
 **find**(\[0; 1; 2; 1; 4; 1\]; 3; 2)' = \[\]
 
-  **lookup**(⃗*a*; ⃗*b*; *x*)
+  **lookup**($\vec{a}$; $\vec{b}$; *x*)
 
-    *Parameters*:  ⃗*a* - vector with reference values;
+    *Parameters*:  $\vec{a}$ - vector with reference values;
 
 *b* - vector with return values;  
 *x* - (scalar) the value to look for.  
-    *Return value*: a vector with all elements in ⃗*b*, for which the corresponding elements  
-in ⃗*a* are equal to *x*.  
+    *Return value*: a vector with all elements in $\vec{b}$, for which the corresponding elements  
+in $\vec{a}$ are equal to *x*.  
     *Notes*:     if the value is not found, an empty vector is returned (with zero length)  
     *Example*: *a* = \[0; 1; 0; 0; 1; 1\]  
 *b* = \[1; 2; 3; 4; 5; 6\]  
@@ -2139,12 +2139,12 @@ The **find** and **lookup** functions have variations with suffixes. Different s
 |  |  |  |  |
 |----|----|----|----|
 | suffix | find | lookup | comparison operator |
-| \_eq | **find_eq**(⃗*a*; *x*; *i*) | **lookup_eq**(⃗*a*; ⃗*b*; *x*) | = - equal |
-| \_ne | **find_ne**(⃗*a*; *x*; *i*) | **lookup_ne**(⃗*a*; ⃗*b*; *x*) | ≠ - not equal |
-| \_lt | **find_lt**(⃗*a*; *x*; *i*) | **lookup_lt**(⃗*a*; ⃗*b*; *x*) | \< - less than |
-| \_le | **find_le**(⃗*a*; *x*; *i*) | **lookup_le**(⃗*a*; ⃗*b*; *x*) | ≤ - less than or equal |
-| \_gt | **find_gt**(⃗*a*; *x*; *i*) | **lookup_gt**(⃗*a*; ⃗*b*; *x*) | \> - greater than |
-| \_ge | **find_ge**(⃗*a*; *x*; *i*) | **lookup_ge**(⃗*a*; ⃗*b*; *x*) | ≥ - greater than or equal |
+| \_eq | **find_eq**($\vec{a}$; *x*; *i*) | **lookup_eq**($\vec{a}$; $\vec{b}$; *x*) | = - equal |
+| \_ne | **find_ne**($\vec{a}$; *x*; *i*) | **lookup_ne**($\vec{a}$; $\vec{b}$; *x*) | ≠ - not equal |
+| \_lt | **find_lt**($\vec{a}$; *x*; *i*) | **lookup_lt**($\vec{a}$; $\vec{b}$; *x*) | \< - less than |
+| \_le | **find_le**($\vec{a}$; *x*; *i*) | **lookup_le**($\vec{a}$; $\vec{b}$; *x*) | ≤ - less than or equal |
+| \_gt | **find_gt**($\vec{a}$; *x*; *i*) | **lookup_gt**($\vec{a}$; $\vec{b}$; *x*) | \> - greater than |
+| \_ge | **find_ge**($\vec{a}$; *x*; *i*) | **lookup_ge**($\vec{a}$; $\vec{b}$; *x*) | ≥ - greater than or equal |
 
 #### Math functions
 
@@ -2154,61 +2154,61 @@ All standard scalar math functions accept vector arguments as well. The function
 
 Calcpad also includes several math functions that are specific for vectors:
 
-  **norm_p**(⃗*a*)
+  **norm_p**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - vector.  
-    *Return value*: scalar representing the Lp norm of vector ⃗*a*.  
+    *Parameters*:  $\vec{a}$ - vector.  
+    *Return value*: scalar representing the Lp norm of vector $\vec{a}$.  
     *Notes*:    The Lp norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{p} = \left( \sum_{i = 1}^{n}\left| a_{i} \right|^{p} \right)^{\frac{1}{p}}`$.  
     *Example*:   **norm_p**(\[1; 2; 3\]; 3)' = 3.3019
 
-  **norm_1**(⃗*a*)
+  **norm_1**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - vector.  
-    *Return value*: scalar representing the L1 norm of vector ⃗*a*.
+    *Parameters*:  $\vec{a}$ - vector.  
+    *Return value*: scalar representing the L1 norm of vector $\vec{a}$.
 
     *Notes*:     The L1 norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{1} = \sum_{i = 1}^{n}{a_{i} \vee}`$.
 
     *Example*:   **norm_1**(\[-1; 2; 3\])' = 6
 
-  **norm**(⃗*a*) or **norm_2**(⃗*a*) or **norm_e**(⃗*a*)
+  **norm**($\vec{a}$) or **norm_2**($\vec{a}$) or **norm_e**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - vector.  
-    *Return value*: scalar representing the L2 (Euclidian) norm of vector ⃗*a*.  
+    *Parameters*:  $\vec{a}$ - vector.  
+    *Return value*: scalar representing the L2 (Euclidian) norm of vector $\vec{a}$.  
     *Notes*:     The L2 norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{2} = \sqrt{\sum_{i = 1}^{n}a_{i}^{2}}`$.  
     *Example*:   **norm_2**(\[1; 2; 3\])' = 3.7417
 
-  **norm_i**(⃗*a*)
+  **norm_i**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - vector.  
-    *Return value*: scalar representing the L∞ (infinity) norm of vector ⃗*a*.  
-    *Notes*:     The L∞ norm is obtained by the formula: \|\| ⃗*a* \|\|∞ = **max** \| *a*i \|.
+    *Parameters*:  $\vec{a}$ - vector.  
+    *Return value*: scalar representing the L∞ (infinity) norm of vector $\vec{a}$.  
+    *Notes*:     The L∞ norm is obtained by the formula: \|\| $\vec{a}$ \|\|∞ = **max** \| *a*i \|.
 
     *Example*:   **norm_i**(\[1; 2; 3\]; 3)' = 3
 
-  **unit**(⃗*a*)
+  **unit**($\vec{a}$)
 
-    *Parameters*:  ⃗*a* - vector.  
-    *Return value*: the normalized vector ⃗*a* (with L2 norm \|\| ⃗*a* \|\|2 = 1).  
-    *Notes*:     The elements of the normalized vector ⃗*a* are evaluated by the expression: *ui* = *ai* / \|\|*a*\|\|2
+    *Parameters*:  $\vec{a}$ - vector.  
+    *Return value*: the normalized vector $\vec{a}$ (with L2 norm \|\| $\vec{a}$ \|\|2 = 1).  
+    *Notes*:     The elements of the normalized vector $\vec{a}$ are evaluated by the expression: *ui* = *ai* / \|\|*a*\|\|2
 
     *Example*:   **unit**(\[1; 2; 3\])' = \[0.26726 0.53452 0.80178\]
 
-  **dot**(⃗*a*; ⃗*b*)
+  **dot**($\vec{a}$; $\vec{b}$)
 
-    *Parameters*:  ⃗*a*, ⃗*b* - vectors.  
-    *Return value*: scalar representing the dot product of both vectors ⃗*a* · ⃗*b*;  
-    *Notes*: The dot product is obtained by the expression: ⃗*a* · ⃗*b* $`\sum_{i = 1}^{n}{a_{i}{\bullet b}_{i}}`$
+    *Parameters*:  $\vec{a}$, $\vec{b}$ - vectors.  
+    *Return value*: scalar representing the dot product of both vectors $\vec{a}$ · $\vec{b}$;  
+    *Notes*: The dot product is obtained by the expression: $\vec{a}$ · $\vec{b}$ $`\sum_{i = 1}^{n}{a_{i}{\bullet b}_{i}}`$
 
     *Example*: *a* = \[1; 2; 4\]  
 *b* = \[5; 3; 1\]  
 **dot**(*a*; *b*)' = 15
 
-  **cross**(⃗*a*; ⃗*b*)
+  **cross**($\vec{a}$; $\vec{b}$)
 
-    *Parameters*:  ⃗*a*, ⃗*b* - vectors.  
-    *Return value*: vector representing the cross product ⃗*c* = ⃗*a* × ⃗*b*.
+    *Parameters*:  $\vec{a}$, $\vec{b}$ - vectors.  
+    *Return value*: vector representing the cross product $\vec{c}$ = $\vec{a}$ × $\vec{b}$.
 
-    *Notes*:     This function is defined only for vectors with lengths 2 or 3.The elements of the resulting vector ⃗*c* are calculated as follows:
+    *Notes*:     This function is defined only for vectors with lengths 2 or 3.The elements of the resulting vector $\vec{c}$ are calculated as follows:
 
 *c*1 = *a*2 *b*3 − *a*3 *b*2; *c*2 = *a*3 *b*1 − *a*1 *b*3; *c*3 = *a*1 *b*2 − *a*2 *b*1  
     *Example*: *a* = \[1; 2; 4\]  
@@ -2235,7 +2235,7 @@ Like aggregate functions, interpolation functions also accept mixed lists of arg
   *b* = \[5; 6; 7; 8\]  
   **take**(7; *a*; 4; *b*; 9; 10)' = 7
 
-The returned value is actually the third element in vector ⃗*b*, but it has an index 7 in the final sequence. A full list of the available aggregate and interpolation functions is provided earlier in this manual (see "Expressions/Functions" above).
+The returned value is actually the third element in vector $\vec{b}$, but it has an index 7 in the final sequence. A full list of the available aggregate and interpolation functions is provided earlier in this manual (see "Expressions/Functions" above).
 
 #### Operators
 
@@ -2323,7 +2323,7 @@ You can have expressions inside the brackets to calculate the indexes in place:
   *i* = 2', '*j* = 3  
   *A*.(2\**i* - 1; *j* + 1)' *A*3, 4 = 27.
 
-In this way, you can iterate through matrix elements in a loop and include the loop counters in the respective indexes. You can use both inline and block loops for that purpose. The code below creates a Vandermonde matrix from vector ⃗*x* with the specified number of columns (6):
+In this way, you can iterate through matrix elements in a loop and include the loop counters in the respective indexes. You can use both inline and block loops for that purpose. The code below creates a Vandermonde matrix from vector $\vec{x}$ with the specified number of columns (6):
 
   *x* = \[1; 2; 3; 4\]  
   *A* = **matrix**(len(*x*); 7)  
@@ -2438,40 +2438,40 @@ This function is equivalent to **diagonal**(*n* ; 1).
 0 & 1 & 0 & 1
 \end{bmatrix}`$
 
-  **vec2diag**(⃗*v*)
+  **vec2diag**($\vec{v}$)
 
-    *Parameters*: ⃗*v* - a vector containing the diagonal elements.  
-    *Return value*: a diagonal matrix from the elements of vector ⃗*v*.  
-    *Notes*:     The size of the matrix is equal to the number of elements in ⃗*v*.  
+    *Parameters*: $\vec{v}$ - a vector containing the diagonal elements.  
+    *Return value*: a diagonal matrix from the elements of vector $\vec{v}$.  
+    *Notes*:     The size of the matrix is equal to the number of elements in $\vec{v}$.  
     *Example*:   **vec2diag**(\[1; 2; 3\]' = $`\begin{bmatrix}
 1 & 0 & 0 \\
 0 & 2 & 0 \\
 0 & 0 & 3
 \end{bmatrix}`$
 
-**vec2row**(⃗*v*)
+**vec2row**($\vec{v}$)
 
-    *Parameters*: ⃗*v* - a vector containing the elements of the row matrix.  
-    *Return value*: a row matrix from the elements of vector ⃗*v*.  
-    *Notes*: The number of columns of the matrix is equal to the size of ⃗*v*.  
+    *Parameters*: $\vec{v}$ - a vector containing the elements of the row matrix.  
+    *Return value*: a row matrix from the elements of vector $\vec{v}$.  
+    *Notes*: The number of columns of the matrix is equal to the size of $\vec{v}$.  
     *Example*: **vec2row**(\[1; 2; 3\]' = $`\begin{bmatrix}
 1 & 2 & 3
 \end{bmatrix}`$
 
-**vec2col**(⃗*v*)
+**vec2col**($\vec{v}$)
 
-    *Parameters*: ⃗*v* - a vector containing the elements of the column matrix.  
-    *Return value*: a column matrix from the elements of vector ⃗*v*.  
-    *Notes*: The number of rows of the matrix is equal to the size of ⃗*v*.  
+    *Parameters*: $\vec{v}$ - a vector containing the elements of the column matrix.  
+    *Return value*: a column matrix from the elements of vector $\vec{v}$.  
+    *Notes*: The number of rows of the matrix is equal to the size of $\vec{v}$.  
     *Example*: **vec2col**(\[1; 2; 3\]' = $`\begin{bmatrix}
 1 \\
 2 \\
 3
 \end{bmatrix}`$
 
-  **join_cols**(⃗*c*1; ⃗*c*2; ⃗*c*3 ...)
+  **join_cols**($\vec{c}$1; $\vec{c}$2; $\vec{c}$3 ...)
 
-    *Parameters*: ⃗*c*1, ⃗*c*2, ⃗*c*3 ... - vectors.  
+    *Parameters*: $\vec{c}$1, $\vec{c}$2, $\vec{c}$3 ... - vectors.  
     *Return value*: a new rectangular matrix, obtained by joining the column vectors.  
     *Notes*: You can specify arbitrary number of input vectors with different lengths. The number of rows is equal to the maximum vector length and the other columns are filled down with zeros to the end. The vectors are joined sequentially from left to right.  
     *Example*: **join_cols**(\[1\]; \[4; 5; 6\]; \[7; 8\]; \[10; 11; 12\]' = $`\begin{bmatrix}
@@ -2480,9 +2480,9 @@ This function is equivalent to **diagonal**(*n* ; 1).
 0 & 6 & 0 & 12
 \end{bmatrix}`$
 
-  **join_rows**(⃗*r*1; ⃗*r*2; ⃗*r*3 ...)
+  **join_rows**($\vec{r}$1; $\vec{r}$2; $\vec{r}$3 ...)
 
-    *Parameters*: ⃗*r*1, ⃗*r*2, ⃗*r*3... - vectors.  
+    *Parameters*: $\vec{r}$1, $\vec{r}$2, $\vec{r}$3... - vectors.  
     *Return value*: a new rectangular matrix, which rows are the specified vector arguments.  
     *Notes*: You can have an arbitrary number of input vectors with different lengths. The number of columns is equal to the maximum vector length. The other rows are filled up with zeros to the end. The vectors are collected from left to right and arranged into rows from top to bottom.  
     *Example*: **join_rows**(\[1; 2; 3; 4\]; \[6; 7; 8; 9; 10\]' = $`\begin{bmatrix}
@@ -2712,12 +2712,12 @@ Structural functions are related only to the matrix structure. Unlike data and m
 \end{bmatrix}`$  
 **col**(*A*; 2)' = \[2 5 8\]
 
-  **extract_rows**(*M*; ⃗*i* )
+  **extract_rows**(*M*; $\vec{i}$ )
 
     *Parameters*: *M* - matrix;  
-⃗*i* - vector containing the indexes of the rows to be extracted.  
-    *Return value*: a new matrix containing the rows of matrix *M* whose indexes are in vector ⃗*i*.  
-    *Notes*:    The rows are extracted in the order, specified in vector ⃗*i*. It can be a result from the **order_rows** function.  
+$\vec{i}$ - vector containing the indexes of the rows to be extracted.  
+    *Return value*: a new matrix containing the rows of matrix *M* whose indexes are in vector $\vec{i}$.  
+    *Notes*:    The rows are extracted in the order, specified in vector $\vec{i}$. It can be a result from the **order_rows** function.  
     *Example*: *A* = \[1; 2; 3\|4; 5; 6\|7; 8; 9\]' = $`\begin{bmatrix}
 1 & 2 & 3 \\
 4 & 5 & 6 \\
@@ -2729,12 +2729,12 @@ Structural functions are related only to the matrix structure. Unlike data and m
 1 & 2 & 3
 \end{bmatrix}`$
 
-  **extract_cols**(*M*; ⃗*j* )
+  **extract_cols**(*M*; $\vec{j}$ )
 
     *Parameters*: *M* - matrix;  
-⃗*j* - vector containing the indexes of the columns to be extracted.  
-    *Return value*: a new matrix containing the columns of *M* whose indexes are in vector ⃗*j*.  
-    *Notes*: The columns are extracted in the order, specified in vector ⃗*j*. It can be a result from the **order_cols** function.  
+$\vec{j}$ - vector containing the indexes of the columns to be extracted.  
+    *Return value*: a new matrix containing the columns of *M* whose indexes are in vector $\vec{j}$.  
+    *Notes*: The columns are extracted in the order, specified in vector $\vec{j}$. It can be a result from the **order_cols** function.  
     *Example*: *A* = \[1; 2; 3\|4; 5; 6\|7; 8; 9\]' = $`\begin{bmatrix}
 1 & 2 & 3 \\
 4 & 5 & 6 \\
@@ -3154,7 +3154,7 @@ Calcpad also includes a lot of math functions that are specific for matrices, as
     *Return value*: (scalar) the condition number of *M* based on the L2 norm.  
     *Notes*: The condition number shows how sensitive is the matrix *A* for solving the
 
-equation *A* ⃗*x* = ⃗*b* or inverting the matrix. The higher is the number, the lower is the accuracy of the obtained solution. In theory, singular matrices have infinite condition numbers. However, in floating point environment, one can obtain very large, but finite number, due to floating point errors. The condition number is calculated by the following expression:  
+equation *A* $\vec{x}$ = $\vec{b}$ or inverting the matrix. The higher is the number, the lower is the accuracy of the obtained solution. In theory, singular matrices have infinite condition numbers. However, in floating point environment, one can obtain very large, but finite number, due to floating point errors. The condition number is calculated by the following expression:  
 *κ*2(*M*) = *σ*max (*M*) / *σ*min (*M*)  
 Since this is computationally expensive, the other functions can be used instead, providing similar values but at lower computational cost.  
     *Example*: *A* = \[1; 2; 3\|4; 5; 6\|7; 8; 9\]' = $`\begin{bmatrix}
@@ -3503,12 +3503,12 @@ $`\begin{bmatrix}
 0 & 0 & 1
 \end{bmatrix}`$ - check
 
-  **lsolve**(*A*; ⃗*b*)
+  **lsolve**(*A*; $\vec{b}$)
 
     *Parameters*: *A* - a square matrix with the equation coefficients;
 
-⃗*b* - the right-hand side vector.  
-    *Return value*: the solution vector ⃗*x* of the system of linear equations *A* ⃗*x* = ⃗*b*.
+$\vec{b}$ - the right-hand side vector.  
+    *Return value*: the solution vector $\vec{x}$ of the system of linear equations *A* $\vec{x}$ = $\vec{b}$.
 
     *Notes*: Calculations are performed by using LU decomposition for non-symmetric matrices and LDLT for symmetric. That is why the matrix is not required to be positive-definite. If *A* is singular or ill-conditioned, an error message is returned.  
     *Example*: *A* = \[8; 6; -4\|6; 12; -3\|-4; -3; 9\]' = $`\begin{bmatrix}
@@ -3520,11 +3520,11 @@ $`\begin{bmatrix}
 *x* = **lsolve**(*A*; *b*)' = \[2.5 1.667 5\] - the solution vector  
 *A*\**x*' = \[10 20 30\] – check
 
-  **clsolve**(*A*; ⃗*b*)
+  **clsolve**(*A*; $\vec{b}$)
 
     *Parameters*: *A* - symmetric, positive-definite coefficient matrix;  
 *b* - the right-hand side vector.  
-    *Return value*: the solution vector ⃗*x* of the system of linear equations *A* ⃗*x* = ⃗*b* using Cholesky decomposition.  
+    *Return value*: the solution vector $\vec{x}$ of the system of linear equations *A* $\vec{x}$ = $\vec{b}$ using Cholesky decomposition.  
     *Notes*: Cholesky decomposition is faster than LU and LDLT, so this function should be preferred over **lsolve** whenever the matrix is symmetric and positive- definite.  
     *Example*: *A* = **copy**(\[8; 6; -4\|6; 12; -3\|-4; -3; 9\]; \_  
     **symmetric**(3); 1; 1)' = $`\begin{bmatrix}
@@ -3536,11 +3536,11 @@ $`\begin{bmatrix}
 *x* = **clsolve**(*A*; *b*)' = \[2.5 1.667 5\] - the solution vector  
 *A*\**x*' = \[10 20 30\] – check
 
-  **slsolve**(*A*; ⃗*b*)
+  **slsolve**(*A*; $\vec{b}$)
 
     *Parameters*: *A* - high-performance symmetric, positive-definite coefficient matrix;  
 *b* - high-performance the right-hand side vector.  
-    *Return value*: the solution vector ⃗*x* of the system of linear equations *A* ⃗*x* = ⃗*b* using preconditioned conjugate gradient (PCG) method.  
+    *Return value*: the solution vector $\vec{x}$ of the system of linear equations *A* $\vec{x}$ = $\vec{b}$ using preconditioned conjugate gradient (PCG) method.  
     *Notes*: The PCG method is iterative and is faster than the direct Cholesky decomposition method. Whenever you have larger systems with tens to hundreds of thousands equations it is recommended to use the **slsolve** function with high performance matrices and vectors.  
     *Example*: *A* = **copy**(\[8; 6; -4\|6; 12; -3\|-4; -3; 9\]; \_  
     **symmetric_hp**(3); 1; 1)' = $`\begin{bmatrix}
