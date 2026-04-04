@@ -30,7 +30,7 @@ Since we normally assign elements in a loop, in this way we avoid resizing the v
 
 Vectors can be defined by using the following syntax:
 
-`a = [ a1; a2; a3; ... ; ai; ... ; an ]`
+`a = [ a_1; a_2; a_3; ... ; a_i; ... ; a_n ]`
 
 The values of the separate elements can be specified by expressions that include variables, operators, functions, etc.
 For example:
@@ -167,24 +167,24 @@ $\vec{a}$
     `b = [7; 8; 9]`  
     `c = join(0; A; 5; 6; b)` $= [0\ 1\ 2\ 3\ 4\ 5\ 6\ 7\ 8\ 9]$
 
-### **slice**($\vec{a}$; *i*1; *i*2)
+### **slice**($\vec{a}; i_1; i_2$)
 
 **Parameters**:
 
 $\vec{a}$
 :   vector
 
-*i*1
+$i_1$
 :   (positive integer) starting index
 
-*i*2
+$i_2$
 :   (positive integer) ending index
 
 **Return value**:
-:   a new vector, containing the part of vector $\vec{a}$ bounded by indexes *i*1 and *i*2, inclusively.
+:   a new vector, containing the part of vector $\vec{a}$ bounded by indexes $i_1$ and $i_2$, inclusively.
 
 !!! note
-    It is not required that *i*1 ≤ *i*2. If an index is greater than the vector length, then all remaining elements are returned to the end.
+    It is not required that $i_1$ ≤ $i_2$. If an index is greater than the vector length, then all remaining elements are returned to the end.
 
 !!! example
     `slice([1; 2; 3; 4; 5; 6; 7; 8]; 3; 7)` $= [3\ 4\ 5\ 6\ 7]$  
@@ -534,7 +534,7 @@ $\vec{a}$
 :   the normalized vector $\vec{a}$ (with $L_2$ norm $|| \vec{a} ||_2$ = 1).
 
 !!! note
-    The elements of the normalized vector $\vec{a}$ are evaluated by the expression: $ui = a_i / ||a||_2$
+    The elements of the normalized vector $\vec{a}$ are evaluated by the expression: $u_i = a_i / ||a||_2$
 
 !!! example
     `unit([1; 2; 3])` $= [0.26726\ 0.53452\ 0.80178]$
