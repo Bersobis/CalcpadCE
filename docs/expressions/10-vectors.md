@@ -92,96 +92,161 @@ This includes all functions that read or modify the structure of the vector.
 It means that the result does not depend on the content, i.e. the values of elements.
 The following functions are available in Calcpad:
 
-  **len**($\vec{a}$)
+### **len**($\vec{a}$)
 
-    *Parameters*:  $\vec{a}$ - vector.
+**Parameters**:
 
-    *Return value*: (scalar) the length of vector $\vec{a}$.  
-    *Notes*:     Represents the full length of the vector (in respect to element count).  
-    *Example*:   **len**(\[1; 0; 2; 3\])' = 4
+$\vec{a}$
+:   vector
 
-  **size**($\vec{a}$)
+**Return value**:
+:   (scalar) the length of vector $\vec{a}$.
 
-    *Parameters*: $\vec{a}$ - vector.  
-    *Return value*: (scalar) the internal size of vector $\vec{a}$.
+!!! note
+    Represents the full length of the vector (in respect to element count).
 
-    *Notes*: If $\vec{a}$ is a large vector, returns the index of the last non-zero element, else -  
-returns the vector length.  
-    *Example*: *a* = **vector**(200)  
-*a*.35 = 1  
-**len**(*a*)' = 200  
-**size**(*a*)' = 35  
-**size**(\[1; 2; 3; 0; 0\])' = 5
+!!! example
+    **len**(\[1; 0; 2; 3\])' = 4
 
-  **resize**($\vec{a}$; *n*)
+### **size**($\vec{a}$)
 
-    *Parameters*: $\vec{a}$ - vector;  
-*n* - (positive integer) the new length of vector $\vec{a}$.  
-    *Return value*: the resized vector $\vec{a}$.
+**Parameters**:
 
-    *Notes*: Sets a new length *n* of vector $\vec{a}$ by modifying the vector in place and  
-returns a reference to the same vector as a result.
+$\vec{a}$
+:   vector
 
-    *Example*: *a* = \[1; 2; 3; 4; 5\]  
-*b* = **resize**(*a*; 3)' = \[1 2 3\]  
-*a*' = \[1 2 3\]
+**Return value**:
+:   (scalar) the internal size of vector $\vec{a}$.
 
-  **join**(*A*; $\vec{b}$; *c*…)
+!!! note
+    If $\vec{a}$ is a large vector, returns the index of the last non-zero element, else returns the vector length.
 
-    *Parameters*: a list of matrices, vectors and scalars.  
-    *Return value*: a new vector, obtained by joining the arguments in the list.  
-    *Notes*: The list can include unlimited number of items of different types, mixed  
-arbitrarily.
-Matrices are first linearized by rows and their elements are  
-included into the common sequence, as well as the vectors, each at its  
-place.  
-    *Example*: *A* = \[1; 2\|3; 4\]  
-*b* = \[7; 8; 9\]  
-*c* = **join**(0; *A*; 5; 6; *b*)' = \[0 1 2 3 4 5 6 7 8 9\]
+!!! example
+    *a* = **vector**(200)  
+    *a*.35 = 1  
+    **len**(*a*)' = 200  
+    **size**(*a*)' = 35  
+    **size**(\[1; 2; 3; 0; 0\])' = 5
 
-  **slice**($\vec{a}$; *i*1; *i*2)
+### **resize**($\vec{a}$; *n*)
 
-    *Parameters*: $\vec{a}$ - vector;
+**Parameters**:
 
-*i*1 - (positive integer) starting index;
+$\vec{a}$
+:   vector
 
-*i*2 - (positive integer) ending index.
+*n*
+:   (positive integer) the new length of vector $\vec{a}$
 
-    *Return value*: a new vector, containing the part of vector $\vec{a}$ bounded by indexes *i*1 and *i*2, inclusively.
+**Return value**:
+:   the resized vector $\vec{a}$.
 
-    *Notes*:     It is not required that *i*1 ≤ *i*2. If an index is greater than the vector length, then all remaining elements are returned to the end.  
-    *Example*: **slice**(\[1; 2; 3; 4; 5; 6; 7; 8\]; 3; 7)' = \[3 4 5 6 7\]  
-**slice**(\[1; 2; 3; 4; 5; 6; 7; 8\]; 6; 10)' = \[6 7 8\]
+!!! note
+    Sets a new length *n* of vector $\vec{a}$ by modifying the vector in place and returns a reference to the same vector as a result.
 
-  **first**($\vec{a}$; *n*)
+!!! example
+    *a* = \[1; 2; 3; 4; 5\]  
+    *b* = **resize**(*a*; 3)' = \[1 2 3\]  
+    *a*' = \[1 2 3\]
 
-    *Parameters*: $\vec{a}$ - vector;  
-*n* - (positive integer) the number of elements to return.  
-    *Return value*: a vector containing the first *n* elements of $\vec{a}$.  
-    *Notes*: If *n* is greater than the length of ⃗ *a*, then all elements are returned.  
-Unlike **resize** the original vector is not modified.  
-    *Example*: **first**(\[0; 1; 2; 3; 4; 5\]; 3)' = \[0 1 2\]  
-**first**(\[0; 1; 2; 3; 4; 5\]; 10)' = \[0 1 2 3 4 5\]
+### **join**(*A*; $\vec{b}$; *c*…)
 
-  **last**($\vec{a}$; *n*)
+**Parameters**:
+:   a list of matrices, vectors and scalars.
 
-    *Parameters*:  $\vec{a}$ - vector;  
-*n* - (positive integer) the number of elements to return.  
-    *Return value*: a vector containing the last *n* elements of $\vec{a}$.  
-    *Notes*: If *n* is greater than the length of $\vec{a}$, then all elements are returned.  
-    *Example*: **last**(\[0; 1; 2; 3; 4; 5\]; 3)' = \[3 4 5\]  
-**last**(\[0; 1; 2; 3; 4; 5\]; 10)' = \[0 1 2 3 4 5\]
+**Return value**:
+:   a new vector, obtained by joining the arguments in the list.
 
-  **extract**($\vec{a}$; $\vec{i}$)
+!!! note
+    The list can include unlimited number of items of different types, mixed arbitrarily. Matrices are first linearized by rows and their elements are included into the common sequence, as well as the vectors, each at its place.
 
-    *Parameters*:  $\vec{a}$ - a vector containing the elements to be extracted;  
-$\vec{i}$ - a vector with the indexes of the elements to be extracted from $\vec{a}$.  
-    *Return value*: a vector with the extracted elements from $\vec{a}$ which indexes are provided in $\vec{i}$.  
-    *Notes*:     All indexes in $\vec{i}$ must be positive integers.
-If an index is greater than the  
-length of vector $\vec{a}$, an "Index out of range" error is returned.  
-    *Example*: *a* = \[0; 1; 2; 3; 4; 5; 6\]  
-**extract**(a; \[2; 4; 6\])' = \[1 3 5\]
+!!! example
+    *A* = \[1; 2\|3; 4\]  
+    *b* = \[7; 8; 9\]  
+    *c* = **join**(0; *A*; 5; 6; *b*)' = \[0 1 2 3 4 5 6 7 8 9\]
+
+### **slice**($\vec{a}$; *i*1; *i*2)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+*i*1
+:   (positive integer) starting index
+
+*i*2
+:   (positive integer) ending index
+
+**Return value**:
+:   a new vector, containing the part of vector $\vec{a}$ bounded by indexes *i*1 and *i*2, inclusively.
+
+!!! note
+    It is not required that *i*1 ≤ *i*2. If an index is greater than the vector length, then all remaining elements are returned to the end.
+
+!!! example
+    **slice**(\[1; 2; 3; 4; 5; 6; 7; 8\]; 3; 7)' = \[3 4 5 6 7\]  
+    **slice**(\[1; 2; 3; 4; 5; 6; 7; 8\]; 6; 10)' = \[6 7 8\]
+
+### **first**($\vec{a}$; *n*)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+*n*
+:   (positive integer) the number of elements to return
+
+**Return value**:
+:   a vector containing the first *n* elements of $\vec{a}$.
+
+!!! note
+    If *n* is greater than the length of $\vec{a}$, then all elements are returned. Unlike **resize** the original vector is not modified.
+
+!!! example
+    **first**(\[0; 1; 2; 3; 4; 5\]; 3)' = \[0 1 2\]  
+    **first**(\[0; 1; 2; 3; 4; 5\]; 10)' = \[0 1 2 3 4 5\]
+
+### **last**($\vec{a}$; *n*)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+*n*
+:   (positive integer) the number of elements to return
+
+**Return value**:
+:   a vector containing the last *n* elements of $\vec{a}$.
+
+!!! note
+    If *n* is greater than the length of $\vec{a}$, then all elements are returned.
+
+!!! example
+    **last**(\[0; 1; 2; 3; 4; 5\]; 3)' = \[3 4 5\]  
+    **last**(\[0; 1; 2; 3; 4; 5\]; 10)' = \[0 1 2 3 4 5\]
+
+### **extract**($\vec{a}$; $\vec{i}$)
+
+**Parameters**:
+
+$\vec{a}$
+:   a vector containing the elements to be extracted
+
+$\vec{i}$
+:   a vector with the indexes of the elements to be extracted from $\vec{a}$
+
+**Return value**:
+:   a vector with the extracted elements from $\vec{a}$ which indexes are provided in $\vec{i}$.
+
+!!! note
+    All indexes in $\vec{i}$ must be positive integers. If an index is greater than the length of vector $\vec{a}$, an "Index out of range" error is returned.
+
+!!! example
+    *a* = \[0; 1; 2; 3; 4; 5; 6\]  
+    **extract**(a; \[2; 4; 6\])' = \[1 3 5\]
 
 ## Data functions
 
@@ -190,89 +255,183 @@ They are related mainly to sorting, ordering, searching and counting.
 Unlike structural functions, the result depends on the element values.
 You can use the following functions:
 
-  **sort**($\vec{a}$)
+### **sort**($\vec{a}$)
 
-    *Parameters*: $\vec{a}$ - input vector.  
-    *Return value*: a vector containing the elements of $\vec{a}$, sorted in ascending order.  
-    *Notes*: The original content of $\vec{a}$ is not modified.  
-    *Example*: *a* = \[4; 0; 2; 3; -1; 1\]  
-*b* = **sort**(*a*)' = \[-1 0 1 2 3 4\]  
-*a*' = \[4 0 2 3 -1 1\]
+**Parameters**:
 
-  **rsort**($\vec{a}$)
+$\vec{a}$
+:   input vector
 
-    *Parameters*: $\vec{a}$ - input vector.
+**Return value**:
+:   a vector containing the elements of $\vec{a}$, sorted in ascending order.
 
-    *Return value*: a vector containing the elements of $\vec{a}$, sorted in descending order.  
-    *Notes*: Similar to **sort**, the original content of *⃗a* remains unchanged.  
-    *Example*: **rsort**(\[4; 0; 2; 3; -1; 1\])' = 4 3 2 1 0 -1\]
+!!! note
+    The original content of $\vec{a}$ is not modified.
 
-  **order**($\vec{a}$)
+!!! example
+    *a* = \[4; 0; 2; 3; -1; 1\]  
+    *b* = **sort**(*a*)' = \[-1 0 1 2 3 4\]  
+    *a*' = \[4 0 2 3 -1 1\]
 
-    *Parameters*: $\vec{a}$ - input vector.  
-    *Return value*: a vector with indexes, ordered by the elements of $\vec{a}$, ascendingly.  
-    *Notes*: Each index in the output vector $\vec{i}$ shows which element in $\vec{a}$ should be placed at the current position to obtain a sorted sequence.  
-You can do that by calling **extract**($\vec{a}$; $\vec{i}$).  
-    *Example*: *a* = \[4; 0; 2; 3; -1; 1\]  
-*i* = **order**(*a*)' = \[5 2 6 3 4 1\]  
-*b* = **extract**(*a*; *i*)' = \[-1 0 1 2 3 4\]
+### **rsort**($\vec{a}$)
 
-  **revorder**($\vec{a}$)
+**Parameters**:
 
-    *Parameters*:  $\vec{a}$ - input vector.  
-    *Return value*: a vector with indexes, ordered by the elements of $\vec{a}$, descending.  
-    *Notes*:     The same considerations as for the **order** function apply.  
-    *Example*:   **revorder**(\[4; 0; 2; 3; -1; 1\])' = \[1 4 3 6 2 5\]
+$\vec{a}$
+:   input vector
 
-  **reverse**($\vec{a}$)
+**Return value**:
+:   a vector containing the elements of $\vec{a}$, sorted in descending order.
 
-    *Parameters*:  $\vec{a}$ - input vector.  
-    *Return value*: a vector containing the elements of $\vec{a}$ in reverse order.  
-    *Notes*:     The original content of $\vec{a}$ remains unchanged.  
-    *Example*:   **reverse**(\[1; 2; 3; 4; 5\])' = \[5 4 3 2 1\]
+!!! note
+    Similar to **sort**, the original content of $\vec{a}$ remains unchanged.
 
-  **count**($\vec{a}$; *x*; *i*)
+!!! example
+    **rsort**(\[4; 0; 2; 3; -1; 1\])' = \[4 3 2 1 0 -1\]
 
-    *Parameters*:  $\vec{a}$ - vector;  
-*x* - (scalar) the value to count;  
-*i* - (positive integer) the index to start with.  
-    *Return value*: (scalar) the number of elements in $\vec{a}$, after the i-th one, that are equal to *x*.  
-    *Notes*:     If *i* is greater than the length of $\vec{a}$, then zero is returned.  
-    *Example*:   **count**(\[0; 1; 2; 1; 4; 1\]; 1; 4)' = 2
+### **order**($\vec{a}$)
 
-  **search**($\vec{a}$; *x*; *i*)
+**Parameters**:
 
-    *Parameters*:  $\vec{a}$ - vector;  
-*x* - (scalar) the value to search for;  
-*i* - (positive integer) the index to start with.  
-    *Return value*: (scalar) the index of the first element in $\vec{a}$, after the i-th, that is equal to *x*.  
-    *Notes*: If *i* is greater than the length of $\vec{a}$ or the value is not found, zero is returned.  
-    *Example*: **search**(\[0; 1; 2; 1; 4; 1\]; 1; 3)' = 4  
-**search**(\[0; 1; 2; 1; 4; 1\]; 1; 7)' = 0
+$\vec{a}$
+:   input vector
 
-  **find**($\vec{a}$; *x*; *i*)
+**Return value**:
+:   a vector with indexes, ordered by the elements of $\vec{a}$, ascendingly.
 
-    *Parameters*:  $\vec{a}$ - vector;  
-*x* - (scalar) the value to search for;  
-*i* - (positive integer) the index to start with.  
-    *Return value*: a vector with the indexes of all elements in $\vec{a}$, after the i-th, that are equal to *x*.  
-    *Notes*: If *i* is greater than the length of $\vec{a}$ or the value is not found, an empty vector is returned (with zero length).  
-    *Example*: **find**(\[0; 1; 2; 1; 4; 1\]; 1; 2)' = \[2 4 6\]  
-**find**(\[0; 1; 2; 1; 4; 1\]; 3; 2)' = \[\]
+!!! note
+    Each index in the output vector $\vec{i}$ shows which element in $\vec{a}$ should be placed at the current position to obtain a sorted sequence. You can do that by calling **extract**($\vec{a}$; $\vec{i}$).
 
-  **lookup**($\vec{a}$; $\vec{b}$; *x*)
+!!! example
+    *a* = \[4; 0; 2; 3; -1; 1\]  
+    *i* = **order**(*a*)' = \[5 2 6 3 4 1\]  
+    *b* = **extract**(*a*; *i*)' = \[-1 0 1 2 3 4\]
 
-    *Parameters*:  $\vec{a}$ - vector with reference values;
+### **revorder**($\vec{a}$)
 
-*b* - vector with return values;  
-*x* - (scalar) the value to look for.  
-    *Return value*: a vector with all elements in $\vec{b}$, for which the corresponding elements  
-in $\vec{a}$ are equal to *x*.  
-    *Notes*:     if the value is not found, an empty vector is returned (with zero length)  
-    *Example*: *a* = \[0; 1; 0; 0; 1; 1\]  
-*b* = \[1; 2; 3; 4; 5; 6\]  
-**lookup**(*a*; *b*; 0)' = \[1 3 4\]  
-**lookup**(*a*; *b*; 2)' = \[\]
+**Parameters**:
+
+$\vec{a}$
+:   input vector
+
+**Return value**:
+:   a vector with indexes, ordered by the elements of $\vec{a}$, descending.
+
+!!! note
+    The same considerations as for the **order** function apply.
+
+!!! example
+    **revorder**(\[4; 0; 2; 3; -1; 1\])' = \[1 4 3 6 2 5\]
+
+### **reverse**($\vec{a}$)
+
+**Parameters**:
+
+$\vec{a}$
+:   input vector
+
+**Return value**:
+:   a vector containing the elements of $\vec{a}$ in reverse order.
+
+!!! note
+    The original content of $\vec{a}$ remains unchanged.
+
+!!! example
+    **reverse**(\[1; 2; 3; 4; 5\])' = \[5 4 3 2 1\]
+
+### **count**($\vec{a}$; *x*; *i*)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+*x*
+:   (scalar) the value to count
+
+*i*
+:   (positive integer) the index to start with
+
+**Return value**:
+:   (scalar) the number of elements in $\vec{a}$, after the i-th one, that are equal to *x*.
+
+!!! note
+    If *i* is greater than the length of $\vec{a}$, then zero is returned.
+
+!!! example
+    **count**(\[0; 1; 2; 1; 4; 1\]; 1; 4)' = 2
+
+### **search**($\vec{a}$; *x*; *i*)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+*x*
+:   (scalar) the value to search for
+
+*i*
+:   (positive integer) the index to start with
+
+**Return value**:
+:   (scalar) the index of the first element in $\vec{a}$, after the i-th, that is equal to *x*.
+
+!!! note
+    If *i* is greater than the length of $\vec{a}$ or the value is not found, zero is returned.
+
+!!! example
+    **search**(\[0; 1; 2; 1; 4; 1\]; 1; 3)' = 4  
+    **search**(\[0; 1; 2; 1; 4; 1\]; 1; 7)' = 0
+
+### **find**($\vec{a}$; *x*; *i*)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+*x*
+:   (scalar) the value to search for
+
+*i*
+:   (positive integer) the index to start with
+
+**Return value**:
+:   a vector with the indexes of all elements in $\vec{a}$, after the i-th, that are equal to *x*.
+
+!!! note
+    If *i* is greater than the length of $\vec{a}$ or the value is not found, an empty vector is returned (with zero length).
+
+!!! example
+    **find**(\[0; 1; 2; 1; 4; 1\]; 1; 2)' = \[2 4 6\]  
+    **find**(\[0; 1; 2; 1; 4; 1\]; 3; 2)' = \[\]
+
+### **lookup**($\vec{a}$; $\vec{b}$; *x*)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector with reference values
+
+$\vec{b}$
+:   vector with return values
+
+*x*
+:   (scalar) the value to look for
+
+**Return value**:
+:   a vector with all elements in $\vec{b}$, for which the corresponding elements in $\vec{a}$ are equal to *x*.
+
+!!! note
+    If the value is not found, an empty vector is returned (with zero length).
+
+!!! example
+    *a* = \[0; 1; 0; 0; 1; 1\]  
+    *b* = \[1; 2; 3; 4; 5; 6\]  
+    **lookup**(*a*; *b*; 0)' = \[1 3 4\]  
+    **lookup**(*a*; *b*; 2)' = \[\]
+
 
 The **find** and **lookup** functions have variations with suffixes.
 Different suffixes refer to different comparison operators.
@@ -299,66 +458,125 @@ For example:
 
 Calcpad also includes several math functions that are specific for vectors:
 
-  **norm_p**($\vec{a}$)
+### **norm_p**($\vec{a}$)
 
-    *Parameters*:  $\vec{a}$ - vector.  
-    *Return value*: scalar representing the Lp norm of vector $\vec{a}$.  
-    *Notes*:    The Lp norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{p} = \left( \sum_{i = 1}^{n}\left| a_{i} \right|^{p} \right)^{\frac{1}{p}}`$.  
-    *Example*:   **norm_p**(\[1; 2; 3\]; 3)' = 3.3019
+**Parameters**:
 
-  **norm_1**($\vec{a}$)
+$\vec{a}$
+:   vector
 
-    *Parameters*:  $\vec{a}$ - vector.  
-    *Return value*: scalar representing the L1 norm of vector $\vec{a}$.
+**Return value**:
+:   scalar representing the $L_p$ norm of vector $\vec{a}$.
 
-    *Notes*:     The L1 norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{1} = \sum_{i = 1}^{n}{a_{i} \vee}`$.
+!!! note
+    The $L_p$ norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{p} = \left( \sum_{i = 1}^{n}\left| a_{i} \right|^{p} \right)^{\frac{1}{p}}`$.
 
-    *Example*:   **norm_1**(\[-1; 2; 3\])' = 6
+!!! example
+    **norm_p**(\[1; 2; 3\]; 3)' = 3.3019
 
-  **norm**($\vec{a}$) or **norm_2**($\vec{a}$) or **norm_e**($\vec{a}$)
+### **norm_1**($\vec{a}$)
 
-    *Parameters*:  $\vec{a}$ - vector.  
-    *Return value*: scalar representing the L2 (Euclidian) norm of vector $\vec{a}$.  
-    *Notes*:     The L2 norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{2} = \sqrt{\sum_{i = 1}^{n}a_{i}^{2}}`$.  
-    *Example*:   **norm_2**(\[1; 2; 3\])' = 3.7417
+**Parameters**:
 
-  **norm_i**($\vec{a}$)
+$\vec{a}$
+:   vector
 
-    *Parameters*:  $\vec{a}$ - vector.  
-    *Return value*: scalar representing the L∞ (infinity) norm of vector $\vec{a}$.  
-    *Notes*:     The L∞ norm is obtained by the formula: \|\| $\vec{a}$ \|\|∞ = **max** \| *a*i \|.
+**Return value**:
+:   scalar representing the $L_1$ norm of vector $\vec{a}$.
 
-    *Example*:   **norm_i**(\[1; 2; 3\]; 3)' = 3
+!!! note
+    The $L_1$ norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{1} = \sum_{i = 1}^{n}{a_{i} \vee}`$.
 
-  **unit**($\vec{a}$)
+!!! example
+    **norm_1**(\[-1; 2; 3\])' = 6
 
-    *Parameters*:  $\vec{a}$ - vector.  
-    *Return value*: the normalized vector $\vec{a}$ (with L2 norm \|\| $\vec{a}$ \|\|2 = 1).  
-    *Notes*:     The elements of the normalized vector $\vec{a}$ are evaluated by the expression: *ui* = *ai* / \|\|*a*\|\|2
+### **norm**($\vec{a}$) / **norm_2**($\vec{a}$) / **norm_e**($\vec{a}$)
 
-    *Example*:   **unit**(\[1; 2; 3\])' = \[0.26726 0.53452 0.80178\]
+**Parameters**:
 
-  **dot**($\vec{a}$; $\vec{b}$)
+$\vec{a}$
+:   vector
 
-    *Parameters*:  $\vec{a}$, $\vec{b}$ - vectors.  
-    *Return value*: scalar representing the dot product of both vectors $\vec{a}$ · $\vec{b}$;  
-    *Notes*: The dot product is obtained by the expression: $\vec{a}$ · $\vec{b}$ $`\sum_{i = 1}^{n}{a_{i}{\bullet b}_{i}}`$
+**Return value**:
+:   scalar representing the $L_2$ (Euclidian) norm of vector $\vec{a}$.
 
-    *Example*: *a* = \[1; 2; 4\]  
-*b* = \[5; 3; 1\]  
-**dot**(*a*; *b*)' = 15
+!!! note
+    The $L_2$ norm is obtained by the formula: $`\left\| \overrightarrow{a} \right\|_{2} = \sqrt{\sum_{i = 1}^{n}a_{i}^{2}}`$.
 
-  **cross**($\vec{a}$; $\vec{b}$)
+!!! example
+    **norm_2**(\[1; 2; 3\])' = 3.7417
 
-    *Parameters*:  $\vec{a}$, $\vec{b}$ - vectors.  
-    *Return value*: vector representing the cross product $\vec{c}$ = $\vec{a}$ × $\vec{b}$.
+### **norm_i**($\vec{a}$)
 
-    *Notes*:     This function is defined only for vectors with lengths 2 or 3.The elements of the resulting vector $\vec{c}$ are calculated as follows:
+**Parameters**:
 
-*c*1 = *a*2 *b*3 − *a*3 *b*2; *c*2 = *a*3 *b*1 − *a*1 *b*3; *c*3 = *a*1 *b*2 − *a*2 *b*1  
-    *Example*: *a* = \[1; 2; 4\]  
-*b* = \[5; 3; 1\]  
-**cross**(*a*; *b*)' = \[-10 19 -7\]
+$\vec{a}$
+:   vector
+
+**Return value**:
+:   scalar representing the $L_∞$ (infinity) norm of vector $\vec{a}$.
+
+!!! note
+    The $L_∞$ norm is obtained by the formula: $|| \vec{a} ||_∞$ = **max** $| a_i |$.
+
+!!! example
+    **norm_i**(\[1; 2; 3\]; 3)' = 3
+
+### **unit**($\vec{a}$)
+
+**Parameters**:
+
+$\vec{a}$
+:   vector
+
+**Return value**:
+:   the normalized vector $\vec{a}$ (with $L_2$ norm $|| \vec{a} ||_2$ = 1).
+
+!!! note
+    The elements of the normalized vector $\vec{a}$ are evaluated by the expression: $ui = a_i / ||a||_2$
+
+!!! example
+    **unit**(\[1; 2; 3\])' = \[0.26726 0.53452 0.80178\]
+
+### **dot**($\vec{a}$; $\vec{b}$)
+
+**Parameters**:
+
+$\vec{a}$, $\vec{b}$
+:   vectors
+
+**Return value**:
+:   scalar representing the dot product of both vectors $\vec{a}$ · $\vec{b}$.
+
+!!! note
+    The dot product is obtained by the expression: $\vec{a}$ · $\vec{b}$ = $`\sum_{i = 1}^{n}{a_{i}{\bullet b}_{i}}`$
+
+!!! example
+    *a* = \[1; 2; 4\]  
+    *b* = \[5; 3; 1\]  
+    **dot**(*a*; *b*)' = 15
+
+### **cross**($\vec{a}$; $\vec{b}$)
+
+**Parameters**:
+
+$\vec{a}$, $\vec{b}$
+:   vectors
+
+**Return value**:
+:   vector representing the cross product $\vec{c}$ = $\vec{a}$ × $\vec{b}$.
+
+!!! note
+    This function is defined only for vectors with lengths 2 or 3. The elements of the resulting vector $\vec{c}$ are calculated as follows:  
+    $c_1 = a_2 b_3 − a_3 b_2$
+    $c_2 = a_3 b_1 − a_1 b_3$
+    $c_3 = a_1 b_2 − a_2 b_1$
+
+!!! example
+    *a* = \[1; 2; 4\]  
+    *b* = \[5; 3; 1\]  
+    **cross**(*a*; *b*)' = \[-10 19 -7\]
+
 
 ## Aggregate and interpolation functions
 
