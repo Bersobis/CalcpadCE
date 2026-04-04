@@ -1,4 +1,4 @@
-﻿## Results
+﻿# Results
 
 You can run the solution by pressing **F5** or clicking the <img src="./media/image6.png" alt="" height="20"> button.
 The results will appear in the "**Output**" box.
@@ -12,7 +12,7 @@ While it is checked, the results will refresh each time you change the code and 
 If you need to synchronize the results manually, you can press "**Ctrl + Enter**". Additionally, the output window will scroll to match the current position in the source code.
 You can do the same by double clicking into the input window.
 
-### Substitution
+## Substitution
 
 Calcpad can substitute the values of variables in all formulas in the output, just before the answer:
 
@@ -42,7 +42,7 @@ If an equation gets too long and does not fit on a single line, you can choose t
   #split - the equation is split after the "=" symbol;  
   #wrap - the equation is wrapped at the end of the line (default).
 
-### Rounding
+## Rounding
 
 Rounding is specified by the number of digits *n* after the decimal point.
 It is entered into the "**Rounding**" input box at the bottom of the program window.
@@ -77,7 +77,7 @@ This is because you use the rounded values instead of the actual ones.
 
 You can override the global rounding inside a worksheet by using the \#Round *n* keyword, where *n* is the number of digits after the decimal point (from "0" to "15"). To restore the global rounding, enter #Round default.
 
-### Formatting
+## Formatting
 
 Calcpad does not simply calculate formulas.
 It also builds a professionally looking report out of your source code.
@@ -123,7 +123,7 @@ You will also need the cloud version of Calcpad for that purpose.
 
 Calcpad uses for decimal separator the symbol defined in the Windows' Regional Settings.
 
-#### Custom format strings
+### Custom format strings
 
 You can specify format strings for different parts of your worksheet and even for individual output values.
 At worksheet level you can do that by following command:
@@ -250,13 +250,13 @@ Displays a digit if available or nothing.<br />
 </tbody>
 </table>
 
-### Scaling
+## Scaling
 
 You can scale up and down the text size in the output window.
 Hold the "**Ctrl**" button and rotate the mouse wheel.
 The forward rotation will scale up and the backward will scale down.
 
-### Saving the output
+## Saving the output
 
 You can save the output to an **Html** file . Unlike the input file, it cannot be modified with Calcpad.
 On the other hand, everyone will be able to view and print your calculations without Calcpad.
@@ -265,7 +265,7 @@ Html files can be opened on any computer using web browser or office program lik
 You can save the file by clicking the <img src="./media/image9.png" alt="" height="20"> button above the output box.
 Then select a file name and click "**Save**".
 
-### Printing
+## Printing
 
 You can print the output by clicking the <img src="./media/image7.png" alt="" height="20"> button.
 Normally, printing is performed after calculations.
@@ -277,14 +277,14 @@ It allows you to set the paper layout, margins, size, type, etc.
 Printing in Calcpad uses the built-in functionality of Windows and Edge.
 The above screenshots may look different on your computer, depending on the versions you use.
 
-### Copying
+## Copying
 
 You can copy the entire output at once by clicking the <img src="./media/image8.png" alt="" height="20"> button above the output window.
 Then, you can paste it in any other program.
 If the target program supports Html, like Word, the formatting will be preserved.
 Otherwise, the content will be pasted as plain text.
 
-### Export to Word
+## Export to Word
 
 You can open the results directly with **MS Word** by clicking <img src="./media/image11.png" alt="" height="20">. It must be installed on the computer, but it is not necessary to be preliminary open.
 This approach is easier than copy-paste and provides some additional benefits.
@@ -299,7 +299,7 @@ Images, tables and most common tags are supported.
 If you have selected inline equation formatting, Calcpad will use an **Html** file for the export.
 It will preserve most of the formatting, but formulas will be part of the document text.
 
-### Export to PDF
+## Export to PDF
 
 A good alternative to **Html** is to save the report as **pdf** file.
 It is another way to make a hard copy of your calculations.

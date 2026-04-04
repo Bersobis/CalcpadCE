@@ -1,4 +1,4 @@
-﻿## Expressions
+﻿# Expressions
 
 The main purpose of Calcpad is to perform calculations.
 That is why, everything inside the input window is assumed to be mathematical expressions, unless it is enclosed in quotes.
@@ -42,9 +42,9 @@ Below, you can see a sample program for solving a quadratic equation:
 
 <img src="./media/image19.png" style="width:6.69375in;height:2.89236in" alt="Sample1" />
 
-### Constants
+## Constants
 
-#### Real
+### Real
 
 Real constants can be positive and negative integer and decimal numbers.
 They can include digits "**0**" - "**9**" and decimal point "**.**". You can also enter numbers as fractions like "**3/4**". However, the program will treat them as expressions (division of two numbers). You cannot define numbers in floating point format: "**3.4e+6**". You have to use an expression like "**3.4\*10^6**" instead.
@@ -52,14 +52,14 @@ They can include digits "**0**" - "**9**" and decimal point "**.**". You can als
 All constants and variables are internally stored as "double-precision floating point" numbers.
 Their values are ranged from **-1.7976931348623157E+308** to **1.7976931348623157E+308**. If a result is out of the above interval, the program returns "-∞" or "+∞, respectively". Division by zero gives the same result, but "**0/0**" = "Undefined". The smallest positive number is **4.94065645841247E-324**. Smaller values are rounded exactly to 0.
 
-#### Complex
+### Complex
 
 If you select "**Complex**" mode, you can use complex numbers in calculations.
 Otherwise, only real arithmetic is applied.
 Each complex number is represented by the ordered couple (**a**; **b**), where "**a**" is real number, and "**b** = \|**b**\|·***i***" is called "imaginary". It can be written in so called algebraic form: ±**a** ± **b*i*** (e.g. "2 + 3*i*"). You can also use other forms, such as polar or exponential form, by entering the respective expressions.
 In Calcpad, the imaginary unit can be entered either as "*i*" or as "1*i*" in case you have a variable named "*i*". It is a special number that satisfies the expression *i*2 = -1.
 
-##### Custom
+#### Custom
 
 You can declare any variable or function as constant (readonly) by adding "#const" before its definition.
 For example:
@@ -70,7 +70,7 @@ For example:
 
 After that, any attempt to assign a new value to the variable or new expression to the function throws an error message.
 
-### Variables
+## Variables
 
 A variable is defined by its name and value using expressions like "*a* = 4". The "**=**" symbol is the assignment operator.
 On the left side, only a single variable name is allowed.
@@ -85,7 +85,7 @@ For example, "*a*" and "*A*" are different variables.
 A name must start with a letter or ∡. superscripts: " **⁰** " - " **⁹** ", " **ⁿ** ", " **⁺** ", " **⁻** ", subscripts: subscripts: " **₀ **" - " **₉ **", " **₊** ", " **₋** ", " **₌** ", " **₍** ", " **₎** " ; and other symbols: " **′** ", " **″** ", " **‴** ", " **⁗** ", " **ø** ", "**Ø**", " **°** ", "**∡**". The first occurrence of an underscore in a name starts a subscript.
 For example, "a_1_1" will be formatted as "*a*1_1". Variables can store either real or complex numbers (in "Complex" mode).
 
-### Operators
+## Operators
 
 The following operators are supported by the Calcpad language:
 
@@ -139,14 +139,14 @@ The following operators are supported by the Calcpad language:
 >
 > "**←**" - assignment to an outer level or global variable in block (\<\*).
 
-#### Operator shortcuts
+### Operator shortcuts
 
 Instead of "≡", "≠", "≤"- and "≥", you can use the respective C-style equivalent operators, as follows: "==", "!=", "\<=" and "\>=". They will be automatically replaced by the corresponding Calcpad operators.
 The shortcut “%%” will be converted to the modulo operator “⦼”. This is necessary because “%” is reserved for the percent units.
 Since this symbol is not very common, it is rendered as “mod” in the output, e.g. “7 mod 5 = 2”, instead of “7 ⦼ 5 = 2”.  in a similar way, double slash "//" is a shortcut for division bar "÷" operator.
 Boolean operators also have shortcuts for easier typing: "&&" for "∧" (AND), "\|\|" for "∨" (OR) and "^^" for "⊕" (XOR).
 
-#### Operator precedence and associativity
+### Operator precedence and associativity
 
 The above operators are listed in the order of their precedence.
 This is the order they will be evaluated in an expression.
@@ -163,14 +163,14 @@ It is performed from right to left, which means that *x*^*a*^*b* will be evaluat
 However, many hand calculators and spreadsheet software like Excel use left associativity for exponentiation.
 In this case *x*^*a*^*b* will be evaluated as *x*a·b. If you need to have *x*ab, you will have to add brackets: *x*^(*a*^*b*).
 
-#### Relational expressions
+### Relational expressions
 
 Relational operators can return only two values: "**1**" for "**true**" and "**0**" for "**false**". You can use them in expressions along with arithmetic operators.
 For example, you can get the greater of two numbers *a* and *b* by the expression: "*a*\*(*a* ≥ *b*) + *b*\*(*a* \< *b*)". But you need to be careful.
 If you use "≤" instead of "**\<**", for the case of *a* equal to *b*, you will get *a* + *b*, which may be not exactly what you want.
 For that special purpose, it is better to use the built-in function **max**(*a*; *b*), logical operators or conditional execution (look further in this manual). Arithmetic operators are of higher precedence than relational, and both are evaluated before logical ones.
 
-#### Logical expressions
+### Logical expressions
 
 Calcpad operates only with numerical data and does not have special types for boolean data.
 Like relational ones, logical operators also use "**1**" for "**true**" and "**0**" for "**false**". Any input value, different than 0, is also assumed to be "**true**". You can build logical expressions by using logical operators and/or logical functions (see further in this manual). They work as follows:
@@ -300,7 +300,7 @@ The results from the above operators are presented in the following tables:
 </tbody>
 </table>
 
-#### Complex arithmetic
+### Complex arithmetic
 
 All operators support complex numbers except for factorial "**!**", integer division "**\\**", remainder "⦼" and comparison: "**\<**", "**≤**", "**\>**", "**≥**". The evaluation of a complex expression is a little bit more difficult than real.
 The rules for the basic complex operations are given below:
@@ -313,7 +313,7 @@ The rules for the basic complex operations are given below:
 
 - Division: (a + b*i*)/(c + d*i*) = (ac + bd)/(c2 + d2) + (bc − ad)/(c2 + d2)*i*;
 
-### Brackets
+## Brackets
 
 Brackets are used in two cases: to change the order of calculations and to enclose arguments of functions.
 Only round brackets are allowed: "**(**" and "**)**". The software checks if the following rules are satisfied for each expression:
@@ -342,9 +342,9 @@ For example:
 
 - Brackets are required almost every time we have to substitute complex variables: *a*·*b* = (2 + 3*i*)·(3 - 2*i*) = 12 + 5*i*.
 
-### Functions
+## Functions
 
-#### Library (built-in) functions
+### Library (built-in) functions
 
 Calcpad includes a library with common math functions, ready to use:
 
@@ -905,7 +905,7 @@ Some examples for rounding of negative and positive numbers are provided in the 
 
 Rounding of complex numbers affects both real and imaginary parts.
 
-#### Custom (user defined) functions
+### Custom (user defined) functions
 
 You can define your own functions and use them further in the calculations.
 Custom functions can have unlimited number of parameters.
@@ -938,7 +938,7 @@ For example:
 
 User defined functions support both real and complex numbers.
 
-### Plotting
+## Plotting
 
 Besides functions, Calcpad provides special commands for advanced operations.
 They accept functions and expressions as arguments and perform plotting, iterative solutions and numerical methods.
@@ -1074,13 +1074,13 @@ $Map{<strong>f</strong>(<em>x</em>; <em>y</em>) @ <em>x</em> = -15:15 &amp; <em>
 </tbody>
 </table>
 
-### Numerical methods
+## Numerical methods
 
 Calcpad has a built in "**Solver**" module, which can solve more difficult problems using numerical methods.
 It can work only with real numbers but not complex.
 It includes the following functions:
 
-#### Root finding
+### Root finding
 
 > \$Root{**f**(*x*) = const @ *x* = *a* : *b*}  
 > \$Root{**f**(*x*) @ *x* = *a* : *b*}
@@ -1102,7 +1102,7 @@ Then, you can see the approximate location of roots and divide the interval into
 Finally, you can call the function several times to find all the roots.
 In some cases, it is possible to develop an automated procedure for interval splitting.
 
-#### Minimum
+### Minimum
 
 \$Inf{**f**(*x*) @ *x* = *a* : *b*}
 
@@ -1113,14 +1113,14 @@ In such cases, it is better to split the interval.
 The value of *x* where the minimum is found is stored into a variable *x*inf.
 If you use different name for the argument, instead of *x*, it will add "\_inf" at the end of that name.
 
-#### Maximum
+### Maximum
 
 \$Sup{**f**(*x*) @ *x* = *a* : *b*}
 
 It works like the minimum finding function, but it finds the greatest value instead.
 The value of *x* where the maximum is located is stored in a variable named *x*sup.
 
-#### Numerical integration
+### Numerical integration
 
 \$Area{**f**(*x*) @ *x* = *a* : *b*}
 
@@ -1137,7 +1137,7 @@ Then, you have two options:
 
 2.  If you are not sure where the discontinuities are, use the \$Area method instead.
 
-#### Numerical differentiation
+### Numerical differentiation
 
 <span id="_Toc198414454" class="anchor"></span>It finds the value of the first derivative of a real function f(*x*) at the specified point *x* = *a*. The geometric representation of derivative is the slope of the tangent to the function at point *a*. There are two methods that you can use in Calcpad for that purpose:
 
@@ -1151,7 +1151,7 @@ Although Richardson extrapolation can improve this significantly, the accuracy f
 Unlike \$Slope, it cannot contain other numerical methods and should be defined only by analytic expressions.
 This limits the applicability of this method but, when possible, you can use it instead of \$Slope to achieve higher accuracy, if needed.
 
-#### General considerations
+### General considerations
 
 Unlike the plotting command, you can include numerical methods in expressions.
 They return values which can be used for further calculations.
@@ -1161,12 +1161,12 @@ For example, you can store the result into a variable:
 
 Similarly to standard functions, "*x*" is local for all numerical methods and its global value is not modified after the method is called.
 
-### Iterative procedures
+## Iterative procedures
 
 There are some other commands that allow you to calculate the result iteratively.
 Unlike numerical methods, they can work with complex numbers.
 
-#### Sum
+### Sum
 
 \$Sum{**f**(*k*) @ *k* = *a* : *b*}
 
@@ -1187,7 +1187,7 @@ As an example, we can take a straight line within the interval (0; 2\**l*), with
 
 <img src="./media/image26.png" style="width:4.33057in;height:2.80665in" alt="Fourier" />
 
-#### Product
+### Product
 
 \$Product{**f**(*k*) @ *k* = *a* : *b*}
 
@@ -1202,7 +1202,7 @@ You can use it further to calculate binomial coefficients by the well-known form
 
 Also, the latter will not overflow together with the factorials for greater values of *n*.
 
-#### Repeat
+### Repeat
 
 \$Repeat{**f**(*k*) @ *k* = *a* : *b*}
 
@@ -1224,7 +1224,7 @@ Then you can plot the result:
 
 <img src="./media/image27.png" style="width:4.81217in;height:4.37051in" alt="Mandelbrot" />
 
-#### Expression blocks
+### Expression blocks
 
 An expression block encloses a list of expressions, divided by semicolons.
 All expressions can assign to local variables.
@@ -1288,7 +1288,7 @@ For that purpose, you have to use a special operator "**←**". Unlike "**=**", 
 Instead, it searches for the innermost existing variable in the current or outer scopes and updates its value.
 If the variable does not exist, an error is reported.
 
-### Units
+## Units
 
 Calcpad provides comprehensive support for physical units of measurement.
 The current version supports metric (SI and compatible), US and Imperial units.
@@ -1365,7 +1365,7 @@ What distance you will travel for <em>t</em>2 = 5 <em>s</em>?<br />
 </tbody>
 </table>
 
-#### Predefined units
+### Predefined units
 
 Calcpad includes a large collection of predefined units as follows:
 
@@ -1481,7 +1481,7 @@ Literals that follow numbers immediately are parsed as units, e.g. "2 m". Stan
 Otherwise, it is parsed as a variable, even if a unit with the same name exists.
 If you put a dot before the literal, you will force it to be parsed as a unit, even if a variable with the same name exists, e.g. ".N\*.m".
 
-#### Custom units
+### Custom units
 
 You can define your own "custom" units and use them like any others in your code.
 Defining a unit is similar to defining a variable, but the name must be prefixed with a dot ".":
@@ -1501,9 +1501,9 @@ Custom dimensionless units exist in a special (ninth) non-physical dimension.
 That is how they do not cancel or convert to other dimensionless units, like percents or angles, when mixed.
 However, if you have two types of dimensionless units in a single file, they will exist in the same dimension, so you should avoid mixing them.
 
-### Vectors
+## Vectors
 
-#### Internal implementation and types of vectors
+### Internal implementation and types of vectors
 
 There are two types of vectors in Calcpad: regular (small) and large.
 Vectors can contain only real numbers with units.
@@ -1529,7 +1529,7 @@ Such vectors are very common in engineering as is the load vector in finite elem
 However, Calcpad reserves a little bit more memory above the size, that is called "capacity". This is because resizing a vector is computationally expensive.
 Since we normally assign elements in a loop, in this way we avoid resizing the vector on each iteration.
 
-#### Definition
+### Definition
 
 Vectors can be defined by using the following syntax:
 
@@ -1558,7 +1558,7 @@ Besides square brackets, you can also define vectors by using creational functio
   **fill**(*a*; 5)' = \[5 5 5 5 5\] - fills the vector with a value of 5;  
   *a* = **range**(0; 10; 2)' = \[0 2 4 6 8 10\] - creates a vector from a range of values starting from 0 to 10 with step 2.
 
-#### Indexing
+### Indexing
 
 You can access individual elements of a vector for reading and writing by using indexes.
 You have to specify the vector name, followed by a dot "." and the index after that.
@@ -1589,7 +1589,7 @@ The above code will produce the following two vectors:
 > $\vec{a}$ = \[1 4 9 16 25 36\] and  
 > $\vec{b}$ = \[0 1 4 9 16 25\].
 
-#### Structural functions
+### Structural functions
 
 This includes all functions that read or modify the structure of the vector.
 It means that the result does not depend on the content, i.e. the values of elements.
@@ -1686,7 +1686,7 @@ length of vector $\vec{a}$, an "Index out of range" error is returned.
     *Example*: *a* = \[0; 1; 2; 3; 4; 5; 6\]  
 **extract**(a; \[2; 4; 6\])' = \[1 3 5\]
 
-#### Data functions
+### Data functions
 
 This kind of functions treat the vector contents as numerical data.
 They are related mainly to sorting, ordering, searching and counting.
@@ -1792,7 +1792,7 @@ The possible suffixes are given in the table below:
 | \_gt | **find_gt**($\vec{a}$; *x*; *i*) | **lookup_gt**($\vec{a}$; $\vec{b}$; *x*) | \> - greater than |
 | \_ge | **find_ge**($\vec{a}$; *x*; *i*) | **lookup_ge**($\vec{a}$; $\vec{b}$; *x*) | ≥ - greater than or equal |
 
-#### Math functions
+### Math functions
 
 All standard scalar math functions accept vector arguments as well.
 The function is applied separately to each of the elements in the input vector and the results are returned in a corresponding output vector.
@@ -1863,7 +1863,7 @@ Calcpad also includes several math functions that are specific for vectors:
 *b* = \[5; 3; 1\]  
 **cross**(*a*; *b*)' = \[-10 19 -7\]
 
-#### Aggregate and interpolation functions
+### Aggregate and interpolation functions
 
 All aggregate functions can work with vectors.
 Since they are multivariate, each of them can accept a single vector, but also a list of scalars, vectors and matrices, mixed in arbitrary order.
@@ -1890,7 +1890,7 @@ Like aggregate functions, interpolation functions also accept mixed lists of arg
 The returned value is actually the third element in vector $\vec{b}$, but it has an index 7 in the final sequence.
 A full list of the available aggregate and interpolation functions is provided earlier in this manual (see "Expressions/Functions" above).
 
-#### Operators
+### Operators
 
 All operators can work with vector operands.
 Operations are performed element-by-element and the results are returned in an output vector.
@@ -1905,9 +1905,9 @@ For example:
 
   \[2; 4; 5\]\*2' = \[4 8 10\]
 
-### Matrices
+## Matrices
 
-#### Internal implementation and types of matrices
+### Internal implementation and types of matrices
 
 Calcpad includes different types of matrices: general (rectangular) and special (column, symmetric, diagonal.
 upper/lower triangular). Internally, each type is implemented in a different way that benefits from the specific structure for better efficiency.
@@ -1935,7 +1935,7 @@ The indexing operator for each type is internally redefined in order to return d
 If we try to write a non-zero value outside the matrix structure, we will get an "Index out of range" error.
 For example, you cannot assign a non-zero value to an element outside the main diagonal of a diagonal type of matrix.
 
-#### Definition
+### Definition
 
 Similar to vectors, you can define matrices by using the "square brackets" syntax, but the rows must be separated by vertical bars " \| ", as follows:
 
@@ -1976,7 +1976,7 @@ The following function generates a 4×4 Vandermonde matrix from a vector contain
 1 & 4 & 16 & 64 & 256
 \end{bmatrix}`$
 
-#### Indexing
+### Indexing
 
 You can use indexing to access individual matrix elements for reading and writing their values.
 Similar to vectors, this is performed by the dot operator, but you have to specify two indexes, as follows:
@@ -2020,7 +2020,7 @@ The inline equivalent of the above loop is the following:
 
   \$Repeat{\$Repeat{*A*.(*i*; *j*) = *x*.*i*^(*j* - 1) @ *j* = 1 : **n_cols**(*A*)} @ *i* = 1 : **n_rows**(*A*)}
 
-#### Creational functions
+### Creational functions
 
 The "square brackets" syntax is very powerful and flexible for creating small matrices with predefined sizes.
 However, it also has a lot of limitations.
@@ -2215,7 +2215,7 @@ If the arguments contain vectors, they are treated as columns.
 11 & 0 & 0
 \end{bmatrix}`$
 
-#### Structural functions
+### Structural functions
 
 Structural functions are related only to the matrix structure.
 Unlike data and math functions, the result does not depend much on the values of the elements.
@@ -2484,7 +2484,7 @@ The result is always a general (rectangular) type of matrix, even if the source 
 10 & 11 & 12
 \end{bmatrix}`$
 
-#### Data functions
+### Data functions
 
 Data functions are not related to the structure of matrices but to the values of the elements.
 The following functions are available for use:
@@ -2704,7 +2704,7 @@ The possible suffixes are given in the table below:
 | \_gt | **mfind_gt**(*M*; *x*) | **hlookup_gt**(*M*; *x*; *i*1; *i*2) | **vlookup_gt**(*M*; *x*; *i*1; *i*2) | \> - greater than |
 | \_ge | **mfind_ge**(*M*; *x*) | **hlookup_ge**(*M*; *x*; *i*1; *i*2) | **vlookup_ge**(*M*; *x*; *i*1; *i*2) | ≥ - greater than or equal |
 
-#### Math functions
+### Math functions
 
 All standard scalar math functions accept matrix arguments as well.
 The function is applied separately to all the elements in the input matrix, even if it is of a special type.
@@ -3456,7 +3456,7 @@ Similar to the input, the real part of the output is stored in the first row and
 > 0 & 0 & 0 & 0
 > \end{bmatrix}`$
 
-#### Aggregate and interpolation functions
+### Aggregate and interpolation functions
 
 All aggregate functions can work with matrices.
 Since they are multivariate, each of them can accept a single matrix, but also a list of scalars, vectors and matrices, mixed in arbitrary order.
@@ -3518,7 +3518,7 @@ You can use interpolation functions to plot matrix data, as in the example below
 
 A full list of the available aggregate and interpolation functions is provided earlier in this manual (see "Expressions/Functions" above).
 
-#### Operators
+### Operators
 
 All operators can be used with matrix operands.
 Both matrices must be of the same sizes.
@@ -3581,7 +3581,7 @@ For example:
 15 & 20
 \end{bmatrix}`$
 
-### High performance vectors and matrices
+## High performance vectors and matrices
 
 High performance (hp) vectors and matrices were introduced in Calcpad version 7.3.0 with the purpose of solving larger engineering problems faster and with less memory consumption.
 But this comes with a trade-off: all elements of an hp vector or matrix must have the same units.
@@ -3633,11 +3633,11 @@ Any expression that contains only hp vectors/arrays will return also an hp type.
 If the expression contains only standard vectors/arrays or mixed standard and hp, it will return a standard type.
 To check if the type of *x* is a high-performance (hp) vector or matrix you can use the function **ishp**(*x*).
 
-#### High performance symmetric solvers
+### High performance symmetric solvers
 
 Calcpad also includes advanced solvers for two of the most common matrix problems – solution of linear systems of equations and finding the eigenvalues and eigenvector of a matrix:
 
-##### PCG symmetric linear solver
+#### PCG symmetric linear solver
 
 Direct methods using Cholesky and LDL<sup>T</sup> factorizations are suitable for small to medium sized matrices.
 For larger matrices, the computational cost and solution time get too high for practical use because the asymptotic complexity of factorization is *O*(*n*<sup>3</sup>). In such cases, iterative solution methods are preferred.
@@ -3660,7 +3660,7 @@ In Calcpad, it is specified by setting the variable *Tol*. Its default value is 
 If the required precision is not reached for under 1000 iterations, no convergence is assumed, so the solution is stopped with an error message.
 Preconditioning can often improve convergence by reducing the condition number *k*. In Calcpad, a simple Jacoby preconditioner is used for that purpose.
 
-##### Symmetric Lanczos eigensolver
+#### Symmetric Lanczos eigensolver
 
 Similarly to the system of equations, the direct QL algorithm with implicit shifts we use for finding the eigenvalues and eigenvectors of matrices has a complexity of *O*(*n*<sup>3</sup>) which makes it suitable for small to medium sized problems.
 In addition, it always finds all eigenvalues and eigenvectors, which is not required in most cases.

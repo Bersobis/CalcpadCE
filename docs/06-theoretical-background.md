@@ -1,4 +1,4 @@
-﻿## Theoretical background
+﻿# Theoretical background
 
 *(you can skip this if you find it boring)*
 

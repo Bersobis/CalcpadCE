@@ -1,6 +1,6 @@
-﻿## Programming
+﻿# Programming
 
-### Input Forms
+## Input Forms
 
 If you have a long and complicated problem or you want to share your solution with others, it is a good idea to create an input form.
 It is very easy to do that with Calcpad.
@@ -53,7 +53,7 @@ You can put question marks "**?**" not only in variable definitions, but at any 
 Then, you can enter a value and calculate the result.
 This approach is not recommended for complicated problems, because the program logic gets unclear and difficult to understand.
 
-#### Advanced UI with Html and CSS
+### Advanced UI with Html and CSS
 
 Besides simple input boxes, you can use some advanced UI elements like "**select**" (combo box), "**radio**" buttons and "**checkboxes**" in your worksheets.
 Since all the output from Calcpad is rendered as an Html document, you can use Html and CSS for that purpose.
@@ -137,7 +137,7 @@ As you can see from the first example, one "value" attribute can contain multipl
 You can copy the above code, add as many options as you like and write your own labels and values.
 You can also change names and ids, but make sure that all source names match exactly the target ids, and no duplicate ids exist.
 
-### Output control
+## Output control
 
 You can easily specify which parts of the code should be visible or hidden in the output.
 Unlike conditional execution, the hidden code is always calculated.
@@ -167,7 +167,7 @@ You can also modify the display of the equations as follows:
 Each of the above keywords overrides the other.
 You can use \#Val to create a table with values, but without the formulas, like in Excel.
 
-### Conditional execution
+## Conditional execution
 
 Sometimes the solution has to continue in different ways, depending on some intermediate values.
 Such feature is included in Calcpad, similarly to other programming languages.
@@ -230,7 +230,7 @@ We can do this, using conditional execution, as follows:
 
 <img src="./media/image37.png" style="width:6.3986in;height:2.48934in" alt="Sample2" />
 
-### Iteration blocks
+## Iteration blocks
 
 You can have simple iterations inside a Calcpad program.
 For that purpose, you have to define a "**repeat-loop**" block:
@@ -284,7 +284,7 @@ Since version VM 7.0, two new iteration blocks were added: "for-loop" and "while
 >
 > \#Loop
 
-### Interactive (step-by-step) execution
+## Interactive (step-by-step) execution
 
 You can make a Calcpad worksheet to execute interactively (step-by-step) by defining "breakpoints" at certain lines.
 It will allow the user to review the intermediate results and enter some additional input data if needed.
@@ -311,7 +311,7 @@ The execution will pause at the current line as if \#Pause is detected.
 
 <span id="TOC_606" class="anchor"></span>
 
-### Modules (include)
+## Modules (include)
 
 Calcpad allows you to include content from external files in your worksheet.
 If you have pieces of code that is repeated in different worksheets, you can organize it in modules and reuse it multiple times.
@@ -330,7 +330,7 @@ To end a "local" section (or start a "global" one), add a new line with the \#gl
 Calcpad supports multiple levels of inclusions.
 That means that the included file, in its turn, can reference other files and so on.
 
-### Macros and string variables
+## Macros and string variables
 
 Macros and string variables are convenient ways to organize your code inside a single file and prevent repetitions.
 They can be inline or multiline.
@@ -378,7 +378,7 @@ If errors are detected at this stage, they are displayed in the output.
 Line numbers in error descriptions refer to the unwrapped code.
 You can go to the respective line by clicking the link on the line number.
 
-### Import/export of external data
+## Import/export of external data
 
 You can import and export numerical data from/to text, CSV and Excel files.
 Inside Calcpad, data should be stored in a matrix/vector variable.
@@ -386,7 +386,7 @@ You can also read and write partial data by specifying the desired range.
 Structured storage of special matrices is supported for saving space.
 The following commands are available:
 
-#### Text/CSV files
+### Text/CSV files
 
 > \#read *M* from *filename.txt*@R1C1:R2C2 TYPE=**R** SEP=',' - reads data from the specified text/CSV file into the matrix/vector *M*. The file must exist;
 >
@@ -1289,7 +1289,7 @@ The minimum allowed syntax for the above commands if all optional keywords are s
 
 > “#read *M* from *filename.txt*” or “#write *M* to *filename.txt*” or “#append *M* to *filename.txt*”.
 
-#### Excel files
+### Excel files
 
 > \#read *M* from *filename.xlsx*@Sheet1!A1:B2 TYPE=**R** - reads the data from the specified Excel file into the matrix/vector *M*. The file must exist as well as the specified worksheet;
 >

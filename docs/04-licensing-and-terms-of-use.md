@@ -1,4 +1,4 @@
-﻿## Licensing and terms of use
+﻿# Licensing and terms of use
 
 This software is free for both commercial and non-commercial use.
 It is distributed under the MIT license:
@@ -19,7 +19,7 @@ or in our SourceForge repository: <https://sourceforge.net/p/calyx/code/ci/maste
 Any scripts, developed with Calcpad are property of the respective authors.
 They can be used without additional limitations except those appointed by the authors themselves.
 
-#### Acknowledgments
+### Acknowledgments
 
 This project uses some additional third-party components, software and design.
 They are re-distributed free of charge, under the license conditions, provided by the respective authors.

@@ -1,4 +1,4 @@
-﻿## Writing code
+﻿# Writing code
 
 Enter the code into the "**Code**" input window.
 Spacing and indent are maintained automatically.
@@ -15,7 +15,7 @@ For example, comments are colored green, and errors are colored red.
 All comments must be enclosed by quotes.
 They can include both plain text and **Html**. You can use Html to add pictures, tables and format the report.
 
-#### Numeric Keypad
+### Numeric Keypad
 
 <img src="./media/image12.png" style="width:5.96875in;height:1.85417in" alt="Keyboard" />
 
@@ -31,7 +31,7 @@ The "**C**" button deletes the previous symbol and "**AC**" deletes a whole line
 If you double click this button, you will clear the whole text.
 If you have done this accidentally, you can use **Undo** <img src="./media/image14.png" alt="Undo" height="20"> to restore.
 
-#### Moving inside the text
+### Moving inside the text
 
 Writing and editing text in Calcpad is not much different than any other Windows program.
 If you have some experience in that, you can skip this and go straight to "**Expressions**".
@@ -42,7 +42,7 @@ Arrows will move the cursor one symbol left or right and one line up or down.
 If you hold the "**Ctrl**" key and press an arrow, the cursor will move with a whole word. "**Home**" and "**End**" keys will send you to the beginning or the end of the current line, respectively.
 If you hold "**Ctrl**" beforehand, you will go to the beginning or the end of the entire text.
 
-#### Selecting text
+### Selecting text
 
 Most editing commands require you to select some text to which the command will be applied.
 The selected text is usually displayed with blue background (it may look different depending on your system settings). You can select text with the mouse as follows: Press the left mouse button at the start position of the text to be selected.
@@ -52,14 +52,14 @@ Alternatively, you can click at the start, press **Shift** and then click at the
 You can also use the computer keyboard.
 Hold **Shift** and press arrows or "**Home**", "**End**", "**Page Up**", "**Page Down**".
 
-#### Deleting text
+### Deleting text
 
 You can delete a single symbol by pressing the "**Delete**" ("Del") or "**Backspace**" ("Bkspc") keys.
 The difference is that "Delete" removes the symbol after the cursor, and "Backspace" - before the cursor.
 If you hold "**Ctrl**" beforehand, you can delete whole words instead of separate symbols.
 If you need to delete a larger part of the text, you can select it and press either "Delete" or "Backspace" after that.
 
-#### Copy
+### Copy
 
 If some part of the text is repeated, you can copy it instead of typing it again.
 That requires two steps: "Copy" and "Paste". At the first step (Copy), the selected text is sent to memory called **Clipboard**. At the second step (Paste), the text is inserted at the new places.
@@ -67,27 +67,27 @@ Once copied, you can paste the text at multiple places.
 
 You can copy the selected text to the Clipboard by pressing "**Ctrl+C**" or by clicking the <img src="./media/image8.png" alt="" height="20"> button.
 
-#### Paste
+### Paste
 
 Before you paste a text from the Clipboard you have to position the cursor at the required place.
 Then press "**Ctrl+V**" or the <img src="./media/image15.png" alt="" height="20"> button.
 You can copy text from Calcpad and paste it to other programs and vice versa.
 For example, you can take some formulas from Word, calculate them in Calcpad and return the results back to Word.
 
-#### Undo
+### Undo
 
 This command undoes the result from the last editing command and restores the previous state.
 You can undo up to 10 steps back.
 Just press "**Ctrl+Z**" or click the <img src="./media/image14.png" alt="Undo" height="20"> button.
 
-#### Redo
+### Redo
 
 "Redo" performs in the opposite way to "Undo". It restores a command that has been undone.
 Redo must follow immediately the last Undo.
 If you enter or edit some text meanwhile, you will lose the ability to redo.
 Click the <img src="./media/image16.png" alt="" height="20"> button to redo.
 
-#### Find
+### Find
 
 You can search for a certain text inside the code and replace it with another, if needed.
 Select the "**Edit/Find**" menu, click the <img src="./media/image17.png" alt="" height="20"> button or press "**Ctrl+F**". The "**Find And Replace**" dialog will appear.
@@ -118,9 +118,9 @@ By default, the case is neglected.
 
 - **Whole words**: If selected, the program will search only for sequences that represent whole words.
 
-### Coding aids
+## Coding aids
 
-#### Syntax highlighting
+### Syntax highlighting
 
 Syntax highlighting applies different colors to different components of the programming language: functions, variables, operators, etc.
 It runs automatically in the background, each time you edit and leave the current line.
@@ -129,14 +129,14 @@ The program makes difference between defined and undefined variables and functio
 The color palette is predefined and cannot be changed.
 Currently, Calcpad does not support custom styles and themes.
 
-#### Auto-indentation
+### Auto-indentation
 
 The indentation of the separate lines in the code is maintained automatically by the program.
 All lines that are inside conditional and loop blocks are indented accordingly.
 Additionally, you can add spaces at the beginning of each line.
 Although spacing is also handled automatically, the leading spaces are not affected.
 
-#### Auto-complete
+### Auto-complete
 
 When you start typing, the program displays a drop-down list with suggestions that match what you have just typed.
 It contains keywords, units of measurement, built-in function and all custom variables and functions that are defined above the current line.
@@ -147,13 +147,13 @@ Click on the list to insert some of the other suggestions.
 Alternatively, you can press "**Down Arrow**" to browse the available suggestions and "**Enter**" to insert the selected one.
 If the list is above the current line, press "**Up Arrow**" instead.
 
-#### Bracket matching
+### Bracket matching
 
 The program can find the matching opening and closing brackets.
 If you position the cursor next or before one of them, both brackets are highlighted.
 If there is no corresponding bracket, nothing is highlighted.
 
-#### Greek letters
+### Greek letters
 
 You can insert Greek letters by clicking the respective symbol below the code editor.
 Alternatively, type the Latin equivalent from the table below and press "**Ctrl+G**". If you press it again, you will convert the letter back from Greek to Latin.
@@ -189,7 +189,7 @@ Since "j"/"J" and "V" remain unused, they are mapped to "ø"/"Ø" and "∡", res
 | omega     | ω     | w     | Ω     | W     |
 | phi-diam  | ø     | j     | Ø     | J     |
 
-#### Using Notepad++
+### Using Notepad++
 
 **Notepad++** is a popular text/code editor.
 It is free and open source and can be downloaded from the official website [https://notepad-plus-plus.org](https://notepad-plus-plus.org/). It supports many programming or scripting languages.

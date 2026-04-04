@@ -1,14 +1,14 @@
-﻿## Reporting
+﻿# Reporting
 
 All calculations are automatically collected into a professionally formatted calculation report.
 You can print it or open it with MS Word for editing.
 Besides math expressions, you can add headings, comments, tables and images.
 
-### Headings
+## Headings
 
 A heading is a text, enclosed in double quotes (**"**). It is bold and larger than the main text.
 
-### Text/comments
+## Text/comments
 
 Comments are enclosed in single quotes (**'**). You can skip the closing quote, if it is the last symbol in the line.
 Headings and comments can contain any symbols without restrictions.
@@ -16,7 +16,7 @@ Everything outside them is assumed to be math expressions.
 However, if you put any formulas inside comments, they will not be calculated or formatted.
 Since the final output is rendered to an Html document, you can use Html and CSS in comments to provide your calculation report with additional formatting.
 
-### Units in comments
+## Units in comments
 
 Alternatively, to native units, you can enter all values to be unitless and then put the units in the comments.
 In this case, you will have to include all unit conversion factors in the equations.
@@ -64,7 +64,7 @@ For example, you can create a conditional block for displaying the selected unit
     'The selected units are millimeters  
   #end if
 
-### Formatting with Html and CSS
+## Formatting with Html and CSS
 
 Calcpad can be used as a development platform for professional engineering programs.
 If you are not going to do that, you can skip this chapter.
@@ -174,7 +174,7 @@ You can learn more about Html and CSS from the following links:
 
 You can also use some of the many free WYSIWYG Html editors available on the Internet.
 
-#### Predefined classes
+### Predefined classes
 
 Some formatting that is commonly used in engineering design worksheets is predefined as CSS classes and can be inserted by simply assigning the respective class to Html elements.
 
@@ -200,7 +200,7 @@ Some formatting that is commonly used in engineering design worksheets is predef
 
 > '\<table class="data"\>'...\</table\>'
 
-#### Content folding
+### Content folding
 
 If you have some long and detailed calculations, you can fold them optionally in the output.
 They will be hidden by default, except for the first line, which can be used for the section heading.
@@ -217,7 +217,7 @@ The result will look as follows:
 >
 > Content to be folded
 
-#### Images
+### Images
 
 Before inserting an image into Calcpad document, you need to have it already as a file.
 You can create it by some image editing software and save it to a \*.png, \*.gif or \*.jpg file.
@@ -239,7 +239,7 @@ You will be prompted to select a file.
 When you click "**Open**", the required record will be inserted at the beginning of the code.
 When you run the calculations, the picture will appear in the output window.
 
-### Formatting with Markdown
+## Formatting with Markdown
 
 [Markdown](https://www.markdownguide.org/) is a simple and lightweight markup language for text formatting.
 Unlike Html, it uses individual symbols or short sequences of symbols for tagging.
@@ -362,9 +362,9 @@ You can use the following syntax elements:
 </tbody>
 </table>
 
-### 
+## 
 
-### Formatting Toolbar
+## Formatting Toolbar
 
 The formatting toolbar is located just above the code editing box.
 It allows fast insertion of formatting markup in comments.

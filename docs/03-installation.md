@@ -1,11 +1,11 @@
-﻿## Installation
+﻿# Installation
 
-### Windows
+## Windows
 
 Installation is performed by the automated setup program [calcpad-setup-en-x64.exe](https://calcpad.eu/download/calcpad-setup-en-x64.zip). Follow the instruction of the setup wizard.
 The software requires a 64-bit computer with Windows 10/11 and [Microsoft .NET Desktop Runtime 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 
-### Linux
+## Linux
 
 1.  Calcpad is a .NET application, so you need .NET 10.0 to run it on Linux.
 Use the following commands to install .NET 10.0 runtime:

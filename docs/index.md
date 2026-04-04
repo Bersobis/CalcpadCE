@@ -1,4 +1,4 @@
-﻿## About Calcpad VM
+﻿# About Calcpad VM
 
 Calcpad is free and open-source software for mathematical and engineering calculations.
 It combines powerful computational algorithms with Html formatted reporting with export to Word.
