@@ -1,4 +1,4 @@
-﻿# Matrices
+# Matrices
 
 ## Internal implementation and types of matrices
 
@@ -782,7 +782,7 @@ If nothing is found, an empty vector \[\] is returned.
 *c* = **vlookup**(*A*; 1; 3; 2)' = \[4 8\]  
 *d* = **vlookup**(*A*; 2; 3; 1)' = \[\]
 
-The **find**, **hlookup** and **vlookup** functions have variations with suffixes.
+The **mfind**, **hlookup** and **vlookup** functions have variations with suffixes.
 Different suffixes refer to different comparison operators.
 They replace the equality in the original functions while the rest of the behavior remains unchanged.
 The possible suffixes are given in the table below:
