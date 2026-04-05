@@ -29,30 +29,30 @@ hooks:
 nav:
   - Home:
     - index.md
-    - Fields of Application: 02-fields-of-application.md
-    - Installation: 03-installation.md
-    - Licensing: 04-licensing-and-terms-of-use.md
-    - How It Works: 05-how-it-works.md
-    - Theoretical Background: 06-theoretical-background.md
-    - Working with Files: 12-working-with-files.md
-  - Writing Code: 07-writing-code.md
+    - Fields of Application: fields-of-application.md
+    - Installation: installation.md
+    - Licensing: licensing-and-terms-of-use.md
+    - How It Works: how-it-works.md
+    - Theoretical Background: theoretical-background.md
+    - Working with Files: working-with-files.md
+  - Writing Code: writing-code.md
   - Expressions:
-    - expressions/_index.md
-    - Constants: expressions/01-constants.md
-    - Variables: expressions/02-variables.md
-    - Operators: expressions/03-operators.md
-    - Brackets: expressions/04-brackets.md
-    - Functions: expressions/05-functions.md
-    - Plotting: expressions/06-plotting.md
-    - Numerical Methods: expressions/07-numerical-methods.md
-    - Iterative Procedures: expressions/08-iterative-procedures.md
-    - Units: expressions/09-units.md
-    - Vectors: expressions/10-vectors.md
-    - Matrices: expressions/11-matrices.md
-    - High Performance Vectors and Matrices: expressions/12-high-performance-vectors-and-matrices.md
-  - Reporting: 09-reporting.md
-  - Programming: 10-programming.md
-  - Results: 11-results.md
+    - expressions/index.md
+    - Constants: expressions/constants.md
+    - Variables: expressions/variables.md
+    - Operators: expressions/operators.md
+    - Brackets: expressions/brackets.md
+    - Functions: expressions/functions.md
+    - Plotting: expressions/plotting.md
+    - Numerical Methods: expressions/numerical-methods.md
+    - Iterative Procedures: expressions/iterative-procedures.md
+    - Units: expressions/units.md
+    - Vectors: expressions/vectors.md
+    - Matrices: expressions/matrices.md
+    - High Performance Vectors and Matrices: expressions/high-performance-vectors-and-matrices.md
+  - Reporting: reporting.md
+  - Programming: programming.md
+  - Results: results.md
 
 markdown_extensions:
   - tables
