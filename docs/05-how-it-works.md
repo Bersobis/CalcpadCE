@@ -3,12 +3,12 @@
 The software is quick and easy to use.
 Just follow these simple steps:
 
-1.  **Enter** text and formulas into the "**Code**" box on the left.
+1. **Enter** text and formulas into the "**Code**" box on the left.
 
-2.  Press **F5** or click <img src="./media/image6.png" alt="" height="20"> to calculate.
+2. Press **F5** or click <img src="./media/image6.png" alt="" height="20"> to calculate.
 Results will appear in the "**Output**" box on the right as a professionally formatted Html **report**.
 
-3.  Click <img src="./media/image7.png" alt="" height="20"> to **print** or <img src="./media/image8.png" alt="" height="20"> to **copy** the output.  
+3. Click <img src="./media/image7.png" alt="" height="20"> to **print** or <img src="./media/image8.png" alt="" height="20"> to **copy** the output.  
     You can also **export** it to **Html** <img src="./media/image9.png" alt="" height="20">, **PDF** <img src="./media/image10.png" alt="" height="20"> or **MS Word** <img src="./media/image11.png" alt="" height="20"> document.
 
 The program can be used in two different modes:
