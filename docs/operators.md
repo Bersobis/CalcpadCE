@@ -67,10 +67,8 @@ For example, "5 + 2∙3" makes "11". If the addition has to be first, write "(5 
 This is called operator associativity.
 For example, "3 - 2 + 1" makes "(3 - 2) + 1 = 2" and not "3 - (2 + 1) = 0". Another good example is "2∙3 / 2∙3", which makes "9" and not "1".
 
-All operators in Calcpad are left-associative (calculations are performed from left to right). The only exception is exponentiation, which is right-associative.
-It is performed from right to left, which means that *x*^*a*^*b* will be evaluated as $x^{a^b}$.
-However, many hand calculators and spreadsheet software like Excel use left associativity for exponentiation.
-In this case *x*^*a*^*b* will be evaluated as $x^{a·b}$.
+All operators in Calcpad are left-associative (calculations are performed from left to right). The only exception is exponentiation, which is right-associative unlike many hand calculators and spreadsheet software like Excel.
+In Calcpad, exponentiation is performed from right to left, which means that *x*^*a*^*b* will be evaluated as $x^{a^b}$.
 
 ## Relational expressions
 
