@@ -2119,7 +2119,7 @@ namespace Calcpad.Wpf
             var dlg = new OpenFileDialog
             {
                 DefaultExt = ".png",
-                Filter = "Image Files (*.bmp, *.png, *.gif, *.jpeg *.jpg)|*.bmp; *.png; *.gif; *.jpeg; *.jpg",
+                Filter = "Image Files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.svg)|*.bmp; *.gif; *.jpeg; *.jpg; *.png; *.svg",
                 CheckFileExists = true,
                 Multiselect = false
             };
