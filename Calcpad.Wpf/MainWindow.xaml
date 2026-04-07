@@ -360,7 +360,7 @@
                     <Separator/>
                     <MenuItem Click="Button_Click" Tag="=" Icon="  =" 
                               Header="{x:Static wpf:MathResources.Assignment}"/>
-                    <MenuItem Click="Button_Click" Tag="=" Icon="  ←" 
+                    <MenuItem Click="Button_Click" Tag="←" Icon="  ←" 
                               Header="{x:Static wpf:MainWindowResources.OuterVariableAssignment}"/>
                 </MenuItem>
                 <MenuItem Header="{x:Static wpf:MathResources.Functions}">
