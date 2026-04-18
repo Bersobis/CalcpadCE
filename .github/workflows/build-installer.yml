@@ -75,6 +75,13 @@ jobs:
       - name: Install NSIS
         run: choco install nsis -y --no-progress
 
+      - name: Install NScurl NSIS plugin
+        uses: negrutiu/nsis-install-plugin@v1
+        with:
+          github-owner: negrutiu
+          github-repo: nsis-nscurl
+          github-asset-regex: NScurl\.zip
+
       - name: Build Installer
         working-directory: Calcpad.Wpf/Installer
         shell: pwsh

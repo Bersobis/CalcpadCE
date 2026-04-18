@@ -12,6 +12,9 @@
 !define APP_URL "https://calcpad-ce.org/"
 !define APP_EXE "Calcpad.exe"
 !define PUBLISH_DIR "..\bin\Release\net10.0-windows\win-x64\publish"
+!define DOTNET_MAJOR "10"
+!define DOTNET_URL "https://aka.ms/dotnet/${DOTNET_MAJOR}.0/windowsdesktop-runtime-win-x64.exe"
+!define DOTNET_INSTALLER "$TEMP\dotnet-windowsdesktop-runtime.exe"
 
 Name "${APP_NAME} ${APP_VERSION}"
 OutFile "Output\CalcpadCE-setup-${APP_VERSION}.exe"
@@ -59,6 +62,56 @@ ManifestDPIAware System
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
+  Call CheckAndInstallDotNet
+FunctionEnd
+
+;--------------------------------
+; .NET Runtime detection and installation
+
+Function CheckAndInstallDotNet
+  ; Check if .NET Desktop Runtime 10.x is installed by scanning the filesystem.
+  ; This works regardless of install method (standalone installer, SDK, or Visual Studio).
+  ; We verify an actual runtime DLL exists inside the version folder to avoid
+  ; false positives from empty leftover directories after uninstall.
+  FindFirst $0 $1 "$PROGRAMFILES64\dotnet\shared\Microsoft.WindowsDesktop.App\${DOTNET_MAJOR}.*"
+  dotnet_check_loop:
+    StrCmp $1 "" dotnet_not_found
+    IfFileExists "$PROGRAMFILES64\dotnet\shared\Microsoft.WindowsDesktop.App\$1\System.Windows.Forms.dll" dotnet_found_close
+    FindNext $0 $1
+    Goto dotnet_check_loop
+  dotnet_not_found:
+    FindClose $0
+    Goto dotnet_missing
+  dotnet_found_close:
+    FindClose $0
+    Goto dotnet_found
+
+dotnet_missing:
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+    ".NET Desktop Runtime ${DOTNET_MAJOR} is required but was not detected.$\n$\nDownload and install it now?" \
+    IDYES dotnet_download
+  Goto dotnet_found
+
+dotnet_download:
+  DetailPrint "Downloading .NET Desktop Runtime ${DOTNET_MAJOR}..."
+  NScurl::http GET "${DOTNET_URL}" "${DOTNET_INSTALLER}" /POPUP /CANCEL /INSIST /END
+  Pop $0
+  StrCmp $0 "OK" dotnet_install
+  MessageBox MB_OK|MB_ICONSTOP "Failed to download .NET Desktop Runtime: $0"
+  Delete "${DOTNET_INSTALLER}"
+  Abort
+
+dotnet_install:
+  DetailPrint "Installing .NET Desktop Runtime ${DOTNET_MAJOR}..."
+  ExecWait '"${DOTNET_INSTALLER}" /install /passive /norestart' $0
+  Delete "${DOTNET_INSTALLER}"
+  ; Exit code 0 = success, 3010 = success but reboot needed
+  StrCmp $0 0 dotnet_found
+  StrCmp $0 3010 dotnet_found
+  MessageBox MB_OK|MB_ICONSTOP "Failed to install .NET Desktop Runtime (exit code: $0)."
+  Abort
+
+dotnet_found:
 FunctionEnd
 
 ;--------------------------------
