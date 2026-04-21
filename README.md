@@ -91,6 +91,8 @@ Whether you want to fix a bug, add a new numerical method, or improve the docume
 To get started, please check out the repository, build the project locally, and browse our open issues.
 If you are planning a major feature, we recommend opening a Discussion first to coordinate with the maintainers.
 
+🡒 **[Contribution Guidelines](CONTRIBUTING.md)**
+
 ## 🛠️ Building the Source Code
 
 Download and install the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
