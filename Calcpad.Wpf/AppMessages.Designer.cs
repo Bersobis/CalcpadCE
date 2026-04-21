@@ -193,7 +193,7 @@ namespace Calcpad.Wpf {
         /// <summary>
         ///   Looks up a localized string similar to 
         ///
-        ///There is no unsaved data. If the problem persists, please contact proektsoft.bg@gmail.com..
+        ///There is no unsaved data. If the problem persists, please file an issue at https://github.com/imartincei/CalcpadCE/issues..
         /// </summary>
         public static string ReportUnhandledExceptionAndClose_NoUnsavedData {
             get {
@@ -215,7 +215,7 @@ namespace Calcpad.Wpf {
         /// <summary>
         ///   Looks up a localized string similar to 
         ///
-        ///There was unsaved data. Calcpad tried, but was unable to recover. If the problem persists, please contact proektsoft.bg@gmail.com..
+        ///There was unsaved data. Calcpad tried, but was unable to recover. If the problem persists, please file an issue at https://github.com/imartincei/CalcpadCE/issues..
         /// </summary>
         public static string ReportUnhandledExceptionAndClose_UnsavedData_RecoveryFailed {
             get {
