@@ -756,9 +756,9 @@ x = $Root{x^2 - 10 @ x = 0 : 5}
 ## RESOURCES
 
 - Official Site: https://calcpad.eu/
-- GitHub: https://github.com/Proektsoftbg/Calcpad
+- GitHub: https://github.com/imartincei/CalcpadCE
 - Documentation: https://calcpad.eu/help/
-- Examples: https://github.com/Proektsoftbg/Calcpad/tree/main/Examples
+- Examples: https://github.com/imartincei/CalcpadCE/tree/main/Examples
 - Blog: https://calcpad.blog/
 
 ---

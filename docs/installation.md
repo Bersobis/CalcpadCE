@@ -29,7 +29,7 @@ The software requires a 64-bit computer with Windows 10/11 and [Microsoft .NET D
     sudo snap install chromium
     ```
 
-3. Download the Calcpad setup package from the following link: <https://github.com/Proektsoftbg/Calcpad/releases/download/v7.5.9/Calcpad.7.5.9.deb>
+3. Download the Calcpad setup package from the following link: <https://github.com/imartincei/CalcpadCE/releases>
     Then, install Calcpad, using the following command:
 
     ```bash
@@ -72,7 +72,7 @@ echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sou
 sudo apt-get install sublime-text
 ```
 
-Then, goto <https://github.com/Proektsoftbg/Calcpad/tree/main/Setup/Linux/Sublime> and download the following files:
+Then, goto <https://github.com/imartincei/CalcpadCE/tree/main/Setup/Linux/Sublime> and download the following files:
 
 - calcpad.sublime-build  
 - calcpad.sublime-completions  

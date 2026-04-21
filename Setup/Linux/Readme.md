@@ -15,7 +15,7 @@ sudo apt remove dotnet*
 sudo snap install chromium
 ```
 3. Download the Calcpad setup package from the following link:
-https://github.com/Proektsoftbg/Calcpad/releases/download/v7.6.2/Calcpad.7.6.2.deb
+https://github.com/imartincei/CalcpadCE/releases
 
 Then, install Calcpad, using the following command:
 ```
@@ -34,7 +34,7 @@ calcpad
 ```
 You can use it to perform calculations in console mode:
 
-![Cli](https://github.com/Proektsoftbg/Calcpad/blob/main/Setup/Linux/Images/Cli.png)
+![Cli](Images/Cli.png)
 
 The Linux version does not include any GUI yet, but you can use some advanced code editors like Notepad++ and Sublime to write Calcpad code and Chromium to view the results.
 Instructions how to install Sublime Text on Linux are provided here:
@@ -47,7 +47,7 @@ sudo apt-get update
 echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
 sudo apt-get install sublime-text
 ```
-Then, goto https://github.com/Proektsoftbg/Calcpad/tree/main/Setup/Linux/Sublime and download the following files:
+Then, goto https://github.com/imaertincei/CalcpadCE/tree/main/Setup/Linux/Sublime and download the following files:
 
 > calcpad.sublime-build<br/>
 > calcpad.sublime-completions<br/>
@@ -65,7 +65,7 @@ chromium &
 Put them side to side. Start a new *.cpd file in Sublime Text or open an example from the /home/&lt;user&gt;/Calcpad folder.
 Press Ctrl+B to calculate. If everything is OK, the results will show in Chromium:
 
-![Sublime+Chromium](https://github.com/Proektsoftbg/Calcpad/blob/main/Setup/Linux/Images/Sublime+Chromium.png)
+![Sublime+Chromium](Images/Sublime+Chromium.png)
 
 Finally, if you want to uninstall Calcpad, type the following:
 ```

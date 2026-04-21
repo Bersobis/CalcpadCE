@@ -6,7 +6,7 @@
    - Node.js - https://nodejs.org/en/download/current
 
 2. Install VS Code extensions
-   - Calcpad - https://marketplace.visualstudio.com/items?itemName=ProektsoftEOOD.calcpad
+   - Calcpad - https://github.com/imartincei/CalcpadCE
    - Claude - https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code
 
 3. Install Claude Code in the terminal 
@@ -14,8 +14,8 @@
    `npm install -g @anthropic-ai/claude-code`
 
 4. Create a work folder for your Calcpad project and place these two files in it:
-   - https://github.com/Proektsoftbg/Calcpad/blob/main/Setup/AI/Work/CALCPAD_CLAUDE_INSTRUCTIONS.txt
-   - https://github.com/Proektsoftbg/Calcpad/blob/main/Setup/AI/Work/CALCPAD_LANGUAGE_REFERENCE_FOR_CLAUDE.md
+   - https://github.com/imartincei/CalcpadCE/blob/main/Setup/AI/Work/CALCPAD_CLAUDE_INSTRUCTIONS.txt
+   - https://github.com/imartincei/CalcpadCE/blob/main/Setup/AI/Work/CALCPAD_LANGUAGE_REFERENCE_FOR_CLAUDE.md
    - You can also copy the Examples folder from your \Documents\Calcpad\
 
 5. Start creating

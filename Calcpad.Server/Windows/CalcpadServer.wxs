@@ -184,8 +184,8 @@
     <Property Id="ARPPRODUCTICON" Value="CalcpadIcon" />
     
     <!-- Add/Remove Programs information -->
-    <Property Id="ARPHELPLINK" Value="https://github.com/Proektsoftbg/Calcpad" />
-    <Property Id="ARPURLINFOABOUT" Value="https://github.com/Proektsoftbg/Calcpad" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/imartincei/CalcpadCE" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/imartincei/CalcpadCE" />
     <Property Id="ARPCOMMENTS" Value="Mathematical calculator and plotter with expression parser and scripting language" />
     
   </Package>

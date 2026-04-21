@@ -6,7 +6,7 @@ Since version VM 7.1.0 you can access the Calcpad math engine from Python via th
 In order to use Calcpad with Python, you need to install the following prerequisites:
 1. Python for Linux: https://www.python.org/downloads/
 2. Python.NET by typing the following command in the Command Editor: ```pip install pythonnet``` 
-3. Install the latest Calcpad: https://github.com/Proektsoftbg/Calcpad/tree/main/Setup/Linux
+3. Install the latest Calcpad: https://github.com/imartincei/CalcpadCE/releases
 
 ## Classes and methods
 The available classes and methods you can use in PyCalcpad.dll and PyCalcpadWrapper.py are as follows:
