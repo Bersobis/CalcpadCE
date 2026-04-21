@@ -70,15 +70,6 @@ namespace Calcpad.Cli {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  Copyright: © 2026 by Proektsoft EOOD..
-        /// </summary>
-        internal static string Copyright_2023_By_Proektsoft_EOOD {
-            get {
-                return ResourceManager.GetString("Copyright_2023_By_Proektsoft_EOOD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enter math expressions or commands (or type HELP for further instructions).
         /// </summary>
         internal static string Enter_Math_Expressions_Or_Commands_Or_Type_HELP_For_Further_Instructions {

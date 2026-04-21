@@ -64,9 +64,6 @@
   <data name="Press_Any_Key_When_Ready" xml:space="preserve">
     <value>Press any key when ready.</value>
   </data>
-  <data name="Copyright_2023_By_Proektsoft_EOOD" xml:space="preserve">
-    <value> Copyright: © 2026 by Proektsoft EOOD.</value>
-  </data>
   <data name="Commands" xml:space="preserve">
     <value>Commands</value>
   </data>
