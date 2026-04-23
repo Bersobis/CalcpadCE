@@ -755,11 +755,10 @@ x = $Root{x^2 - 10 @ x = 0 : 5}
 
 ## RESOURCES
 
-- Official Site: https://calcpad.eu/
+- Official Site: https://calcpad-ce.org/
 - GitHub: https://github.com/imartincei/CalcpadCE
-- Documentation: https://calcpad.eu/help/
+- Documentation: https://imartincei.github.io/CalcpadCE/
 - Examples: https://github.com/imartincei/CalcpadCE/tree/main/Examples
-- Blog: https://calcpad.blog/
 
 ---
 

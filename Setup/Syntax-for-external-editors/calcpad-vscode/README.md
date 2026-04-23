@@ -74,7 +74,7 @@ The extension automatically associates with `.cpd` files. To manually set the la
 ## Requirements
 
 - VS Code 1.74.0 or higher
-- CalcpadCE must be installed (https://calcpad.eu/download/calcpad-VM-setup-en-x64.zip)
+- CalcpadCE must be installed
 
 ## Known issues
 

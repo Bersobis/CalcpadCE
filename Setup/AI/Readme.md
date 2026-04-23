@@ -2,7 +2,7 @@
 
 1. Install software:
    - Visual Studio Code - https://code.visualstudio.com/download
-   - CalcpadCE for desktop - https://calcpad.eu/download/calcpad-VM-setup-en-x64.zip
+   - CalcpadCE for desktop - https://github.com/imartincei/CalcpadCE/releases
    - Node.js - https://nodejs.org/en/download/current
 
 2. Install VS Code extensions

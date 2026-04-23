@@ -2,7 +2,7 @@
 
 ## Windows
 
-Installation is performed by the automated setup program [calcpad-setup-en-x64.exe](https://calcpad.eu/download/calcpad-setup-en-x64.zip). Follow the instruction of the setup wizard.
+Installation is performed by the automated [setup program](https://github.com/imartincei/CalcpadCE/releases). Follow the instruction of the setup wizard.
 The software requires a 64-bit computer with Windows 10/11 and [Microsoft .NET Desktop Runtime 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 
 ## Linux
