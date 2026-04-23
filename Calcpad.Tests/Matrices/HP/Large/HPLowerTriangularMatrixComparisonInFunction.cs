@@ -32,7 +32,7 @@
             "n = 500",
             RandomMatrixA,
             $"f(a) = {func}(a)",
-            "r = abs(f(a) - f(hp(a))) ≤ 10^-14*abs(f(a))"
+            TestCalc.CompareWithTolerance("f(a)", "f(hp(a))", "10^-14")
         ];
 
         private static string[] InterpolationTestHelper(string func) => [
@@ -41,7 +41,7 @@
             "j = random(n - 1) + 1",
             RandomMatrixA,
             $"f(i; j; a) = {func}(i; j; a)",
-            "r = abs(f(i; j; a) - f(i; j; hp(a))) ≤ 10^-14*abs(f(i; j; a))"
+            TestCalc.CompareWithTolerance("f(i; j; a)", "f(i; j; hp(a))", "10^-14")
         ];
 
         private static readonly string[] PositiveDefiniteArray = [
@@ -949,7 +949,7 @@
                 "n = 500",
                 RandomMatrixA,
                 "f(a) = mnorm_i(a)",
-                "r = abs(f(a) - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithTolerance("f(a)", "f(hp(a))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -1070,7 +1070,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = adj(a)",
-                "r = abs(f(a) - f(hp(a))) ≤ 10^-8*abs(f(a))",
+                TestCalc.CompareWithTolerance("f(a)", "f(hp(a))", "10^-8"),
                 "mcount(r; 0)"
             ]);
             Assert.Equal(0, result);
@@ -1085,7 +1085,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = cofactor(a)",
-                "r = abs(f(a) - f(hp(a))) ≤ 10^-8*abs(f(a))",
+                TestCalc.CompareWithTolerance("f(a)", "f(hp(a))", "10^-8"),
                 "mcount(r; 0)"
                 ]);
             Assert.Equal(0, result);
@@ -1141,7 +1141,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = inverse(a)",
-                "r = abs(f(a) - f(hp(a))) ≤ 10^-8*abs(f(a))",
+                TestCalc.CompareWithTolerance("f(a)", "f(hp(a))", "10^-8"),
                 "mcount(r; 0)"
             ]);
             Assert.Equal(0, result);

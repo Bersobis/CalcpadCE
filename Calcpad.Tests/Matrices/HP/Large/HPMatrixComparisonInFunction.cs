@@ -37,7 +37,7 @@
             "n = 500",
             RandomMatrixA,
             $"f(a) = {func}(a)",
-            "r = abs(f(a) - f(hp(a))) ≤ 10^-14*abs(f(a))"
+            TestCalc.CompareWithTolerance("f(a)", "f(hp(a))", "10^-14")
         ];
 
         private static string[] InterpolationTestHelper(string func) => [
@@ -47,7 +47,7 @@
             "j = random(n - 1) + 1",
             RandomMatrixA,
             $"f(i; j; a) = {func}(i; j; a)",
-            "r = abs(f(i; j; a) - f(i; j; hp(a))) ≤ 10^-14*abs(f(i; j; a))"
+            TestCalc.CompareWithTolerance("f(i; j; a)", "f(i; j; hp(a))", "10^-14")
         ];
 
         private static readonly string[] PositiveDefiniteArray = [
@@ -974,7 +974,7 @@
                 RandomMatrixA,
                 "c = mnorm_i(a)",
                 "c_hp = mnorm_i(hp(a))",
-                "r = abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithTolerance("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }

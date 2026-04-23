@@ -34,7 +34,7 @@
             RandomMatrixA,
             $"c = {func}(a)",
             $"c_hp = {func}(hp(a))",
-            "r = abs(c - c_hp) ≤ 10^-14*abs(c)"
+            TestCalc.CompareWithTolerance("c", "c_hp", "10^-14")
         ];
 
         private static string[] InterpolationTestHelper(string func) => [
@@ -43,7 +43,7 @@
             RandomMatrixA,
             $"c = {func}(i; 1; a)",
             $"c_hp = {func}(i; 1; hp(a))",
-            "r = abs(c - c_hp) ≤ 10^-14*abs(c)"
+            TestCalc.CompareWithTolerance("c", "c_hp", "10^-14")
 ];
 
         [Fact]
@@ -937,7 +937,7 @@
                 RandomMatrixA,
                 "c = mnorm_i(a)",
                 "c_hp = mnorm_i(hp(a))",
-                "r = abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithTolerance("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
