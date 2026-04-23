@@ -10,8 +10,8 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RootNamespace>Calcpad.Wpf</RootNamespace>
     <Platforms>AnyCPU</Platforms>
-		<Authors>CalcpadCE Contributors</Authors>
-		<Company>CalcpadCE Community</Company>
+    <Authors>CalcpadCE Contributors</Authors>
+    <Company>CalcpadCE Community</Company>
     <PackageId>CalcpadCE</PackageId>
     <Product>CalcpadCE</Product>
     <AssemblyName>CalcpadCE</AssemblyName>
