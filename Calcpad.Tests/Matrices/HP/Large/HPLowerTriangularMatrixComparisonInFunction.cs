@@ -896,7 +896,7 @@
                 RandomMatrixA,
                 RandomMatrixB,
                 "f(a; b) = fprod(a; b)",
-                "abs(f(a; b) - f(hp(a); hp(b))) ≤ 10^-12*abs(f(a; b))"
+                TestCalc.CompareWithToleranceDirect("f(a; b)", "f(hp(a); hp(b))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -935,7 +935,7 @@
                 "n = 200",
                 RandomMatrixA,
                 "f(a) = mnorm_2(a)",
-                "abs(f(a) - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithToleranceDirect("f(a)", "f(hp(a))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -963,7 +963,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = cond_1(a)",
-                "abs(f(a) - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithToleranceDirect("f(a)", "f(hp(a))", "10^-12")
                 ]);
             Assert.Equal(1, result);
         }
@@ -977,7 +977,7 @@
                 "n = 200",
                 WellConditionedMatrix,
                 "f(a)  = cond_2(a)",
-                "abs(f(a)  - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithToleranceDirect("f(a) ", "f(hp(a))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -991,7 +991,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = cond_e(a)",
-                "abs(f(a) - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithToleranceDirect("f(a)", "f(hp(a))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -1005,7 +1005,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = cond_i(a)",
-                "abs(f(a) - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithToleranceDirect("f(a)", "f(hp(a))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -1019,7 +1019,7 @@
                 "n = 250",
                 WellConditionedMatrix,
                 "f(a) = det(a)",
-                "abs(f(a) - f(hp(a))) ≤ 10^-12*abs(f(a))"
+                TestCalc.CompareWithToleranceDirect("f(a)", "f(hp(a))", "10^-12")
             ]);
             Assert.Equal(1, result);
         }

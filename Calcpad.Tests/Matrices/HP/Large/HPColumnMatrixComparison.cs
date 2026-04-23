@@ -881,7 +881,7 @@
                 RandomMatrixB,
                 "c = fprod(a; b)",
                 "c_hp = fprod(hp(a); hp(b))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -922,7 +922,7 @@
                 RandomMatrixA,
                 "c = mnorm_2(a)",
                 "c_hp = mnorm_2(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }

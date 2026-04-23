@@ -917,7 +917,7 @@
                 RandomMatrixB,
                 "c = fprod(a; b)",
                 "c_hp = fprod(hp(a); hp(b))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -960,7 +960,7 @@
                 RandomMatrixA,
                 "c = mnorm_2(a)",
                 "c_hp = mnorm_2(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -991,7 +991,7 @@
                 WellConditionedMatrix,
                 "c = cond_1(a)",
                 "c_hp = cond_1(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
                 ]);
             Assert.Equal(1, result);
         }
@@ -1006,7 +1006,7 @@
                 WellConditionedMatrix,
                 "c = cond_2(a)",
                 "c_hp = cond_2(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -1021,7 +1021,7 @@
                 WellConditionedMatrix,
                 "c = cond_e(a)",
                 "c_hp = cond_e(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -1036,7 +1036,7 @@
                 WellConditionedMatrix,
                 "c = cond_i(a)",
                 "c_hp = cond_i(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
@@ -1051,7 +1051,7 @@
                 RandomSquareMatrix,
                 "c = det(a)",
                 "c_hp = det(hp(a))",
-                "abs(c - c_hp) ≤ 10^-12*abs(c)"
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
             ]);
             Assert.Equal(1, result);
         }
