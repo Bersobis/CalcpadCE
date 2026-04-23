@@ -20,7 +20,7 @@ A_c = A_w + 2*A_f'mm²
 #show
 'Maximum seismic axial load -'N_Ed = ? {2254}'kN
 
-'<p><b>Concrete</b> &nbsp;&nbsp;[EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p><b>Concrete</b> &nbsp;&nbsp;[EN 1992-1-1, Table 3.1]</p>
 'Characteristic compressive cylinder strength
 f_ck = ? {25}'MPa
 'Partial safety factor -'γ_c = 1.5','α_ct = 1','α_cc = ? {1}'

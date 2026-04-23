@@ -33,7 +33,7 @@ a_l = (2*d - h_w)/(n_ef + 1)'mm
 'Bending moment -'M_Ed = ? {200}'kN·m
 'Shear force -'V_Ed = ? {120}'kN
 '<h4>Material properties</h4>
-'<p><b>Concrete</b> [EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p><b>Concrete</b> [EN 1992-1-1, Table 3.1]</p>
 'Characteristic compressive cylinder strength -'f_ck = ? {20}'MPa,
 'Partial safety factors for concrete -'γ_c = 1.5','α_cc = ? {0.85}
 #post

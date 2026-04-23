@@ -7,7 +7,7 @@
 'Cross section area -'A_c = b_c*h_c'mm²
 'Maximum seismic axial load -'N_Ed = ? {983.8}'kN
 
-'<p class="ref">[EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p class="ref">[EN 1992-1-1, Table 3.1]</p>
 '<p><b>Concrete</b></p>
 'Characteristic compressive cylinder strength -'f_ck = ? {25}'MPa
 'Partial safety factor -'γ_c = 1.5','α_ct = 1','α_cc = ? {1}

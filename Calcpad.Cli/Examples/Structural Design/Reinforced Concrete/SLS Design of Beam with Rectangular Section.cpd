@@ -78,7 +78,7 @@
 'Concrete cover to the center of reinforcement -'d_2 = ?'mm
 '
 '<h4>Material properties</h4>
-'<p><b>Concrete</b> [EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p><b>Concrete</b> [EN 1992-1-1, Table 3.1]</p>
 'Characteristic compressive cylinder strength -'f_ck = ?'MPa
 #post
 'Mean value of cylinder compressive strength -'f_cm = f_ck + 8'MPa

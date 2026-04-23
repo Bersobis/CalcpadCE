@@ -36,7 +36,7 @@
 'Orography factor -'C_0 = 1.0
 #pre
 '<p id="C" style="display:none;">'C = ? {4}'</p>
-'<p class="ref">[EN 1991-1-4, <a target="_blank" href="https://calcpad.eu/reference/wind-terrain.html">Table 4.1</a>]</p>
+'<p class="ref">[EN 1991-1-4, Table 4.1]</p>
 'Terrain categories
 '<p><select data-target="C">
 '<option value="0"> 0. Sea or coastal area...</option>
@@ -46,7 +46,7 @@
 '<option value="4"> IV. Area in which at least 15 % of the surface is covered with buildings with h > 15 m</option>
 '</select></p>
 #post
-'<p class="ref">[EN 1991-1-4, <a target="_blank" href="https://calcpad.eu/reference/wind-terrain.html">Table 4.1</a>]</p>
+'<p class="ref">[EN 1991-1-4, Table 4.1]</p>
 #if C ≡ 0
 	'Terrain category - 0:'z_0 = 0.003'm,'z_min = 1.0'm,'z_max = 200'm
 	'Sea or coastal area exposed to the open sea.
@@ -722,7 +722,7 @@ e'm,'e/4'm,'e/10'm
 '</table>
 #equ
 '<h4>Notes</h4>
-'<p><sup>1)</sup> External pressure coefficients are determined according to <br />EN 1991-1-4, <a target="_blank" href="https://calcpad.eu/reference/wind-cpe-walls.html">Table 7.1</a> - for  vertical walls and <a target="_blank" href="https://calcpad.eu/reference/wind-cpe-roof-2.html">Tables 7.4 a, b</a> and <a target="_blank" href="https://calcpad.eu/reference/wind-cpe-roof-0.html">7.2</a> - for roof.<br/>
+'<p><sup>1)</sup> External pressure coefficients are determined according to <br />EN 1991-1-4, Table 7.1 - for  vertical walls and Tables 7.4 a, b and 7.2 - for roof.<br/>
 '<sup>2)</sup> Surface loads are calculated with coefficient <i>C</i><sub>pe,10</sub>. These loads should be applied only for global analysis of the structure. For design of separate structural elements, values of <i>C</i><sub>pe</sub> = <i>C</i><sub>pe,1</sub> - (<i>C</i><sub>pe,1</sub> - <i>C</i><sub>pe,10</sub>)&middot;log(<i>A</i>)) is used instead of <i>C</i><sub>pe,10</sub> for the respective reference area<i>A</i>.<br />
 '<sup>3)</sup> Thus, the given loads on beams, columns, purlins and siding should be used only for design of the respective elements. These loads cannot be used for load take-down and calculation of other elements.<br />
 '<sup>4)</sup> Positive values (+) mean pressure towards the given surface and negative values (-) are in the opposite direction. The pressure is always perpendicular to the respective surface.</p>

@@ -12,7 +12,7 @@
 'Flange first moment of area -'S_f = A_f*(d - h_f/2)'mm<sup>3</sup>
 #show
 '<h4>Material properties</h4>
-'<p style="float:right">[EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p style="float:right">[EN 1992-1-1, Table 3.1]</p>
 '<p><b>Concrete</b></p>
 'Characteristic compressive cylinder strength -'f_ck = ?'MPa
 'Partial safety factor for concrete -'γ_c = 1.5','α_cc = ?

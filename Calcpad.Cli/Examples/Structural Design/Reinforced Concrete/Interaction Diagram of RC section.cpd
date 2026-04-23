@@ -18,7 +18,7 @@
 #show
 '<h4>Material properties</h4>
 '<!--'PlotWidth = 250','PlotHeight = 125'-->
-'<p><b>Concrete</b> [EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p><b>Concrete</b> [EN 1992-1-1, Table 3.1]</p>
 'Characteristic compressive cylinder strength -'f_ck = ?'MPa
 'Partial safety factors for concrete -'γ_c = 1.5','α_cc = ?
 #post

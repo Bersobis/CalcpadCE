@@ -16,7 +16,7 @@
 '<p><b>Section design loads</b></p>
 'Shear force -'V_Ed = ?'kN&nbsp;&emsp;Axial force -'N_Ed = ?'kN
 '<h4>Material properties</h4>
-'<p class="ref">[EN 1992-1-1, <a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">Table 3.1</a>]</p>
+'<p class="ref">[EN 1992-1-1, Table 3.1]</p>
 '<p><b>Concrete</b></p>
 'Characteristic compressive cylinder strength -'f_ck = ?'MPa
 'Partial safety factor for concrete -'γ_c = 1.5','α_cc = ?

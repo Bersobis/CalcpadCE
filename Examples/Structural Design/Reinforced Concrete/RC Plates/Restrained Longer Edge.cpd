@@ -59,7 +59,7 @@ l_y = l_y_cl + min(b_y/100;h/100)'m
 	'</div>
 	#show
 	'<h4>Material properties</h4>
-	'<p><b>Concrete</b> &nbsp;&nbsp;[<a target="_blank" href="https://calcpad.eu/reference/concrete-table.html">EN 1992-1-1, Table 3.1</a>]</p>
+	'<p><b>Concrete</b> &nbsp;&nbsp;[EN 1992-1-1, Table 3.1]</p>
 	'Characteristic compressive cylinder strength -'f_ck = ?'MPa
 	'Partial safety factors for concrete -'γ_c = 1.5','α_cc = ?
 	#post
