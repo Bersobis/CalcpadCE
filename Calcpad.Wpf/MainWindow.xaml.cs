@@ -3392,16 +3392,6 @@ namespace Calcpad.Wpf
             }
         }
 
-        private void Logo_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            var info = new ProcessStartInfo
-            {
-                FileName = "https:// calcpad.eu",
-                UseShellExecute = true
-            };
-            Process.Start(info);
-        }
-
         private void PdfButton_Click(object sender, RoutedEventArgs e)
         {
             if (_isParsing)

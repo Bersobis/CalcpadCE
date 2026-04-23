@@ -46,7 +46,6 @@
     <Resource Include="resources\form.png" />
     <Resource Include="resources\help.png" />
     <Resource Include="resources\image.png" />
-    <Resource Include="resources\logo.png" />
     <Resource Include="resources\new.png" />
     <Resource Include="resources\open.png" />
     <Resource Include="resources\paste.png" />
@@ -141,9 +140,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="doc\Images\Keyboard.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="doc\Images\Logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="doc\Images\Mandelbrot.png">

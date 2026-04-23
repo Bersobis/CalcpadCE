@@ -2212,15 +2212,6 @@
                 <ComboBoxItem Width="70" Content="Opera" HorizontalAlignment="Left"/>
                 <ComboBoxItem Width="70" Content="IExplore" HorizontalAlignment="Left"/>
             </ComboBox>
-            <Image x:Name="Logo" 
-                   Source="Resources/logo.png" 
-                   Height="16"
-                   Width="2000" 
-                   VerticalAlignment="Top" 
-                   HorizontalAlignment="Right" 
-                   Margin="0,0,4,0" 
-                   Cursor="Hand" 
-                   MouseUp="Logo_MouseUp"/>
         </StatusBar>
         <Grid x:Name="FramesGrid" Margin="0,1,0,35" Grid.Row="1">
             <Grid.ColumnDefinitions>
