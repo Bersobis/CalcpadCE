@@ -216,7 +216,7 @@ namespace Calcpad.Wpf
             _htmlWorksheet = ReadTextFromFile($"{docPath}\\template{htmlExt}").Replace("https:// calcpad.local", docUrl);
             _htmlParsingPath = $"{docPath}\\parsing{htmlExt}";
             _htmlParsingUrl = $"{docUrl}/parsing{htmlExt}";
-            _htmlHelpPath = GetHelp(MainWindowResources.calcpad_download_help_html);
+            _htmlHelpPath = GetHelp();
             _htmlSource = ReadTextFromFile($"{docPath}\\source.html");
             _svgTyping = $"<img style=\"height:1em;\" src=\"{docUrl}/typing.gif\" alt=\"...\">";
             _readmeFileName = $"{docPath}\\readme{htmlExt}";
@@ -1522,7 +1522,7 @@ namespace Calcpad.Wpf
                 _wv2Warper.Navigate(_htmlHelpPath);
         }
 
-        private static string GetHelp(string helpURL)
+        private static string GetHelp()
         {
             var fileName = $"{AppInfo.DocPath}\\help.{_currentCultureName}.html";
             if (!File.Exists(fileName))

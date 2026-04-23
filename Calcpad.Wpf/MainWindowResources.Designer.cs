@@ -250,15 +250,6 @@ namespace Calcpad.Wpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https:// calcpad.eu/download/help.html.
-        /// </summary>
-        public static string calcpad_download_help_html {
-            get {
-                return ResourceManager.GetString("calcpad_download_help_html", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Calculate.
         /// </summary>
         public static string Calculate {
