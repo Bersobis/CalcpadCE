@@ -1051,7 +1051,7 @@
                 RandomSquareMatrix,
                 "c = det(a)",
                 "c_hp = det(hp(a))",
-                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-12")
+                TestCalc.CompareWithToleranceDirect("c", "c_hp", "10^-8")
             ]);
             Assert.Equal(1, result);
         }

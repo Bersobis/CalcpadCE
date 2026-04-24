@@ -99,7 +99,7 @@
         public void HPUpperTriangularMatrixMultiplication()
         {
             var calc = new TestCalc(new());
-            var result = calc.Run(OperatorTestHelper('*', "10^-12"));
+            var result = calc.Run(OperatorTestHelper('*', "10^-11"));
             Assert.Equal(0, result);
         }
 

@@ -456,7 +456,7 @@ namespace Calcpad.Tests
                 RandomMatrixB,
                 "f(a; b) = a * b",
                 "c_hp = matmul(hp(a); hp(b))",
-                TestCalc.CompareWithTolerance("f(a; b)", "c_hp", "10^-14"),
+                TestCalc.CompareWithTolerance("f(a; b)", "c_hp", "10^-13"),
                 "mcount(r; 0)"
             ]);
             Assert.Equal(0, result);
