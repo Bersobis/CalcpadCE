@@ -115,7 +115,7 @@ namespace Calcpad.Wpf
                         _cfn = Path.Combine(DocumentPath, value);
                     else
                         SetCurrentDirectory(path);
-                    Title = AppInfo.Title + " - " + Path.GetFileName(value);
+                    Title = Path.GetFileName(value) + " -" + AppInfo.Title;
                     _tempDir = Path.GetFileNameWithoutExtension(value) + '\\';
                 }
             }
