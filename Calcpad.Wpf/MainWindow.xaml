@@ -1,4 +1,4 @@
-﻿<Window xmlns:Wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" 
+<Window xmlns:Wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wpf="clr-namespace:Calcpad.Wpf"
@@ -2212,6 +2212,16 @@
                 <ComboBoxItem Width="70" Content="Opera" HorizontalAlignment="Left"/>
                 <ComboBoxItem Width="70" Content="IExplore" HorizontalAlignment="Left"/>
             </ComboBox>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="website"
+                           FontFamily="Roboto"
+                           FontSize="13"
+                           Margin="0,0,4,2"
+                           Foreground="#DA000000"
+                           Text="calcpad-ce.org"
+                           Cursor="Hand"
+                           MouseUp="Website_MouseUp"/>
+            </StatusBarItem>
         </StatusBar>
         <Grid x:Name="FramesGrid" Margin="0,1,0,35" Grid.Row="1">
             <Grid.ColumnDefinitions>
