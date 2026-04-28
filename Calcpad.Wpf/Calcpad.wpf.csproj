@@ -109,10 +109,8 @@
     <None Update="doc\Images\Calc.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="doc\Images\calcpad.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="doc\Images\Calcpad.png">
+    <None Include="..\docs\media\logo.svg">
+      <Link>doc\Images\logo.svg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="doc\Images\Copy.png">
