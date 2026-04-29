@@ -1,245 +1,267 @@
-Demos:
-  - Beam design with Markdown
-  - Bolt 3D Model
-  - Css Classes
-  - Custom units/Currency units
-  - Custom units/Information units
-  - Design Check
-  - Double Interpolation
-  - Functions of Multiple Parameters
-  - Html UI
-  - Interpolation
-  - Interpolation of Functions
-  - Markdown
-  - Multiline functions/Cubic roots function
-  - Multiline functions/Fibonacci numbers
-  - Multiline functions/Greatest common divisor - Euclid algorithm
-  - Multiline functions/Quadratic roots function
-  - Optimization of foundation pad dimensions
-  - Page header with logo
-  - Parametric 3D Drawing of RC Beam
-  - Plot with attributes
-  - Plotly
-  - Plotting Easter Egg in 2D and 3D
-  - Rounding and formatting
-  - TT Panel
-  - svg_drawing
-  - toc
+Engineering Examples:
+  Areas:
+    - Circle
+    - Ellipse
+    - Equilateral Triangle
+    - Parabola
+    - Polygon
+    - Rectangle
+    - Right Triangle
+    - Sector (angle)
+    - Sector (chord)
+    - Segment (angle)
+    - Segment (chord)
+    - Square
+    - Trapezoid
+    - Triangle
+    - Triangle (height)
+  Volumes:
+    - Cone
+    - Cube
+    - Cylinder
+    - Ellipsoid
+    - Rectangular Frustum
+    - Rectangular Prism
+    - Rectangular Pyramid
+    - Right Polygonal Prism
+    - Sphere
+    - Spherical Cap
+    - Spherical Segment
+    - Tetrahedron
+    - Triangular Frustum
+    - Triangular Pyramid
+    - Triangular prism
+  Geometrical:
+    - Angle Section
+    - Channel Section
+    - Circle
+    - Circlular Pipe
+    - Double Tee Section
+    - Ellipse
+    - Elliptical Pipe
+    - Equilateral Triangle
+    - Half Circle
+    - Hexagon
+    - Polygon
+    - Quarter Circle
+    - Rectangle
+    - Rectangular Tube
+    - Rhombus
+    - Rhombus (square)
+    - Right Triangle
+    - Sector
+    - Segment
+    - Solution of a triangle
+    - Square
+    - Tee Section
+    - Trapezoid
+    - Zed Section
+  3D, Plotting, Drawing:
+    - Bolt 3D Model
+    - Parametric 3D Drawing of RC Beam
+    - Plot with attributes
+    - Plotly
+    - Plotting Easter Egg in 2D and 3D
+    - TT Panel
+  Fractals:
+    - Julia Set
+    - Koch Snowflake
+    - Koch Snowflake Animation
+    - Kochwave Animation
+    - Kochwave Snowflake Animation
+    - Mandelbrot Set
+    - Sierpinski Christmas Tree
+  Interpolation:
+    - Double Interpolation
+    - Interpolation
+    - Interpolation of Functions
+  Numerical:
+    - Least Squares Fitting
+    - Monte Carlo Pi
+    - Newton's method animated
+    - Numerical Differentiation
+    - Numerical Integration
+    - Rayleigh Quotient Iteration
+    - System of nonlinear equations
+  Vectors:
+    - Vector Initialization, indexing and operators
+    - Vector data functions
+    - Vector math functions
+    - Vector structural functions
+  Vectors - High Performance:
+    - Vector Initialization, indexing and operators
+    - Vector data functions
+    - Vector math functions
+    - Vector structural functions
+  Matrices:
+    - Matrix creational functions
+    - Matrix data functions
+    - Matrix initialization and indexing
+    - Matrix math functions
+    - Matrix operators
+    - Matrix structural functions
+  Matrices - High Performance:
+    - Least squares
+    - Matrix creational functions
+    - Matrix data functions
+    - Matrix initialization and indexing
+    - Matrix math functions
+    - Matrix operators
+    - Matrix structural functions
+    - Rayleigh quotient iteration
+  Pendulums:
+    - Comparison of different methods for analysis of simple undamped pendulum
+    - Double damped pendulum simulation by RK4 method
+    - Double damped pendulum simulation by RK4 method ver 2
+    - Elastic damped pendulum simulation by RK4 method
+    - Simple damped pendulum simulation by RK4 method
+    - Simple undamped pendulum animatation by RK4 method
+  Waves:
+    - Diffraction of Light on Single Slit - General View
+    - Diffraction of Light on Single Slit - Screen View
+    - Interference of Light - 2 Slits General View
+    - Interference of Light - 2 Slits Screen View
+    - Interference of Light - 4 Slits General View
+    - Interference of Light - 4 Slits Screen View
+    - Interference of Light - 6 Slits General View
+    - Interference of Light - 6 Slits Screen View
+    - Waves 2D on Water Interference
+    - Waves 2D on Water Interference Animated
+  Parametric Curves:
+    - Common Spirals
+    - Cornu Spiral
+    - Epicycloid
+    - Hypocycloid
+    - Lissajous Curve
+    - Rose Curve
+  Elastic analysis:
+    - Deep Beam
+    - Rectangular Slab
+    - Saint-Venant Torsion
+  Finite Elements:
+    - Deep Beam FEA
+    - Flat Slab FEA
+    - Flat Slab FEA Optimized
+    - Rectangular Slab FEA
+  Fourier:
+    - FFT
+    - Fourier Series
+    - Fourier Series + FFT
+    - Strong Motion FFT
+  Multiline functions:
+    - Cubic roots function
+    - Fibonacci numbers
+    - Greatest common divisor - Euclid algorithm
+    - Quadratic roots function
+  Custom units:
+    - Currency units
+    - Information units
+  Formatting:
+    - Beam design with Markdown
+    - Css Classes
+    - Design Check
+    - Markdown
+    - Page header with logo
+    - Rounding and formatting
+    - toc
+  Others:
+    - Bitwise operations
+    - Collatz Check
+    - Combinatorics
+    - Cubic Equation
+    - Functions of Multiple Parameters
+    - Heart Function Animation
+    - Himmelblau function
+    - Html UI
+    - Quadratic Equation
+    - Special functions
 
-Mathematics:
-  - Areas/Circle
-  - Areas/Ellipse
-  - Areas/Equilateral Triangle
-  - Areas/Parabola
-  - Areas/Polygon
-  - Areas/Rectangle
-  - Areas/Right Triangle
-  - Areas/Sector (angle)
-  - Areas/Sector (chord)
-  - Areas/Segment (angle)
-  - Areas/Segment (chord)
-  - Areas/Square
-  - Areas/Trapezoid
-  - Areas/Triangle
-  - Areas/Triangle (height)
-  - Bitwise operations
-  - Collatz Check
-  - Combinatorics
-  - Cubic Equation
-  - FFT
-  - Fourier Series
-  - Fourier Series + FFT
-  - Fractals/Julia Set
-  - Fractals/Koch Snowflake
-  - Fractals/Koch Snowflake Animation
-  - Fractals/Kochwave Animation
-  - Fractals/Kochwave Snowflake Animation
-  - Fractals/Mandelbrot Set
-  - Fractals/Sierpinski Christmas Tree
-  - Heart Function Animation
-  - High performance/Matrices/Least squares
-  - High performance/Matrices/Matrix creational functions
-  - High performance/Matrices/Matrix data functions
-  - High performance/Matrices/Matrix initialization and indexing
-  - High performance/Matrices/Matrix math functions
-  - High performance/Matrices/Matrix operators
-  - High performance/Matrices/Matrix structural functions
-  - High performance/Matrices/Rayleigh quotient iteration
-  - High performance/Vectors/Vector Initialization, indexing and operators
-  - High performance/Vectors/Vector data functions
-  - High performance/Vectors/Vector math functions
-  - High performance/Vectors/Vector structural functions
-  - Least Squares Fitting
-  - Matrices/Matrix creational functions
-  - Matrices/Matrix data functions
-  - Matrices/Matrix initialization and indexing
-  - Matrices/Matrix math functions
-  - Matrices/Matrix operators
-  - Matrices/Matrix structural functions
-  - Monte Carlo Pi
-  - Newton's method animated
-  - Numerical Differentiation
-  - Numerical Integration
-  - Parametric Curves/Common Spirals
-  - Parametric Curves/Cornu Spiral
-  - Parametric Curves/Epicycloid
-  - Parametric Curves/Hypocycloid
-  - Parametric Curves/Lissajous Curve
-  - Parametric Curves/Rose Curve
-  - Quadratic Equation
-  - Rayleigh Quotient Iteration
-  - Solution of a triangle
-  - Special functions
-  - Strong Motion FFT
-  - System of nonlinear equations
-  - Vectors/Vector Initialization, indexing and operators
-  - Vectors/Vector data functions
-  - Vectors/Vector math functions
-  - Vectors/Vector structural functions
-  - Volumes/Cone
-  - Volumes/Cube
-  - Volumes/Cylinder
-  - Volumes/Ellipsoid
-  - Volumes/Rectangular Frustum
-  - Volumes/Rectangular Prism
-  - Volumes/Rectangular Pyramid
-  - Volumes/Right Polygonal Prism
-  - Volumes/Sphere
-  - Volumes/Spherical Cap
-  - Volumes/Spherical Segment
-  - Volumes/Tetrahedron
-  - Volumes/Triangular Frustum
-  - Volumes/Triangular Pyramid
-  - Volumes/Triangular prism
-
-Mechanics:
-  - Elastic analysis/Deep Beam
-  - Elastic analysis/Rectangular Slab
-  - Elastic analysis/Saint-Venant Torsion
-  - Finite Elements/Deep Beam FEA
-  - Finite Elements/Flat Slab FEA
-  - Finite Elements/Flat Slab FEA Optimized
-  - Finite Elements/Rectangular Slab FEA
-  - Geometrical Properties/Angle Section
-  - Geometrical Properties/Channel Section
-  - Geometrical Properties/Circle
-  - Geometrical Properties/Circlular Pipe
-  - Geometrical Properties/Double Tee Section
-  - Geometrical Properties/Ellipse
-  - Geometrical Properties/Elliptical Pipe 
-  - Geometrical Properties/Equilateral Triangle
-  - Geometrical Properties/Half Circle
-  - Geometrical Properties/Hexagon
-  - Geometrical Properties/Polygon
-  - Geometrical Properties/Quarter Circle
-  - Geometrical Properties/Rectangle
-  - Geometrical Properties/Rectangular Tube
-  - Geometrical Properties/Rhombus
-  - Geometrical Properties/Rhombus (square)
-  - Geometrical Properties/Right Triangle
-  - Geometrical Properties/Sector
-  - Geometrical Properties/Segment
-  - Geometrical Properties/Square
-  - Geometrical Properties/Tee Section
-  - Geometrical Properties/Trapezoid
-  - Geometrical Properties/Zed Section
-  - Soil Mechanics/Soil stress and deformations
-  - Structural Analysis/Cantilevers/Concentrated Force
-  - Structural Analysis/Cantilevers/Concentrated Moment
-  - Structural Analysis/Cantilevers/Linearly Distributed Load
-  - Structural Analysis/Cantilevers/Partially Distributed Load
-  - Structural Analysis/Cantilevers/Uniformly Distributed Load
-  - Structural Analysis/Continuous beam/Continuous beam
-  - Structural Analysis/Deflections/Cantilever with Concentrated Load
-  - Structural Analysis/Deflections/Cantilever with Unifrom Load
-  - Structural Analysis/Deflections/Simply Supported Beam with Concentrated Load
-  - Structural Analysis/Deflections/Simply Supported Beam with Unifrom Load
-  - Structural Analysis/Frames/Frame
-  - Structural Analysis/Frames/Frame-var
-  - Structural Analysis/Frames/Multi-Story Frame
-  - Structural Analysis/Frames/svg_drawing
-  - Structural Analysis/Fully Restrained Beams/Concentrated Force
-  - Structural Analysis/Fully Restrained Beams/Concentrated Moment
-  - Structural Analysis/Fully Restrained Beams/Linearly Distributed Load
-  - Structural Analysis/Fully Restrained Beams/Partially Distributed Load
-  - Structural Analysis/Fully Restrained Beams/Uniformly Distributed Load
-  - Structural Analysis/Nonlinear/Material and geometric nonlinear analysis of prestressed asymmetric Biot truss
-  - Structural Analysis/Nonlinear/Nonlinear analysis of a Von-Mises truss
-  - Structural Analysis/Nonlinear/Third order geometric nonlinearity analysis of a double-strut Biot system
-  - Structural Analysis/Nonlinear/svg_drawing
-  - Structural Analysis/Propped Cantilevers/Concentrated Force
-  - Structural Analysis/Propped Cantilevers/Concentrated Moment
-  - Structural Analysis/Propped Cantilevers/Linearly Distributed Load
-  - Structural Analysis/Propped Cantilevers/Partially Distributed Load
-  - Structural Analysis/Propped Cantilevers/Uniformly Distributed Load
-  - Structural Analysis/Simply Supported Beams/Concentrated Force
-  - Structural Analysis/Simply Supported Beams/Concentrated Forces
-  - Structural Analysis/Simply Supported Beams/Concentrated Moment
-  - Structural Analysis/Simply Supported Beams/Linearly Distributed Load
-  - Structural Analysis/Simply Supported Beams/Partially Distributed Load
-  - Structural Analysis/Simply Supported Beams/Uniformly Distributed Load
-  - Structural Dynamics/Beam Impact Analysis Animated
-  - Structural Dynamics/Free Vibrations of Steel Pole
-  - Structural Dynamics/Free Vibrations of Steel Pole Animation
-  - Structural Dynamics/Free Vibrations of Steel Pole Animation Plotly
-  - Structural Dynamics/svg_drawing
-
-Physics:
-  - Pendulums/Comparison of different methods for analysis of simple undamped pendulum
-  - Pendulums/Double damped pendulum simulation by RK4 method
-  - Pendulums/Double damped pendulum simulation by RK4 method ver 2
-  - Pendulums/Elastic damped pendulum simulation by RK4 method
-  - Pendulums/Simple damped pendulum simulation by RK4 method
-  - Pendulums/Simple undamped pendulum animatation by RK4 method
-  - Pendulums/svg_drawing
-  - Waves/DiffractionOfLightOnSingleSlitGeneralView
-  - Waves/DiffractionOfLightOnSingleSlitScreenView
-  - Waves/InterferenceOfLight2SlitsGeneralView
-  - Waves/InterferenceOfLight2SlitsScreenView
-  - Waves/InterferenceOfLight4SlitsGeneralView
-  - Waves/InterferenceOfLight4SlitsScreenView
-  - Waves/InterferenceOfLight6SlitsGeneralView
-  - Waves/InterferenceOfLight6SlitsScreenView
-  - Waves/Waves2DOnWatterInterference
-  - Waves/Waves2DOnWatterInterferenceAnimated
-
-Structural Design:
-  - Loads/Snow Drift
-  - Loads/Snow Load
-  - Loads/Wind Load
-  - Reinforced Concrete/Areas of Reinforcement Bars
-  - Reinforced Concrete/Bending Capacity of Tee Section
-  - Reinforced Concrete/Bending Design of Rectangular Section
-  - Reinforced Concrete/Bending Design of Tee Section
-  - Reinforced Concrete/Column Design for Bending and Axial Force
-  - Reinforced Concrete/Column Design for Biaxial Bending and Axial Force
-  - Reinforced Concrete/Column Design for Biaxial Bending and Axial Force (with units)
-  - Reinforced Concrete/Combined Bending, Shear and Torsion
-  - Reinforced Concrete/Interaction Diagram of RC section
-  - Reinforced Concrete/Punching/Corner Column
-  - Reinforced Concrete/Punching/Edge Column
-  - Reinforced Concrete/Punching/Internal Column
-  - Reinforced Concrete/RC Plates/Fully Restrained Slab Panel
-  - Reinforced Concrete/RC Plates/Restrained Adjacent Edges
-  - Reinforced Concrete/RC Plates/Restrained Both Longer Edges
-  - Reinforced Concrete/RC Plates/Restrained Both Shorter Edges
-  - Reinforced Concrete/RC Plates/Restrained Longer Edge
-  - Reinforced Concrete/RC Plates/Restrained Panel with Unrestrained Longer Edge
-  - Reinforced Concrete/RC Plates/Restrained Panel with Unrestrained Shorter Edge
-  - Reinforced Concrete/RC Plates/Restrained Shorter Edge
-  - Reinforced Concrete/RC Plates/Simply Supported Slab Panel
-  - Reinforced Concrete/SLS Design of Beam with Rectangular Section
-  - Reinforced Concrete/SLS Design of Beam with Tee Section
-  - Reinforced Concrete/Seismic Detailing/Beam Detailing for DCM
-  - Reinforced Concrete/Seismic Detailing/Column Detailing for DCM
-  - Reinforced Concrete/Seismic Detailing/Shear Wall Detailing for DCM
-  - Reinforced Concrete/Shear Design of Rectangular Section
-  - Steel/I section properties
-  - Steel/I section properties Excel
-  - Steel/I section properties and drawing
-  - Steel/svg_drawing
-
-Tests:
-  - Himmelblau function
-  - Integration tests
-  - Root finding tests
+Structural Engineering Examples:
+  Cantilevers:
+    - Concentrated Force
+    - Concentrated Moment
+    - Linearly Distributed Load
+    - Partially Distributed Load
+    - Uniformly Distributed Load
+  Propped Cantilevers:
+    - Concentrated Force
+    - Concentrated Moment
+    - Linearly Distributed Load
+    - Partially Distributed Load
+    - Uniformly Distributed Load
+  Continuous beam:
+    - Continuous beam
+  Deflections:
+    - Cantilever with Concentrated Load
+    - Cantilever with Unifrom Load
+    - Simply Supported Beam with Concentrated Load
+    - Simply Supported Beam with Unifrom Load
+  Frames:
+    - Frame
+    - Frame-var
+    - Multi-Story Frame
+  Fully Restrained Beams:
+    - Concentrated Force
+    - Concentrated Moment
+    - Linearly Distributed Load
+    - Partially Distributed Load
+    - Uniformly Distributed Load
+  Loads:
+    - Optimization of foundation pad dimensions
+    - Snow Drift
+    - Snow Load
+    - Wind Load
+  Nonlinear:
+    - Material and geometric nonlinear analysis of prestressed asymmetric Biot truss
+    - Nonlinear analysis of a Von-Mises truss
+    - Third order geometric nonlinearity analysis of a double-strut Biot system
+  Simply Supported Beams:
+    - Concentrated Force
+    - Concentrated Forces
+    - Concentrated Moment
+    - Linearly Distributed Load
+    - Partially Distributed Load
+    - Uniformly Distributed Load
+  Soil Mechanics:
+    - Soil stress and deformations
+  Steel:
+    - I section properties
+    - I section properties Excel
+    - I section properties and drawing
+    - svg_drawing
+  Structural Dynamics:
+    - Beam Impact Analysis Animated
+    - Free Vibrations of Steel Pole
+    - Free Vibrations of Steel Pole Animation
+    - Free Vibrations of Steel Pole Animation Plotly
+  Reinforced Concrete:
+    - Areas of Reinforcement Bars
+    - Bending Capacity of Tee Section
+    - Bending Design of Rectangular Section
+    - Bending Design of Tee Section
+    - Column Design for Bending and Axial Force
+    - Column Design for Biaxial Bending and Axial Force
+    - Column Design for Biaxial Bending and Axial Force (with units)
+    - Combined Bending, Shear and Torsion
+    - Interaction Diagram of RC section
+    - SLS Design of Beam with Rectangular Section
+    - SLS Design of Beam with Tee Section
+    - Shear Design of Rectangular Section
+  Reinforced Concrete - Punching:
+    - Corner Column
+    - Edge Column
+    - Internal Column
+  Reinforced Concrete - Plates:
+    - Fully Restrained Slab Panel
+    - Restrained Adjacent Edges
+    - Restrained Both Longer Edges
+    - Restrained Both Shorter Edges
+    - Restrained Longer Edge
+    - Restrained Panel with Unrestrained Longer Edge
+    - Restrained Panel with Unrestrained Shorter Edge
+    - Restrained Shorter Edge
+    - Simply Supported Slab Panel
+  Reinforced Concrete - Seismic Detailing:
+    - Beam Detailing for DCM
+    - Column Detailing for DCM
+    - Shear Wall Detailing for DCM

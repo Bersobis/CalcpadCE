@@ -28,12 +28,16 @@ _temp_dir: str | None = None
 
 
 def on_config(config, **kwargs):
-    """Inject the Examples nav section from docs/examples.yml."""
+    """Inject the Examples nav entries from docs/examples.yml."""
     repo_root = Path(config["config_file_path"]).parent
     examples = _load_examples(repo_root)
 
-    examples_nav = [{cat: f"examples/{_slugify(cat)}.md"} for cat in examples]
-    config["nav"].append({"Examples": examples_nav})
+    for group_name, categories in examples.items():
+        cat_nav = [
+            {f"{_display_name(cat)} ({len(stems)})": f"examples/{_slugify(cat)}.md"}
+            for cat, stems in categories.items()
+        ]
+        config["nav"].append({group_name: cat_nav})
     return config
 
 
@@ -44,21 +48,24 @@ def on_files(files, config, **kwargs):
     repo_root = Path(config["config_file_path"]).parent
     examples_root = repo_root / "Examples"
     examples = _load_examples(repo_root)
+    group_folders = _group_folders(repo_root)
 
     cli_path = _find_cli(repo_root)
 
     # Resolve every listed entry to a concrete .cpd path (fail fast on missing files)
     all_cpd: list[tuple[str, Path]] = []
-    for category, stems in examples.items():
-        for stem in stems:
-            cpd_file = examples_root / category / f"{stem}.cpd"
-            if not cpd_file.exists():
-                raise SystemExit(
-                    f"render_examples: Listed example not found on disk:\n"
-                    f"  {cpd_file}\n"
-                    f"Either add the file or remove the entry from docs/examples.yml."
-                )
-            all_cpd.append((category, cpd_file))
+    for group_name, categories in examples.items():
+        folder = group_folders[group_name]
+        for category, stems in categories.items():
+            for stem in stems:
+                cpd_file = examples_root / folder / category / f"{stem}.cpd"
+                if not cpd_file.exists():
+                    raise SystemExit(
+                        f"render_examples: Listed example not found on disk:\n"
+                        f"  {cpd_file}\n"
+                        f"Either add the file or remove the entry from docs/examples.yml."
+                    )
+                all_cpd.append((category, cpd_file))
 
     # Render all fragments in parallel
     fragments: dict[Path, str] = {}
@@ -79,43 +86,57 @@ def on_files(files, config, **kwargs):
 
     all_files = list(files)
 
-    for category, stems in examples.items():
-        cpd_files = [examples_root / category / f"{stem}.cpd" for stem in stems]
-        content = _render_category_page(category, cpd_files, fragments)
-        slug = _slugify(category)
-        dest = examples_temp / f"{slug}.md"
-        dest.write_text(content, encoding="utf-8")
+    group_folders = _group_folders(repo_root)
+    for group_name, categories in examples.items():
+        folder = group_folders[group_name]
+        for category, stems in categories.items():
+            cpd_files = [examples_root / folder / category / f"{stem}.cpd" for stem in stems]
+            content = _render_category_page(category, cpd_files, fragments)
+            slug = _slugify(category)
+            dest = examples_temp / f"{slug}.md"
+            dest.write_text(content, encoding="utf-8")
 
-        virtual = mkdocs_files.File(
-            path=f"examples/{slug}.md",
-            src_dir=_temp_dir,
-            dest_dir=config["site_dir"],
-            use_directory_urls=config["use_directory_urls"],
-        )
-        all_files.append(virtual)
+            virtual = mkdocs_files.File(
+                path=f"examples/{slug}.md",
+                src_dir=_temp_dir,
+                dest_dir=config["site_dir"],
+                use_directory_urls=config["use_directory_urls"],
+            )
+            all_files.append(virtual)
 
-    # Inject asset files (e.g. .js, .css, images) referenced by examples
-    # They sit next to .cpd files and are referenced via relative URLs like ./toc.js,
-    # which resolves to examples/<file> when the page is served under examples/.
-    _ASSET_SUFFIXES = {".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
-    # src_dir must contain the full path subtree: src_dir / path = actual file on disk
-    # so mirror the examples/ subdirectory inside the temp tree.
+    # Inject asset files (e.g. .js, .css, images) referenced by examples.
+    # Assets are referenced from example pages via relative URLs like ./Models/bolt_and_nut.glb.
+    # With use_directory_urls=false the page is at examples/<slug>.html, so the URL resolves to
+    # examples/Models/bolt_and_nut.glb — we must preserve sub-directory structure relative to
+    # the category folder, not flatten everything to examples/<filename>.
+    _ASSET_SUFFIXES = {".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".txt", ".glb"}
     assets_temp = Path(_temp_dir) / "assets"
     assets_examples = assets_temp / "examples"
     assets_examples.mkdir(parents=True)
-    seen_asset_names: set[str] = set()
-    for asset in examples_root.rglob("*"):
-        if asset.suffix.lower() in _ASSET_SUFFIXES and asset.name not in seen_asset_names:
-            shutil.copy2(asset, assets_examples / asset.name)
-            seen_asset_names.add(asset.name)
-            log.info(f"Copying asset {asset.relative_to(examples_root)}")
-            virtual_asset = mkdocs_files.File(
-                path=f"examples/{asset.name}",
-                src_dir=str(assets_temp),
-                dest_dir=config["site_dir"],
-                use_directory_urls=False,
-            )
-            all_files.append(virtual_asset)
+    seen_asset_paths: set[str] = set()
+    for group_name, categories in examples.items():
+        folder = group_folders[group_name]
+        for category in categories:
+            cat_dir = examples_root / folder / category
+            for asset in cat_dir.rglob("*"):
+                if asset.suffix.lower() not in _ASSET_SUFFIXES:
+                    continue
+                rel = asset.relative_to(cat_dir)  # e.g. Models/bolt_and_nut.glb
+                path_key = rel.as_posix()
+                if path_key in seen_asset_paths:
+                    continue
+                seen_asset_paths.add(path_key)
+                dest = assets_examples / rel
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(asset, dest)
+                log.info(f"Copying asset {asset.relative_to(examples_root)}")
+                virtual_asset = mkdocs_files.File(
+                    path=f"examples/{path_key}",
+                    src_dir=str(assets_temp),
+                    dest_dir=config["site_dir"],
+                    use_directory_urls=False,
+                )
+                all_files.append(virtual_asset)
 
     return mkdocs_files.Files(all_files)
 
@@ -145,34 +166,85 @@ def _slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
-def _load_examples(repo_root: Path) -> dict[str, list[str]]:
-    """Read docs/examples.yml and return {category: [relative_stem, ...]}."""
+def _display_name(name: str) -> str:
+    """Convert a filesystem-safe name to a display name.
+
+    Replaces the safe separator ' - ' with ': ' so that folder names like
+    'Reinforced Concrete - Punching' render as 'Reinforced Concrete: Punching'.
+    """
+    return name.replace(" - ", ": ")
+
+
+def _load_examples(repo_root: Path) -> dict[str, dict[str, list[str]]]:
+    """Read docs/examples.yml and return {group: {category: [stem, ...]}}."""
     yaml_path = repo_root / "docs" / "examples.yml"
     if not yaml_path.exists():
         raise SystemExit(
-            f"render_examples: docs/examples.yml not found.\n"
-            f"Generate it with:  python docs/hooks/generate_examples.py"
+            f"render_examples: docs/examples.yml not found."
         )
 
     # Minimal hand-rolled YAML parser — avoids a hard PyYAML import.
-    # Format is strictly: top-level keys followed by list items (  - value).
-    examples: dict[str, list[str]] = {}
+    # Format (3 levels):
+    #   GroupName:
+    #     CategoryName:
+    #       - stem
+    examples: dict[str, dict[str, list[str]]] = {}
+    current_group: str | None = None
     current_category: str | None = None
     for lineno, raw in enumerate(yaml_path.read_text(encoding="utf-8").splitlines(), 1):
         line = raw.rstrip()
         if not line or line.startswith("#"):
             continue
-        if line.startswith("  - "):
+        if line.startswith("    - "):          # 4-space list item → stem
             if current_category is None:
                 raise SystemExit(f"render_examples: examples.yml line {lineno}: list item before any category key")
-            examples[current_category].append(line[4:])
-        elif line.endswith(":"):
-            current_category = line[:-1]
-            examples[current_category] = []
+            examples[current_group][current_category].append(line[6:])
+        elif line.startswith("  ") and line.endswith(":"):  # 2-space category key
+            if current_group is None:
+                raise SystemExit(f"render_examples: examples.yml line {lineno}: category before any group key")
+            current_category = line.strip()[:-1]
+            examples[current_group][current_category] = []
+        elif not line.startswith(" ") and line.endswith(":"):  # top-level group key
+            current_group = line[:-1]
+            current_category = None
+            examples[current_group] = {}
         else:
             raise SystemExit(f"render_examples: examples.yml line {lineno}: unexpected format: {line!r}")
 
     return examples
+
+
+def _group_folders(repo_root: Path) -> dict[str, str]:
+    """Return a mapping from group display name to its folder inside Examples/.
+
+    The mapping is derived from the docs/examples.yml group names by matching
+    them against actual sub-folders of Examples/.
+    """
+    examples_root = repo_root / "Examples"
+    available = {d.name for d in examples_root.iterdir() if d.is_dir()}
+
+    # Try an explicit well-known mapping first; fall back to matching by name.
+    known: dict[str, str] = {
+        "Structural Engineering Examples": "Structural",
+        "Other Examples": "Engineering",
+    }
+    result: dict[str, str] = {}
+    for group_name in _load_examples(repo_root):
+        if group_name in known and known[group_name] in available:
+            result[group_name] = known[group_name]
+        else:
+            # Fall back: look for a folder whose name appears in the group display name
+            match = next((f for f in available if f.lower() in group_name.lower()), None)
+            if match is None:
+                raise SystemExit(
+                    f"render_examples: Cannot map group '{group_name}' to a folder in Examples/.\n"
+                    f"Available folders: {sorted(available)}"
+                )
+            result[group_name] = match
+    return result
+
+
+def _find_cli(repo_root: Path) -> Path:
     """Return the path to an existing Cli executable.
 
     Searches (in order):
@@ -217,7 +289,6 @@ def _render_fragment(cpd_file: Path, cli_path: Path, label: str = "") -> str:
     Raises SystemExit on any CLI error, timeout, or empty output.
     """
     name = label or cpd_file.name
-    log.info(f"Rendering {name} ...")
     tmp_fd, out_path = tempfile.mkstemp(suffix=".html")
     os.close(tmp_fd)
     try:
@@ -258,7 +329,7 @@ def _strip_headings(fragment: str) -> str:
 
 def _render_category_page(category: str, cpd_files: list[Path], fragments: dict[Path, str]) -> str:
     """Build the Markdown content for one category page from pre-rendered fragments."""
-    lines = [f"# {category}\n"]
+    lines = [f"# {_display_name(category)}\n"]
 
     for cpd_file in cpd_files:
         name = cpd_file.stem
