@@ -77,7 +77,7 @@
     join_rows(r1; r2; r3…)       mnorm_2(M)             revorder_cols(M; i)
     augment(A; B; C…)            mnorm_i(M)             order_rows(M; j)
     stack(A; B; C…)              cond(M)                revorder_rows(M; j)
-	                             cond_e(M)              mcount(M; x)
+                                 cond_e(M)              mcount(M; x)
     Structural:                  cond_1(M)              msearch(M; x; i; j)
     n_rows(M)                    cond_2(M)              mfind(M; x)
     n_cols(M)                    cond_i(M)              mfind_eq(M; x)
@@ -99,9 +99,9 @@
     submatrix(M; i1; i2; j1; j2) slolve(A; B)           vlookup_lt(M; x; j1; j2)
                                  csolve(A; B)           vlookup_le(M; x; j1; j2)
     Double interpolation:        cmsolve(A; B)          vlookup_gt(M; x; j1; j2)
-    take(x; y; M)	             smsolve(A; B)          vlookup_ge(M; x; j1; j2)
+    take(x; y; M)                smsolve(A; B)          vlookup_ge(M; x; j1; j2)
     line(x; y; M)                matmul(A; B)
-    spline(x; y; M)				 ift(M), fft(M)
+    spline(x; y; M)              ift(M), fft(M)
 
 ————————————————————————————————————————————————————————————————————————————————
  Iterative and numerical methods:
@@ -181,15 +181,18 @@
 ————————————————————————————————————————————————————————————————————————————————
  Special symbol conversion table:
 ————————————————————————————————————————————————————————————————————————————————
-(add apostrophe ` before the respective latin letter)
+(backtick ` or tilde ~ before the respective latin letter)
 
 Fr: `a `b `c `d `e `f `g `h `i `j `k `l `m `n `o `p `q `r `s `t `u `v `w `x `y `z
+    ~a ~b ~c ~d ~e ~f ~g ~h ~i ~j ~k ~l ~m ~n ~o ~p ~q ~r ~s ~t ~u ~v ~w ~x ~y ~z
 To:  α  β  χ  δ  ε  φ  γ  η  ι  ø  κ  λ  μ  ν  ο  π  θ  ρ  σ  τ  υ  ϑ  ω  ξ  ψ  ζ
 
 Fr: `A `B `C `D `E `F `G `H `I `J `K `L `M `N `O `P `Q `R `S `T `U `V `W `X `Y `Z
+    ~A ~B ~C ~D ~E ~F ~G ~H ~I ~J ~K ~L ~M ~N ~O ~P ~Q ~R ~S ~T ~U ~V ~W ~X ~Y ~Z
 To:  Α  Β  Χ  Δ  Ε  Φ  Γ  Η  Ι  Ø  Κ  Λ  Μ  Ν  Ο  Π  Θ  Ρ  Σ  Τ  Υ  ∡  Ω  Ξ  Ψ  Ζ
 
 Fr: `@ `' (single quote) `" (double quote)
+    ~@ ~' (single quote) ~" (double quote)
 To:  °  ′ (single prime)  ″ (double prime/second)
 
 ————————————————————————————————————————————————————————————————————————————————
@@ -206,5 +209,5 @@ To:  °  ′ (single prime)  ″ (double prime/second)
     cli input.cpd      - calculates input.cpd and exports to input.html.
 
     Additional arguments:
-        -s              - silent mode (do not open the output file), e.g.:
+        -s             - silent mode (do not open the output file), e.g.:
         cli input.cpd output.html -s

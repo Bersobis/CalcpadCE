@@ -1,20 +1,20 @@
 ————————————————————————————————————————————————————————————————————————————————
  命令:
 ————————————————————————————————————————————————————————————————————————————————
-	NEW     - 清除当前会话并开始新会话
-	OPEN    - 从磁盘打开存储的文件;
-	SAVE    - 将当前文件保存到磁盘;
-	LIST    - 列出磁盘上的可用文件;
-	EXIT    - 关闭程序;
-	RESET   - 清除输出并从头开始重新计算所有内容;
-	CLS     - 清除输出并从最后一行继续;
-	DEL     - 删除最后一行；
-	DEG     - 将默认三角单位设置为度;
-	RAD     - 将默认三角单位设置为弧度;
-	GRA     - 将默认三角单位设置为等级;
-	SETTINGS/OPTIONS -显示设置文件进行编辑;
-	LICENSE - 显示许可证文件;
-	HELP    - 显示此帮助文件.
+    NEW     - 清除当前会话并开始新会话
+    OPEN    - 从磁盘打开存储的文件;
+    SAVE    - 将当前文件保存到磁盘;
+    LIST    - 列出磁盘上的可用文件;
+    EXIT    - 关闭程序;
+    RESET   - 清除输出并从头开始重新计算所有内容;
+    CLS     - 清除输出并从最后一行继续;
+    DEL     - 删除最后一行；
+    DEG     - 将默认三角单位设置为度;
+    RAD     - 将默认三角单位设置为弧度;
+    GRA     - 将默认三角单位设置为等级;
+    SETTINGS/OPTIONS -显示设置文件进行编辑;
+    LICENSE - 显示许可证文件;
+    HELP    - 显示此帮助文件.
 
 ————————————————————————————————————————————————————————————————————————————————
  运营商: ! ^ / ÷ \ % * - + ≡ ≠ < > ≤ ≥ ∧ ∨ ⊕ = ← ? (输入字段)
@@ -40,7 +40,6 @@
     switch(cond1; val1; cond2; val2; …; default)
     take(n; a; b; c…)     line(x; a; b; c…)       spline(x; a; b; c…)
 
-
 ————————————————————————————————————————————————————————————————————————————————
  矢量函数:
 ————————————————————————————————————————————————————————————————————————————————
@@ -58,7 +57,7 @@
     first(v; n)           unit(v)         find_lt(v; x; i)    lookup_lt(a; b; x)
     last(v; n)            dot(a; b)       find_le(v; x; i)    lookup_le(a; b; x)
     extract(v; i )        cross(a; b)     find_gt(v; x; i)    lookup_gt(a; b; x)
-	                                      find_ge(v; x; i)    lookup_ge(a; b; x)
+                                          find_ge(v; x; i)    lookup_ge(a; b; x)
 
 ————————————————————————————————————————————————————————————————————————————————
  矩阵函数:
@@ -77,7 +76,7 @@
     join_rows(r1; r2; r3…)       mnorm_1(M)             revorder_cols(M; i)
     augment(A; B; C…)            mnorm_2(M)             order_rows(M; j)
     stack(A; B; C…)              mnorm_i(M)             revorder_rows(M; j)
-	                             cond(M)                mcount(M; x)
+                                 cond(M)                mcount(M; x)
     结构相关:                      cond_e(M)              msearch(M; x; i; j)
     n_rows(M)                    cond_1(M)              mfind(M; x)
     n_cols(M)                    cond_2(M)              mfind_eq(M; x)
@@ -98,10 +97,10 @@
     diag2vec(v)                  lsolve(A; b)           vlookup_ne(M; x; j1; j2)
     submatrix(M; i1; i2; j1; j2) clsolve(A; b)          vlookup_lt(M; x; j1; j2)
                                  slolve(A; B)           vlookup_le(M; x; j1; j2)
-    双重插值:                      csolve(A; B)           vlookup_gt(M; x; j1; j2)
-    take(x; y; M)	             cmsolve(A; B)          vlookup_ge(M; x; j1; j2)
+    双重插值:                     csolve(A; B)           vlookup_gt(M; x; j1; j2)
+    take(x; y; M)                cmsolve(A; B)          vlookup_ge(M; x; j1; j2)
     line(x; y; M)                smsolve(A; B)
-    spline(x; y; M)				 fft(M), ift(M)
+    spline(x; y; M)              fft(M), ift(M)
 
 ————————————————————————————————————————————————————————————————————————————————
 迭代和数值方法:
@@ -184,12 +183,15 @@
 (在相应的拉丁字母之前添加撇号 `)
 
 Fr: `a `b `c `d `e `f `g `h `i `j `k `l `m `n `o `p `q `r `s `t `u `v `w `x `y `z
+    ~a ~b ~c ~d ~e ~f ~g ~h ~i ~j ~k ~l ~m ~n ~o ~p ~q ~r ~s ~t ~u ~v ~w ~x ~y ~z
 To:  α  β  χ  δ  ε  φ  γ  η  ι  ø  κ  λ  μ  ν  ο  π  θ  ρ  σ  τ  υ  ϑ  ω  ξ  ψ  ζ
 
 Fr: `A `B `C `D `E `F `G `H `I `J `K `L `M `N `O `P `Q `R `S `T `U `V `W `X `Y `Z
+    ~A ~B ~C ~D ~E ~F ~G ~H ~I ~J ~K ~L ~M ~N ~O ~P ~Q ~R ~S ~T ~U ~V ~W ~X ~Y ~Z
 To:  Α  Β  Χ  Δ  Ε  Φ  Γ  Η  Ι  Ø  Κ  Λ  Μ  Ν  Ο  Π  Θ  Ρ  Σ  Τ  Υ  ∡  Ω  Ξ  Ψ  Ζ
 
 Fr: `@ `' (single quote) `" (double quote)
+    ~@ ~' (single quote) ~" (double quote)
 To:  °  ′ (single prime)  ″ (double prime/second)
 
 ————————————————————————————————————————————————————————————————————————————————
@@ -205,6 +207,6 @@ To:  °  ′ (single prime)  ″ (double prime/second)
 
     cli input.cpd      - 计算input.cpd并导出到input.html；.
 
-	附加参数:
-		-s   		   - 静默模式（不打开输出文件），例如:
-		cli input.cpd output.html -s
+    附加参数:
+        -s             - 静默模式（不打开输出文件），例如:
+        cli input.cpd output.html -s

@@ -1,4 +1,3 @@
-﻿using Calcpad.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,12 +8,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using Calcpad.Core;
 
 namespace Calcpad.Cli
 {
     class Program
     {
-        private static readonly string _currentCultureName = "en"; //en, bg or zh
+        private static readonly string _currentCultureName = GetCurrentCultureName();
         private static readonly char _dirSeparator = Path.DirectorySeparatorChar;
         const string Prompt = " |> ";
         private static int _width;
@@ -33,7 +33,8 @@ namespace Calcpad.Cli
 
             private string LatinToGreek(string input)
             {
-                var i = input.IndexOf('`');
+                char[] prefixes = { '`', '~' };
+                var i = input.IndexOfAny(prefixes);
                 if (i == -1)
                     return input;
 
@@ -46,7 +47,7 @@ namespace Calcpad.Cli
 
                     n = i + 1;
                     _sb.Append(LatinToGreekChar(input[n]));
-                    i = input.IndexOf('`', n);
+                    i = input.IndexOfAny(prefixes, n);
                     ++n;
                 }
                 if (n < input.Length)
@@ -59,7 +60,7 @@ namespace Calcpad.Cli
                 >= 'a' and <= 'z' => GreekLetters[c - 'a'],
                 'V' => '∡',
                 'J' => 'Ø',
-                >= 'A' and <= 'Z' => (char) (GreekLetters[c - 'A'] + 'Α' - 'α'),
+                >= 'A' and <= 'Z' => (char)(GreekLetters[c - 'A'] + 'Α' - 'α'),
                 '@' => '°',
                 '\'' => '′',
                 '"' => '″',
@@ -160,7 +161,7 @@ namespace Calcpad.Cli
                         case "DEG":
                         case "RAD":
                         case "GRA":
-                            settings.Math.Degrees = sCaps == "DEG" ? 0: sCaps == "RAD" ? 1 : 2;
+                            settings.Math.Degrees = sCaps == "DEG" ? 0 : sCaps == "RAD" ? 1 : 2;
                             mp.Degrees = settings.Math.Degrees;
                             Header(Title, settings.Math.Degrees);
                             Render(mp, Lines, true);
@@ -217,28 +218,28 @@ namespace Calcpad.Cli
 
         static Settings GetSettings()
         {
-                Settings settings = new();
-                settings.Math.Decimals = 6;
-                XmlSerializer writer = new(settings.GetType());
-                var path = OperatingSystem.IsWindows() ?
-                    AppPath:
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"{_dirSeparator}.config{_dirSeparator}calcpad{_dirSeparator}";
+            Settings settings = new();
+            settings.Math.Decimals = 6;
+            XmlSerializer writer = new(settings.GetType());
+            var path = OperatingSystem.IsWindows() ?
+                AppPath :
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"{_dirSeparator}.config{_dirSeparator}calcpad{_dirSeparator}";
 
-                var fileName = path + "Settings.xml";
-                FileStream fileStream = null;
-                try
+            var fileName = path + "Settings.xml";
+            FileStream fileStream = null;
+            try
+            {
+                if (Path.Exists(fileName))
                 {
-                    if (Path.Exists(fileName))
-                    {
-                        fileStream = File.OpenRead(fileName);
-                        settings = (Settings)writer.Deserialize(fileStream);
-                    }
-                    else if(Path.Exists(path))
-                    {
-                        fileStream = File.Create(fileName);
-                        writer.Serialize(fileStream, settings);
-                    }
+                    fileStream = File.OpenRead(fileName);
+                    settings = (Settings)writer.Deserialize(fileStream);
                 }
+                else if (Path.Exists(path))
+                {
+                    fileStream = File.Create(fileName);
+                    writer.Serialize(fileStream, settings);
+                }
+            }
             catch (Exception ex)
             {
                 fileStream?.Close();
@@ -395,7 +396,7 @@ namespace Calcpad.Cli
             var n = args.Length;
             if (n > 1)
             {
-                var fileName = string.Join(" ", args, 1, n - 1); //.ToLower(); cannot be used in linux due to case sensitive file system
+                var fileName = string.Join(" ", args, 1, n - 1);
 
                 if (OperatingSystem.IsWindows())
                 {
@@ -428,8 +429,8 @@ namespace Calcpad.Cli
             if (plusIndex >= 0) ver = ver[..plusIndex];
             Console.WriteLine(new string('—', _width));
             Console.WriteLine(string.Format(Messages.Welcome_To_Calcpad_Command_Line_Interpreter, ver));
-            Console.WriteLine("Copyright (c) 2026 CalcpadCE Contributors");
-            Console.WriteLine("Copyright (c) 2014-2026 Nedelcho Ganchovski");
+            Console.WriteLine(" Copyright (c) 2026 CalcpadCE Contributors");
+            Console.WriteLine(" Copyright (c) 2014-2026 Nedelcho Ganchovski");
             Console.Write($"\r\n {Messages.Commands}: NEW OPEN SAVE LIST EXIT RESET CLS DEL ");
             switch (drg)
             {
@@ -577,7 +578,7 @@ namespace Calcpad.Cli
 
             Console.SetCursorPosition(0, Console.CursorTop - 1);
             Prompt += "SAVE" + Messages.Problem_Title;
-            if (Title.Length > 0 )
+            if (Title.Length > 0)
                 Prompt += $" ({Title}): ";
             else
                 Prompt += ": ";
@@ -621,6 +622,7 @@ namespace Calcpad.Cli
 
             Console.ResetColor();
         }
+
         private static bool Execute(string fileName, string args = "")
         {
             var proc = new Process();
@@ -644,6 +646,14 @@ namespace Calcpad.Cli
                 WriteError(Ex.Message, true);
                 return false;
             }
+        }
+
+        private static string GetCurrentCultureName()
+        {
+            string lang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+            if (lang is "en" or "bg" or "zh")
+                return lang;
+            return "en";
         }
     }
 }
