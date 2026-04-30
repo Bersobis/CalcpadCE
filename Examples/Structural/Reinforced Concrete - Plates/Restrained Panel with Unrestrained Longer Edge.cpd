@@ -1,6 +1,6 @@
 "Restrained Slab Panel with Unrestrained Longer Edge<hr/><small>According to <strong>Eurocode</strong>: EN 1992-1-1</small>
 '<div style="max-width:180mm;">
-'<img alt="sfff-span-cl.png" class="side" style="height:180pt;" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/spans/sfff-span-cl.png?raw=true">
+'<img alt="sfff-span-cl.png" class="side" style="height:180pt;" src="../../Images/structures/rc/spans/sfff-span-cl.png">
 '<h4>Dimensions</h4>
 'Clear spans (<i>l</i><sub>x</sub> &lt; <i>l</i><sub>y</sub>)
 l_x_cl = ?'m,'l_y_cl = ?'m
@@ -18,7 +18,7 @@ l_y = l_y_cl + min(b_y/100;h/100)'m
 #else
 	#show
 	'Design spans lengths and edge moments in adjacent panels
-	'<img alt="sfff-span.png" class="side" style="height:140pt;" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/spans/sfff-span.png?raw=true">
+	'<img alt="sfff-span.png" class="side" style="height:140pt;" src="../../Images/structures/rc/spans/sfff-span.png">
 	'<table><tr><td>
 	'Parallel to <i>x</i> - <br />
 	'</td><td>

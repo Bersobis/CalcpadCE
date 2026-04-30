@@ -1,6 +1,6 @@
 "Shear Wall Detailing for Ductility Class DCM<hr/><small>According to <strong>Eurocode</strong>: EN 1998-1</small>
 '<div style="max-width:180mm">
-'<img class="side" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/detailing/shear-wall-section.png?raw=true" alt="shear-wall-section.png" style="width:260pt;">
+'<img class="side" src="../../Images/structures/rc/detailing/shear-wall-section.png" alt="shear-wall-section.png" style="width:260pt;">
 '<p><b>Shear wall dimensions</b></p>
 'Length -'l_w = ? {4000}'mm
 'Web thickness -'b_wo = ? {300}'mm
@@ -27,7 +27,7 @@ f_ck = ? {25}'MPa
 #post
 'Mean value of axial tensile strength
 f_ctm = 0.30*f_ck^(2/3)'MPa
-'<img class="side" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/detailing/shear-wall-view.png?raw=true" alt="shear-wall-view.png" style="width:100pt;">
+'<img class="side" src="../../Images/structures/rc/detailing/shear-wall-view.png" alt="shear-wall-view.png" style="width:100pt;">
 'Characteristic axial tensile strength
 f_ctk,005 = 0.7*f_ctm'MPa
 'Design compressive cylinder strength

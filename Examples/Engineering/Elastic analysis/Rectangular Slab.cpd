@@ -8,7 +8,7 @@
 'Elastic modulus -'E = ? {35000}MPa
 'Poisson`s ratio -'ν = ? {0.15}
 'Number of iterations -'N = ? {5}
-'</td><td><img src="https://github.com/imartincei/CalcpadCE/blob/main/Images/mechanics/elastic/slab.png?raw=true" style="height:110pt; width:145pt; margin-left:40pt;"></td></tr></table>
+'</td><td><img src="../../Images/mechanics/elastic/slab.png" style="height:110pt; width:145pt; margin-left:40pt;"></td></tr></table>
 #rad
 #post
 '<h3>Analysis</h3>

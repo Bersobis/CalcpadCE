@@ -1,6 +1,6 @@
 "Beam Detailing for Ductility Class DCM<hr/><small>According to <strong>Eurocode</strong>: EN 1998-1</small>
 '<div style="max-width:180mm">
-'<img style="width:375pt;" style="max-width:100%;" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/detailing/beam.png?raw=true" alt="beam.png">
+'<img style="width:375pt;" style="max-width:100%;" src="../../Images/structures/rc/detailing/beam.png" alt="beam.png">
 '<p><b>Beam dimensions</b></p>
 'Cross section - 'b_w = ? {350}'mm, 'h_w = ? {650}'mm
 'Clear beam span -'l_cl = ? {5000}'mm

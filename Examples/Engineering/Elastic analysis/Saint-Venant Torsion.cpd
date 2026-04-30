@@ -6,7 +6,7 @@
 a = ? {50}cm','b = ? {30}*(cm/2)
 'Torsional moment -'M_t = ? {20}kNm
 'Number of iterations -'n = ? {10}
-'</td><td><img src="https://github.com/imartincei/CalcpadCE/blob/main/Images/mechanics/elastic/torsion.png?raw=true" style="height:110pt; width:152pt; margin-left:50pt;"></td></tr></table>
+'</td><td><img src="../../Images/mechanics/elastic/torsion.png" style="height:110pt; width:152pt; margin-left:50pt;"></td></tr></table>
 #post
 '<h3>Analysis</h3>
 k(i) = 2*i + 1', 'α(i) = k(i)*π/a

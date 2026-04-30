@@ -1,6 +1,6 @@
 "Column Detailing for Ductility Class DCM<hr/><small>According to <strong>Eurocode</strong>: EN 1998-1</small>
 '<div style="max-width:180mm">
-'<img class="side" style="width:220pt;" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/detailing/column-section.png?raw=true" alt="column-section.png">
+'<img class="side" style="width:220pt;" src="../../Images/structures/rc/detailing/column-section.png" alt="column-section.png">
 '<p><b>Column dimensions</b></p>
 'Cross section -'b_c = ? {500}'mm,'h_c = ? {500}'mm
 'Clear storey height -'l_cl = ? {2850}'mm
@@ -11,7 +11,7 @@
 '<p><b>Concrete</b></p>
 'Characteristic compressive cylinder strength -'f_ck = ? {25}'MPa
 'Partial safety factor -'γ_c = 1.5','α_ct = 1','α_cc = ? {1}
-'<img class="side" style="width:130pt;" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/detailing/column-view.png?raw=true" alt="column-view.png">
+'<img class="side" style="width:130pt;" src="../../Images/structures/rc/detailing/column-view.png" alt="column-view.png">
 #post
 'Mean value of axial tensile strength
 f_ctm = 0.30*f_ck^(2/3)'MPa

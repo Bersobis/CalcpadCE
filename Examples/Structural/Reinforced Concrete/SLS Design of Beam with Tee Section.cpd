@@ -12,25 +12,25 @@
 #hide
 #if type ≡ 1
 	#show
-	'<img class="side flip flip_1" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/design/deflection-cantilever-force.png?raw=true" alt="deflection-cantilever-force.png" style="width:150pt;">
+	'<img class="side flip flip_1" src="../../Images/structures/rc/design/deflection-cantilever-force.png" alt="deflection-cantilever-force.png" style="width:150pt;">
 	#post
 	'Cantilever with concentrated load
 	#hide
 #else if type ≡ 2
 	#show
-	'<img class="side flip flip_2" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/design/deflection-cantilever-uniform.png?raw=true" alt="deflection-cantilever-uniform.png" style="width:150pt;">
+	'<img class="side flip flip_2" src="../../Images/structures/rc/design/deflection-cantilever-uniform.png" alt="deflection-cantilever-uniform.png" style="width:150pt;">
 	#post
 	'Cantilever with uniformly distributed load
 	#hide
 #else if type ≡ 3
 	#show
-	'<img class="side flip flip_3" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/design/deflection-beam-force.png?raw=true" alt="deflection-beam-force.png" style="width:150pt;">
+	'<img class="side flip flip_3" src="../../Images/structures/rc/design/deflection-beam-force.png" alt="deflection-beam-force.png" style="width:150pt;">
 	#post
 	'Simply supported beam with concentrated load
 	#hide
 #else if type ≡ 0
 	#show
-	'<img class="side flip flip_0" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/design/deflection-beam-uniform.png?raw=true" alt="deflection-beam-uniform.png" style="width:150pt;">
+	'<img class="side flip flip_0" src="../../Images/structures/rc/design/deflection-beam-uniform.png" alt="deflection-beam-uniform.png" style="width:150pt;">
 	#post
 	'Simply supported beam with uniformly distributed load
 	#hide
@@ -56,7 +56,7 @@
 'Characteristic combination (<i>g</i> + <i>q</i>) -'M_k = ?'kNm
 'Quasi-permanent combination (<i>g</i> + <i>ψ</i><sub>2</sub><i>q</i>) -'M_qp = ?'kNm
 '
-'<img class="side" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/design/beam-tsection.png?raw=true" alt="beam-tsection.png" style="width:150pt;">
+'<img class="side" src="../../Images/structures/rc/design/beam-tsection.png" alt="beam-tsection.png" style="width:150pt;">
 '<h4>Cross section dimensions</h4>
 'Stem:'b = ?'mm,'h = ?'mm
 'Flange:'b_f = ?'mm,'h_f = ?'mm

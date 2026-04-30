@@ -1,5 +1,5 @@
 "Geometrical Properties of Square Rhombus
-'<hr /><div style="max-width:120mm"><img style="height:135pt;" alt="rombus-square.png" class="side" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/mechanics/sections/rhombus-square.png?raw=true"></div>
+'<hr /><div style="max-width:120mm"><img style="height:135pt;" alt="rombus-square.png" class="side" src="../../Images/mechanics/sections/rhombus-square.png"></div>
 'Side length
 a = ?'%u
 'Diagonal length

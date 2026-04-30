@@ -1,6 +1,6 @@
 "Combined Bending, Shear and Torsion Design of RC Beam<hr/><small>According to <strong>Eurocode</strong>: EN 1992-1-1</small>
 '<div style="width:180mm">
-'<img style="width:400pt;" src="https://github.com/imartincei/CalcpadCE/blob/main/Images/structures/rc/design/torsion.png?raw=true" alt="torsion.png">
+'<img style="width:400pt;" src="../../Images/structures/rc/design/torsion.png" alt="torsion.png">
 '<h4>Cross section dimensions</h4>
 b_w = ? {250}'mm,'h_w = ? {500}'mm
 b_f = ? {1200}'mm,'h_f = ? {120}'mm
