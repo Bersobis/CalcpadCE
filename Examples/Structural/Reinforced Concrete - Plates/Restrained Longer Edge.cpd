@@ -263,7 +263,7 @@ l_y = l_y_cl + min(b_y/100;h/100)'m
 	'</div><div class="fold">
 	'<h4>Reinforcement detailing</h4>
 	'<p><b>Bottom reinforcement</b></p>
-	'<p class="ref">[EN 1992-1-1, т. 9.2.1.1 (1)]</p>
+	'<p class="ref">[EN 1992-1-1, Clause 9.2.1.1 (1)]</p>
 	'Minimum reinforcement ratio
 	ρ_min = max(0.26*f_ctm/f_yk;0.0013)
 	'<p class="ref">[EN 1992-1-1, § 9.2.1.1 (3)]</p>

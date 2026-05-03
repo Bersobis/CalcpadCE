@@ -122,7 +122,7 @@ N_B = π^2*EI/(L_o)^2|kN
 '<p class="ref">[EN 1992-1-1 (5.30)]</p>
 'Bending moment with second order effects
 M_Ed_ = M_0Ed/(1 - N_Ed/N_B)
-'<p class="ref">[БДС EN 1992-1-1, т. 6.1(4)]</p>
+'<p class="ref">[EN 1992-1-1, Clause 6.1(4)]</p>
 'Minimum eccentricity
 e_o = max(h/30;20mm)|mm
 'Design bending moment
