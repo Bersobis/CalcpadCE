@@ -59,9 +59,9 @@ Precision = 10^-15
 η(2) - π^2/12
 η(4) - 7*π^4/720
 '**Error function** -' _
-erf(x) = 2*sign(x)/sqrt(π)*$Integral{e^-t^2 @ t = 0 : abs(x)}', ' _
-erfc(x) = 1 - erf(x)
-$Plot{erf(x) @ x = -5 : 5}
+erf_e(x) = 2*sign(x)/sqrt(π)*$Integral{e^-t^2 @ t = 0 : abs(x)}', ' _
+erfc_e(x) = 1 - erf_e(x)
+$Plot{erf_e(x) @ x = -5 : 5}
 '##### Integral functions
 '**Fresnel integrals**:' _
 C(x) = $Integral{cos(t^2) @ t = 0 : x}', ' _
@@ -71,24 +71,24 @@ $Plot{C(x) & S(x) @ x = -5 : 5}
 $Plot{C(t)^S(t) @ t = 0 : 5}
 '<!--'PlotWidth = 200'-->'
 '<br/>**Sine and cosine integrals**:
-Ci(x) = if(x ≡ 0; -1÷0; γ + ln(x) + $Integral{(cos(t) - 1)/t @ t = 0 : x})', ' _
-Si(x) = if(x ≡ 0; 0; $Integral{sin(t)/t @ t = 0 : x})
-$Plot{Ci(t) @ t = 0 : 15}
-$Plot{Si(t) @ t = -15 : 15}
+Ci_e(x) = if(x ≡ 0; -1÷0; γ + ln(x) + $Integral{(cos(t) - 1)/t @ t = 0 : x})', ' _
+Si_e(x) = if(x ≡ 0; 0; $Integral{sin(t)/t @ t = 0 : x})
+$Plot{Ci_e(t) @ t = 0 : 15}
+$Plot{Si_e(t) @ t = -15 : 15}
 '<br/>**Hyperbolic sine and cosine integrals**:
-Chi(x) = if(x ≡ 0; -1÷0; γ + ln(x) + $Integral{(cosh(t) - 1)/t @ t = 0 : x})', ' _
-Shi(x) = if(x ≡ 0; 0; $Integral{sinh(t)/t @ t = 0 : x})
-$Plot{Chi(t) @ t = 0 : 4}
-$Plot{Shi(t) @ t = -3 : 3}
+Chi_e(x) = if(x ≡ 0; -1÷0; γ + ln(x) + $Integral{(cosh(t) - 1)/t @ t = 0 : x})', ' _
+Shi_e(x) = if(x ≡ 0; 0; $Integral{sinh(t)/t @ t = 0 : x})
+$Plot{Chi_e(t) @ t = 0 : 4}
+$Plot{Shi_e(t) @ t = -3 : 3}
 li_2 = 1.0451637801174928
 '**Logarithmic Integral** -' _
-Li(x) = $Integral{1/ln(t) @ t = 2 : x}', ' _
-li(x) = if(x < 1; $Integral{1/ln(t) @ t = 0 : x}; Li(x) + li_2)
-$Plot{li(x) @ x = 0 : 4}
+Li_e(x) = $Integral{1/ln(t) @ t = 2 : x}', ' _
+li_e(x) = if(x < 1; $Integral{1/ln(t) @ t = 0 : x}; Li_e(x) + li_2)
+$Plot{li_e(x) @ x = 0 : 4}
 '<br/>**Exponential Integral** -' _
 E_1(x) = -$Integral{1/ln(t) @ t = 0 : e^(-x)}', ' _
-Ei(x) = switch(x < 0; -E_1(-x); x > 0; li_2 + Li(e^x))
-$Plot{Ei(x) @ x = -1 : 4}
+Ei_e(x) = switch(x < 0; -E_1(-x); x > 0; li_2 + Li_e(e^x))
+$Plot{Ei_e(x) @ x = -1 : 4}
 '<br/>**Dawson′s Integral** -' _
 F_D(x) = e^(-x^2)*$Integral{e^(t^2) @ t = 0 : x}'<br/>
 $Plot{F_D(x) @ x = -10 : 10}
@@ -119,18 +119,18 @@ am_(u; m) = gd(u) + (1 - m)/4*(sinh(u)*cosh(u) - u)*sech(u)
    **am**(*u*, *m*) = π - **am**(2K(*m*) - *u*, *m*), for *u* < 2K(*m*)
 'Function for evaluation of Jacobi elliptic amplitude:
 am(u; m) = switch(
-   m ≡ 0; u;
-   m ≡ 1; asin(tanh(u));
+   m ≡ 0; u; 
+   m ≡ 1; asin(tanh(u)); 
    $block{
-       K_m2 = K(m)*2;
-       s = sign(u); u = abs(u);
-       n = floor(u/(K_m2));
-       u = u - n*K_m2;
-       y = u*π/(K_m2);
+       K_m2 = K(m)*2; 
+       s = sign(u); u = abs(u); 
+       n = floor(u/(K_m2)); 
+       u = u - n*K_m2; 
+       y = u*π/(K_m2); 
        am = if(
-           u > K_m2/2;
-           π - $Root{F(φ; m) = K_m2 - u @ φ = 0 : π/2};
-           $Root{F(φ; m) = u @ φ = max(0; y - 1) : min(π/2; y + 1)});
+           u > K_m2/2; 
+           π - $Root{F(φ; m) = K_m2 - u @ φ = 0 : π/2}; 
+           $Root{F(φ; m) = u @ φ = max(0; y - 1) : min(π/2; y + 1)}); 
        s*(am + n*π) _
     } _
 )
@@ -146,41 +146,41 @@ sn(u; m) = sin(am(u; m))
 cn(u; m) = cos(am(u; m))
 '
 dn(u; m) = $block{
-  sn = sin(am(u; m));
+  sn = sin(am(u; m)); 
   sqrt(1 - m*sn*sn)}
 '
 cs(u; m) = $block{
-  φ = am(u; m);
+  φ = am(u; m); 
   cos(φ)/sin(φ)}
 '
 cd(u; m) = $block{
-  φ = am(u; m);
-  sn = sin(φ);
-  cn = cos(φ);
-  dn = sqrt(1 - m*sn*sn);
+  φ = am(u; m); 
+  sn = sin(φ); 
+  cn = cos(φ); 
+  dn = sqrt(1 - m*sn*sn); 
   cn÷dn}
 '
 dc(u; m) = $block{
-  φ = am(u; m);
-  sn = sin(φ);
-  cn = cos(φ);
-  dn = sqrt(1 - m*sn*sn);
+  φ = am(u; m); 
+  sn = sin(φ); 
+  cn = cos(φ); 
+  dn = sqrt(1 - m*sn*sn); 
   dn÷cn}
 '
 sc(u; m) = $block{
- φ = am(u; m);
+ φ = am(u; m); 
  sin(φ)/cos(φ)}
 '
 sd(u; m) = $block{
- φ = am(u; m);
- sn = sin(φ);
- dn = sqrt(1 - m*sn*sn);
+ φ = am(u; m); 
+ sn = sin(φ); 
+ dn = sqrt(1 - m*sn*sn); 
  sn÷dn}
 '
 ds(u; m) = $block{
- φ = am(u; m);
- sn = sin(φ);
- dn = sqrt(1 - m*sn*sn);
+ φ = am(u; m); 
+ sn = sin(φ); 
+ dn = sqrt(1 - m*sn*sn); 
  dn÷sn}
 Precision = 10^-15
 'Checks:
@@ -224,8 +224,8 @@ $Plot{Wr(x) - 2/(π*x) @ x = 100 : 200}
 'Secondary value -'W_b(x) = ln_2(x)/ln(x)
 'Lower bound -'W_btm(x) = W_a(x) + 0.5*W_b(x)
 'Upper bound -'W_top(x) = W_a(x) + e/(e - 1)*W_b(x)
-'The function -'W(x) = if(x < e;
-     $Root{ξ*exp(ξ) = x @ ξ = -1 : 1};
+'The function -'W(x) = if(x < e; 
+     $Root{ξ*exp(ξ) = x @ ξ = -1 : 1}; 
      $Root{ξ*exp(ξ) = x @ ξ = W_btm(x) : W_top(x)})
 $Plot{W(x) @ x = -1 : 10}
 'Omega constant -'Ω = 0.567143290409783873

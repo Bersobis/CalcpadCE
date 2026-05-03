@@ -91,8 +91,8 @@ n(N) = N/(A_c*f_cd/1000)
 k_2_(N) = n(N)*λ/170
 k_2(N) = min(k_2_(N); 0.2)
 K_c(N) = k_1*k_2(N)/(1 + φ_ef)
-EI(N) = (K_c(N)*E_cd*I_c + K_s*E_s*I_s)
-N_B(N) = π^2*EI(N)/(L_o)^2
+EI_e(N) = (K_c(N)*E_cd*I_c + K_s*E_s*I_s)
+N_B(N) = π^2*EI_e(N)/(L_o)^2
 #if L > 0
 	M_II_1 = (M_Ed_1 + N_Ed_1*e_i/1000)/(1 - N_Ed_1/N_B(N_Ed_1))
 	M_II_2 = (M_Ed_2 + N_Ed_2*e_i/1000)/(1 - N_Ed_2/N_B(N_Ed_2))

@@ -200,18 +200,18 @@ b = vector(2)','h = vector(2)
 'Shear area -'A_Q(ξ) = I(ξ)^2/$Area{S_1(ξ; z)^2/b(ξ; z) @ z = 0.1mm : h(ξ) - 0.1mm}
 '<h4>Element stiffness matrix</h4>
 'Elastic properties for element "e"
-EA(e; x) = E.e_M.e*A(x/l(e))
-EI(e; x) = E.e_M.e*I(x/l(e))
+EA_e(e; x) = E.e_M.e*A(x/l(e))
+EI_e(e; x) = E.e_M.e*I(x/l(e))
 GA_Q(e; x) = G.e_M.e*A_Q(x/l(e))
 'Stiffness matrix for element with variable cross-section
-'Displacement due to F<sub>x</sub> = 1 in primary system -'u_F(e) = $Area{1/EA(e; x) @ x = 0m : l(e)}
-'Displacement due to F<sub>y1</sub> = 1 in primary system, with account of shear deflections -'v_F1(e) = $Area{x^2/EI(e; x) @ x = 0m : l(e)} + $Area{1/GA_Q(e; x) @ x = 0m : l(e)}
-'Rotation due to F<sub>y1</sub> = 1 in primary system -'φ_F1(e) = -$Area{x/EI(e; x) @ x = 0m : l(e)}' + 0
+'Displacement due to F<sub>x</sub> = 1 in primary system -'u_F(e) = $Area{1/EA_e(e; x) @ x = 0m : l(e)}
+'Displacement due to F<sub>y1</sub> = 1 in primary system, with account of shear deflections -'v_F1(e) = $Area{x^2/EI_e(e; x) @ x = 0m : l(e)} + $Area{1/GA_Q(e; x) @ x = 0m : l(e)}
+'Rotation due to F<sub>y1</sub> = 1 in primary system -'φ_F1(e) = -$Area{x/EI_e(e; x) @ x = 0m : l(e)}' + 0
 'Displacement due to M<sub>1</sub> = 1 in primary system -'v_M1(e) = φ_F1(e)
-'Rotation due to M<sub>1</sub> = 1 in primary system -'φ_M1(e) = $Area{1/EI(e; x) @ x = 0m : l(e)}' + 0
+'Rotation due to M<sub>1</sub> = 1 in primary system -'φ_M1(e) = $Area{1/EI_e(e; x) @ x = 0m : l(e)}' + 0
 'Determinant -'D_1(e) = φ_M1(e)*v_F1(e) - φ_F1(e)^2
-'Displacement due to F<sub>y2</sub> = 1 in primary system -'v_F2(e) = $Area{(l(e) - x)^2/EI(e; x) @ x = 0m : l(e)} + $Area{1/GA_Q(e; x) @ x = 0m : l(e)}
-'Rotation due to F<sub>2</sub> = 1 in primary system -'φ_F2(e) = $Area{(l(e) - x)/EI(e; x) @ x = 0m : l(e)}' + 0
+'Displacement due to F<sub>y2</sub> = 1 in primary system -'v_F2(e) = $Area{(l(e) - x)^2/EI_e(e; x) @ x = 0m : l(e)} + $Area{1/GA_Q(e; x) @ x = 0m : l(e)}
+'Rotation due to F<sub>2</sub> = 1 in primary system -'φ_F2(e) = $Area{(l(e) - x)/EI_e(e; x) @ x = 0m : l(e)}' + 0
 'Displacement due to M<sub>2</sub> = 1 in primary system -'v_M2(e) = φ_F2(e)
 'Rotation due to M<sub>2</sub> = 1 in primary system -'φ_M2(e) = φ_M1(e)
 'Determinant -'D_2(e) = φ_M2(e)*v_F2(e) - φ_F2(e)^2
@@ -259,9 +259,9 @@ K
 'Shear forces -'Q_0(e; x) = $Area{q_E(e; ξ) @ ξ = 0m : x}
 'Bending moments -'M_0(e; x) = $Area{q_E(e; ξ)*(x - ξ) @ ξ = 0m : x}
 'Reactions at element ends
-'Displacements along “x“ due to axial loads -'u_n(e) = $Area{N_0(e; x)/EA(e; x) @ x = 0m : l(e)}
-'Displacements along “y“ due to lateral loads -'v_q(e) = $Area{M_0(e; x)*x/EI(e; x) @ x = 0m : l(e)} + $Area{Q_0(e; x)/GA_Q(e; x) @ x = 0m : l(e)}
-'Rotations due to lateral loads -'φ_q(e) = -$Area{M_0(e; x)/EI(e; x) @ x = 0m : l(e)}
+'Displacements along “x“ due to axial loads -'u_n(e) = $Area{N_0(e; x)/EA_e(e; x) @ x = 0m : l(e)}
+'Displacements along “y“ due to lateral loads -'v_q(e) = $Area{M_0(e; x)*x/EI_e(e; x) @ x = 0m : l(e)} + $Area{Q_0(e; x)/GA_Q(e; x) @ x = 0m : l(e)}
+'Rotations due to lateral loads -'φ_q(e) = -$Area{M_0(e; x)/EI_e(e; x) @ x = 0m : l(e)}
 'Element endpoint loads in local coordinate system
 'For joint “1”:
 F_x1(e) = -u_n(e)/u_F(e)
@@ -420,8 +420,8 @@ u_1(e) = take(1; z_E,loc(e))','v_1(e) = take(2; z_E,loc(e))','φ_1(e) = take(3; 
 u_2(e) = take(4; z_E,loc(e))','v_2(e) = take(5; z_E,loc(e))','φ_2(e) = take(6; z_E,loc(e))
 'Displacement functions (approximate)
 x_m(e; ξ) = 0.5*ξ*l(e)
-u(e; ξ) = u_1(e)*(1 - ξ) + u_2(e)*ξ + n_E(e; x_m(e; ξ))*.m/EA(e; x_m(e; ξ))*ξ*(1 - ξ)
-v(e; ξ) = v_1(e)*Φ_1(e; ξ) + φ_1(e)*Φ_2(e; ξ) + v_2(e)*Φ_3(e; ξ) + φ_2(e)*Φ_4(e; ξ) + q_E(e; x_m(e; ξ))*l(e)^4/(24*EI(e; x_m(e; ξ)))*(ξ^2*(1 - ξ)^2/.m) + q_E(e; x_m(e; ξ))*l(e)^2/(2*GA_Q(e; x_m(e; ξ)))*(ξ*(1 - ξ)/.m)
+u(e; ξ) = u_1(e)*(1 - ξ) + u_2(e)*ξ + n_E(e; x_m(e; ξ))*.m/EA_e(e; x_m(e; ξ))*ξ*(1 - ξ)
+v(e; ξ) = v_1(e)*Φ_1(e; ξ) + φ_1(e)*Φ_2(e; ξ) + v_2(e)*Φ_3(e; ξ) + φ_2(e)*Φ_4(e; ξ) + q_E(e; x_m(e; ξ))*l(e)^4/(24*EI_e(e; x_m(e; ξ)))*(ξ^2*(1 - ξ)^2/.m) + q_E(e; x_m(e; ξ))*l(e)^2/(2*GA_Q(e; x_m(e; ξ)))*(ξ*(1 - ξ)/.m)
 'Deformed shape, mm
 #val
 #hide
