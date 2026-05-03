@@ -12,7 +12,7 @@
 'Flange first moment of area -'S_f = A_f*(d - h_f/2)'mm<sup>3</sup>
 #show
 '<h4>Material properties</h4>
-'<p style="float:right">[EN 1992-1-1, Table 3.1]</p>
+'<p class="ref" style="float:right">[EN 1992-1-1, Table 3.1]</p>
 '<p><b>Concrete</b></p>
 'Characteristic compressive cylinder strength -'f_ck = ?'MPa
 'Partial safety factor for concrete -'γ_c = 1.5','α_cc = ?
@@ -80,7 +80,7 @@ M_f = b_f*h_f*η*f_cd*(d - h_f/2)*10^-6'kN·m
 	ρ_1 = A_s1/(b_w*d)
 	'<!--'ρ_2 = 0'-->
 #end if
-'<p class="ref">[БДС EN 1992-1-1, § 9.2.1.1]
+'<p class="ref">[EN 1992-1-1, § 9.2.1.1]
 'Minimum tensile reinforcement ratio
 ρ_min = max(0.26*f_ctm/f_yk; 0.0013)
 'Minimum reinforcement -'A_s_min = ρ_min*b_w*d'mm<sup>2</sup>
