@@ -7,7 +7,11 @@ Their parameters must be enclosed in curly brackets: "{" and "}". Such is the pl
 It can plot a function of one variable in the specified interval.
 It has the following format:
 
-`$Plot{y(x) @ x = a : b}`, where:
+```calcpad
+$Plot{y(x) @ x = a : b}
+```
+
+Where:
 
 - **y**(*x*) - the function to be plotted. Instead of **y**(*x*) you can put any valid expression. It will be used to calculate the ordinate values;
 - *x* - the name of the variable along the abscissa. You can put here only a single name. It is not required to define the variable preliminary;
