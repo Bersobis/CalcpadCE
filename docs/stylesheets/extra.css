@@ -6,6 +6,11 @@ img[height="20"] {
     vertical-align: text-bottom;
 }
 
+/* Use system fonts instead of loading Roboto from Google Fonts. */
+body {
+    --md-text-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
 /* CalcpadCE internal sylesheets */
 .err {
     color: Crimson;
