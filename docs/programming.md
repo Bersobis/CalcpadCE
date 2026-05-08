@@ -464,20 +464,20 @@ Command options:
 - `!A1:B2` target cell range \[optional\]:
     - `A1` starting cell reference \[optional\], where A is the column name and 1 is the row index;
     - `:B2` ending cell reference as above \[optional\];  
-        Column names start at **A**, and row numbers start at **1**. You can skip any of the starting and ending column/row references.
-        In this case, data is read to the first and last nonempty cells, respectively.
-        The starting cell references can be greater than the ending ones.
-        Examples for data import settings are provided below:
+    Column names start at **A**, and row numbers start at **1**. You can skip any of the starting and ending column/row references.
+    In this case, data is read to the first and last nonempty cells, respectively.
+    The starting cell references can be greater than the ending ones.
+    Examples for data import settings are provided below:
 
-        ![Excel addressing examples](media/Image%2050.png)
+    ![Excel addressing examples](media/Image%2050.png)
 
-        The behavior of data export commands `#write` and `#append` is a bit different.
-        The starting reference indicates the location of the first element $M_{1,1}$ of the output matrix.
-        So, even if it is greater than A1, it will not truncate the first rows and columns.
-        Unless bound by the ending reference, the entire matrix will be written after the specified location.
-        Otherwise, the remaining rows and columns after the ending reference will be truncated.
-        For example: `#write M to filename.xlsx@Sheet1!C2` will produce the following output:
+    The behavior of data export commands `#write` and `#append` is a bit different.
+    The starting reference indicates the location of the first element $M_{1,1}$ of the output matrix.
+    So, even if it is greater than A1, it will not truncate the first rows and columns.
+    Unless bound by the ending reference, the entire matrix will be written after the specified location.
+    Otherwise, the remaining rows and columns after the ending reference will be truncated.
+    For example: `#write M to filename.xlsx@Sheet1!C2` will produce the following output:
 
-        ![Excel example](media/Image%2051.png){style="width: 300px;"}
+    ![Excel example](media/Image%2051.png){style="width: 300px;"}
 
 - `TYPE=R` type of matrix/vector for structured storage \[optional\]. The same rules apply as for text/CSV files above.
