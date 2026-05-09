@@ -1,4 +1,4 @@
-﻿# Licensing and terms of use
+﻿# Licensing and Terms of Use
 
 This software is free for both commercial and non-commercial use.
 It is distributed under the MIT license:
