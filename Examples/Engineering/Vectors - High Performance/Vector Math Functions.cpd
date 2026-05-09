@@ -1,3 +1,4 @@
+'<!-- HP variant of the vector math toolkit: $L_p$ norms, dot and cross products, element-wise transcendentals and statistical primitives, evaluated on packed storage. -->
 '<style>em {font-family:"Times New Roman";}</style>
 "Vector math functions
 '<p><b>Norm_p</b>(<em>vector</em>)</p><hr/>

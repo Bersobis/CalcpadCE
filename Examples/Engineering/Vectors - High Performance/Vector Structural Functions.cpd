@@ -1,3 +1,4 @@
+'<!-- HP variant of the structural toolkit: $len$, $size$, $resize$, $slice$, $join$ and $reverse$, operating in-place on packed storage where possible. -->
 '<style>em {font-family:"Times New Roman";}</style>
 "Vector structural functions
 '<p><b>Len</b>(<em>vector</em>) and <b>Size</b>(<em>vector</em>)</p><hr/>

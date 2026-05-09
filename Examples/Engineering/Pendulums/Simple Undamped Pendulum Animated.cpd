@@ -1,5 +1,6 @@
+'<!-- Single-degree-of-freedom undamped pendulum integrated with classical RK4 from a near-inverted initial angle.
+'Each time step is rendered as an SVG frame so the swing builds up live, alongside an angle-versus-time plot. -->
 #rad
-"Animation of simple undamped pendulum by Runge-Kutta 4 method
 '<table><tr><td>
 '<h4>Input parameters</h4>
 'Gravitational acceleration (m/s²) - 'g = 9.80665m/s^2

@@ -1,3 +1,4 @@
+'<!-- Builds a print-ready page header from a logo SVG and a small HTML table, the standard recipe for branded engineering reports. -->
 '<style>.header{width: 100%; max-width:170mm;} .header th{border: solid 1pt lightgray; text-align:left; font-size:90%;} .header th p{line-height:1em; } .logo{width:80pt; height:17.6pt; float:right; margin-top:3pt;} .addr{margin-bottom:8pt;} .pr{font-size:130%;}</style>
 '<table class="header"><thead>
 '<tr><th rowspan=3><img class="logo" src="https://raw.githubusercontent.com/imartincei/CalcpadCE/refs/heads/main/docs/media/logo.svg" alt="logo">

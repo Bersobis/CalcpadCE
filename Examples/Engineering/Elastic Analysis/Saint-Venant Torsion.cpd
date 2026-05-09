@@ -1,5 +1,5 @@
-"Saint-Venant Torsion of Rectangular Section
-'<hr />
+'<!-- Closed-form [Saint-Venant torsion](https://en.wikipedia.org/wiki/Saint-Venant%27s_principle) of a rectangular cross-section, evaluating the shear-stress field $τ_{zx}$, $τ_{zy}$ and torsional rigidity from a single Fourier series.
+'A hand-check baseline for FE torsion models and for simplified rectangular-section design formulas. -->
 '<h3>Input data</h3>
 '<table><tr><td>
 'Dimensions of cross section

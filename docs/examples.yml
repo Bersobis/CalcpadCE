@@ -85,10 +85,10 @@ Engineering Examples:
     - Rayleigh Quotient Iteration
     - System of Nonlinear Equations
   Pendulums:
-    - Simple Undamped Animated
-    - Simple Damped Animated
-    - Elastic Damped Animated
-    - Double Damped Animated
+    - Simple Undamped Pendulum Animated
+    - Simple Damped Pendulum Animated
+    - Elastic Damped Pendulum Animated
+    - Double Damped Pendulum Animated
     - Comparison of Different Methods for Analysis of Simple Undamped Pendulum
   Waves:
     - Waves 2D on Water Interference Animated

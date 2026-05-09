@@ -1,5 +1,5 @@
-"Elastic Analysis of Rectangular Slab
-'<hr />
+'<!-- [Navier double-trig-series solution](https://en.wikipedia.org/wiki/Bending_of_plates#Bending_of_rectangular_plates) for a thin rectangular plate on simple supports under uniform load.
+'Returns maximum deflection and bending moments $M_x$, $M_y$ for arbitrary plan dimensions, thickness and elastic constants — a quick parametric check against slab FEA. -->
 '<h3>Input data</h3>
 'Dimensions in plan -'a = ? {6}m','b = ? {4}m
 '<table><tr><td>

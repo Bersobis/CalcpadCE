@@ -1,3 +1,5 @@
+'<!-- Wires raw HTML $select$ and input controls into a worksheet to drive a parametric cross-section design, demonstrating Calcpad form-based UI.
+'Copy the code into the Desktop application to modify the input values. -->
 'Cross section: <select name="section">
 '<option value="100;150">RHS 100x150</option>
 '<option value="150;200">RHS 150x200</option>

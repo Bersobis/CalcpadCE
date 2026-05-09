@@ -1,3 +1,4 @@
+'<!-- Multiline quadratic-roots function returning both roots of $a x^2 + b x + c = 0$ via the discriminant, with real/complex branching. -->
 "Quadratic Equation Roots function
 'Multiline code block example:
 quadRoots(a; b; c) = _

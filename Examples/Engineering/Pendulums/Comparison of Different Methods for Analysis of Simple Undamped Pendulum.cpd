@@ -1,5 +1,6 @@
+'<!-- Side-by-side study of the simple undamped pendulum solved four ways: the small-angle analytical solution, the elliptic-integral exact period, an RK4 numerical integration and a CalcpadCE `$Find` shooting solver.
+'Errors and orbits are plotted together. -->
 #rad
-"Comparison of different methods for analysis of simple undamped pendulum
 '<table><tr><td>
 '<h4>Input parameters</h4>
 'Gravitational acceleration (m/s²) - 'g = 9.80665m/s^2

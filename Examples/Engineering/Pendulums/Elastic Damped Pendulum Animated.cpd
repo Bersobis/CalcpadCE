@@ -1,5 +1,6 @@
+'<!-- Two-DOF elastic pendulum: the rigid rod is replaced by an axial spring of stiffness $k_s$, giving coupled radial and angular equations of motion with independent damping factors.
+'RK4 integration drives the SVG animation. -->
 #rad
-"Animation of elastic damped pendulum by Runge-Kutta 4 method
 '<table><tr><td>
 '<h4>Input parameters</h4>
 'Gravitational acceleration -'g = 9.80665m/s^2

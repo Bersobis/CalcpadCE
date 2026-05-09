@@ -1,3 +1,4 @@
+'<!-- Recovers all six elements of a triangle from three given side lengths via the law of cosines, plus area and the three heights. -->
 "Solution of triangle, defined by three sides
 #deg
 'Lengths of sides:

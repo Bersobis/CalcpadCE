@@ -1,3 +1,4 @@
+'<!-- Data-oriented matrix toolkit: row- and column-wise sorting, ordering, search, plus the standard reductions ($sum$, $product$, $min$, $max$, $mean$). -->
 '<style>em {font-family:"Times New Roman";}</style>
 "Matrix data functions
 '<p><b>Sort_Cols</b>(<em>matrix</em>; <em>row index</em>) and <b>Rsort_Cols</b>(<em>matrix</em>; <em>row index</em>)</p><hr/>

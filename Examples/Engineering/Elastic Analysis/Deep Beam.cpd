@@ -1,5 +1,5 @@
-"Elastic Analysis of Deep Beam
-'<hr />
+'<!-- Plane-stress analysis of a simply-supported deep beam under a partial uniform load, using a sine-series decomposition of the load and reaction.
+'Recovers $σ_x$, $σ_y$ and $τ_{xy}$ for arbitrary length, height, load span and support width — an analytical baseline for FE checks. -->
 #rad
 '<h3>Input data</h3>
 '<table><tr><td>

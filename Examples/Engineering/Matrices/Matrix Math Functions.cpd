@@ -1,3 +1,4 @@
+'<!-- Linear-algebra primitives: Hadamard product, determinant, inverse, transpose, trace, rank, $L_p$ and Frobenius norms, plus solver and decomposition helpers. -->
 '<style>em {font-family:"Times New Roman";}</style>
 "Matrix math functions
 '<p><b>Hprod</b>(<em>first matrix</em>; <em>second matrix</em>)</p><hr/>

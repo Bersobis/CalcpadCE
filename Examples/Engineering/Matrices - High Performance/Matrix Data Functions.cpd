@@ -1,3 +1,4 @@
+'<!-- HP variant of the data toolkit: row- and column-wise sorting, ordering, search and reductions, all on packed numerical storage. -->
 '<style>em {font-family:"Times New Roman";}</style>
 "Matrix data functions
 '<p><b>Sort_Cols</b>(<em>matrix</em>; <em>row index</em>) and <b>Rsort_Cols</b>(<em>matrix</em>; <em>row index</em>)</p><hr/>

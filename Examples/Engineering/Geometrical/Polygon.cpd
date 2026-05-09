@@ -1,3 +1,4 @@
+'<!-- Section properties of an arbitrary polygon from a list of vertex coordinates: signed area, centroid and second moments of area via the shoelace formulas. -->
 "Geometrical properties of arbitrary polygon
 '<h4>Point coordinates</h4>
 x = [0; 6.3; 6; 1; 0.4; 0]
