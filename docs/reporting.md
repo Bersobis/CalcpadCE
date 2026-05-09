@@ -149,15 +149,16 @@ All you need to do is to enclose the folding section into a Html "**div**" eleme
 ```html
 '<div class="fold">
 '<b>Heading</b> (click to unfold)
-'Content to be folded
+'<p>Content to be folded</p>
 '</div>
 ```
 
 The result will look as follows:
 
-> **Heading** (click to unfold) … ▼
->
-> Content to be folded
+<div class="fold">
+<p><b>Heading</b> (click to unfold)</p>
+<p>Content to be folded</p>
+</div>
 
 ### Images
 
