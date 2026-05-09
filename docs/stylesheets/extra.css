@@ -40,10 +40,14 @@ body:has(.calcpad-output) .md-content {
     max-width: 100rem;
 }
 
-/* Side-by-side layout for Examples pages */
+/* Side-by-side layout for Examples pages.
+   `minmax(0, 1fr)` (instead of plain `1fr`) keeps the two columns at a
+   strict 50/50 split even when one side has very wide content (e.g. large
+   matrices in the output). Wide content scrolls horizontally inside its
+   column rather than pushing the other column to a tiny width. */
 .example-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
     align-items: start;
     margin: 1rem 0;
@@ -55,7 +59,23 @@ body:has(.calcpad-output) .md-content {
 }
 
 .example-output {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+figure.example-output {
+    margin: 0;
+    text-align: start;
+}
+
+/* Visually hidden but exposed to assistive tech and search engines. */
+.screenreader-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 /* Vertical scroll applied by example-layout.js to <code>; horizontal scroll
