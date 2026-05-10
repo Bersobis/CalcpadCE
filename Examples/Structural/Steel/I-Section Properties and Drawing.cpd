@@ -1,6 +1,8 @@
-'<!-- Cross-section properties of an asymmetric or built-up I-section computed from seven user-supplied dimensions, with classification per Eurocode EN 1993-1-1 and elastic and plastic section moduli for both axes. -->
-"Design of steel I section <hr/><small>According to <strong>Eurocode</strong>: EN 1993-1-1 </small>
-'<div style="max-width:180mm">
+'<!-- Catalogue-driven variant of the I-section properties calculation: a single drop-down selector populates the dimensions and an SVG sketch of the chosen rolled section is rendered alongside the results. -->
+"Design of steel I-Section <hr/><small>According to <strong>Eurocode</strong>: EN 1993-1-1 </small>
+#pre
+'<div style="max-width:150mm; padding-left:5mm; background:#f0f0ee; border: solid 1pt #e4e4e0; border-radius:6pt; box-shadow: 3pt 3pt 6pt rgba(0, 0, 0, 0.4)">
+#show
 '
 '<table><tr><td>
 '<h4>Dimensions</h4>
@@ -11,26 +13,6 @@
 '<p>Section type -
 '<select data-target="section" style="font-weight:bold; border:none; background: none; color: black; box-shadow:none; appearance: none;">
 #show
-'<option value=80;3.9;42;5.9;42;5.9;3.9;2.3>IPN 80</option>
-'<option value=100;4.5;50;6.8;50;6.8;4.5;2.7>IPN 100</option>
-'<option value=120;5.1;58;7.7;58;7.7;5.1;3.1>IPN 120</option>
-'<option value=140;5.7;66;8.6;66;8.6;5.7;3.4>IPN 140</option>
-'<option value=160;6.3;74;9.5;74;9.5;6.3;3.8>IPN 160</option>
-'<option value=180;6.9;82;10.4;82;10.4;6.9;4.1>IPN 180</option>
-'<option value=200;7.5;90;11.3;90;11.3;7.5;4.5>IPN 200</option>
-'<option value=220;8.1;98;12.2;98;12.2;8.1;4.9>IPN 220</option>
-'<option value=240;8.7;106;13.1;106;13.1;8.7;5.2>IPN 240</option>
-'<option value=260;9.4;113;14.1;113;14.1;9.4;5.6>IPN 260</option>
-'<option value=280;10.1;119;15.2;119;15.2;10.1;6.1>IPN 280</option>
-'<option value=300;10.8;125;16.2;125;16.2;10.8;6.5>IPN 300</option>
-'<option value=320;11.5;131;17.3;131;17.3;11.5;6.9>IPN 320</option>
-'<option value=340;12.2;137;18.3;137;18.3;12.2;7.3>IPN 340</option>
-'<option value=360;13;143;19.5;143;19.5;13;7.8>IPN 360</option>
-'<option value=380;13.7;149;20.5;149;20.5;13.7;8.2>IPN 380</option>
-'<option value=400;14.4;155;21.6;155;21.6;14.4;8.6>IPN 400</option>
-'<option value=450;16.2;170;24.3;170;24.3;16.2;9.7>IPN 450</option>
-'<option value=500;18;185;27;185;27;18;10.8>IPN 500</option>
-'<option value=550;19;200;30;200;30;19;11.9>IPN 550</option>
 '<option value=100;4.1;55;5.7;55;5.7;7;0>IPE 100 </option>
 '<option value=120;4.4;64;6.3;64;6.3;7;0>IPE 120 </option>
 '<option value=137.4;3.8;73;5.6;73;5.6;7;0>IPE 140 A</option>
@@ -207,10 +189,10 @@
 '</select></p>
 #show
 '<table id="section">
-'<tr><td style="padding-right: 10px;">'h = ? {550}'mm, </td><td>'t_w = ? {19}'mm </td></tr>
-'<tr><td style="padding-right: 10px;">'b_f1 = ? {200}'mm,</td><td>'t_f1 = ? {30}'mm</td></tr>
-'<tr><td style="padding-right: 10px;">'b_f2 = ? {200}'mm,</td><td>'t_f2 = ? {30}'mm</td></tr>
-'<tr><td style="padding-right: 10px;">'r = ? {19}'mm, </td><td style="display:none">'r_2 = ? {11.9}'mm</td></tr>
+'<tr><td style="padding-right: 10px;">'h = ? {180}'mm, </td><td>'t_w = ? {5.3}'mm </td></tr>
+'<tr><td style="padding-right: 10px;">'b_f1 = ? {91}'mm,</td><td>'t_f1 = ? {8}'mm</td></tr>
+'<tr><td style="padding-right: 10px;">'b_f2 = ? {91}'mm,</td><td>'t_f2 = ? {8}'mm</td></tr>
+'<tr><td style="padding-right: 10px;">'r = ? {9}'mm, </td><td style="display:none">'r_2 = ? {0}'mm</td></tr>
 '</table>
 h_w = h - t_f1 - t_f2'mm
 #pre
@@ -231,16 +213,18 @@ h_w = h - t_f1 - t_f2'mm
 '
 '
 '<h4>Steel properties</h4>
-'</td><td>
-'<img alt="I-section.png" width="160" src="./i-section.png">
-'</td></tr></table>
 'Yield strength - 'f_y = ? {235}'MPa
 'Tensile strength - 'f_u = ? {360}'MPa
+#pre
+
+#post
 'Modulus of elasticity - 'E = 210000'MPa
 'Private factors of safety:
 γ_M0 = 1.05', 'γ_M2 = 1.25
-'
-'
+#show
+'</td><td>
+#pre
+'<img alt="I-section.svg" src="./i-section.svg">
 #hide
 #if rolled
 	A_r = (1 - π/4)*r^2
@@ -317,6 +301,54 @@ I_z1 = t_f1*b_f1^3/12
 I_z2 = t_f2*b_f2^3/12
 I_w = I_z1*I_z2/(I_z1 + I_z2)*h_2^2
 e_z = t_f1/2 + h_2*I_z1/I_z
+H = 180
+k = H/h
+b = max(b_f1; b_f2)
+B = b*k
+x1 = -b_f2/2
+x2 = -t_w/2
+x3 = t_w/2
+x4 = b_f2/2
+x5 = -b_f1/2
+x6 = b_f1/2
+y1 = 0
+y2 = t_f2
+y3 = h - t_f1
+y4 = h
+R = r
+y2r = y2 + r
+y3r = y3 - r
+x2r = x2 - r
+x3r = x3 + r
+stroke = 0.4/k
+dist = 15*stroke
+#post
+#val
+#include svg_drawing.cpd
+'<svg width="'B + 80'pt" height="'H + 80'pt" viewBox="'-b/2 - 50/k' '-50/k' 'b + 100/k' 'h + 100/k'" style="font-size:'9/k'pt;" xmlns="http://www.w3.org/2000/svg">
+'<path d="M'x1','y1'H'x4'V'y2'H'x3r'A'r','r' 0 0 0 'x3','y2r'V'y3r'A'r','r' 0 0 0 'x3r','y3'H'x6'V'y4'H'x5'V'y3'H'x2r'A'r','r' 0 0 0 'x2','y3r'V'y2r'A'r','r' 0 0 0 'x2r','y2'H'x1'Z" fill="LightSkyBlue" fill-opacity="0.6" stroke="#4ac" stroke-width="'1.5/k'" />
+line$(-b/2 - 35/k; h - z_c; b/2 + 35/k;h - z_c; axis_style$)
+texth$(-b/2 - 40/k; h - z_c; y)
+texth$(b/2 + 40/k; h - z_c; y)
+line$(0; -35/k; 0;h + 35/k; axis_style$)
+texth$(0;-40/k; z)
+texth$(0; h + 45/k; z)
+dimv$(x1 - 15/k; y1; y4; 'h')
+dimv$(x4 + 25/k; y1; y2; 't_f2')
+dimv$(x6 + 25/k; y3; y4; 't_f1')
+dimh$(x5; x6; y4 + 25/k; 'b_f1')
+dimh$(x1; x4; -15/k; 'b_f2')
+#format
+dimh$(x2; x3; z_c - 15/k; )
+texth$(x3 + 15/k; z_c - 20/k; 't_w')
+line$(x3r - 0.707*r; y3r + 0.707*r; x3r + 25/k; y3r - 25/k; dim_style$)
+line$(x3r + 25/k; y3r - 25/k; x3r + 35/k; y3r - 25/k; dim_style$)
+texth$(x3r + 45/k; y3r - 20/k; 'r')
+'</svg>
+#equ
+'</td></tr></table>
+'
+'
 #post
 '<h4>Section properties</h4>
 '<table style="width:100%">
@@ -325,4 +357,3 @@ e_z = t_f1/2 + h_2*I_z1/I_z
 '<tr><td>'I_z'mm<sup>4</sup></td><td>'r_z'mm</td><td>'W_el_z'mm<sup>3</sup></td><td>'W_pl_z'mm<sup>3</sup></td></tr>
 '<tr><td>'I_t'mm<sup>4</sup></td><td>'I_w'mm<sup>6</sup></td><td>'W_t'mm<sup>3</sup></td><td></td></tr>
 '</table>
-'</div>
