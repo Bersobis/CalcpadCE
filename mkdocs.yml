@@ -5,6 +5,7 @@ theme:
   name: material
   custom_dir: docs/overrides
   font: false
+  logo: media/logo.svg
   palette:
     - scheme: default
       primary: indigo
@@ -59,6 +60,8 @@ nav:
     - quick-reference.md
 
 markdown_extensions:
+  - toc:
+      permalink: true
   - tables
   - attr_list
   - mdx_truly_sane_lists:

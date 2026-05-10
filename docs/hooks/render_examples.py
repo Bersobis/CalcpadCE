@@ -497,18 +497,18 @@ def _render_category_page(category: str, cpd_files: list[Path], fragments: dict[
         highlighted_source = _pyg_highlight(
             source.rstrip(), _CALCPAD_LEXER, _CALCPAD_FORMATTER
         )
-        caption = f"Generated output for {cpd_file.stem}"
 
         # No markdown="block" on any div here — the outer <div class="example-grid">
         # has no markdown attribute so md_in_html passes the entire block through
         # unchanged (including blank lines and raw <script> content inside it).
         lines.append('<div class="example-grid">')
-        lines.append('<div class="example-source">')
+        lines.append('<figure>')
+        lines.append(f'<figcaption>CalcpadCE Code:</figcaption>')
         lines.append(highlighted_source)
-        lines.append('</div>')
+        lines.append('</figure>')
         lines.append('<figure class="example-output">')
+        lines.append(f'<figcaption>Rendered Output:</figcaption>')
         lines.append(fragment)
-        lines.append(f'<figcaption class="screenreader-only">{caption}</figcaption>')
         lines.append('</figure>')
         lines.append('</div>\n')
 
