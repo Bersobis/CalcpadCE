@@ -1,3 +1,4 @@
+'<!-- Trapezoidal load defined by end intensities $q_1$ and $q_2$, locating the in-span peak from the zero of $V(x)$ and falling back to the uniform and triangular special cases. -->
 "Simply Supported Beam with Linearly Distributed Load
 '<hr /><div style = "max-width:180mm;">
 '<img style="width:190pt;" alt = "simply-supported-beam-distributed-load-linear.png" class="side" src = "../../Images/mechanics/beams/simply-supported-beam-distributed-load-linear.png">

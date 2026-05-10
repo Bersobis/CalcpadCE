@@ -468,7 +468,9 @@ def _render_category_page(category: str, cpd_files: list[Path], fragments: dict[
 
     front_matter = ["---", "search:", "  exclude: true"]
     if intro_text:
-        description = _first_paragraph(intro_text).replace('"', "'")
+        description = (
+            _first_paragraph(intro_text).replace("\\", "\\\\").replace('"', "'")
+        )
         if description:
             front_matter.append(f'description: "{description}"')
     front_matter.append("---\n")

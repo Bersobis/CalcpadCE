@@ -1,3 +1,4 @@
+'<!-- Plane frame analysis with prismatic arbitrary cross-sections, assembling local 6x6 stiffness matrices with axial, bending and shear contributions and solving the global system by Cholesky decomposition. -->
 #include svg_drawing.cpd
 "Analysis of plane frames with arbitrary cross-sections
 '<hr/>

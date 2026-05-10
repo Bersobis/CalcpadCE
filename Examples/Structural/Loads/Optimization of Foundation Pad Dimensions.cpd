@@ -1,3 +1,4 @@
+'<!-- Numerical sizing of a rectangular foundation pad under axial force and biaxial bending: the side-ratio $k = a / b$ that minimises the base area while keeping the maximum stress below the permissible value and avoiding uplift is found with the embedded `Inf` solver. -->
 "Single load case problem
 'Loads:
 '&emsp;Compression -'N = 1000'kN

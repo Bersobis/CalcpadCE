@@ -1,3 +1,4 @@
+'<!-- Biaxial bending check of a rectangular column with the same strain-compatibility model as the uniaxial worksheet, expressed entirely with explicit CalcpadCE units so that the input fields use cm or mm directly. -->
 '<small>According to <strong>Eurocode</strong>: EN 1992-1-1</small>
 '<div style="max-width:180mm">
 '<img class="side" style="width:150pt;" src="../../Images/structures/rc/design/column-design.png" alt="Column_Design.png">

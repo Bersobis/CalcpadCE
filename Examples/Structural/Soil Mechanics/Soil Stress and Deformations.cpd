@@ -1,3 +1,4 @@
+'<!-- Stresses and settlement in an elastic half-space under a trapezoidal surface pressure on a rectangular footprint, obtained by numerical integration of the Boussinesq point-load kernel for $\sigma_z$, $\tau_{xz}$ and $\tau_{yz}$. -->
 "Soil stress and deformation for arbitrary surface load
 '<hr/>
 '(by integration of the Boussinesq formula)

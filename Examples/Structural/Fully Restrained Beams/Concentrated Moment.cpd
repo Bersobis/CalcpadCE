@@ -1,3 +1,4 @@
+'<!-- Fully restrained beam loaded by a concentrated moment $M$ at distance $a$, with a constant shear $V = 6 M a b / l^3$ and a step in the bending diagram across the load. -->
 "Fully Restrained Beam with Concentrated Moment
 '<div style="max-width:180mm">
 '<hr /><img class="side" style="width:210pt;" alt="fixed-beam-concentrated-moment.png" src="../../Images/mechanics/beams/fixed-beam-concentrated-moment.png">

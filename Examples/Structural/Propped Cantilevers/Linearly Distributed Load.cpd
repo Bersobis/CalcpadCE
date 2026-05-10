@@ -1,3 +1,4 @@
+'<!-- Propped cantilever under a trapezoidal load defined by end intensities $q_1$ and $q_2$, locating the in-span peak from the zero of the shear $V(x)$. -->
 "Propped Cantilever with Linearly Distributed Load
 '<hr /><div style="max-width:180mm;">
 #pre

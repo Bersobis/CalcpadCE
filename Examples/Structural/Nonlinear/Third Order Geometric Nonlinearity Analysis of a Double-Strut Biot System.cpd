@@ -1,3 +1,4 @@
+'<!-- Symmetric two-bar Biot truss in third-order geometric nonlinearity: the deformed length $l'(v) = \sqrt{l^2 + v^2}$ enters the equilibrium directly and the vertical displacement is found by four different numerical methods. -->
 "Third order geometric nonlinearity analysis of a double-bar Biot truss
 '<hr/>
 '(solved by four different numerical methods)

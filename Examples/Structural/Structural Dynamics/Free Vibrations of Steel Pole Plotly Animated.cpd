@@ -1,3 +1,4 @@
+'<!-- Tapered steel pole free-vibration analysis with the mode shapes animated in the browser by Plotly, smoothly interpolating between the positive and negative amplitude of each mode. -->
 "Free vibrations of steel pole with variable cross-section of arbitrary shape
 '<hr/>
 #rad

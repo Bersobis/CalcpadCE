@@ -1,3 +1,4 @@
+'<!-- Uniform load $q$ over a stretch of length $b$ between offsets $a$ and $c = l - a - b$, with a guard against an invalid configuration when $a + b > l$. -->
 "Fully Restrained Beam with Partially Distributed Load
 '<div style="max-width:180mm;">
 '<hr /><img style="width:210pt;" alt="fixed-beam-distributed-load-partial.png" class="side" src="../../Images/mechanics/beams/fixed-beam-distributed-load-partial.png">
