@@ -175,6 +175,13 @@ Engineering Examples:
     - Himmelblau Function
 
 Structural Engineering Examples:
+  Simply Supported Beams:
+    - Uniformly Distributed Load
+    - Linearly Distributed Load
+    - Partially Distributed Load
+    - Concentrated Force
+    - Concentrated Forces
+    - Concentrated Moment
   Cantilevers:
     - Concentrated Force
     - Concentrated Moment
@@ -213,13 +220,6 @@ Structural Engineering Examples:
     - Material and Geometric Nonlinear Analysis of Prestressed Asymmetric Biot Truss
     - Nonlinear Analysis of a Von-Mises Truss Animated
     - Third Order Geometric Nonlinearity Analysis of a Double-Strut Biot System
-  Simply Supported Beams:
-    - Concentrated Force
-    - Concentrated Forces
-    - Concentrated Moment
-    - Linearly Distributed Load
-    - Partially Distributed Load
-    - Uniformly Distributed Load
   Soil Mechanics:
     - Soil Stress and Deformations
   Steel:
