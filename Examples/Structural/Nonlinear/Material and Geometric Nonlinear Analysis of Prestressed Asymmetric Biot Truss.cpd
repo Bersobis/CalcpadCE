@@ -1,6 +1,4 @@
 '<!-- Combined material and geometric nonlinear analysis of a prestressed three-joint truss with a bilinear elastic-plastic stress-strain law, solved by a global Newton-Raphson iteration that updates the Jacobi matrix and the axial stiffness $E A$ at each step. -->
-"Material and geometric nonliner analysis of prestressed asymmetric Biot truss
-'<hr/>
 '<h4>Input data</h4>
 #deg
 #hide

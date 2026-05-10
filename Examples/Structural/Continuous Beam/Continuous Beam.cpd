@@ -1,6 +1,4 @@
 '<!-- Force-method analysis of a multi-span continuous beam under a uniform load $q$, building the flexibility matrix from bending and shear integrals and solving for the redundant reactions, internal forces and deflections. -->
-"Analysis of continuous beam by force method
-'<hr/>
 '<h4>Input data</h4>
 'Span lengths -'l = [4; 7; 3; 5]*m
 'Number of spans -'n = len(l)

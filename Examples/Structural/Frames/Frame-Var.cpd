@@ -1,7 +1,5 @@
 '<!-- Plane frame with linearly tapered members: each element stiffness coefficient is obtained by integrating $1 / EA(x)$, $x / EI(x)$ and $1 / GA_Q(x)$ along the element length. -->
 #include svg_drawing.cpd
-"Analysis of plane frame with variable arbitrary cross-sections
-'<hr/>
 '<h4>Joint coordinates - xJ; yJ</h4>
 #hide
 #deg
