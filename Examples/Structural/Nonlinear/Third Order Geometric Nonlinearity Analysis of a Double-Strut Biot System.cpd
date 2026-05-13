@@ -1,0 +1,160 @@
+'<!-- Symmetric two-bar Biot truss in third-order geometric nonlinearity: the deformed length $l'(v) = \sqrt{l^2 + v^2}$ enters the equilibrium directly and the vertical displacement is found by four different numerical methods. -->
+'(solved by four different numerical methods)
+'<h4>Input data</h4>
+'Strut length -'l = 2m
+'Material - steel. Modulus of elasticity -'E = 210GPa
+'Cross section - circular with diameter'Φ = 20mm
+'Area -'A = π*Φ^2/4|cm^2
+'Axial stiffness -'EA = E*A
+'Vertical force -'F_y = 20kN
+#include svg_drawing.cpd
+#hide
+L = l/2cm
+H = 0
+k = L/10
+#def svg$ = '<svg viewbox="'-5*k' '-5*k' '2*(L+5*k)' '10*k + H'" xmlns="http://www.w3.org/2000/svg" version="1.1" style="font-family: Georgia Pro; font-size:8px; width:'450'pt; height:'150'pt">
+#def thin_style$ = style="stroke:darkcyan; stroke-width:1; fill:none"
+#def pin_style$ = style="stroke:red; stroke-width:1; fill:white"
+#def thick_style$ = style="stroke:darkcyan; stroke-width:3; fill:none"
+#def load_style$ = style="stroke:deepskyblue; stroke-width:1; fill:deepskyblue;"
+#show
+#def frame$
+	line$(0; 0; L; H; main_style$)
+	line$(L; H; 2*L; 0; main_style$)
+	#hide
+	x1 = 0
+	y1 = k/10
+	#show
+	#for i = 1 : 2
+		#hide
+		δ = 0.8*k
+		x2 = x1 - δ
+		y2 = y1 - abs(δ)
+		x3 = x1 + δ
+		y3 = y1 + abs(δ)
+		#show
+		line$(x2; y3; x3; y3; thick_style$)
+		line$(x2; y3; x1; y1; thin_style$)
+		line$(x3; y3; x1; y1; thin_style$)
+		#hide
+		x1 = x1 + 2*L
+		#show
+	#loop
+	'<polygon points="'L','H - 4*δ' 'L','H - 0.32*δ' 'L - 0.32*δ','H - 1.4*δ' 'L + 0.32*δ','H - 1.4*δ' 'L','H - 0.32*δ'" load_style$ />
+	texth$(L+20;H-3.2*δ;Fy='F_y'kN)
+	dimh$(0; L; H+2*k; 'l'm)
+	dimh$(L; 2*L; H+2*k; 'l'm)
+	circle$(0; 0; 2.5; pin_style$)
+	circle$(L; H; 2.5; pin_style$)
+	circle$(2*L; 0; 2.5; pin_style$)
+#end def
+#val
+svg$
+frame$
+'</svg>
+#equ
+'<h4>Solution</h4>
+'Because of the symmetry, the horizontal displacement in the middle is'u = 0m'.
+'The vertical displacement is the only unknown - <var>v</var> = ?
+'Since the system is linearly unstable, we use 3-rd order geometric nonlinearity theory for the solution. The equilibrium equations are then derived for the deformed state of the structure, as follows:
+'Length and elongation in deformed state
+l′(v) = sqrt((l + u)^2 + v^2)','Δl(v) = l′(v) - l
+'Horizontal reaction -'F_x(v) = EA*(Δl(v)/l)*((l + u)/l′(v))
+'Vertical reaction -'F_y(v) = EA*(Δl(v)/l)*(v/l′(v))
+'Vertical reaction derivative -'F′_yv(v) = EA*(1/l - (l + u)^2/l′(v)^3)
+'<h4>1. Fixed point iteration method</h4>
+'Relative strain -'ε = F_y/(2*EA)
+'Relative precision -'δ_max = 10^-4
+'Initial value -'v_0 = 200mm
+'We express the unknown vertical displacement at the middle joint as a function of the vertical force:
+v = sqrt(1/(1/l - ε/v_0)^2 - (l + u)^2)|mm
+#hide
+n = 0
+#repeat 100
+	n = n + 1
+	v_0 = v
+	v = sqrt(1/(1/l - ε/v_0)^2 - (l + u)^2)|mm
+	δ = abs(v - v_0)
+	#if δ < δ_max*abs(v)
+		#break
+	#end if
+#loop
+#show
+'After calculating the above expression iteratively'n'times, we get:
+v
+'Relative error -'δ = abs(v - v_0)/abs(v)
+'<h4>2. Newton-Raphson′s method</h4>
+'Initial value -'v_0 = 200mm
+'We repeatedly calculate the following expression:
+v = v_0 - (2*F_y(v_0) - F_y)/F′_yv(v_0)
+#hide
+n = 0
+#repeat 100
+	n = n + 1
+	v_0 = v
+	v = v_0 - (2*F_y(v_0) - F_y)/(2*F′_yv(v_0))
+	δ = abs(v - v_0)
+	#if δ < δ_max*abs(v)
+		#break
+	#end if
+#loop
+#show
+'After'n'iterations we get:'v
+'Relative error -'δ = abs(v - v_0)/abs(v)
+'<h4>3. Secant method</h4>
+'Slope reduction factor -'α = 1
+'Initial value -'v_0 = 200mm
+'Force value -'F_y0 = 2*F_y(v_0)
+'We calculate the first approximation using Newton-Raphson′s method
+v_1 = v_0 - α*((F_y0 - F_y)/(2*F′_yv(v_0)))
+'Force value -'F_y1 = 2*F_y(v_1)
+'The next approximation is evaluated by the formula:
+v_2 = v_1 - α*(F_y1 - F_y)*((v_1 - v_0)/(F_y1 - F_y0))
+'We continue the calculations iteratively until we reach convergence.
+#hide
+n = 0
+#repeat 100
+	n = n + 1
+	v_0 = v_1
+	v_1 = v_2
+	F_y0 = 2*F_y(v_0)
+	F_y1 = 2*F_y(v_1)
+	v_2 = v_1 - α*(F_y1 - F_y)*((v_1 - v_0)/(F_y1 - F_y0))
+	δ = abs(v_2 - v_1)
+	#if δ < δ_max*abs(v_2)
+		#break
+	#end if
+#loop
+#show
+'After'n'iterations we get:'v_2
+'Relative error -'δ = abs(v_2 - v_1)/abs(v_2)
+'<h4>4. Solution with Calcpad <small>(modified Anderson-Bjork′s method)</small></h4>
+v = $Root{2*F_y(v) = F_y @ v = 0mm : 200m}
+'System behavior graph (force-displacement)
+'<!--'v_2 = v','PlotWidth = 250','PlotHeight = 150'-->
+$Plot{F_y & 2*F_y(v) & v_2|F_y @ v = 0mm : 200mm}
+'<h4>Results</h4>
+'Axial forces in bars -'N = Δl(v)/l*EA
+'Rotation angle -'α = atan2(l; v)'°
+'Reactions in supports
+'Horizontal -'R_x = F_x(v)'='N*cos(α)
+'Vertical -'R_y = F_y(v)'='N*sin(α)
+#hide
+H = v/cm
+δ = 0.8*k
+#show
+#val
+svg$
+'<polygon points="'0','0' '0','-4*δ' '-0.32*δ','-2.8*δ' '0.32*δ','-2.8*δ' '0','-4*δ'" load_style$/>
+'<polygon points="'2*L','0' '2*L','-4*δ' '2*L - 0.32*δ','-2.8*δ' '2*L + 0.32*δ','-2.8*δ' '2*L','-4*δ'" load_style$/>
+'<polygon points="'-0.32*δ','0' '-4*δ','0' '-2.8*δ','-0.32*δ' '-2.8*δ','0.32*δ' '-4*δ','0'" load_style$/>
+'<polygon points="'2*L + 0.32*δ','0' '2*L + 4*δ','0' '2*L + 2.8*δ','-0.32*δ' '2*L + 2.8*δ','0.32*δ' '2*L + 4*δ','0'" load_style$/>
+texth$(-4*δ;-δ;Rx='R_x'kN)
+texth$(2*L+4*δ;-δ;Rx='R_x'kN)
+texth$(3*δ;-3.2*δ;Ry='R_y'kN)
+texth$(2*L-3*δ;-3.2*δ;Ry='R_y'kN)
+texth$(L/2;0;N='N'kN)
+texth$(3*L/2;0;N='N'kN)
+frame$
+'</svg>
+#equ

@@ -24,7 +24,7 @@ CalcpadCE includes a library with common math functions, ready to use.
 | `sech(x)` | hyperbolic secant = 1/**cosh**(*x*) |
 | `coth(x)` | hyperbolic cotangent = (e*x* + e-*x*)/(e*x* - e-*x*), for *x* ≠ 0 |
 
-## Inverse trigonometric
+## Inverse Trigonometric
 
 | Name | Description |
 | -------- | - |
@@ -36,7 +36,7 @@ CalcpadCE includes a library with common math functions, ready to use.
 | `asec(x)` | inverse secant = **acos**(1/*x*) |
 | `acot(x)` | inverse cotangent |
 
-## Inverse hyperbolic
+## Inverse Hyperbolic
 
 | Name | Description |
 | -------- | - |
@@ -47,7 +47,7 @@ CalcpadCE includes a library with common math functions, ready to use.
 | `asech(x)` | inverse hyperbolic secant = **acosh**(1/*x*) |
 | `acoth(x)` | inverse hyperbolic cotangent = 1/2·**ln**\[(*x* + 1)/(*x* - 1)\], for \|*x*\| \> 1 |
 
-## Log/Exponential and roots
+## Log/Exponential and Roots
 
 | Name | Description |
 | -------- | - |
@@ -86,7 +86,7 @@ CalcpadCE includes a library with common math functions, ready to use.
 | `phase(a + bi)` | complex number phase (argument) = **atan2**(a; b) |
 | `conj(a + bi)` | complex number conjugate = a - bi. |
 
-## Aggregate and interpolation
+## Aggregate and Interpolation
 
 | Name | Description |
 | -------- | - |
@@ -102,7 +102,7 @@ CalcpadCE includes a library with common math functions, ready to use.
 | $line(x; A; \vec{b}; c…)$ | performs linear interpolation among the specified values for *x* |
 | $spline(x; A; \vec{b}; c…)$ | performs Hermite spline interpolation |
 
-## Conditional and logical
+## Conditional and Logical
 
 | Name | Description |
 | -------- | - |
@@ -175,7 +175,7 @@ Some examples for rounding of negative and positive numbers are provided in the 
 
 Rounding of complex numbers affects both real and imaginary parts.
 
-## Custom (user defined) functions
+## Custom (User Defined) Functions
 
 You can define your own functions and use them further in the calculations.
 Custom functions can have unlimited number of parameters.

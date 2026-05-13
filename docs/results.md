@@ -115,7 +115,7 @@ You will also need the cloud version of CalcpadCE for that purpose.
 
 CalcpadCE uses for decimal separator the symbol defined in the Windows' Regional Settings.
 
-## Custom format strings
+## Custom Format Strings
 
 You can specify format strings for different parts of your worksheet and even for individual output values.
 At worksheet level you can do that by following command:
@@ -256,7 +256,7 @@ You can scale up and down the text size in the output window.
 Hold the "**Ctrl**" button and rotate the mouse wheel.
 The forward rotation will scale up and the backward will scale down.
 
-## Saving the output
+## Saving the Output
 
 You can save the output to an **Html** file . Unlike the input file, it cannot be modified with CalcpadCE.
 On the other hand, everyone will be able to view and print your calculations without CalcpadCE.
