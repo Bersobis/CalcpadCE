@@ -324,7 +324,7 @@ def _render_fragment(cpd_file: Path, cli_path: Path, label: str = "") -> str:
         result = subprocess.run(
             [str(cli_path), str(cpd_file), out_path, "-b", "-s"],
             capture_output=True,
-            timeout=30,
+            timeout=60,
         )
         if result.returncode != 0:
             stderr = result.stderr.decode(errors="replace").strip()
