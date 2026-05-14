@@ -41,15 +41,11 @@
     
     
       
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
     
     
       <link rel="stylesheet" href="stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="stylesheets/calcpad-output.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -57,6 +53,9 @@
 
     
     
+  
+  <script src="javascripts/jquery-3.6.3.min.js"></script>
+
   </head>
   
   
@@ -92,8 +91,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="." title="CalcpadCE Documentation" class="md-header__button md-logo" aria-label="CalcpadCE Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="media/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -217,7 +215,67 @@
           
   
   
-  Home
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="quick-reference.html" class="md-tabs__link">
+          
+  
+  
+  Quick Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="examples/areas.html" class="md-tabs__link">
+          
+  
+  
+  Engineering Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="examples/simply-supported-beams.html" class="md-tabs__link">
+          
+  
+  
+  Structural Engineering Examples
 
         </a>
       </li>
@@ -249,8 +307,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="." title="CalcpadCE Documentation" class="md-nav__button md-logo" aria-label="CalcpadCE Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="media/logo.svg" alt="logo">
 
     </a>
     CalcpadCE Documentation
@@ -293,7 +350,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Documentation
   
 
     
@@ -309,7 +366,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Home
+    Documentation
   
 
           </label>
@@ -329,7 +386,7 @@
   <span class="md-ellipsis">
     
   
-    About Calcpad VM
+    About CalcpadCE (Community Edition)
   
 
     
@@ -945,12 +1002,12 @@
   <a href="#predefined-units" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Predefined units
+        Predefined Units
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Predefined units">
+    <nav class="md-nav" aria-label="Predefined Units">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -968,7 +1025,7 @@
   <a href="#metric-units-si-and-compatible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Metric units (SI and compatible)
+        Metric Units (SI and Compatible)
       
     </span>
   </a>
@@ -979,7 +1036,7 @@
   <a href="#non-metric-units-imperialus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Non-metric units (Imperial/US)
+        Non-Metric Units (Imperial/US)
       
     </span>
   </a>
@@ -995,7 +1052,7 @@
   <a href="#custom-units" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom units
+        Custom Units
       
     </span>
   </a>
@@ -1102,6 +1159,1275 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quick Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="quick-reference.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/areas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Areas (15)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/volumes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Volumes (15)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/geometrical.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Geometrical (24)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/fractals.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fractals (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/3d-plotting-drawing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3D, Plotting, Drawing (7)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/interpolation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interpolation (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/numerical.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numerical (7)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/pendulums.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendulums (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/waves.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Waves (10)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/parametric-curves.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parametric Curves (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/elastic-analysis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elastic Analysis (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/finite-elements.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Finite Elements (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/fourier.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fourier (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/special-math-functions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Special Math Functions (1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/vectors.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/vectors-high-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors: High Performance (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/matrices.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/matrices-high-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices: High Performance (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/multiline-functions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multiline Functions (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/custom-units.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Units (2)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/formatting.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formatting (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/others.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Others (8)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structural Engineering Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structural Engineering Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/simply-supported-beams.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simply Supported Beams (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/cantilevers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cantilevers (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/propped-cantilevers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Propped Cantilevers (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/continuous-beam.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Continuous Beam (1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/deflections.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deflections (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/frames.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frames (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/fully-restrained-beams.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fully Restrained Beams (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/loads.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loads (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/nonlinear.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nonlinear (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/soil-mechanics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Soil Mechanics (1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/steel.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Steel (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/structural-dynamics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structural Dynamics (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete (12)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete-punching.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete: Punching (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete-plates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete: Plates (9)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete-seismic-detailing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete: Seismic Detailing (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1132,12 +2458,12 @@
   <a href="#predefined-units" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Predefined units
+        Predefined Units
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Predefined units">
+    <nav class="md-nav" aria-label="Predefined Units">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1155,7 +2481,7 @@
   <a href="#metric-units-si-and-compatible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Metric units (SI and compatible)
+        Metric Units (SI and Compatible)
       
     </span>
   </a>
@@ -1166,7 +2492,7 @@
   <a href="#non-metric-units-imperialus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Non-metric units (Imperial/US)
+        Non-Metric Units (Imperial/US)
       
     </span>
   </a>
@@ -1182,7 +2508,7 @@
   <a href="#custom-units" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom units
+        Custom Units
       
     </span>
   </a>
@@ -1206,8 +2532,8 @@
 
 
 
-<h1 id="units">Units</h1>
-<p>Calcpad provides comprehensive support for physical units of measurement.
+<h1 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h1>
+<p>CalcpadCE provides comprehensive support for physical units of measurement.
 The current version supports metric (SI and compatible), US and Imperial units.
 There are seven basic units that correspond to the seven physical dimensions:</p>
 <ul>
@@ -1231,7 +2557,8 @@ For example, the following expression will be evaluated as:</p>
 <p><code>1.23 m + 35 cm + 12 mm</code> <span class="arithmatex">\(= 1.59m\)</span> (and not: 1.23 + 35 + 12 = 48.23)</p>
 <p>The result is usually obtained into the first unit in the expression.
 If you want to use particular units, write a vertical bar "|" followed by the target units at the end:</p>
-<p><code>1.23 m + 35 cm + 12 mm | cm</code></p>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="m">1.23</span><span class="w"> </span><span class="na">m</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">35</span><span class="w"> </span><span class="na">cm</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="na">mm</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nv">cm</span>
+</code></pre></div>
 <p>The above expression will be evaluated to 159.2 <em>cm</em>. If you simply want to convert units, just write the source and the target units, separated by a vertical bar, like: mm | cm or 10 m/s | km/h.</p>
 <p>Unit consistency is also verified automatically.
 For example, you cannot add <em>m</em> and <em>s</em> (e.g. <code>6 m + 2 s</code>), but you can multiply and divide them: <code>6 m / 2 s = 3 m/s</code>.</p>
@@ -1271,14 +2598,14 @@ In the next example, speed is calculated in m/s, but is converted and stored as 
 </tr>
 </tbody>
 </table>
-<h2 id="predefined-units">Predefined units</h2>
-<p>Calcpad includes a large collection of predefined units as follows:</p>
-<h3 id="dimensionless">Dimensionless</h3>
+<h2 id="predefined-units">Predefined Units<a class="headerlink" href="#predefined-units" title="Permanent link">&para;</a></h2>
+<p>CalcpadCE includes a large collection of predefined units as follows:</p>
+<h3 id="dimensionless">Dimensionless<a class="headerlink" href="#dimensionless" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Parts: %, ‰, ‱, pcm, ppm, ppb, ppt, ppq;</li>
 <li>Angles: °, ′, ″, deg, rad, grad, rev;</li>
 </ul>
-<h3 id="metric-units-si-and-compatible">Metric units (SI and compatible)</h3>
+<h3 id="metric-units-si-and-compatible">Metric Units (SI and Compatible)<a class="headerlink" href="#metric-units-si-and-compatible" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Mass: g, hg, kg, t, kt, Mt, Gt, dg, cg, mg, μg, ng, pg, Da (or u);</li>
 <li>Length: m, km, dm, cm, mm, μm, nm, pm, AU, ly;</li>
@@ -1317,7 +2644,7 @@ In the next example, speed is calculated in m/s, but is converted and stored as 
 <li>Equivalent dose: Sv, kSv, MSv, GSv, TSv, mSv, μSv, nSv, pSv;</li>
 <li>Catalytic activity: kat;</li>
 </ul>
-<h3 id="non-metric-units-imperialus">Non-metric units (Imperial/US)</h3>
+<h3 id="non-metric-units-imperialus">Non-Metric Units (Imperial/US)<a class="headerlink" href="#non-metric-units-imperialus" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Mass: gr, dr, oz, lb (or lbm, lb_m), kipm (or kip_m), st, qr,<br />
      cwt (or cwt_UK, cwt_US), ton (or ton_UK, ton_US), slug;</li>
@@ -1342,18 +2669,18 @@ If you want them to return the result in the current units, you have to define a
 <p>Literals that follow numbers immediately are parsed as units, e.g. "2 m". Standalone literals can be either units or variables, e.g. "N*m". The rules for parsing are as follows: If a literal has not been defined as a variable, it is parsed as a unit.
 Otherwise, it is parsed as a variable, even if a unit with the same name exists.
 If you put a dot before the literal, you will force it to be parsed as a unit, even if a variable with the same name exists, e.g. ".N*.m".</p>
-<h2 id="custom-units">Custom units</h2>
+<h2 id="custom-units">Custom Units<a class="headerlink" href="#custom-units" title="Permanent link">&para;</a></h2>
 <p>You can define your own "custom" units and use them like any others in your code.
 Defining a unit is similar to defining a variable, but the name must be prefixed with a dot ".":</p>
-<div class="highlight"><pre><span></span><code><span class="o">.*</span><span class="n">Name</span><span class="o">*</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">expression</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="p">.</span><span class="o">*</span><span class="nv">Name</span><span class="o">*</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">expression</span>
 </code></pre></div>
 <p>Names can include some currency symbols like: €, £, ₤, ¥, ¢, ₽, ₹, ₩, ₪. If you need to create a unit, that derive from others, you can write an expression with numbers and units on the right side.
 You can also define dimensionless units, like currency (USD, EUR, €, ₤) or information (bit, byte, KiB, etc), by specifying "= 1" for the first unit and setting the others as multiples.
 For example:</p>
-<div class="highlight"><pre><span></span><code><span class="p">.</span><span class="n">bit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
-<span class="p">.</span><span class="n">byte</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">8</span><span class="o">*</span><span class="n">bit</span>
-<span class="p">.</span><span class="n">KiB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1024</span><span class="o">*</span><span class="n">byte</span>
-<span class="k">...</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="p">.</span><span class="nv">bit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="p">.</span><span class="nv">byte</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="o">*</span><span class="nv">bit</span>
+<span class="p">.</span><span class="nv">KiB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1024</span><span class="o">*</span><span class="nv">byte</span>
+<span class="p">...</span>
 </code></pre></div>
 <p>Custom dimensionless units exist in a special (ninth) non-physical dimension.
 That is how they do not cancel or convert to other dimensionless units, like percents or angles, when mixed.
@@ -1416,12 +2743,28 @@ However, if you have two types of dimensionless units in a single file, they wil
       <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.highlight", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
+  
       <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="javascripts/mathjax.js"></script>
       
-        <script src="javascripts/mathjax/tex-mml-chtml.js"></script>
+        <script src="javascripts/mathjax/tex-chtml.js"></script>
+      
+        <script src="javascripts/example-layout.js"></script>
       
     
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("body").on("click", ".fold > :first-child, .unfold > :first-child", function () {
+        var parent = $(this).parent();
+        if (parent.hasClass("fold")) {
+          parent.removeClass("fold").addClass("unfold");
+        } else {
+          parent.removeClass("unfold").addClass("fold");
+        }
+      });
+    });
+  </script>
+
   </body>
 </html>

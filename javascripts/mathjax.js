@@ -1,5 +1,9 @@
 window.MathJax = {
+  loader: {
+    load: ["[tex]/boldsymbol"],
+  },
   tex: {
+    packages: { "[+]": ["boldsymbol"] },
     inlineMath: [["\\(", "\\)"]],
     displayMath: [["\\[", "\\]"]],
     processEscapes: true,
@@ -9,13 +13,23 @@ window.MathJax = {
     ignoreHtmlClass: ".*",
     processHtmlClass: "arithmatex|md-ellipsis",
   },
+  startup: {
+    typeset: false,
+  },
 };
 
 // Material for MkDocs uses instant loading, which swaps page content via XHR
 // without a full browser reload. MathJax must re-typeset after each navigation.
 document$.subscribe(function () {
-  MathJax.startup.output.clearCache();
-  MathJax.typesetClear();
-  MathJax.texReset();
-  MathJax.typesetPromise();
+  if (!window.MathJax || !MathJax.startup || !MathJax.startup.promise) {
+    return;
+  }
+  MathJax.startup.promise = MathJax.startup.promise.then(function () {
+    if (MathJax.startup.output && MathJax.startup.output.clearCache) {
+      MathJax.startup.output.clearCache();
+    }
+    MathJax.typesetClear();
+    MathJax.texReset();
+    return MathJax.typesetPromise();
+  });
 });

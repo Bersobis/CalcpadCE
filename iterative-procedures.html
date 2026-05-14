@@ -41,15 +41,11 @@
     
     
       
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
     
     
       <link rel="stylesheet" href="stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="stylesheets/calcpad-output.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -57,6 +53,9 @@
 
     
     
+  
+  <script src="javascripts/jquery-3.6.3.min.js"></script>
+
   </head>
   
   
@@ -92,8 +91,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="." title="CalcpadCE Documentation" class="md-header__button md-logo" aria-label="CalcpadCE Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="media/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -217,7 +215,67 @@
           
   
   
-  Home
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="quick-reference.html" class="md-tabs__link">
+          
+  
+  
+  Quick Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="examples/areas.html" class="md-tabs__link">
+          
+  
+  
+  Engineering Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="examples/simply-supported-beams.html" class="md-tabs__link">
+          
+  
+  
+  Structural Engineering Examples
 
         </a>
       </li>
@@ -249,8 +307,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="." title="CalcpadCE Documentation" class="md-nav__button md-logo" aria-label="CalcpadCE Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="media/logo.svg" alt="logo">
 
     </a>
     CalcpadCE Documentation
@@ -293,7 +350,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Documentation
   
 
     
@@ -309,7 +366,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Home
+    Documentation
   
 
           </label>
@@ -329,7 +386,7 @@
   <span class="md-ellipsis">
     
   
-    About Calcpad VM
+    About CalcpadCE (Community Edition)
   
 
     
@@ -950,7 +1007,7 @@
   <a href="#expression-blocks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Expression blocks
+        Expression Blocks
       
     </span>
   </a>
@@ -1085,6 +1142,1275 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quick Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="quick-reference.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/areas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Areas (15)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/volumes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Volumes (15)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/geometrical.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Geometrical (24)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/fractals.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fractals (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/3d-plotting-drawing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3D, Plotting, Drawing (7)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/interpolation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interpolation (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/numerical.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numerical (7)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/pendulums.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendulums (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/waves.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Waves (10)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/parametric-curves.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parametric Curves (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/elastic-analysis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elastic Analysis (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/finite-elements.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Finite Elements (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/fourier.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fourier (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/special-math-functions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Special Math Functions (1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/vectors.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/vectors-high-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors: High Performance (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/matrices.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/matrices-high-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices: High Performance (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/multiline-functions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multiline Functions (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/custom-units.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Units (2)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/formatting.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formatting (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/others.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Others (8)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structural Engineering Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structural Engineering Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/simply-supported-beams.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simply Supported Beams (6)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/cantilevers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cantilevers (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/propped-cantilevers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Propped Cantilevers (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/continuous-beam.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Continuous Beam (1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/deflections.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deflections (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/frames.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frames (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/fully-restrained-beams.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fully Restrained Beams (5)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/loads.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loads (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/nonlinear.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nonlinear (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/soil-mechanics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Soil Mechanics (1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/steel.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Steel (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/structural-dynamics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structural Dynamics (4)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete (12)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete-punching.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete: Punching (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete-plates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete: Plates (9)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/reinforced-concrete-seismic-detailing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforced Concrete: Seismic Detailing (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1148,7 +2474,7 @@
   <a href="#expression-blocks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Expression blocks
+        Expression Blocks
       
     </span>
   </a>
@@ -1172,54 +2498,54 @@
 
 
 
-<h1 id="iterative-procedures">Iterative procedures</h1>
+<h1 id="iterative-procedures">Iterative Procedures<a class="headerlink" href="#iterative-procedures" title="Permanent link">&para;</a></h1>
 <p>There are some other commands that allow you to calculate the result iteratively.
 Unlike numerical methods, they can work with complex numbers.</p>
-<h2 id="sum">Sum</h2>
-<div class="highlight"><pre><span></span><code>$<span class="n">Sum</span><span class="p">{</span><span class="n">f</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">b</span><span class="p">}</span>
+<h2 id="sum">Sum<a class="headerlink" href="#sum" title="Permanent link">&para;</a></h2>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nd">$Sum</span><span class="p">{</span><span class="nv">f</span><span class="p">(</span><span class="nv">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nv">b</span><span class="p">}</span>
 </code></pre></div>
 <p>It sums the values of f(<em>k</em>) for all integer <em>k</em> between <em>a</em> and <em>b</em>. The values of <em>k</em> can only grow, so it should be satisfied that <em>a</em> \&lt; <em>b</em>. Instead of f(<em>k</em>) you can put any valid expression that includes <em>k</em>. Otherwise, it will simply sum the same value <em>k</em> times.
 For example, you can use series to calculate constants.
 Such is the Leibniz formula for calculation of π:</p>
-<div class="highlight"><pre><span></span><code><span class="mi">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>$<span class="n">Sum</span><span class="p">{(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="mi">1000</span><span class="p">}</span>`<span class="w"> </span>$<span class="p">=</span><span class="w"> </span><span class="mf">3.1406</span>$
+<div class="language-calcpad highlight"><pre><span></span><code><span class="m">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nd">$Sum</span><span class="p">{(</span><span class="o">-</span><span class="m">1</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="nv">k</span><span class="o">+</span><span class="m">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="nv">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">:</span><span class="m">1000</span><span class="p">}</span>`<span class="w"> </span>$<span class="o">=</span><span class="w"> </span><span class="m">3.1406</span>$
 </code></pre></div>
 <p>You can also use series to define functions.
 Of course, they cannot be infinite.
 The number of iterations should be sufficient to provide the required precision of the result.
 The following pattern can be applied to approximate a function with Fourier series:</p>
-<div class="highlight"><pre><span></span><code><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">a_0</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>$<span class="n">Sum</span><span class="p">{</span><span class="n">a</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="o">*</span>π<span class="o">/</span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>$<span class="n">Sum</span><span class="p">{</span><span class="n">b</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="o">*</span>π<span class="o">*</span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">}</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nv">f</span><span class="p">(</span><span class="nv">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">a_0</span><span class="o">/</span><span class="m">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nd">$Sum</span><span class="p">{</span><span class="nv">a</span><span class="p">(</span><span class="nv">k</span><span class="p">)</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span><span class="nv">k</span><span class="o">*</span><span class="nv">x</span><span class="o">*</span><span class="nv">π</span><span class="o">/</span><span class="nv">l</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="o">=</span><span class="m">1</span><span class="p">:</span><span class="nv">n</span><span class="p">}</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nd">$Sum</span><span class="p">{</span><span class="nv">b</span><span class="p">(</span><span class="nv">k</span><span class="p">)</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span><span class="nv">k</span><span class="o">*</span><span class="nv">x</span><span class="o">*</span><span class="nv">π</span><span class="o">*</span><span class="nv">l</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="o">=</span><span class="m">1</span><span class="p">:</span><span class="nv">n</span><span class="p">}</span>
 </code></pre></div>
 <p>As an example, we can take a straight line within the interval (0; 2*<em>l</em>), withs equation: f(<em>x</em>) = <em>x</em>/(2*<em>l</em>). The integration constants are <em>a</em>(<em>k</em>) = 0 and <em>b</em>(<em>k</em>) = -1/(<em>k</em>*π). If we plot the Fourier approximation for <em>n</em> = 5, we will get the following result:</p>
 <p><img src="./media/image26.png" style="width:4.33057in;height:2.80665in" alt="Fourier" /></p>
-<h2 id="product">Product</h2>
-<div class="highlight"><pre><span></span><code>$<span class="n">Product</span><span class="p">{</span><span class="n">f</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">b</span><span class="p">}</span>
+<h2 id="product">Product<a class="headerlink" href="#product" title="Permanent link">&para;</a></h2>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nd">$Product</span><span class="p">{</span><span class="nv">f</span><span class="p">(</span><span class="nv">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nv">b</span><span class="p">}</span>
 </code></pre></div>
 <p>It works like "<strong>Sum</strong>", but it multiplies the terms instead of adding them.
 For example, you can define your own factorial function:</p>
-<div class="highlight"><pre><span></span><code><span class="n">F</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span>$<span class="n">Product</span><span class="p">{</span><span class="n">k</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">n</span><span class="p">}</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nv">F</span><span class="p">(</span><span class="nv">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">$Product</span><span class="p">{</span><span class="nv">k</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nv">n</span><span class="p">}</span>
 </code></pre></div>
 <p>You can use it further to calculate binomial coefficients by the well-known formula: C(<em>n</em>; <em>k</em>) = F(<em>n</em>)/(F (<em>k</em>)*F(<em>n</em> - <em>k</em>)). However, it is much more efficient to define a special procedure that computes the coefficient directly without using factorials:</p>
-<div class="highlight"><pre><span></span><code>$<span class="n">Product</span><span class="p">{(</span><span class="nb">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="nb">i</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">k</span><span class="p">}</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nd">$Product</span><span class="p">{(</span><span class="nv">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nv">k</span><span class="p">)</span><span class="o">/</span><span class="nv">i</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">:</span><span class="nv">k</span><span class="p">}</span>
 </code></pre></div>
 <p>Also, the latter will not overflow together with the factorials for greater values of <em>n</em>.</p>
-<h2 id="repeat">Repeat</h2>
-<div class="highlight"><pre><span></span><code>$<span class="n">Repeat</span><span class="p">{</span><span class="n">f</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">b</span><span class="p">}</span>
+<h2 id="repeat">Repeat<a class="headerlink" href="#repeat" title="Permanent link">&para;</a></h2>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nd">$Repeat</span><span class="p">{</span><span class="nv">f</span><span class="p">(</span><span class="nv">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nv">b</span><span class="p">}</span>
 </code></pre></div>
 <p>This is a general inline iterative procedure that repeatedly calculates <strong>f</strong>(<em>k</em>). It can be used for sums and products instead of the respective procedures, but it is not so efficient.
 However, there are expressions that can be calculated only by the "<strong>Repeat</strong>" command.
 Normally, such expressions will make sense if you assign the result to a variable to be used in the next iteration.
 So, the following pattern is more likely to be applied in practice:</p>
-<div class="highlight"><pre><span></span><code>$<span class="n">Repeat</span><span class="p">{</span><span class="n">x</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">b</span><span class="p">}</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nd">$Repeat</span><span class="p">{</span><span class="nv">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">f</span><span class="p">(</span><span class="nv">x</span><span class="p">;</span><span class="w"> </span><span class="nv">k</span><span class="p">)</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nv">b</span><span class="p">}</span>
 </code></pre></div>
 <p>For example, you can use this command to define the Mandelbrot set in a single line:</p>
-<div class="highlight"><pre><span></span><code><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span>$<span class="n">Repeat</span><span class="p">{</span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">z</span><span class="o">^</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">}</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nv">f</span><span class="p">(</span><span class="nv">z</span><span class="p">;</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">$Repeat</span><span class="p">{</span><span class="nv">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">z</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">c</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">:</span><span class="m">100</span><span class="p">}</span>
 </code></pre></div>
 <p>You should not forget to switch to "Complex" mode.
 Then you can plot the result:</p>
-<div class="highlight"><pre><span></span><code>$<span class="n">Map</span><span class="p">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>1<span class="nb">i</span><span class="o">*</span><span class="n">y</span><span class="p">))</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.5</span><span class="p">:</span><span class="mf">0.5</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nd">$Map</span><span class="p">{</span><span class="nb">abs</span><span class="p">(</span><span class="nv">f</span><span class="p">(</span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="na">i</span><span class="o">*</span><span class="nv">y</span><span class="p">))</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="m">1.5</span><span class="p">:</span><span class="m">0.5</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="nv">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="m">1</span><span class="p">:</span><span class="m">1</span><span class="p">}</span>
 </code></pre></div>
 <p><img src="./media/image27.png" style="width:4.81217in;height:4.37051in" alt="Mandelbrot" /></p>
-<h2 id="expression-blocks">Expression blocks</h2>
+<h2 id="expression-blocks">Expression Blocks<a class="headerlink" href="#expression-blocks" title="Permanent link">&para;</a></h2>
 <p>An expression block encloses a list of expressions, divided by semicolons.
 All expressions can assign to local variables.
 You can use expression blocks to embed short algorithmic procedures into function definitions, inline loops or any other expressions and expression blocks.
@@ -1245,14 +2571,14 @@ Such is the <em>quadRoots</em> function in the example below that find the roo
 <tbody>
 <tr>
 <td style="text-align: left;">
-<div class="highlight"><pre><span></span><code><span class="n">quadRoots</span><span class="p">(</span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">_</span>
-$<span class="n">block</span><span class="p">{</span>
-<span class="w">    </span><span class="n">D</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">b</span><span class="o">^</span><span class="mi">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">4</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">c</span><span class="p">;</span>
-<span class="w">    </span><span class="n">x_1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="p">);</span>
-<span class="w">    </span><span class="n">x_2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="p">);</span>
-<span class="w">    </span><span class="p">[</span><span class="n">x_1</span><span class="p">;</span><span class="w"> </span><span class="n">x_2</span><span class="p">];</span>
+<div class="language-calcpad highlight"><pre><span></span><code><span class="nv">quadRoots</span><span class="p">(</span><span class="nv">a</span><span class="p">;</span> <span class="nv">b</span><span class="p">;</span> <span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>_
+<span class="nd">$block</span><span class="p">{</span>
+    <span class="nv">D</span> <span class="o">=</span> <span class="nv">b</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">4</span><span class="o">*</span><span class="nv">a</span><span class="o">*</span><span class="nv">c</span><span class="p">;</span>
+    <span class="nv">x_1</span> <span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="nv">b</span> <span class="o">-</span> <span class="nb">sqrt</span><span class="p">(</span><span class="nv">D</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="nv">a</span><span class="p">);</span>
+    <span class="nv">x_2</span> <span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="nv">b</span> <span class="o">+</span> <span class="nb">sqrt</span><span class="p">(</span><span class="nv">D</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="nv">a</span><span class="p">);</span>
+    <span class="p">[</span><span class="nv">x_1</span><span class="p">;</span> <span class="nv">x_2</span><span class="p">];</span>
 <span class="p">}</span>
-<span class="n">quadRoots</span><span class="p">(</span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<span class="nv">quadRoots</span><span class="p">(</span><span class="m">2</span><span class="p">;</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="m">5</span><span class="p">)</span>
 </code></pre></div>
 </td>
 <td><img src="./media/image28.png" width="400" /></td>
@@ -1335,12 +2661,28 @@ If the variable does not exist, an error is reported.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.highlight", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
+  
       <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="javascripts/mathjax.js"></script>
       
-        <script src="javascripts/mathjax/tex-mml-chtml.js"></script>
+        <script src="javascripts/mathjax/tex-chtml.js"></script>
+      
+        <script src="javascripts/example-layout.js"></script>
       
     
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("body").on("click", ".fold > :first-child, .unfold > :first-child", function () {
+        var parent = $(this).parent();
+        if (parent.hasClass("fold")) {
+          parent.removeClass("fold").addClass("unfold");
+        } else {
+          parent.removeClass("unfold").addClass("fold");
+        }
+      });
+    });
+  </script>
+
   </body>
 </html>
