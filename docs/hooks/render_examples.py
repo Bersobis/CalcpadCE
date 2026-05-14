@@ -503,7 +503,7 @@ def _render_category_page(category: str, cpd_files: list[Path], fragments: dict[
         # unchanged (including blank lines and raw <script> content inside it).
         lines.append('<div class="example-grid">')
         lines.append('<figure>')
-        lines.append(f'<figcaption>CalcpadCE Code:</figcaption>')
+        lines.append(f'<figcaption>Code:</figcaption>')
         lines.append(highlighted_source)
         lines.append('</figure>')
         lines.append('<figure class="example-output">')
