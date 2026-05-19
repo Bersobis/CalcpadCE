@@ -2918,7 +2918,7 @@ circle.Series5 {fill:MediumVioletRed;}
    </polyline>
   </g>
  </svg>
- <h4>Comparision of Crank–Nicolson and Runge-Kutta 4 methods</h4>
+ <h4>Comparison of Crank–Nicolson and Runge-Kutta 4 methods</h4>
  <style>.Series2{stroke-dasharray: 30, 10;}</style>
  <table>
   <tr>
