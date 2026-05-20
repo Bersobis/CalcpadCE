@@ -94,6 +94,9 @@ StyleCopReport.xml
 *.svclog
 *.scc
 
+# Files built by Visual Studio Code
+*.csproj.lscache
+
 # Chutzpah Test files
 _Chutzpah*
 
