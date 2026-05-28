@@ -253,7 +253,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="areas.html" class="md-tabs__link">
+        <a href="getting-started.html" class="md-tabs__link">
           
   
   
@@ -383,7 +383,7 @@
   <span class="md-ellipsis">
     
   
-    About CalcpadCE (Community Edition)
+    About CalcpadCE
   
 
     
@@ -1027,7 +1027,7 @@
   <span class="md-ellipsis">
     
   
-    High Performance Vectors and Matrices
+    High Performance Functions
   
 
     
@@ -1191,6 +1191,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started (3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2465,7 +2493,7 @@
 <p>Defines USD, EUR and other currencies as custom units with cross-rates, so monetary expressions auto-convert and round consistently across the worksheet.</p>
 <div class="example-grid">
 <figure>
-<figcaption>CalcpadCE Code:</figcaption>
+<figcaption>Code:</figcaption>
 <div class="highlight"><pre><span></span><code><span class="c1">&#39;&lt;p&gt;&lt;b&gt;Definition&lt;/b&gt;&lt;/p&gt;</span>
 <span class="p">.</span><span class="nv">EUR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
 <span class="p">.</span><span class="nv">USD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.92</span><span class="na">EUR</span>
@@ -2488,17 +2516,16 @@
 <p><b>Definition</b></p> 
 <p><span class="eq"><i>EUR</i> = 1</span></p>
 <p><span class="eq"><i>USD</i> = 0.92 <i>EUR</i></span></p>
-<p><span class="eq"><i>BGN</i> = 0.5112919 <i>EUR</i></span></p>
+<p><span class="eq"><i>BGN</i> = 0.511 <i>EUR</i></span></p>
 <p><b>Conversion</b></p> 
-<p><span class="eq">10 <i>BGN</i> = 5.55752 <i>USD</i></span></p>
-<p><span class="eq">20 <i>EUR</i> = 39.1166 <i>BGN</i></span></p>
-<p><span class="eq">30 <i>EUR</i> = 32.608696 <i>USD</i></span></p>
+<p><span class="eq">10 <i>BGN</i> = 5.56 <i>USD</i></span></p>
+<p><span class="eq">20 <i>EUR</i> = 39.12 <i>BGN</i></span></p>
+<p><span class="eq">30 <i>EUR</i> = 32.61 <i>USD</i></span></p>
 <p><b>Usage</b></p> 
 <p>Unit price -  <span class="eq"><var>p</var> = 15 <span class="dvc"><i>USD</i><span class="dvl"></span><i>m</i></span></span></p>
 <p>Order length - <span class="eq"><var>L</var> = 100 <i>m</i></span></p>
 <p>Total price in USD - <span class="eq"><var>P</var> = <var>p</var> · <var>L</var> = 15 <i>USD</i><i class="unit"> ∕ </i><i>m</i> · 100 <i>m</i> = 1500 <i>USD</i></span></p>
 <p>Total price in EUR - <span class="eq"><var>P</var> = 1380 <i>EUR</i></span></p>
-<p>&nbsp;</p>
 </div>
 </figure>
 </div>
@@ -2507,7 +2534,7 @@
 <p>Defines bit, byte and the <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary prefixes</a> (KiB, MiB, GiB, TiB) as custom units, ready for bandwidth and storage calculations.</p>
 <div class="example-grid">
 <figure>
-<figcaption>CalcpadCE Code:</figcaption>
+<figcaption>Code:</figcaption>
 <div class="highlight"><pre><span></span><code><span class="c1">&#39;&lt;p&gt;&lt;b&gt;Definition&lt;/b&gt;&lt;/p&gt;</span>
 <span class="p">.</span><span class="nv">bit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
 <span class="p">.</span><span class="nv">byte</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="na">bit</span>
@@ -2545,13 +2572,12 @@
 <p><span class="eq"><i>TiB</i> = 1073741824 <i>byte</i></span></p>
 <p><b>Usage</b></p> 
 <p><span class="eq"><var>v</var> = 10000000 <span class="dvc"><i>byte</i><span class="dvl"></span><i>s</i></span></span></p>
-<p><span class="eq"><var>v</var> = 33.527613 <i>TiB</i><i class="unit"> ∕ </i><i>h</i></span></p>
-<p>&nbsp;</p>
+<p><span class="eq"><var>v</var> = 33.53 <i>TiB</i><i class="unit"> ∕ </i><i>h</i></span></p>
 </div>
 </figure>
 </div>
 
-<p>Spotted an error? <a href="https://github.com/imartincei/CalcpadCE/tree/main/Examples/Engineering/Custom%20Units">Edit these examples.</a></p>
+<p>Spotted an error? <a href="https://github.com/imartincei/CalcpadCE/tree/main/Examples/Engineering/Custom%20Units">Edit</a> these examples.</p>
 
 
 
@@ -2619,8 +2645,6 @@
         <script src="../javascripts/mathjax.js"></script>
       
         <script src="../javascripts/mathjax/tex-chtml.js"></script>
-      
-        <script src="../javascripts/example-layout.js"></script>
       
     
   <script>
