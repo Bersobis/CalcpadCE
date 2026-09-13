@@ -1,8 +1,7 @@
 import * as monaco from 'monaco-editor';
 
 /**
- * CalcPad dark theme for Monaco, and the source of truth for the palette — the VS Code
- * extension and backend/template.html copy it, and check-contrast.mjs asserts they match.
+ * CalcPad dark theme for Monaco
  */
 // `semanticHighlighting: true` is recognized by Monaco at runtime but isn't
 // in IStandaloneThemeData's public types, so we cast at the property level.
@@ -68,8 +67,7 @@ export const calcpadDarkTheme: monaco.editor.IStandaloneThemeData = {
 };
 
 /**
- * CalcPad light theme for Monaco — the dark theme's token roles, as saturated as WCAG AA
- * allows on white (#212). WPF's palette is more vivid only because most of it fails AA.
+ * CalcPad light theme for Monaco
  */
 export const calcpadLightTheme: monaco.editor.IStandaloneThemeData = {
     base: 'vs',

@@ -11,8 +11,7 @@ namespace Calcpad.Highlighter.Tokenizer
         private const string UiKeyword = "#ui";
 
         /// <summary>
-        /// Directives whose remainder is a payload rather than an expression, and the token type
-        /// that payload takes. Matched case-insensitively, as Core's parsers match keywords.
+        /// Directives whose remainder is a payload rather than an expression.
         /// #UI is absent: its block is optional, so <see cref="ParseSpace"/> only arms it.
         /// </summary>
         private static readonly (string Keyword, TokenType Payload)[] PayloadKeywords =

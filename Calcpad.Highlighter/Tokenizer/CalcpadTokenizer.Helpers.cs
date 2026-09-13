@@ -79,10 +79,6 @@ namespace Calcpad.Highlighter.Tokenizer
                    text.Equals("#md", StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <summary>
-        /// Case-insensitive compare of the token builder against a lowercase keyword. Avoids the
-        /// StringBuilder.ToString() allocation in the hot ParseSpace path.
-        /// </summary>
         private static bool IsKeywordBuilder(StringBuilder builder, string keyword)
         {
             if (builder.Length != keyword.Length)
