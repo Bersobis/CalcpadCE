@@ -77,7 +77,7 @@ Without it, the input properties are derived from the right-hand side.
 | Number, with or without a unit | ✔ | `#UI L = 10m`, `#UI n = 4`, `#UI q = 3kN/m` |
 | Vector or matrix literal | ✔ | `#UI v = [1; 2; 3]`, `#UI M = [1; 2 \| 3; 4]` |
 | `vector()` / `matrix()` constructor | ✔ | `#UI Z = vector(5)`, `#UI G = matrix(r; c)` |
-| An expression | ✘ | `#UI k = 2*E`, `#UI k = max(v)`, `#UI v = [1; sqrt(4)]` |
+| An expression (unless allowExpression is true) | ✘ | `#UI k = 2*E`, `#UI k = max(v)`, `#UI v = [1; sqrt(4)]` |
 | Text | ✘ | `#UI text = 'text'` |
 
 Some considerations:
