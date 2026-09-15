@@ -30,30 +30,35 @@ p[data-ui-type="datagrid"]:empty {
     background: none;
 }
 
-.calcpad-ui-datagrid > .jss_content {
+/* The library nests the content under .jtabs-content > .jss_container, so this cannot be a
+   child selector. Its padding is scrollable width the grid is sized without. */
+.calcpad-ui-datagrid .jss_content {
     padding-right: 0;
     padding-bottom: 0;
     box-shadow: none !important;
 }
 
 /* Wrapping. The library sets white-space: nowrap on the table and repeats it on the body
-   cells, clips the headers and the last column, and packs body cells to line-height 1em -
-   all of which have to be restated for text that spills to wrap instead of disappearing.
+   cells, and packs them to line-height 1em. No overflow-wrap or word-break: a line breaks at
+   a space and never inside a word, so the script sizes each column to its longest word.
    Row heights are never set from script, so the rows grow to fit. */
 
 .calcpad-ui-datagrid .jss_worksheet > thead > tr > td,
 .calcpad-ui-datagrid .jss_worksheet > tbody > tr > td,
 .calcpad-ui-datagrid .jss_worksheet > tbody > tr > td:first-child {
     white-space: normal;
-    overflow-wrap: break-word;
-    word-break: break-word;
     line-height: 1.3;
     vertical-align: middle;
     height: auto;
 }
 
-.calcpad-ui-datagrid .jss_worksheet > thead > tr > td,
-.calcpad-ui-datagrid .jss_worksheet > tbody > tr > td:last-child {
+/* A word past the column's cap is cut off rather than laid over its neighbour. */
+.calcpad-ui-datagrid .jss_worksheet > tbody > tr > td {
+    overflow: hidden;
+}
+
+/* The header row cannot grow the way a body row can, so it is never clipped. */
+.calcpad-ui-datagrid .jss_worksheet > thead > tr > td {
     overflow: visible;
     text-overflow: clip;
 }
@@ -159,7 +164,7 @@ p[data-ui-type="datagrid"]:empty {
     box-shadow: none;
 }
 
-.dark-theme .calcpad-ui-datagrid > .jss_content {
+.dark-theme .calcpad-ui-datagrid .jss_content {
     scrollbar-color: rgba(121, 121, 121, 0.4) transparent;
 }
 

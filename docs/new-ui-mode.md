@@ -224,18 +224,20 @@ Note that this is still subject to the limitations of the calculation engine, pu
 
 #### Sizing
 
-THe default grid width is the row header plus 80 pixels per column.
-`width` overrides that total — a number of pixels, or a percentage of the line such as `"75%"` (`"100%"` and `"full"` both fill it).
+By default each column is sized to the longest single word it has to show, its header included, with a minimum of 80 pixels.
+`width` overrides that total using a number of pixels or a percentage of the line such as `"75%"` (`"100%"` and `"full"` both fill the entire line).
 `rowHeaderWidth` and `columnWidths` set each row/column in the order they are declared.
-When the parts add up to more than table width, they are all scaled down together, keeping their relative sizes. 
+When `width` is set and the parts add up to more than it, they are all scaled down together, keeping their relative sizes.
 This means `columnWidths` can be written as plain ratios.
+No column is scaled below its own longest word, so a `width` too small for the content is overrun and the grid scrolls rather than clipping every column.
 
 ```text
 #UI {"type": "datagrid", "width": "100%", "rowHeaderWidth": 140, "columnWidths": [2, 1, 1]} M = matrix(2; 3)
 ```
 
-A grid of a single column is sized to its column header rather than stretched.
-Headers and cells wrap when their text spills, and the rows grow to fit.
+Text wraps at spaces only, and the rows grow to fit.
+A word too long for its column is cut off at the cell border.
+Click into the cell or hover over a header to read it in full.
 
 >Note:
 >Setting a datagrid with a row length of 1 will output a vector instead of matrix due to limitations in how vectors/matricies are input. This is planned to be fixed in a future version. As this is mostly an issue when dynamically defining row lengths from a variable, you can check if the row length is one and convert it to a matrix using vec2row() where this is an issue.

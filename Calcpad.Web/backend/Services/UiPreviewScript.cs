@@ -34,9 +34,12 @@ namespace Calcpad.Server.Services
     // How long a datagrid waits for data entry to stop before it posts.
     var GRID_IDLE_MS = 400;
 
-    // MIN_* are the floors a proportional shrink may not go below.
-    var DEF_COL = 80, MIN_COL = 28, DEF_ROW_HDR = 50, MIN_ROW_HDR = 24, SINGLE_MIN = 80;
-    var CHROME = 8, SCROLLBAR = 10, HDR_PAD = 12, MAX_GRID_H = 420;
+    // MIN_* floor a proportional shrink, DEF_* a measured one. No column, measured or
+    // shrunk, passes MAX_SHARE of the grid - one long word must not crowd out the rest.
+    var DEF_COL = 80, MIN_COL = 28, DEF_ROW_HDR = 50, MIN_ROW_HDR = 24, MAX_SHARE = 0.25;
+    var CHROME = 8, SCROLLBAR = 10, HDR_PAD = 12, CELL_PAD = 10, MAX_GRID_H = 420;
+    // The table's own left and right border, outside every column.
+    var BORDERS = 2;
     var measureCtx = null;
     var sheetsByKey = {};
     // Nothing is persisted until an edit is posted, so opening a document afresh never moves focus.
@@ -65,6 +68,7 @@ namespace Calcpad.Server.Services
             // A grid keeps its position in the library; jspreadsheet.current takes the keystrokes.
             state.key = sheet.calcpadUiKey;
             state.cell = [sheet.selectedCell[0], sheet.selectedCell[1], sheet.selectedCell[2], sheet.selectedCell[3]];
+            state.scroll = [sheet.content.scrollLeft, sheet.content.scrollTop];
         }
         postState(state);
     }
@@ -72,18 +76,19 @@ namespace Calcpad.Server.Services
     function restoreState() {
         if (!pending) return;
         if (pending.key && pending.cell)
-            restoreCell(sheetsByKey[pending.key], pending.cell);
+            restoreCell(sheetsByKey[pending.key], pending.cell, pending.scroll);
         else if (pending.key)
             restoreFocus(pending.key, pending.caret);
     }
 
-    function restoreCell(sheet, cell) {
+    // The offset goes back verbatim: selecting the cell only scrolls far enough to reveal it,
+    // which loses the position whenever the cell was already in view at the left.
+    function restoreCell(sheet, cell, scroll) {
         if (!sheet) return;
         jspreadsheet.current = sheet;
         sheet.updateSelectionFromCoords(cell[0], cell[1], cell[2], cell[3]);
-        var record = sheet.records && sheet.records[cell[1]] && sheet.records[cell[1]][cell[0]];
-        if (record && record.element && record.element.scrollIntoView)
-            record.element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        sheet.content.scrollLeft = scroll[0];
+        sheet.content.scrollTop = scroll[1];
     }
 
     function restoreFocus(key, caret) {
@@ -226,7 +231,7 @@ namespace Calcpad.Server.Services
 
             var colHeaders = jsonAttr(container, 'data-ui-col-headers');
             var rowHeaders = jsonAttr(container, 'data-ui-row-headers');
-            var layout = resolveWidths(container, data, cols, colHeaders);
+            var layout = resolveWidths(container, data, cols, colHeaders, rowHeaders);
 
             var columns = [];
             for (var c = 0; c < cols; c++) {
@@ -235,6 +240,8 @@ namespace Calcpad.Server.Services
                 columns.push(def);
             }
 
+            // No tableOverflow: it only gates tableWidth/tableHeight, which size .jss_content at a
+            // size of its own, and it has the library close an open cell editor on any scroll.
             var worksheet = {
                 data: data,
                 minDimensions: [cols, rows],
@@ -247,8 +254,14 @@ namespace Calcpad.Server.Services
                 allowManualInsertColumn: false,
                 allowDeleteColumn: false,
                 allowComments: false,
-                // No tableWidth/tableHeight: they only fix .jss_content at a size of its own.
-                tableOverflow: true
+                // The directive owns the headers and the geometry.
+                allowRenameColumn: false,
+                columnResize: false,
+                rowResize: false,
+                // Reordering would permute the matrix written back to the document.
+                columnSorting: false,
+                columnDrag: false,
+                rowDrag: false
             };
             if (rowHeaders) {
                 worksheet.rows = {};
@@ -313,7 +326,7 @@ namespace Calcpad.Server.Services
         return Math.floor(w) || 640;
     }
 
-    function measureText(container, text) {
+    function measureText(container, text, bold) {
         if (!text) return 0;
         if (!measureCtx) {
             try { measureCtx = document.createElement('canvas').getContext('2d'); } catch (e) { return 0; }
@@ -321,8 +334,19 @@ namespace Calcpad.Server.Services
         if (!measureCtx) return 0;
         var style = window.getComputedStyle(container);
         // The 'font' shorthand does not always serialise.
-        measureCtx.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily].join(' ');
+        measureCtx.font = [style.fontStyle, bold ? 'bold' : style.fontWeight, style.fontSize, style.fontFamily].join(' ');
         return Math.ceil(measureCtx.measureText(text).width);
+    }
+
+    // Breaking only at spaces, the longest word is the width below which a line starts to clip.
+    function widestWord(container, text, bold, cap) {
+        if (text === null || text === undefined) return 0;
+        var words = String(text).split(/\s+/), max = 0;
+        for (var i = 0; i < words.length; i++) {
+            max = Math.max(max, measureText(container, words[i], bold));
+            if (max >= cap) return cap;
+        }
+        return max;
     }
 
     function positive(n) {
@@ -342,51 +366,86 @@ namespace Calcpad.Server.Services
     }
 
     // One factor with the drift settled on the widest, so declared widths are read as ratios.
-    function fitColumns(cols, target) {
-        var total = 0;
-        for (var i = 0; i < cols.length; i++) total += cols[i];
-        if (!total || !cols.length) return cols;
+    // A column pinned to its floor leaves the pool, and the rest share what is left of the
+    // target; when the floors alone outgrow it the grid overflows and scrolls.
+    function fitColumns(cols, floors, target) {
+        var n = cols.length, out = cols.slice(), pinned = [], i;
+        if (!n) return out;
 
-        var f = target / total;
-        var out = cols.map(function (w) { return Math.max(MIN_COL, Math.floor(w * f)); });
-        var sum = 0, widest = 0;
-        for (var j = 0; j < out.length; j++) {
-            sum += out[j];
-            if (out[j] > out[widest]) widest = j;
+        for (var pass = 0; pass <= n; pass++) {
+            var room = target, pool = 0;
+            for (i = 0; i < n; i++) {
+                if (pinned[i]) room -= out[i];
+                else pool += cols[i];
+            }
+            if (!pool) break;
+
+            var hit = false;
+            for (i = 0; i < n; i++) {
+                if (pinned[i]) continue;
+                out[i] = Math.floor(cols[i] * room / pool);
+                if (out[i] < floors[i]) {
+                    out[i] = floors[i];
+                    pinned[i] = true;
+                    hit = true;
+                }
+            }
+            if (!hit) break;
         }
-        out[widest] = Math.max(MIN_COL, out[widest] + target - sum);
+
+        var sum = 0, widest = -1;
+        for (i = 0; i < n; i++) {
+            sum += out[i];
+            if (!pinned[i] && (widest < 0 || out[i] > out[widest])) widest = i;
+        }
+        if (widest >= 0) out[widest] = Math.max(floors[widest], out[widest] + target - sum);
         return out;
     }
 
-    function resolveWidths(container, data, cols, colHeaders) {
+    // The longest word a column has to show, header included. Capped, not floored: the
+    // caller floors a natural width at DEF_COL and a shrunk one at MIN_COL.
+    function measureColumn(container, data, c, header, cap) {
+        var max = widestWord(container, header, true, cap) + HDR_PAD;
+        for (var r = 0; r < data.length && max < cap; r++)
+            max = Math.max(max, widestWord(container, data[r][c], false, cap) + CELL_PAD);
+
+        return Math.min(cap, max);
+    }
+
+    function resolveWidths(container, data, cols, colHeaders, rowHeaders) {
         for (var r = 0; r < data.length; r++) cols = Math.max(cols, data[r].length);
 
         var page = availableWidth(container) - CHROME;
         if (data.length * 24 + 30 > MAX_GRID_H) page -= SCROLLBAR;
 
-        var declared = jsonAttr(container, 'data-ui-column-widths') || [];
-        var rowHeader = positive(container.getAttribute('data-ui-row-header-width')) || DEF_ROW_HDR;
-        var w = [];
-        for (var c = 0; c < cols; c++) w.push(positive(declared[c]) || DEF_COL);
-
-        // A single column has no page to share, so it is sized to its header.
-        if (cols === 1 && !positive(declared[0]))
-            w[0] = Math.max(SINGLE_MIN, measureText(container, colHeaders && colHeaders[0]) + HDR_PAD);
-
         var target = targetWidth(container, page);
+        var cap = Math.max(DEF_COL, Math.round((target === null ? page : target) * MAX_SHARE));
 
-        var total = rowHeader;
-        for (var i = 0; i < w.length; i++) total += w[i];
-        // An undeclared total keeps its natural width, unless that runs off the page.
-        if (target === null) {
-            if (total <= page) return { rowHeader: rowHeader, cols: w, width: page };
-
-            target = page;
+        var declared = jsonAttr(container, 'data-ui-column-widths') || [];
+        var rowHeader = positive(container.getAttribute('data-ui-row-header-width'));
+        if (rowHeader === null) {
+            rowHeader = DEF_ROW_HDR;
+            for (var h = 0; rowHeaders && h < rowHeaders.length; h++)
+                rowHeader = Math.max(rowHeader, Math.min(cap, widestWord(container, rowHeaders[h], true, cap) + HDR_PAD));
         }
-        // The row header is a width, not a ratio: it gives way only when nothing is left.
-        var room = target - cols * MIN_COL;
-        if (rowHeader > room) rowHeader = Math.max(MIN_ROW_HDR, room);
-        return { rowHeader: rowHeader, cols: fitColumns(w, target - rowHeader), width: page };
+        // A declared width is a ratio, but its content still sets the floor it cannot shrink past.
+        var w = [], floors = [];
+        for (var c = 0; c < cols; c++) {
+            var word = measureColumn(container, data, c, colHeaders && colHeaders[c], cap);
+            w.push(positive(declared[c]) || Math.max(DEF_COL, word));
+            floors.push(Math.max(MIN_COL, word));
+        }
+
+        // An undeclared total keeps its natural width - capHeight scrolls it, shrinking would clip.
+        if (target === null) return { rowHeader: rowHeader, cols: w, width: page };
+
+        var floorTotal = 0;
+        for (var i = 0; i < floors.length; i++) floorTotal += floors[i];
+        // The row header is a width, not a ratio: it gives way only where that buys a fit.
+        // Once the floors alone outgrow the target, narrowing it just loses the row titles too.
+        var room = target - BORDERS - floorTotal;
+        if (rowHeader > room && room >= MIN_ROW_HDR) rowHeader = room;
+        return { rowHeader: rowHeader, cols: fitColumns(w, floors, target - rowHeader - BORDERS), width: page };
     }
 
     // jspreadsheet hardcodes width="50" on the first <col> and offers no option for it.
