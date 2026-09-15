@@ -30,7 +30,7 @@ namespace Calcpad.Core
             public bool HasDeclaredShape { get; init; }
             public string[] ColumnHeaders { get; init; }
             public string[] RowHeaders { get; init; }
-            public int? Width { get; init; }
+            public string Width { get; init; }
             public int? RowHeaderWidth { get; init; }
             public int[] ColumnWidths { get; init; }
             public string[] Keys { get; init; }
@@ -105,7 +105,20 @@ namespace Calcpad.Core
                 var type = UiSyntax.ResolveType(properties.Type, assignment.Rhs);
                 if (!UiSyntax.IsValue(assignment.Rhs, type, properties.AllowsExpression))
                 {
-                    AppendError(s.ToString(), Messages.UI_directives_do_not_support_expressions, _currentLine);
+                    AppendError(s.ToString(), Messages.UI_expressions_require_allowExpression, _currentLine);
+                    return KeywordResult.None;
+                }
+                if (UiSyntax.TypeMismatch(properties.Type, assignment.Rhs, properties.AllowsExpression) is { } mismatch)
+                {
+                    AppendError(s.ToString(), mismatch, _currentLine);
+                    return KeywordResult.None;
+                }
+                var typeErrors = properties.ValidateResolvedType(type);
+                if (typeErrors.Count > 0)
+                {
+                    foreach (var error in typeErrors)
+                        AppendError(s.ToString(), error.Message, _currentLine);
+
                     return KeywordResult.None;
                 }
 
@@ -446,14 +459,22 @@ namespace Calcpad.Core
             foreach (var row in cells)
                 foreach (var cell in row)
                 {
-                    var i = 0;
-                    while (i < cell.Length && (char.IsAsciiDigit(cell[i]) || cell[i] is '.' or '-' or '+'))
-                        ++i;
-
-                    if (i > 0 && i < cell.Length)
-                        return cell[i..];
+                    var unit = SplitCell(cell).Unit;
+                    if (unit.Length > 0)
+                        return unit;
                 }
             return string.Empty;
+        }
+
+        /// <summary>Splits the numeric prefix of a cell from the unit written after it.</summary>
+        private static (string Value, string Unit) SplitCell(string cell)
+        {
+            var i = 0;
+            // '−' is the minus the controls accept alongside the ASCII one.
+            while (i < cell.Length && (char.IsAsciiDigit(cell[i]) || cell[i] is '.' or '-' or '+' or '−'))
+                ++i;
+
+            return i == 0 ? (cell, string.Empty) : (cell[..i], cell[i..]);
         }
 
         private static List<string[]> SplitMatrixLiteral(string content)
@@ -470,6 +491,7 @@ namespace Calcpad.Core
             return rows;
         }
 
+        /// <summary>Reads the cells out of the literal the line was written or overridden with.</summary>
         private static void CaptureDatagridValues(UiPropertyMetadata ui, string expression)
         {
             var eqIndex = IndexOfAssignment(expression);
@@ -479,8 +501,44 @@ namespace Calcpad.Core
             var rhs = expression[(eqIndex + 1)..].Trim();
             var bracketStart = rhs.IndexOf('[');
             var bracketEnd = rhs.LastIndexOf(']');
-            if (bracketStart >= 0 && bracketEnd > bracketStart)
-                ui.DataValues = rhs[(bracketStart + 1)..bracketEnd].Replace(" ", "");
+            if (bracketStart < 0 || bracketEnd <= bracketStart)
+                return;
+
+            var cells = SplitMatrixLiteral(rhs[(bracketStart + 1)..bracketEnd].Replace(" ", ""));
+            SetDatagridCells(ui, [.. cells], null);
+        }
+
+        /// <summary>The grid's cells, with each unit kept aside when it edits numbers only.</summary>
+        private static void SetDatagridCells(UiPropertyMetadata ui, string[][] values, string[][] units)
+        {
+            for (var r = 0; r < values.Length; ++r)
+                for (var c = 0; c < values[r].Length; ++c)
+                {
+                    if (!ui.KeepsUnits)
+                    {
+                        values[r][c] += units?[r][c];
+                        continue;
+                    }
+                    var (value, unit) = SplitCell(values[r][c]);
+                    values[r][c] = value;
+                    if (unit.Length > 0)
+                    {
+                        units ??= NewUnits(values);
+                        units[r][c] = unit;
+                    }
+                }
+
+            ui.CellUnits = ui.KeepsUnits ? units : null;
+            ui.DataValues = string.Join("|", values.Select(row => string.Join(";", row)));
+        }
+
+        private static string[][] NewUnits(string[][] values)
+        {
+            var units = new string[values.Length][];
+            for (var r = 0; r < values.Length; ++r)
+                units[r] = [.. Enumerable.Repeat(string.Empty, values[r].Length)];
+
+            return units;
         }
 
         private static void CaptureSourceValue(UiPropertyMetadata ui, string expression)
@@ -490,10 +548,7 @@ namespace Calcpad.Core
                 ui.SourceValue = expression[(eqIndex + 1)..].Trim();
         }
 
-        /// <summary>
-        /// Fills a grid that has no literal to read from with the value the line produced, keeping
-        /// each cell's unit aside when the grid edits numbers only. Falls back to zeros.
-        /// </summary>
+        /// <summary>Fills a grid with no literal to read from, falling back to zeros.</summary>
         private void ResolveDatagridValues(UiPropertyMetadata ui)
         {
             if (ui.DataValues is not null)
@@ -506,15 +561,7 @@ namespace Calcpad.Core
                 ui.DataValues = string.Join("|", Enumerable.Repeat(zeros, ui.Rows));
                 return;
             }
-
-            if (ui.KeepsUnits)
-                ui.CellUnits = units;
-            else
-                for (var r = 0; r < values.Length; ++r)
-                    for (var c = 0; c < values[r].Length; ++c)
-                        values[r][c] += units[r][c];
-
-            ui.DataValues = string.Join("|", values.Select(row => string.Join(";", row)));
+            SetDatagridCells(ui, values, units);
         }
 
         private bool TryGetUiOverride(UiPropertyMetadata ui, out string value)
@@ -542,8 +589,7 @@ namespace Calcpad.Core
                     $"{lhs} {value}{rhs[(bracketEnd + 1)..]}";
             }
 
-            // Every other mode replaces the whole right hand side; only the default one
-            // rewrites the number in place and leaves the unit where it was written.
+            // Only the default mode rewrites the number in place, leaving the unit as written.
             if (ui.Type is "dropdown" or "radio" || !ui.KeepsUnits)
                 return $"{lhs} {value}";
 
@@ -590,17 +636,14 @@ namespace Calcpad.Core
                 "dropdown" => ReplaceEquation(equationHtml, (v, u) => BuildUiDropdown(ui, SelectedValue(v, u))),
                 "radio" => ReplaceEquation(equationHtml, (v, u) => BuildUiRadio(ui, SelectedValue(v, u))),
                 "checkbox" => ReplaceEquation(equationHtml, (v, _) => BuildUiCheckbox(ui, v)),
-                // Without the unit pinned to the document it belongs in the box, so the
-                // equation's unit markup goes rather than being re-appended after it.
-                _ when ui.AllowsExpression => ReplaceEquation(equationHtml, (_, _) => BuildUiEntry(ui, ui.SourceValue)),
-                _ when !ui.KeepsUnits => ReplaceEquation(equationHtml, (v, _) => BuildUiEntry(ui, StripSpaces(v) + _parser.ResultUnitsInputText)),
-                _ => InjectUiControl(equationHtml, (v, _) => BuildUiEntry(ui, v))
+                // The box holds the right hand side, so the substituted form repeats it.
+                _ when ui.AllowsExpression => ReplaceRhs(equationHtml, BuildUiEntry(ui, ui.SourceValue)),
+                // The unit belongs in the box, so its markup goes; the name stays.
+                _ when !ui.KeepsUnits => InjectUiControl(equationHtml, false, (v, _) => BuildUiEntry(ui, StripSpaces(v) + _parser.ResultUnitsInputText)),
+                _ => InjectUiControl(equationHtml, true, (v, _) => BuildUiEntry(ui, v))
             };
 
-        /// <summary>
-        /// The control as it stands when the line did not parse: there is no rendered equation to
-        /// take the value from, so it comes from the right hand side as written.
-        /// </summary>
+        /// <summary>The control for a line that did not parse: the value comes from the source.</summary>
         private string BuildUiControlFromSource(UiPropertyMetadata ui)
         {
             var value = ui.SourceValue ?? string.Empty;
@@ -613,14 +656,21 @@ namespace Calcpad.Core
             };
         }
 
-        private static string InjectUiControl(string equationHtml, Func<string, string, string> build)
+        private static string InjectUiControl(string equationHtml, bool keepUnit, Func<string, string, string> build)
         {
             var resultStart = ResultStart(equationHtml);
             if (resultStart < 0)
                 return equationHtml;
 
             SplitValueAndUnit(equationHtml[resultStart..], out var value, out var unitHtml);
-            return equationHtml[..resultStart] + build(value, unitHtml) + unitHtml;
+            return equationHtml[..resultStart] + build(value, unitHtml) + (keepUnit ? unitHtml : string.Empty);
+        }
+
+        /// <summary>Everything after the name and its '=' gives way to the control.</summary>
+        private static string ReplaceRhs(string equationHtml, string control)
+        {
+            var i = equationHtml.IndexOf(" = ", StringComparison.Ordinal);
+            return i < 0 ? control : equationHtml[..(i + 3)] + control;
         }
 
         private static string ReplaceEquation(string equationHtml, Func<string, string, string> build)
@@ -715,8 +765,7 @@ namespace Calcpad.Core
             AppendJsonAttribute(sb, "data-ui-col-headers", ui.ColumnHeaders);
             AppendJsonAttribute(sb, "data-ui-row-headers", ui.RowHeaders);
             AppendJsonAttribute(sb, "data-ui-column-widths", ui.ColumnWidths);
-            if (ui.CellUnits is not null && HasAnyUnit(ui.CellUnits))
-                AppendJsonAttribute(sb, "data-ui-cell-units", ui.CellUnits);
+            AppendJsonAttribute(sb, "data-ui-cell-units", FitCellUnits(ui));
 
             if (ui.Width is { } width)
                 sb.Append($" data-ui-width=\"{width}\"");
@@ -739,8 +788,29 @@ namespace Calcpad.Core
                 sb.Append($" {name}=\"{HttpUtility.HtmlAttributeEncode(JsonSerializer.Serialize(value))}\"");
         }
 
-        private static bool HasAnyUnit(string[][] units) =>
-            units.Any(row => row.Any(u => !string.IsNullOrEmpty(u)));
+        /// <summary>
+        /// The stored units over the grid as drawn. A cell the value never reached takes the
+        /// first unit there is, so the literal cannot mix one with a bare number.
+        /// </summary>
+        private static string[][] FitCellUnits(UiPropertyMetadata ui)
+        {
+            var units = ui.CellUnits;
+            if (units is null)
+                return null;
+
+            var fallback = units.SelectMany(row => row).FirstOrDefault(u => !string.IsNullOrEmpty(u));
+            if (fallback is null)
+                return null;
+
+            var fitted = new string[ui.Rows][];
+            for (var r = 0; r < ui.Rows; ++r)
+            {
+                fitted[r] = new string[ui.Columns];
+                for (var c = 0; c < ui.Columns; ++c)
+                    fitted[r][c] = r < units.Length && c < units[r].Length ? units[r][c] ?? fallback : fallback;
+            }
+            return fitted;
+        }
 
         private static void SplitValueAndUnit(string resultHtml, out string value, out string unitHtml)
         {
@@ -760,8 +830,7 @@ namespace Calcpad.Core
                 value = resultHtml[..unitStart].TrimEnd(ThinSpace, ' ');
                 unitHtml = ThinSpace + resultHtml[unitStart..];
             }
-            // The angle units are written straight after the number, without markup of
-            // their own, so they have to be split off the value by hand.
+            // Angle units follow the number with no markup of their own.
             var i = value.Length;
             while (i > 0 && value[i - 1] is '°' or '′' or '″')
                 --i;

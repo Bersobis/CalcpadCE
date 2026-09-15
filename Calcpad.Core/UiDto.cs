@@ -26,9 +26,7 @@ namespace Calcpad.Core
         Values
     }
 
-    /// <summary>
-    /// JSON payload of the <c>#UI {...}</c> directive.
-    /// </summary>
+    /// <summary>JSON payload of the <c>#UI {...}</c> directive.</summary>
     public sealed class UiDto : DirectiveDto<UiDto, UiKey>
     {
         public string Type { get; set; }
@@ -41,7 +39,7 @@ namespace Calcpad.Core
         public int? Columns { get; set; }
         public string[] ColumnHeaders { get; set; }
         public string[] RowHeaders { get; set; }
-        /// <summary>Total grid width in pixels, or "100%". Null means the grid's natural width.</summary>
+        /// <summary>Total grid width in pixels, or a percentage of the line. Null means the grid's natural width.</summary>
         public JsonElement? Width { get; set; }
         public int? RowHeaderWidth { get; set; }
         public int[] ColumnWidths { get; set; }
@@ -52,36 +50,46 @@ namespace Calcpad.Core
         public static readonly IReadOnlyList<string> KnownTypes =
             ["entry", "datagrid", "dropdown", "radio", "checkbox"];
 
-        /// <summary>Maximum number of cells (rows × columns) in a datagrid before rejecting as too large for UI interaction.</summary>
+        /// <summary>Most cells a datagrid may hold before it is rejected as too large.</summary>
         internal const int MaxSize = 100_000;
 
         /// <summary>True for the types whose choices come from the paired keys and values arrays.</summary>
         public bool HasOptions => Type is "dropdown" or "radio";
 
-        /// <summary>
-        /// A free expression cannot have a unit appended to it, so <see cref="AllowExpression"/>
-        /// settles <see cref="ForceUnits"/> rather than combining with it.
-        /// </summary>
+        /// <summary>An expression takes no appended unit, so allowExpression settles this.</summary>
         [JsonIgnore]
         public bool KeepsUnits => AllowExpression != true && ForceUnits != false;
 
         [JsonIgnore]
         public bool AllowsExpression => AllowExpression == true;
 
-        /// <summary>The declared total width in pixels, -1 for "100%", or null when undeclared.</summary>
-        public int? GetWidth()
+        /// <summary>The declared total width as a pixel count or a "75%" share of the line, null when undeclared.</summary>
+        public string GetWidth()
         {
             if (Width is not { } w)
                 return null;
 
             if (w.ValueKind == JsonValueKind.Number && w.TryGetDouble(out var d))
-                return (int)Math.Round(d);
+                return ((int)Math.Round(d)).ToString(CultureInfo.InvariantCulture);
 
-            return w.ValueKind == JsonValueKind.String && IsFullWidth(w.GetString()) ? -1 : null;
+            return w.ValueKind == JsonValueKind.String && TryGetPercent(w.GetString(), out var percent) ?
+                percent.ToString(CultureInfo.InvariantCulture) + "%" :
+                null;
         }
 
-        private static bool IsFullWidth(string s) =>
-            s is not null && s.Trim() is "100%" or "full";
+        /// <summary>"full" is the spelled out form of 100%.</summary>
+        private static bool TryGetPercent(string s, out double percent)
+        {
+            percent = 100;
+            if (s is null)
+                return false;
+
+            s = s.Trim();
+            return s == "full" ||
+                s.EndsWith('%') &&
+                double.TryParse(s[..^1], NumberStyles.Float, CultureInfo.InvariantCulture, out percent) &&
+                percent > 0;
+        }
 
         protected override void Validate(List<DirectiveError<UiKey>> errors)
         {
@@ -102,6 +110,10 @@ namespace Calcpad.Core
                     errors.Add(new(UiKey.AllowExpression, string.Format(Messages.The_UI_0_does_not_apply_to_1, "allowExpression", Type)));
             }
 
+            // An undeclared type is settled later, by ValidateResolvedType.
+            if (Type is "entry" or "dropdown" or "radio" or "checkbox")
+                ValidateGridProperties(errors);
+
             CheckNotNegative(errors, UiKey.Rows, "rows", Rows);
             CheckNotNegative(errors, UiKey.Columns, "columns", Columns);
             CheckNotNegative(errors, UiKey.RowHeaderWidth, "rowHeaderWidth", RowHeaderWidth);
@@ -117,11 +129,38 @@ namespace Calcpad.Core
                         Messages.The_UI_0_keys_and_values_arrays_must_have_the_same_length, Type, Keys.Length, Values.Length)));
             }
 
-            // Only checked against a declared size: an omitted one is auto-detected later,
-            // from the right hand side the payload cannot see.
+            // An omitted size is auto-detected later, from a right hand side not seen here.
             CheckHeaderCount(errors, UiKey.ColumnHeaders, "columnHeaders", ColumnHeaders?.Length, Columns, "columns");
             CheckHeaderCount(errors, UiKey.RowHeaders, "rowHeaders", RowHeaders?.Length, Rows, "rows");
             CheckHeaderCount(errors, UiKey.ColumnWidths, "columnWidths", ColumnWidths?.Length, Columns, "columns");
+        }
+
+        /// <summary>The grid properties against the type the right hand side settled on.</summary>
+        public IReadOnlyList<DirectiveError<UiKey>> ValidateResolvedType(string type)
+        {
+            var errors = new List<DirectiveError<UiKey>>();
+            if (Type is null && type != "datagrid")
+                ValidateGridProperties(errors);
+
+            return errors;
+        }
+
+        /// <summary>Geometry and headers a control that is not a grid has nothing to do with.</summary>
+        private void ValidateGridProperties(List<DirectiveError<UiKey>> errors)
+        {
+            CheckGridOnly(errors, UiKey.Rows, "rows", Rows);
+            CheckGridOnly(errors, UiKey.Columns, "columns", Columns);
+            CheckGridOnly(errors, UiKey.ColumnHeaders, "columnHeaders", ColumnHeaders);
+            CheckGridOnly(errors, UiKey.RowHeaders, "rowHeaders", RowHeaders);
+            CheckGridOnly(errors, UiKey.Width, "width", Width);
+            CheckGridOnly(errors, UiKey.RowHeaderWidth, "rowHeaderWidth", RowHeaderWidth);
+            CheckGridOnly(errors, UiKey.ColumnWidths, "columnWidths", ColumnWidths);
+        }
+
+        private static void CheckGridOnly<T>(List<DirectiveError<UiKey>> errors, UiKey key, string name, T value)
+        {
+            if (value is not null)
+                errors.Add(new(key, string.Format(Messages.The_UI_0_only_applies_to_a_datagrid, name)));
         }
 
         private void ValidateWidth(List<DirectiveError<UiKey>> errors)
@@ -136,8 +175,8 @@ namespace Calcpad.Core
 
                 return;
             }
-            if (w.ValueKind != JsonValueKind.String || !IsFullWidth(w.GetString()))
-                errors.Add(new(UiKey.Width, Messages.The_UI_width_must_be_a_number_or_100_percent));
+            if (w.ValueKind != JsonValueKind.String || !TryGetPercent(w.GetString(), out _))
+                errors.Add(new(UiKey.Width, Messages.The_UI_width_must_be_a_number_or_a_percentage));
         }
 
         private static void CheckNotNegative(List<DirectiveError<UiKey>> errors, UiKey key, string name, int? value)

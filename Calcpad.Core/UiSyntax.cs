@@ -46,12 +46,24 @@ namespace Calcpad.Core
             return rest.Length > 0 && rest[0] == '(';
         }
 
-        /// <summary>
-        /// A datagrid replaces the whole right hand side when edited, and so does any control
-        /// with 'allowExpression', so neither needs the literal to be a value it can rewrite.
-        /// </summary>
+        /// <summary>A grid and an 'allowExpression' box both replace the right hand side whole.</summary>
         public static bool IsValue(ReadOnlySpan<char> rhs, string type, bool allowExpression) =>
             type == "datagrid" || allowExpression || IsValue(rhs);
+
+        /// <summary>
+        /// Why a declared type cannot render its value: a grid over a single value, or a scalar
+        /// control over a vector or matrix. Null when they agree, or the shape is not yet known.
+        /// </summary>
+        public static string TypeMismatch(string declaredType, ReadOnlySpan<char> rhs, bool allowExpression) =>
+            declaredType switch
+            {
+                "datagrid" when IsNumber(rhs.Trim()) =>
+                    Messages.The_UI_datagrid_requires_a_vector_or_matrix_value,
+                // A control editing the text as written holds the literal whatever its shape.
+                "entry" or "dropdown" or "radio" or "checkbox" when !allowExpression && IsDatagridRhs(rhs) =>
+                    string.Format(Messages.The_UI_0_cannot_hold_a_vector_or_matrix_value, declaredType),
+                _ => null
+            };
 
         public static bool IsValue(ReadOnlySpan<char> rhs)
         {

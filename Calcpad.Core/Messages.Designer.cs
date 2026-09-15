@@ -1672,11 +1672,11 @@ namespace Calcpad.Core {
         }
 
         // / <summary>
-        // /   Looks up a localized string similar to #UI directives do not support expressions..
+        // /   Looks up a localized string similar to #UI does not support expressions unless &apos;allowExpression&apos; is true..
         // / </summary>
-        public static string UI_directives_do_not_support_expressions {
+        public static string UI_expressions_require_allowExpression {
             get {
-                return ResourceManager.GetString("UI_directives_do_not_support_expressions", resourceCulture);
+                return ResourceManager.GetString("UI_expressions_require_allowExpression", resourceCulture);
             }
         }
 
@@ -1744,11 +1744,38 @@ namespace Calcpad.Core {
         }
 
         // / <summary>
-        // /   Looks up a localized string similar to #UI &apos;width&apos; must be a number of pixels or &quot;100%&quot;..
+        // /   Looks up a localized string similar to #UI &apos;datagrid&apos; requires a vector or matrix value..
         // / </summary>
-        public static string The_UI_width_must_be_a_number_or_100_percent {
+        public static string The_UI_datagrid_requires_a_vector_or_matrix_value {
             get {
-                return ResourceManager.GetString("The_UI_width_must_be_a_number_or_100_percent", resourceCulture);
+                return ResourceManager.GetString("The_UI_datagrid_requires_a_vector_or_matrix_value", resourceCulture);
+            }
+        }
+
+        // / <summary>
+        // /   Looks up a localized string similar to #UI &apos;{0}&apos; cannot hold a vector or matrix value. Use a datagrid..
+        // / </summary>
+        public static string The_UI_0_cannot_hold_a_vector_or_matrix_value {
+            get {
+                return ResourceManager.GetString("The_UI_0_cannot_hold_a_vector_or_matrix_value", resourceCulture);
+            }
+        }
+
+        // / <summary>
+        // /   Looks up a localized string similar to #UI &apos;{0}&apos; only applies to a datagrid..
+        // / </summary>
+        public static string The_UI_0_only_applies_to_a_datagrid {
+            get {
+                return ResourceManager.GetString("The_UI_0_only_applies_to_a_datagrid", resourceCulture);
+            }
+        }
+
+        // / <summary>
+        // /   Looks up a localized string similar to #UI &apos;width&apos; must be a number of pixels or a percentage, e.g. &quot;75%&quot;..
+        // / </summary>
+        public static string The_UI_width_must_be_a_number_or_a_percentage {
+            get {
+                return ResourceManager.GetString("The_UI_width_must_be_a_number_or_a_percentage", resourceCulture);
             }
         }
 

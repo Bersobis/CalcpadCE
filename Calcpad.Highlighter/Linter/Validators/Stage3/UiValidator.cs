@@ -7,11 +7,10 @@ using Calcpad.Highlighter.Linter.Models;
 namespace Calcpad.Highlighter.Linter.Validators.Stage3
 {
     /// <summary>
-    /// Validates the optional JSON block of the #UI directive (`#UI {...} name = value`), reporting
-    /// an unclosed or malformed block and unrecognized keys before deferring to <see cref="UiDto"/>
-    /// for the property rules, so the linter and ExpressionParser reject the same payloads with the
-    /// same wording. What stays here is what the payload alone cannot decide: that the line assigns
-    /// something, and that it does not assign a string variable.
+    /// The JSON block of `#UI {...} name = value`: an unclosed or malformed block and unknown keys,
+    /// then <see cref="UiDto"/> for the property rules so the linter and ExpressionParser word them
+    /// alike. What stays here is what the payload cannot decide - that the line assigns, and that
+    /// it does not assign a string.
     /// </summary>
     public class UiValidator
     {
@@ -80,7 +79,20 @@ namespace Calcpad.Highlighter.Linter.Validators.Stage3
                 var type = UiSyntax.ResolveType(properties?.Type, rhs);
                 if (!UiSyntax.IsValue(rhs, type, properties?.AllowsExpression ?? false))
                 {
-                    reporter.Warn(Messages.UI_directives_do_not_support_expressions);
+                    reporter.Warn(Messages.UI_expressions_require_allowExpression);
+                    return;
+                }
+                if (UiSyntax.TypeMismatch(properties?.Type, rhs, properties?.AllowsExpression ?? false) is { } mismatch)
+                {
+                    reporter.Warn(mismatch);
+                    return;
+                }
+                var typeErrors = properties?.ValidateResolvedType(type);
+                if (typeErrors is { Count: > 0 })
+                {
+                    foreach (var error in typeErrors)
+                        reporter.Warn(error.Message);
+
                     return;
                 }
             }
@@ -103,8 +115,7 @@ namespace Calcpad.Highlighter.Linter.Validators.Stage3
             }
             catch (JsonException)
             {
-                // A wrong value type stops deserialization but not the checks below, which
-                // only need to know where the block ends.
+                // The checks below only need where the block ends, not a deserialized payload.
                 reporter.Warn(Messages.A_UI_value_has_the_wrong_type);
                 return true;
             }

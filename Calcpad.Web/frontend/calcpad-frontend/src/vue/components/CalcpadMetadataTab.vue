@@ -199,7 +199,7 @@
             <button class="add-button" @click="model.ui.rowHeaders.push('')">+ Add row header</button>
 
             <div class="sub-row">
-              <span class="sub-label" title="Pixels, or 100% to fill the line. Natural width when empty.">Grid width</span>
+              <span class="sub-label" title="Pixels, or a percentage of the line such as 75%. Natural width when empty.">Grid width</span>
               <input type="text" placeholder="100%" v-model="model.ui.width" />
             </div>
             <div class="sub-row">
@@ -800,18 +800,22 @@ function onApply() {
     if (model.ui.reportStyle.trim()) ui.reportStyle = model.ui.reportStyle.trim()
     if (model.ui.forceUnits !== '') ui.forceUnits = model.ui.forceUnits
     if (model.ui.allowExpression !== '') ui.allowExpression = model.ui.allowExpression
-    if (model.ui.rows !== '') ui.rows = Number(model.ui.rows)
-    if (model.ui.columns !== '') ui.columns = Number(model.ui.columns)
-    const columnHeaders = model.ui.columnHeaders.filter(h => h.trim() !== '')
-    if (columnHeaders.length) ui.columnHeaders = columnHeaders
-    const rowHeaders = model.ui.rowHeaders.filter(h => h.trim() !== '')
-    if (rowHeaders.length) ui.rowHeaders = rowHeaders
-    const width = model.ui.width.trim()
-    // A plain number stays a number; "100%" is the only string the directive takes.
-    if (width) ui.width = /^\d+$/.test(width) ? Number(width) : width
-    if (model.ui.rowHeaderWidth !== '') ui.rowHeaderWidth = Number(model.ui.rowHeaderWidth)
-    const columnWidths = model.ui.columnWidths.filter(w => w !== '').map(Number)
-    if (columnWidths.length) ui.columnWidths = columnWidths
+    // The directive takes these on a grid only, and the fields above are hidden for the other
+    // types - an undeclared type is auto-detected, so whatever it carries is left alone.
+    if (!['entry', 'dropdown', 'radio', 'checkbox'].includes(model.ui.type)) {
+      if (model.ui.rows !== '') ui.rows = Number(model.ui.rows)
+      if (model.ui.columns !== '') ui.columns = Number(model.ui.columns)
+      const columnHeaders = model.ui.columnHeaders.filter(h => h.trim() !== '')
+      if (columnHeaders.length) ui.columnHeaders = columnHeaders
+      const rowHeaders = model.ui.rowHeaders.filter(h => h.trim() !== '')
+      if (rowHeaders.length) ui.rowHeaders = rowHeaders
+      const width = model.ui.width.trim()
+      // A plain number stays a number; a percentage goes through as a string.
+      if (width) ui.width = /^\d+(\.\d+)?$/.test(width) ? Number(width) : width
+      if (model.ui.rowHeaderWidth !== '') ui.rowHeaderWidth = Number(model.ui.rowHeaderWidth)
+      const columnWidths = model.ui.columnWidths.filter(w => w !== '').map(Number)
+      if (columnWidths.length) ui.columnWidths = columnWidths
+    }
     if (model.ui.keys.length) {
       ui.keys = model.ui.keys.slice()
       ui.values = model.ui.values.slice()

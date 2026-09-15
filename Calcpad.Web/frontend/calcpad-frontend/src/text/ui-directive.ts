@@ -186,6 +186,6 @@ export const UI_PROPERTY_KEYS: UiPropertyKey[] = [
     },
     { key: 'rows', label: 'Rows', detail: 'Datagrid row count (auto-detected when unset).', type: 'number', min: 0 },
     { key: 'columns', label: 'Columns', detail: 'Datagrid column count (auto-detected when unset).', type: 'number', min: 0 },
-    { key: 'width', label: 'Grid width', detail: 'Total datagrid width in pixels, or "100%" to fill the line. Natural width when unset.', type: 'string' },
+    { key: 'width', label: 'Grid width', detail: 'Total datagrid width in pixels, or a percentage of the line such as "75%". Natural width when unset.', type: 'string' },
     { key: 'rowHeaderWidth', label: 'Row header width', detail: 'Width of the datagrid row header column, in pixels.', type: 'number', min: 1 },
 ];

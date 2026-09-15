@@ -115,15 +115,15 @@ They share the line's JSON properties but are saved and overridden separately.
 | `columns` | number | datagrid | Grid columns. Auto-detected when omitted |
 | `rowHeaders` | array | datagrid | Row header labels |
 | `columnHeaders` | array | datagrid | Column header labels |
-| `width` | number or `"100%"` | datagrid | Total grid width in pixels, or `"100%"` to fill the line. Natural width when omitted |
+| `width` | number or percentage | datagrid | Total grid width in pixels, or a percentage of the line such as `"75%"`. Natural width when omitted |
 | `rowHeaderWidth` | number | datagrid | Width of the row header column, in pixels. Default 50 |
 | `columnWidths` | array | datagrid | Column widths in pixels. May be shorter than the column count; the rest take the default 80 |
 | `keys` | array | dropdown, radio | The labels shown to the user |
 | `values` | array | dropdown, radio | The values substituted into the calculation, one per key |
 
 `keys` and `values` are both required for a drop-down or radio group, and must be the same length.
-Header and width arrays must not be longer than the grid dimension they describe.
-`forceUnits` and `allowExpression` are reported on a drop-down, radio group or checkbox, which always substitute the whole value from their own `values` anyway.
+The datagrid properties throw an error on any other control.
+`forceUnits` and `allowExpression` will error on a drop-down, radio group or checkbox, which always substitute the whole value from their own `values` anyway.
 
 You don't have to write JSON by hand — the [Properties tab](new-calcpad-panel.md#properties) has a form for it that fills in the fields that apply to the control type it detects.
 
@@ -215,7 +215,7 @@ The grid's size comes from the directive or default size, so rows and columns ca
 By default the cells hold plain numbers and a cell holding anything else is put back to `0`.
 When a default value carries a unit, the unit is kept aside rather than shown.
 The cells stay numeric, hovering the cell shows the unit that will be applied in the report.
-So `U = matrix(2; 2)*5m` fills the grid with `5` and writes `[5m; 5m | 5m; 5m]`.
+So `U = matrix(2; 2)*5m` fills the grid with `5` and writes `[5m; 5m | 5m; 5m]`, and a literal default such as `M = [1m; 2m]` behaves the same way.
 
 It is also recommended to put units in column or row headers.
 
@@ -225,7 +225,7 @@ Note that this is still subject to the limitations of the calculation engine, pu
 #### Sizing
 
 THe default grid width is the row header plus 80 pixels per column.
-`width` overrides that total — a number of pixels, or `"100%"` to fill the line.
+`width` overrides that total — a number of pixels, or a percentage of the line such as `"75%"` (`"100%"` and `"full"` both fill it).
 `rowHeaderWidth` and `columnWidths` set each row/column in the order they are declared.
 When the parts add up to more than table width, they are all scaled down together, keeping their relative sizes. 
 This means `columnWidths` can be written as plain ratios.
@@ -407,7 +407,7 @@ Inside a loop each pass renders its own control, and each is entered separately:
 | Message | Cause |
 |---------|-------|
 | The `#UI` keyword requires a variable assignment. | The line assigns nothing |
-| `#UI` directives do not support expressions. | The right-hand side is computed, not a value |
+| `#UI` does not support expressions unless `'allowExpression'` is true. | The right-hand side is computed, not a value, and `allowExpression` is off |
 | String mode is not supported by the `#UI` keyword. | The variable ends with `$`, or `"mode"` is not `number` |
 | Improper format for `#UI` keyword. Missing closing brace. | The JSON block is unterminated |
 | Invalid JSON in `#UI`. | The block is not valid JSON |

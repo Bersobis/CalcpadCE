@@ -1,14 +1,9 @@
 namespace Calcpad.Server.Services
 {
     /// <summary>
-    /// The client side half of the <c>#UI</c> feature: wires change events on the controls
-    /// <c>ExpressionParser</c> emitted and hydrates datagrid containers with jspreadsheet, each
-    /// edit posted to the host as a <c>uiValueChange</c> message carrying the
-    /// <c>data-ui-var</c> key. Emitted server side rather than per frontend so all three hosts
-    /// share one implementation, which is also all they need: each renders the document into a
-    /// sandboxed frame it replaces wholesale, so there is one way out — the parent — and one way
-    /// back to where the user was, whose focused control, caret and selected cell are posted to
-    /// the host for it to seed into the replacement.
+    /// The client side half of the <c>#UI</c> feature: wires the controls <c>ExpressionParser</c>
+    /// emitted, hydrates datagrids with jspreadsheet and posts each edit to the host as a
+    /// <c>uiValueChange</c>. Emitted server side so all three hosts share one implementation.
     /// </summary>
     internal static class UiPreviewScript
     {
@@ -17,10 +12,8 @@ namespace Calcpad.Server.Services
         private const string ScriptTag = """
 <script>
 (function () {
-    // The document is always sandboxed inside the host - a preview pane in the web and
-    // desktop editors, the shell's frame in VS Code - so the parent is the only way out.
-    // An exported input form opened on its own is the exception: the post reaches a window
-    // with no listener, leaving the controls static, as that export says they are.
+    // The document is sandboxed inside the host, so the parent is the only way out. An exported
+    // form opened on its own posts to a window with no listener, leaving it static.
     function send(msg) {
         try { window.parent.postMessage(msg, '*'); } catch (e) { }
     }
@@ -28,8 +21,6 @@ namespace Calcpad.Server.Services
     function post(type, varName, newValue, sourceLine) {
         send({
             type: type, varName: varName, newValue: newValue, sourceLine: sourceLine,
-            // Set by the web editor when it has several preview panes; absent
-            // elsewhere, where the host routes to whatever document it owns.
             groupId: window.__calcpadGroupId
         });
     }
@@ -38,34 +29,26 @@ namespace Calcpad.Server.Services
         return parseInt(el.getAttribute('data-ui-line') || '0');
     }
 
-    // Every control the user can be sitting in. The element wrapping the whole line
-    // carries data-ui-var too, so matching on the classes is what distinguishes the
-    // control itself from its row.
+    // The line wrapper carries data-ui-var too, so the classes pick out the control itself.
     var CONTROLS = '.calcpad-ui-input, .calcpad-ui-dropdown, .calcpad-ui-checkbox, .calcpad-ui-radio, .calcpad-ui-datagrid';
     // How long a datagrid waits for data entry to stop before it posts.
     var GRID_IDLE_MS = 400;
 
-    // Layout constants. DEF_COL is the resting width of a column nothing was declared for,
-    // MIN_* the floors a proportional shrink may not go below, SINGLE_MIN the floor for the
-    // lone column of a one-column grid, which is sized from its header instead of stretched.
+    // MIN_* are the floors a proportional shrink may not go below.
     var DEF_COL = 80, MIN_COL = 28, DEF_ROW_HDR = 50, MIN_ROW_HDR = 24, SINGLE_MIN = 80;
     var CHROME = 8, SCROLLBAR = 10, HDR_PAD = 12, MAX_GRID_H = 420;
     var measureCtx = null;
     var sheetsByKey = {};
-    // Set once an edit has been posted. Until then nothing is persisted, so opening
-    // the document afresh - rather than having it re-rendered - never moves focus.
+    // Nothing is persisted until an edit is posted, so opening a document afresh never moves focus.
     var armed = false;
 
-    // Handing the state to the host is what carries it across a re-render: every host swaps
-    // the document by assigning srcdoc, so this window does not survive, and the frame's
-    // opaque origin denies it sessionStorage. Both the web editor and the VS Code shell hold
-    // what is posted here and seed it back into the replacement as __calcpadUiPosition.
+    // Assigning srcdoc does not leave this window standing and its opaque origin denies it
+    // storage, so the host holds the state and seeds it back as __calcpadUiPosition.
     function postState(state) {
         send({ type: 'cpdUiState', state: state, groupId: window.__calcpadGroupId });
     }
 
-    // Consumed once, up front: a position left over from an earlier session must not
-    // steal focus when the document is opened again rather than re-rendered.
+    // Consumed once: a stale position must not steal focus when a document is merely opened.
     var pending = window.__calcpadUiPosition || null;
     window.__calcpadUiPosition = null;
 
@@ -79,8 +62,7 @@ namespace Calcpad.Server.Services
             if (active.setSelectionRange && active.type === 'text')
                 state.caret = [active.selectionStart, active.selectionEnd];
         } else if (sheet && sheet.calcpadUiKey && sheet.selectedCell) {
-            // A grid keeps its position in the library rather than in the focused
-            // element, and jspreadsheet.current is the one taking keystrokes.
+            // A grid keeps its position in the library; jspreadsheet.current takes the keystrokes.
             state.key = sheet.calcpadUiKey;
             state.cell = [sheet.selectedCell[0], sheet.selectedCell[1], sheet.selectedCell[2], sheet.selectedCell[3]];
         }
@@ -99,7 +81,6 @@ namespace Calcpad.Server.Services
         if (!sheet) return;
         jspreadsheet.current = sheet;
         sheet.updateSelectionFromCoords(cell[0], cell[1], cell[2], cell[3]);
-        // A tall grid scrolls, so the cell that was left can be below the fold.
         var record = sheet.records && sheet.records[cell[1]] && sheet.records[cell[1]][cell[0]];
         if (record && record.element && record.element.scrollIntoView)
             record.element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -110,7 +91,6 @@ namespace Calcpad.Server.Services
         document.querySelectorAll(CONTROLS).forEach(function (el) {
             if (!target && el.getAttribute('data-ui-var') === key) target = el;
         });
-        // A radio group is a span wrapping the buttons, so focus the selected one.
         if (target && target.tagName === 'SPAN')
             target = target.querySelector('input[type="radio"]:checked') || target.querySelector('input[type="radio"]');
         if (!target || !target.focus) return;
@@ -120,9 +100,7 @@ namespace Calcpad.Server.Services
         try { target.setSelectionRange(caret[0], caret[1]); } catch (e) { }
     }
 
-    // The re-render lands well after the edit that triggered it, by which time the
-    // user has usually moved on, so the position keeps being written until the
-    // document is actually replaced rather than being captured once at post time.
+    // The re-render lands long after the edit, so the position is rewritten until then.
     function trackPosition() {
         if (armed) saveState();
     }
@@ -130,23 +108,19 @@ namespace Calcpad.Server.Services
     function change(el, value) {
         post('uiValueChange', el.getAttribute('data-ui-var'), value, lineOf(el));
         armed = true;
-        // Committing a cell or leaving a field moves focus on, so where to come back
-        // to is only settled on the next tick.
+        // Committing moves focus on, so where to come back to settles on the next tick.
         setTimeout(saveState, 0);
     }
 
     document.addEventListener('focusin', trackPosition);
     document.addEventListener('mouseup', trackPosition);
 
-    // What a control may produce. The entered text replaces the right hand side of the
-    // assignment, so anything the parser would reject turns the line into an error - with no
-    // exponent form, since MathParser reads the 'e' of 2.5e6 as a unit, and with PARTIAL
-    // additionally passing the mid-typing states, which are filtered on the way in but never
-    // posted.
+    // The entered text replaces the right hand side, so anything the parser would reject turns
+    // the line into an error - no exponent form, since MathParser reads the 'e' of 2.5e6 as a
+    // unit. PARTIAL also passes the mid-typing states, which are never posted.
     var NUMBER = /^[-+\u2212]?(\d+\.?\d*|\.\d+)$/;
     var PARTIAL = /^[-+\u2212]?(\d+\.?\d*|\.\d*)?$/;
-    // A number with a unit, mirroring UiSyntax.IsNumber + IsUnits: unit names are letters and
-    // a handful of symbols, joined by the product/division operators, each optionally raised.
+    // A number with a unit, mirroring UiSyntax.IsNumber + IsUnits.
     var UNIT_NAME = '[\\p{L}\u00b0%\u2030\u2031\u2032\u2033\u2127_]+';
     var UNIT_POW = '(?:\\s*\\^\\s*[-+\u2212]?\\d+(?:\\.\\d+)?)?';
     var UNIT_PART = UNIT_NAME + UNIT_POW;
@@ -154,9 +128,8 @@ namespace Calcpad.Server.Services
         '^[-+\u2212]?(?:\\d+\\.?\\d*|\\.\\d+)' +
         '(?:\\s*' + UNIT_PART + '(?:\\s*[*/\u00b7\u00d7\u2219]\\s*' + UNIT_PART + ')*)?$', 'u');
 
-    // The three input modes of the #UI directive. Default edits the number and leaves the
-    // unit in the document; 'forceUnits: false' puts the unit in the control; 'allowExpression'
-    // hands the right hand side over whole and leaves the parser to report what it cannot read.
+    // Default edits the number and leaves the unit in the document; 'forceUnits: false' puts the
+    // unit in the control; 'allowExpression' hands the right hand side over whole.
     function modeOf(el) {
         if (el.getAttribute('data-ui-allow-expression') === '1') return 'expression';
         return el.getAttribute('data-ui-force-units') === '0' ? 'value' : 'number';
@@ -170,12 +143,9 @@ namespace Calcpad.Server.Services
     document.querySelectorAll('.calcpad-ui-input').forEach(function (input) {
         var mode = modeOf(input);
         if (mode === 'number') input.setAttribute('inputmode', 'decimal');
-        // The text the filter last let through, and the last accepted value, which an
-        // abandoned edit - a field left holding '-' - falls back to.
         var typed = input.value;
         var committed = input.value;
-        // Only the number-only mode can tell a mid-typing state from a wrong one, so it is
-        // the only one that filters keystrokes; the others are checked when the edit ends.
+        // Only the number-only mode can tell a mid-typing state from a wrong one.
         if (mode === 'number')
             input.addEventListener('input', function () {
                 if (PARTIAL.test(input.value)) {
@@ -187,8 +157,7 @@ namespace Calcpad.Server.Services
                 try { input.setSelectionRange(caret, caret); } catch (e) { }
             });
         input.addEventListener('change', function () {
-            // '12.' is a number as far as the field is concerned, but not as the right
-            // hand side of the assignment it is written into.
+            // '12.' passes as a number in the field, but not as a right hand side.
             var value = input.value.trim();
             if (mode !== 'expression') value = value.replace(/\.$/, '');
             if (!accepts(mode, value)) {
@@ -229,8 +198,6 @@ namespace Calcpad.Server.Services
         if (!grids.length) return;
 
         if (typeof jspreadsheet === 'undefined') {
-            // The libraries are inlined into <head> whenever a datagrid is present, so this
-            // only happens if the bundled assets are missing from the deployment.
             grids.forEach(function (container) {
                 container.textContent = 'Datagrid library is not available.';
             });
@@ -253,11 +220,12 @@ namespace Calcpad.Server.Services
                 data = [];
                 for (var r = 0; r < rows; r++) data.push(new Array(cols).fill('0'));
             }
+            // A unit reaching a numeric cell is rejected on the next edit and takes the value
+            // with it, so it is put aside here rather than shown.
+            if (mode === 'number') cellUnits = stripUnits(data, cellUnits);
 
             var colHeaders = jsonAttr(container, 'data-ui-col-headers');
             var rowHeaders = jsonAttr(container, 'data-ui-row-headers');
-            // Measured while the container is still a plain block element: jspreadsheet turns
-            // it into its own inline-block, after which clientWidth is the table's, not the page's.
             var layout = resolveWidths(container, data, cols, colHeaders);
 
             var columns = [];
@@ -271,8 +239,7 @@ namespace Calcpad.Server.Services
                 data: data,
                 minDimensions: [cols, rows],
                 columns: columns,
-                // The grid is sized by the #UI directive's row/col count, so the ways a user
-                // could resize or annotate it are taken out of the context menu and keyboard.
+                // The #UI directive sizes the grid, so resizing and annotating are taken out.
                 allowInsertRow: false,
                 allowManualInsertRow: false,
                 allowDeleteRow: false,
@@ -280,9 +247,7 @@ namespace Calcpad.Server.Services
                 allowManualInsertColumn: false,
                 allowDeleteColumn: false,
                 allowComments: false,
-                // No tableWidth/tableHeight: both do nothing but fix .jss_content at a size of
-                // their own, which leaves slack around the table and, for tableHeight, an inline
-                // drop shadow drawn around it. Left off, the box shrinks to the table.
+                // No tableWidth/tableHeight: they only fix .jss_content at a size of its own.
                 tableOverflow: true
             };
             if (rowHeaders) {
@@ -303,17 +268,14 @@ namespace Calcpad.Server.Services
             var key = container.getAttribute('data-ui-var');
             sheet.calcpadUiKey = key;
             sheetsByKey[key] = sheet;
-            // Everything below has to stay synchronous: restoreState() runs straight after
-            // hydration and paints the selection from live geometry.
+            // Must stay synchronous: restoreState() paints the selection from live geometry.
             applyRowHeaderWidth(container, layout.rowHeader);
             capHeight(container, layout.width);
             showUnits(sheet, cellUnits);
             var idle = null;
 
-            // Tabbing across a row fires one change per cell and each one has the host
-            // rewrite the whole document, which would land on top of whatever is being
-            // typed next. Filling the grid in is treated as one edit instead: the post
-            // waits for a pause in data entry, or for the grid to be left.
+            // Each committed cell would have the host rewrite the document on top of whatever
+            // is typed next, so filling the grid in is treated as one edit.
             function emit() {
                 if (idle) clearTimeout(idle);
                 idle = setTimeout(flush, GRID_IDLE_MS);
@@ -342,9 +304,8 @@ namespace Calcpad.Server.Services
         });
     }
 
-    // Must be called before jspreadsheet() turns the container into its own inline-block:
-    // until then it is a block element in normal flow, so its content box is the width the
-    // page allows - body margins, max-width, the host pane and any indentation included.
+    // Called before jspreadsheet() makes the container an inline-block: until then its content
+    // box is the width the page allows.
     function availableWidth(container) {
         var w = container.clientWidth;
         if (!w && container.parentElement) w = container.parentElement.clientWidth;
@@ -359,7 +320,7 @@ namespace Calcpad.Server.Services
         }
         if (!measureCtx) return 0;
         var style = window.getComputedStyle(container);
-        // Built field by field: the 'font' shorthand does not always serialise.
+        // The 'font' shorthand does not always serialise.
         measureCtx.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily].join(' ');
         return Math.ceil(measureCtx.measureText(text).width);
     }
@@ -369,9 +330,18 @@ namespace Calcpad.Server.Services
         return isFinite(n) && n > 0 ? n : null;
     }
 
-    // Rescale the columns by one factor so they total `target`, keeping their relative widths,
-    // and settle the rounding drift on the widest one. Their declared numbers are therefore
-    // read as ratios whenever a total is asked for.
+    // The declared total, in pixels or as a percentage of the line, never wider than the page.
+    function targetWidth(container, page) {
+        var raw = (container.getAttribute('data-ui-width') || '').trim();
+        if (raw.slice(-1) === '%') {
+            var percent = parseFloat(raw);
+            return isFinite(percent) && percent > 0 ? Math.min(page, Math.round(page * percent / 100)) : null;
+        }
+        var px = positive(raw);
+        return px === null ? null : Math.min(px, page);
+    }
+
+    // One factor with the drift settled on the widest, so declared widths are read as ratios.
     function fitColumns(cols, target) {
         var total = 0;
         for (var i = 0; i < cols.length; i++) total += cols[i];
@@ -384,8 +354,6 @@ namespace Calcpad.Server.Services
             sum += out[j];
             if (out[j] > out[widest]) widest = j;
         }
-        // A shortfall the floors already caused cannot be taken back out again; what is
-        // left over runs off the page and scrolls.
         out[widest] = Math.max(MIN_COL, out[widest] + target - sum);
         return out;
     }
@@ -401,33 +369,27 @@ namespace Calcpad.Server.Services
         var w = [];
         for (var c = 0; c < cols; c++) w.push(positive(declared[c]) || DEF_COL);
 
-        // A single column has no page to share, so it is sized to its header rather than
-        // stretched across one.
+        // A single column has no page to share, so it is sized to its header.
         if (cols === 1 && !positive(declared[0]))
             w[0] = Math.max(SINGLE_MIN, measureText(container, colHeaders && colHeaders[0]) + HDR_PAD);
 
-        var width = parseInt(container.getAttribute('data-ui-width'), 10);
-        var target = null;
-        if (width === -1) target = page;              // "100%"
-        else if (isFinite(width) && width > 0) target = Math.min(width, page);
+        var target = targetWidth(container, page);
 
         var total = rowHeader;
         for (var i = 0; i < w.length; i++) total += w[i];
-        // An undeclared total is left at its natural width, unless that runs off the page.
+        // An undeclared total keeps its natural width, unless that runs off the page.
         if (target === null) {
             if (total <= page) return { rowHeader: rowHeader, cols: w, width: page };
 
             target = page;
         }
-        // The row header is a width, not a ratio: it keeps what it was given and only gives
-        // way when the columns would have no room left.
+        // The row header is a width, not a ratio: it gives way only when nothing is left.
         var room = target - cols * MIN_COL;
         if (rowHeader > room) rowHeader = Math.max(MIN_ROW_HDR, room);
         return { rowHeader: rowHeader, cols: fitColumns(w, target - rowHeader), width: page };
     }
 
-    // jspreadsheet hardcodes width="50" on the first <col> of its colgroup and offers no
-    // option for it - setWidth() indexes the data columns - so it is set after the fact.
+    // jspreadsheet hardcodes width="50" on the first <col> and offers no option for it.
     function applyRowHeaderWidth(container, width) {
         var col = container.querySelector('colgroup > col');
         if (!col) return;
@@ -436,8 +398,8 @@ namespace Calcpad.Server.Services
         col.style.width = width + 'px';
     }
 
-    // Measured rather than predicted from the row count: wrapped rows are taller than the
-    // library's default. Set on .jss_content, which is what the PDF pass already clears.
+    // Measured, not predicted: wrapped rows are taller than the library's default. Set on
+    // .jss_content, which is what the PDF pass already clears.
     function capHeight(container, width) {
         var content = container.querySelector('.jss_content');
         if (!content) return;
@@ -446,15 +408,13 @@ namespace Calcpad.Server.Services
             content.style.maxHeight = MAX_GRID_H + 'px';
             content.style.overflowY = 'auto';
         }
-        // Only when the floors above could not bring the table inside the page.
         if (content.scrollWidth > width) {
             content.style.width = width + 'px';
             content.style.overflowX = 'auto';
         }
     }
 
-    // Every cell becomes an element of a matrix literal, so one the mode does not accept -
-    // typed or pasted in - is put back to 0, in the grid as well as in what gets posted.
+    // Every cell becomes a matrix element, so one the mode rejects goes back to 0.
     function valuesOnly(sheet, grid, mode) {
         for (var r = 0; r < grid.length; r++) {
             for (var c = 0; c < grid[r].length; c++) {
@@ -470,20 +430,34 @@ namespace Calcpad.Server.Services
         return grid;
     }
 
-    // The unit the cell was seeded with, put back on the way out so a grid of plain numbers
-    // still writes a literal in the units the document was working in. A cell outside the
-    // stored grid takes the first unit there is.
+    // Mirrors SplitCell server side: the numeric prefix, then whatever unit follows it.
+    function splitUnit(cell) {
+        var s = String(cell), i = 0;
+        while (i < s.length && '0123456789.-+−'.indexOf(s.charAt(i)) !== -1) ++i;
+        return i === 0 ? [s, ''] : [s.slice(0, i), s.slice(i)];
+    }
+
+    // Takes any unit out of the cells and into the stash, so the grid edits numbers only.
+    function stripUnits(data, cellUnits) {
+        for (var r = 0; r < data.length; r++)
+            for (var c = 0; c < data[r].length; c++) {
+                var parts = splitUnit(data[r][c]);
+                if (!parts[1]) continue;
+                data[r][c] = parts[0];
+                if (!cellUnits) cellUnits = data.map(function (row) { return row.map(function () { return ''; }); });
+                if (!cellUnits[r]) cellUnits[r] = [];
+                cellUnits[r][c] = parts[1];
+            }
+        return cellUnits;
+    }
+
+    // The seeded unit goes back on, so a grid of plain numbers still writes the document's units.
     function withUnits(grid, cellUnits) {
         if (!cellUnits) return grid;
 
-        var fallback = '';
-        for (var i = 0; i < cellUnits.length && !fallback; i++)
-            for (var j = 0; j < cellUnits[i].length && !fallback; j++)
-                fallback = cellUnits[i][j] || '';
-
         return grid.map(function (row, r) {
             return row.map(function (cell, c) {
-                var unit = cellUnits[r] && cellUnits[r][c] !== undefined ? cellUnits[r][c] : fallback;
+                var unit = (cellUnits[r] && cellUnits[r][c]) || '';
                 return unit ? cell + unit : cell;
             });
         });
