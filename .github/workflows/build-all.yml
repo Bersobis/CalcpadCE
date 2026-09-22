@@ -68,6 +68,9 @@ jobs:
           cp Calcpad.Cli/bin/Release/net10.0/${{ matrix.rid }}/*.deb \
             "artifacts/CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}.deb"
 
+      - name: Verify third-party notices
+        run: ./tools/license-scan/verify-notices.sh "artifacts/CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}.deb"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
@@ -119,6 +122,9 @@ jobs:
           cp Calcpad.Cli/bin/Release/net10.0/${{ matrix.rid }}/*.rpm \
             "artifacts/CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}.rpm"
 
+      - name: Verify third-party notices
+        run: ./tools/license-scan/verify-notices.sh "artifacts/CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}.rpm"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
@@ -155,6 +161,10 @@ jobs:
         shell: pwsh
         run: Compress-Archive -Path "CalcpadCE-cli-${{ inputs.version }}-win-x64" -DestinationPath "CalcpadCE-cli-${{ inputs.version }}-win-x64.zip"
 
+      - name: Verify third-party notices
+        shell: bash
+        run: ./tools/license-scan/verify-notices.sh "CalcpadCE-cli-${{ inputs.version }}-win-x64.zip"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
@@ -186,6 +196,9 @@ jobs:
 
       - name: Create tarball
         run: tar cjf "CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}.tar.bz2" CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}
+
+      - name: Verify third-party notices
+        run: ./tools/license-scan/verify-notices.sh "CalcpadCE-cli-${{ inputs.version }}-${{ matrix.rid }}.tar.bz2"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
