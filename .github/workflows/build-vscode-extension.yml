@@ -38,6 +38,9 @@ jobs:
       - name: Package extension
         run: npm run package:vsix --prefix Calcpad.Web/frontend/vscode-calcpad
 
+      - name: Verify third-party notices
+        run: ./tools/license-scan/verify-notices.sh Calcpad.Web/frontend/vscode-calcpad/*.vsix
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
