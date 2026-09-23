@@ -61,6 +61,10 @@ jobs:
           Copy-Item Calcpad.Web/frontend/calcpad-desktop/src-tauri/target/portable/CalcpadCE-portable-win64.zip `
             -Destination "artifacts/CalcpadCE-portable-${{ inputs.version }}.zip"
 
+      - name: Verify third-party notices
+        shell: bash
+        run: ./tools/license-scan/verify-notices.sh "artifacts/CalcpadCE-portable-${{ inputs.version }}.zip"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:

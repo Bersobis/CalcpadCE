@@ -28,6 +28,10 @@
       <LinuxPath>/usr/bin/calcpad</LinuxPath>
     </Content>
     <Content Include="doc/**/*" CopyToPublishDirectory="PreserveNewest" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(MSBuildThisFileDirectory)..\THIRD-PARTY-NOTICES.txt"
+      CopyToPublishDirectory="PreserveNewest"
+      CopyToOutputDirectory="PreserveNewest"
+      TargetPath="doc/THIRD-PARTY-NOTICES.txt" />
     <Content Include="$(ExamplesContentDir)\**\*"
       CopyToPublishDirectory="PreserveNewest"
       CopyToOutputDirectory="PreserveNewest"
