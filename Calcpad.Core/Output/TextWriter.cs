@@ -147,6 +147,20 @@ namespace Calcpad.Core
             return sb.ToString();
         }
 
+        protected override string WrapMatrix(string[][] rows, int columns)
+        {
+            var sb = new StringBuilder("[");
+            for (int i = 0; i < rows.Length; ++i)
+            {
+                if (i > 0)
+                    sb.Append(" |");
+
+                sb.Append(string.Join("  ", rows[i]));
+            }
+
+            return sb.Append(']').ToString();
+        }
+
         internal override string FormatVector(Vector vector)
         {
             var div = "  ";

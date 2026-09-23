@@ -35,6 +35,7 @@ namespace Calcpad.Core
                     OutputWriter.OutputFormat.Xml => new XmlWriter(_parser._settings, _parser.Phasor),
                     _ => new TextWriter(_parser._settings, _parser.Phasor)
                 };
+                writer.InlineMatrices = _parser.InlineMatrices;
                 _stringBuilder.Clear();
                 var delimiter = writer.FormatOperator(';');
                 var assignment = writer.FormatOperator('=');
@@ -136,7 +137,10 @@ namespace Calcpad.Core
 
             private string RenderRpn(Token[] rpn, bool substitute, OutputWriter writer, out bool hasOperators)
             {
-                var textWriter = new TextWriter(_parser._settings, _parser.Phasor);
+                var textWriter = new TextWriter(_parser._settings, _parser.Phasor)
+                {
+                    InlineMatrices = _parser.InlineMatrices
+                };
                 var stackBuffer = new Stack<RenderToken>();
                 var div = writer.FormatOperator(';');
                 const char thinSpace = (char)0x2009;
@@ -196,7 +200,7 @@ namespace Calcpad.Core
                             else if (tt == TokenTypes.Vector)
                                 RenderVectorToken(t, b);
                             else if (tt == TokenTypes.RowDivisor)
-                                t.Content = RenderParameters(t, b, t.ParameterCount);
+                                t.Content = writer.FormatMatrixRow(RenderElements(t, b, t.ParameterCount));
                             else if (tt == TokenTypes.Matrix)
                                 RenderMatrixToken(t, b);
                             else if (st == "!")
@@ -304,7 +308,7 @@ namespace Calcpad.Core
                         var s = !_parser._settings.Substitute &&
                                  _parser._functionDefinitionIndex < 0 &&
                                  _parser._isCalculated ?
-                            RenderVector(vector, new TextWriter(_parser._settings, _parser.Phasor)) :
+                            RenderVector(vector, new TextWriter(_parser._settings, _parser.Phasor) { InlineMatrices = _parser.InlineMatrices }) :
                             string.Empty;
                         t.Content = writer.FormatVariable("\u20D7" + t.Content, s, true);
                     }
@@ -313,7 +317,7 @@ namespace Calcpad.Core
                         var s = !_parser._settings.Substitute &&
                                  _parser._functionDefinitionIndex < 0 &&
                                  _parser._isCalculated ?
-                            RenderMatrix(matrix, new TextWriter(_parser._settings, _parser.Phasor)) :
+                            RenderMatrix(matrix, new TextWriter(_parser._settings, _parser.Phasor) { InlineMatrices = _parser.InlineMatrices }) :
                             string.Empty;
                         t.Content = writer.FormatVariable(t.Content, s, true);
                     }
@@ -681,39 +685,42 @@ namespace Calcpad.Core
 
                 void RenderMatrixToken(RenderToken t, RenderToken b)
                 {
-                    var s = RenderParameters(t, b, t.ParameterCount, true);
-                    t.Content = AddBrackets(s, t.Level, t.MinOffset, t.MaxOffset, '[', ']');
+                    t.Content = writer.FormatBracketedMatrix(
+                        RenderElements(t, b, t.ParameterCount), t.Level, t.MinOffset, t.MaxOffset);
                     t.MinOffset = 0;
                     t.MaxOffset = 0;
                 }
 
                 void RenderVectorToken(RenderToken t, RenderToken b)
                 {
-                    var s = RenderParameters(t, b, t.ParameterCount);
-                    t.Content = AddBrackets(s, t.Level, t.MinOffset, t.MaxOffset, '[', ']');
+                    t.Content = writer.FormatBracketedVector(
+                        RenderElements(t, b, t.ParameterCount), t.Level, t.MinOffset, t.MaxOffset);
                     t.MinOffset = 0;
                     t.MaxOffset = 0;
                 }
 
-                string RenderParameters(RenderToken t, RenderToken b, int count, bool matrix = false)
+                string[] RenderElements(RenderToken t, RenderToken b, int count)
                 {
-                    var s = b.Content;
+                    var items = new string[count + 1];
+                    items[^1] = b.Content;
                     t.Level = b.Level;
                     t.MinOffset = b.MinOffset;
                     t.MaxOffset = b.MaxOffset;
-                    var d = matrix ? writer.FormatOperator('|') : div;
-                    for (int j = 0; j < count; ++j)
+                    for (int j = count - 1; j >= 0; --j)
                     {
                         var a = stackBuffer.Pop();
-                        s = string.Concat(a.Content, d, s);
+                        items[j] = a.Content;
                         if (a.Level > t.Level)
                             t.Level = a.Level;
 
                         t.MinOffset = Math.Min(a.MinOffset, t.MinOffset);
                         t.MaxOffset = Math.Max(a.MaxOffset, t.MaxOffset);
                     }
-                    return s;
+                    return items;
                 }
+
+                string RenderParameters(RenderToken t, RenderToken b, int count) =>
+                    string.Join(div, RenderElements(t, b, count));
 
                 void RenderFactorialToken(RenderToken t, RenderToken b)
                 {
@@ -728,7 +735,7 @@ namespace Calcpad.Core
                 {
                     var offset = b.MaxOffset + b.MinOffset;
                     b.Level += (b.MaxOffset - b.MinOffset) / 2;
-                    var sb = offset == 0 ? b.Content : FixOffset(b.Content, offset);
+                    var sb = offset == 0 ? b.Content : OutputWriter.FixOffset(b.Content, offset);
                     t.Content = writer.FormatRoot(sb, b.Level, s);
                     t.Level = b.Level;
                 }
@@ -800,22 +807,8 @@ namespace Calcpad.Core
                     }
                 }
 
-                string AddBrackets(string s, int level, int minOffset, int maxOffset, char left, char right)
-                {
-                    var offset = minOffset + maxOffset;
-                    level += (maxOffset - minOffset) / 2;
-                    if (offset == 0)
-                        return writer.AddBrackets(s, level, left, right);
-
-                    return writer.AddBrackets(FixOffset(s, offset), level, left, right);
-                }
-
-                string FixOffset(string s, int offset) => offset switch
-                {
-                    < 0 => $"<span class=\"dvc up\">{s}</span>",
-                    > 0 => $"<span class=\"dvc down\">{s}</span>",
-                    _ => s
-                };
+                string AddBrackets(string s, int level, int minOffset, int maxOffset, char left, char right) =>
+                    writer.AddOffsetBrackets(s, level, minOffset, maxOffset, left, right);
             }
 
             private static string RenderMatrix(Matrix matrix, OutputWriter writer) =>

@@ -42,6 +42,32 @@ If an equation gets too long and does not fit on a single line, you can choose t
 - `#split` the equation is split after the "=" symbol
 - `#wrap` the equation is wrapped at the end of the line (default)
 
+Matrices and vectors are rendered either as a structured grid of aligned cells enclosed in brackets that stretch to the full height of the content, or on a single line.
+Choose the way they look in the output by using these two switches:
+
+- `#gridMatVec` matrices and vectors are rendered as a structured grid (default)
+- `#inlineMatVec` matrices and vectors are rendered on a single line
+
+Both switches apply from the point they appear to the rest of the document and have no `#end` form.
+Each one undoes the other, so you can switch back and forth as many times as you like.
+If both are used, the one that appears last in the document wins.
+Write each switch on a line of its own - only the first directive on a line is read.
+
+For example:
+
+```
+#gridMatVec
+A = [1; 2|3; 4]
+
+#inlineMatVec
+B = [1; 2|3; 4]
+
+#gridMatVec
+C = [1; 2|3; 4]
+```
+
+Here *A* and *C* are printed as a grid of cells inside full-height brackets, while *B* is printed as a single line.
+
 ## Rounding
 
 Rounding is specified by the number of digits *n* after the decimal point.

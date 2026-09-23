@@ -560,6 +560,20 @@ namespace Calcpad.Highlighter.Snippets.Data
             },
             new SnippetItem
             {
+                Insert = "#inlineMatVec",
+                Description = "Render matrices and vectors on a single line. Applies to the rest of the document; takes no condition and has no #end form - switch back with #gridMatVec.",
+                Category = "Output Control",
+                KeywordType = "Keyword"
+            },
+            new SnippetItem
+            {
+                Insert = "#gridMatVec",
+                Description = "Render matrices and vectors as a structured grid of aligned cells enclosed in full-height brackets (default). Applies to the rest of the document; takes no condition and has no #end form - switch back with #inlineMatVec.",
+                Category = "Output Control",
+                KeywordType = "Keyword"
+            },
+            new SnippetItem
+            {
                 Insert = "#round digits",
                 Description = "Round output to n digits after decimal point",
                 Category = "Settings/Rounding",

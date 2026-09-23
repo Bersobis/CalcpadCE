@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Calcpad.Core
@@ -336,7 +337,6 @@ namespace Calcpad.Core
 
         internal override string FormatVector(Vector vector)
         {
-            var div = VectorSpacing;
             var sb = new StringBuilder();
             const double tol = 1e-14;
             var zeroThreshold = GetMaxVisibleVectorValue(vector) * tol;
@@ -348,41 +348,91 @@ namespace Calcpad.Core
 
             var units = hp_v?.Units;
             var len = vector.Length;
-            sb.Append("<b class=\"b0\">[</b>");
-            for (int i = 0; i < len; ++i)
-            {
-                if (i > 0)
-                    sb.Append(div);
-
-                if (i == maxCount)
-                {
-                    var n = len - maxCount;
-                    sb.Append($"<span title=\"{n - Math.Sign(n - 1)} elements skipped.\">...</span>")
-                        .Append(div);
-                    break;
-                }
-                AppendElement(i);
-            }
-            var last = len - 1;
-            if (maxCount < last)
-                AppendElement(last);
-            sb.Append("<b class=\"b0\">]</b>");
+            if (InlineMatrices)
+                AppendRow();
+            else
+                AppendGrid();
 
             if (units is not null)
                 sb.Append(HairSpace).Append(units.Html);
 
             return sb.ToString();
 
-            void AppendElement(int index)
+            void AppendRow()
+            {
+                var div = VectorSpacing;
+                sb.Append("<b class=\"b0\">[</b>");
+                for (int i = 0; i < len; ++i)
+                {
+                    if (i > 0)
+                        sb.Append(div);
+
+                    if (i == maxCount)
+                    {
+                        var n = len - maxCount;
+                        sb.Append($"<span title=\"{n - Math.Sign(n - 1)} elements skipped.\">...</span>")
+                            .Append(div);
+                        break;
+                    }
+                    AppendElement(i);
+                }
+                var last = len - 1;
+                if (maxCount < last)
+                    AppendElement(last);
+                sb.Append("<b class=\"b0\">]</b>");
+            }
+
+            void AppendGrid()
+            {
+                var cells = new List<string>(Math.Min(len, maxCount + 2));
+                for (int i = 0; i < len; ++i)
+                {
+                    if (i == maxCount)
+                    {
+                        var n = len - maxCount;
+                        cells.Add($"<span title=\"{n - Math.Sign(n - 1)} elements skipped.\">...</span>");
+                        break;
+                    }
+                    cells.Add(Element(i));
+                }
+                var last = len - 1;
+                if (maxCount < last)
+                    cells.Add(Element(last));
+
+                sb.Append(WrapMatrix([cells.ToArray()], cells.Count));
+            }
+
+            void AppendElement(int index) => sb.Append(Element(index));
+
+            string Element(int index)
             {
                 if (hp_v is null)
-                    sb.Append(FormatMatrixValue(vector[index], zeroThreshold));
-                else
-                {
-                    var d = hp_v.GetValue(index);
-                    sb.Append(FormatReal(d, units?.FormatString, zeroSmallElements && Math.Abs(d) < zeroThreshold));
-                }
+                    return FormatMatrixValue(vector[index], zeroThreshold);
+
+                var d = hp_v.GetValue(index);
+                return FormatReal(d, units?.FormatString, zeroSmallElements && Math.Abs(d) < zeroThreshold);
             }
+        }
+
+        protected override string WrapMatrix(string[][] rows, int columns)
+        {
+            var sb = new StringBuilder("<span class=\"matrix\">");
+            foreach (var cells in rows)
+            {
+                // The empty first and last cells of every row carry the brackets.
+                // Short rows are padded, otherwise :last-child lands in a different column per row
+                // and the right bracket comes out stair-stepped.
+                sb.Append("<span class=\"tr\"><span class=\"td\"></span>");
+                foreach (var cell in cells)
+                    sb.Append("<span class=\"td\">").Append(cell).Append("</span>");
+
+                for (int i = cells.Length; i < columns; ++i)
+                    sb.Append("<span class=\"td\"></span>");
+
+                sb.Append("<span class=\"td\"></span></span>");
+            }
+
+            return sb.Append("</span>").ToString();
         }
 
         internal override string FormatMatrixValue(RealValue value, double zeroThreshold)

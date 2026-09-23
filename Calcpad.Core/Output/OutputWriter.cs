@@ -72,6 +72,60 @@ namespace Calcpad.Core
         internal abstract string FormatMatrixValue(RealValue value, double zeroThreshold);
         internal abstract string FormatBlock(string[] sa);
         internal abstract string CloseCurlyBrackets(string sa, int level);
+
+        /// <summary>Set by <c>#inlineMatVec</c>: renders matrices and vectors as single-line bracketed lists.</summary>
+        internal bool InlineMatrices { get; set; }
+
+        /// <summary>Rows of the bracketed group being assembled, kept as cells until the width is known.</summary>
+        private readonly List<string[]> _rows = [];
+
+        /// <summary>One row of a bracketed group. <c>;</c> separates columns, so a row is never stacked.</summary>
+        internal string FormatMatrixRow(string[] cells)
+        {
+            if (InlineMatrices)
+                return string.Join(FormatOperator(';'), cells);
+
+            _rows.Add(cells);
+            return string.Empty;
+        }
+
+        /// <summary>A bracketed group with no row divisor: one row, one cell per <c>;</c>-separated item.</summary>
+        internal string FormatBracketedVector(string[] items, int level, int minOffset, int maxOffset) =>
+            InlineMatrices ?
+                AddOffsetBrackets(string.Join(FormatOperator(';'), items), level, minOffset, maxOffset, '[', ']') :
+                WrapMatrix([items], items.Length);
+
+        /// <summary>A bracketed group with row divisors. Short rows are padded to keep the brackets square.</summary>
+        internal string FormatBracketedMatrix(string[] rows, int level, int minOffset, int maxOffset)
+        {
+            if (InlineMatrices)
+                return AddOffsetBrackets(string.Join(FormatOperator('|'), rows), level, minOffset, maxOffset, '[', ']');
+
+            var grid = _rows.ToArray();
+            _rows.Clear();
+            var columns = 0;
+            foreach (var row in grid)
+                columns = Math.Max(columns, row.Length);
+
+            return WrapMatrix(grid, columns);
+        }
+
+        /// <param name="columns">Widest row. Rows with fewer cells are padded, so the brackets stay aligned.</param>
+        protected abstract string WrapMatrix(string[][] rows, int columns);
+
+        internal string AddOffsetBrackets(string s, int level, int minOffset, int maxOffset, char left, char right)
+        {
+            var offset = minOffset + maxOffset;
+            level += (maxOffset - minOffset) / 2;
+            return AddBrackets(offset == 0 ? s : FixOffset(s, offset), level, left, right);
+        }
+
+        internal static string FixOffset(string s, int offset) => offset switch
+        {
+            < 0 => $"<span class=\"dvc up\">{s}</span>",
+            > 0 => $"<span class=\"dvc down\">{s}</span>",
+            _ => s
+        };
         internal string FormatUnitsText(string text)
         {
             _stringBuilder.Clear();

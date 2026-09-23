@@ -64,7 +64,9 @@ namespace Calcpad.Core
             Ui,
             ProjectPath,
             LibraryPath,
-            SkipLine
+            SkipLine,
+            InlineMatVec,
+            GridMatVec
         }
         private enum KeywordResult
         {
@@ -181,6 +183,12 @@ namespace Calcpad.Core
                     break;
                 case Keyword.Wrap:
                     _parser.Split = false;
+                    break;
+                case Keyword.InlineMatVec:
+                    _parser.InlineMatrices = true;
+                    break;
+                case Keyword.GridMatVec:
+                    _parser.InlineMatrices = false;
                     break;
                 case Keyword.Deg:
                     _parser.Degrees = 0;

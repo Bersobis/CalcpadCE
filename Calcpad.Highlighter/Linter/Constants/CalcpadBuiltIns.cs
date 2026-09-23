@@ -222,7 +222,8 @@ namespace Calcpad.Highlighter.Linter.Constants
             "#end val", "#end equ", "#end noc",
             "#end nosub", "#end novar", "#end varsub",
             "#split", "#wrap", "#phasor", "#complex",
-            "#rad", "#deg", "#gra"
+            "#rad", "#deg", "#gra",
+            "#inlineMatVec", "#gridMatVec"
         }.ToFrozenSet(System.StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
