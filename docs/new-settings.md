@@ -13,6 +13,7 @@ In VS Code, do not use VS Code's own settings editor.
 | **Substitute Variables** | on/off | Substitute variable values into the output. |
 | **Format Equations** | on/off | *Professional* (on) renders equations in stacked math form; *Inline* (off) renders them on a single line. |
 | **Zero Small Matrix Elements** | on/off | Show very small matrix/vector values as `0` instead of using scientific notation. |
+| **Inline Matrices** | on/off | Print matrices and vectors on a single bracketed line. Off (default) prints them as a grid of aligned cells inside full-height brackets. |
 | **Show Hidden Output** | on/off | Ignore `#hide` so suppressed content is rendered anyway. For debugging. |
 | **Max Output Count** | 5–100 | Maximum number of rows/columns shown for large matrices and vectors. |
 | **Numerical Precision** | 1e-15–1e-2 | Relative precision used by integration, root-finding, and other numerical methods. |

@@ -64,9 +64,7 @@ namespace Calcpad.Core
             Ui,
             ProjectPath,
             LibraryPath,
-            SkipLine,
-            InlineMatVec,
-            GridMatVec
+            SkipLine
         }
         private enum KeywordResult
         {
@@ -183,12 +181,6 @@ namespace Calcpad.Core
                     break;
                 case Keyword.Wrap:
                     _parser.Split = false;
-                    break;
-                case Keyword.InlineMatVec:
-                    _parser.InlineMatrices = true;
-                    break;
-                case Keyword.GridMatVec:
-                    _parser.InlineMatrices = false;
                     break;
                 case Keyword.Deg:
                     _parser.Degrees = 0;
@@ -872,6 +864,10 @@ namespace Calcpad.Core
                         Settings.Math.Tol = dto.Tol.Value;
                         _parser.SetVariable("Tol", dto.Tol.Value);
                     }
+                    break;
+                case SettingKey.InlineMatrices:
+                    if (dto.InlineMatrices.HasValue)
+                        Settings.Math.InlineMatrices = dto.InlineMatrices.Value;
                     break;
             }
         }

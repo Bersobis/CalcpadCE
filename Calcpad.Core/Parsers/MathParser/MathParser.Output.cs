@@ -35,7 +35,6 @@ namespace Calcpad.Core
                     OutputWriter.OutputFormat.Xml => new XmlWriter(_parser._settings, _parser.Phasor),
                     _ => new TextWriter(_parser._settings, _parser.Phasor)
                 };
-                writer.InlineMatrices = _parser.InlineMatrices;
                 _stringBuilder.Clear();
                 var delimiter = writer.FormatOperator(';');
                 var assignment = writer.FormatOperator('=');
@@ -137,10 +136,7 @@ namespace Calcpad.Core
 
             private string RenderRpn(Token[] rpn, bool substitute, OutputWriter writer, out bool hasOperators)
             {
-                var textWriter = new TextWriter(_parser._settings, _parser.Phasor)
-                {
-                    InlineMatrices = _parser.InlineMatrices
-                };
+                var textWriter = new TextWriter(_parser._settings, _parser.Phasor);
                 var stackBuffer = new Stack<RenderToken>();
                 var div = writer.FormatOperator(';');
                 const char thinSpace = (char)0x2009;
@@ -308,7 +304,7 @@ namespace Calcpad.Core
                         var s = !_parser._settings.Substitute &&
                                  _parser._functionDefinitionIndex < 0 &&
                                  _parser._isCalculated ?
-                            RenderVector(vector, new TextWriter(_parser._settings, _parser.Phasor) { InlineMatrices = _parser.InlineMatrices }) :
+                            RenderVector(vector, new TextWriter(_parser._settings, _parser.Phasor)) :
                             string.Empty;
                         t.Content = writer.FormatVariable("\u20D7" + t.Content, s, true);
                     }
@@ -317,7 +313,7 @@ namespace Calcpad.Core
                         var s = !_parser._settings.Substitute &&
                                  _parser._functionDefinitionIndex < 0 &&
                                  _parser._isCalculated ?
-                            RenderMatrix(matrix, new TextWriter(_parser._settings, _parser.Phasor) { InlineMatrices = _parser.InlineMatrices }) :
+                            RenderMatrix(matrix, new TextWriter(_parser._settings, _parser.Phasor)) :
                             string.Empty;
                         t.Content = writer.FormatVariable(t.Content, s, true);
                     }

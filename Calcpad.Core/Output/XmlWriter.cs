@@ -584,7 +584,7 @@ namespace Calcpad.Core
             if (maxCount < last)
                 cells.Add(Element(last));
 
-            var s = InlineMatrices ?
+            var s = inlineMatrices ?
                 AddBrackets(string.Join(div, cells), 0, '[', ']') :
                 WrapMatrix([cells.ToArray()], cells.Count);
 

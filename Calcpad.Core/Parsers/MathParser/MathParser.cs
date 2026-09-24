@@ -81,8 +81,6 @@ namespace Calcpad.Core
         internal bool IsPlotting { get; set; }
         internal bool IsCalculation { get; set; }
         internal bool Split { get; set; }
-        /// <summary>Set by <c>#inlineMatVec</c>: renders matrices and vectors on a single line.</summary>
-        internal bool InlineMatrices { get; set; }
         internal bool ShowWarnings { get; set; } = true;
         internal bool Phasor { get; set; } = false;
         public int Degrees { get => _calc.Degrees;  set => _calc.Degrees = value; }

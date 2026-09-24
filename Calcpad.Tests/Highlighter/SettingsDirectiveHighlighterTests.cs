@@ -49,6 +49,27 @@ namespace Calcpad.Tests.Highlighter
         }
 
         /// <summary>
+        /// The known-key set is derived from <c>Calcpad.Core</c>'s <c>SettingKey</c> enum, so a key
+        /// added there needs no change on the Highlighter side. Guards that derivation: if the enum
+        /// and the DTO ever drift apart, this fails while the unknown-key test above still passes.
+        /// </summary>
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public void SettingsDirective_InlineMatricesKey_IsRecognized(string value)
+        {
+            var result = Lint($"#settings {{\"inlineMatrices\": {value}}}\nx = 1");
+            Assert.DoesNotContain(result.Diagnostics, d => d.Code == "CPD-3413");
+        }
+
+        [Fact]
+        public void SettingsDirective_InlineMatricesKey_RejectsWrongValueType()
+        {
+            var result = Lint("#settings {\"inlineMatrices\": 4}\nx = 1");
+            Assert.Contains(result.Diagnostics, d => d.Code == "CPD-3413");
+        }
+
+        /// <summary>
         /// Core matches keywords case-insensitively, so the payload directives must too -- these
         /// spellings used to fall through and tokenize their payload as ordinary code.
         /// </summary>

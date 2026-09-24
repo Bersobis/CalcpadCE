@@ -473,8 +473,8 @@ Results will appear in the "**Output**" box on the right as a professionally for
     - `#format default` - restores the default formatting
     - `#split` - split long equations after the `=` symbol onto a new indented line
     - `#wrap` - wrap long equations at the end of the line (default)
-    - `#inlineMatVec` - render matrices and vectors as a single bracketed line
-    - `#gridMatVec` - render matrices and vectors as an aligned grid with full-height brackets (default)
+    - `#settings {"inlineMatrices": true}` - render matrices and vectors as a single bracketed line
+    - `#settings {"inlineMatrices": false}` - render matrices and vectors as an aligned grid with full-height brackets (default)
     - `#md on` - enables markdown in comments
     - `#md off` - disables markdown in comments
     - `#phasor` - sets output format of complex numbers to polar phasor: A∠φ

@@ -9,11 +9,45 @@ namespace Calcpad.Tests
             return parser.HtmlResult;
         }
 
+        // Grid rendering wraps in <span class="matrix">; inline rendering uses a bold bracket.
+        private const string Grid = "<span class=\"matrix\">";
+        private const string Inline = "<b class=\"b0\">[</b>";
+
         [Fact]
         public void SettingsDirective_AppliesDecimals()
         {
             var html = Render("#settings {\"decimals\": 4}\nx = 6.12345");
             Assert.Contains("6.1235", html);
+        }
+
+        [Fact]
+        public void SettingsDirective_AppliesInlineMatrices()
+        {
+            var html = Render("#settings {\"inlineMatrices\": true}\nv = [1; 2; 3]");
+
+            Assert.DoesNotContain(Grid, html);
+            Assert.Contains(Inline, html);
+        }
+
+        [Fact]
+        public void SettingsDirective_ChangesInlineMatricesMidFile()
+        {
+            // Both markers must appear: a renders inline, b renders as a grid again.
+            var html = Render(
+                "#settings {\"inlineMatrices\": true}\na = [1; 2; 3]\n" +
+                "#settings {\"inlineMatrices\": false}\nb = [1; 2; 3]");
+
+            Assert.Contains(Inline, html);
+            Assert.Contains(Grid, html);
+        }
+
+        [Fact]
+        public void SettingsDirective_LeavesGridAsTheDefault()
+        {
+            var html = Render("v = [1; 2; 3]");
+
+            Assert.Contains(Grid, html);
+            Assert.DoesNotContain(Inline, html);
         }
 
         [Fact]

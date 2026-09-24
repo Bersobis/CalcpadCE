@@ -1,0 +1,16 @@
+# VS 18 (Insiders / Preview) ships the MSVC C-runtime libs only under
+# lib\onecore\x64\ instead of the traditional lib\x64\.  Rust's linker
+# invocation uses the MSVC toolchain's link.exe but does NOT automatically
+# add the onecore sub-path, so `msvcrt.lib` is not found.
+#
+# The rustflags below append the onecore\x64 directory as a /LIBPATH so
+# link.exe can resolve msvcrt.lib (and the other CRT imports) from there.
+#
+# If you later switch to a VS17 (stable 2022) install that has lib\x64\
+# as well, these flags are harmless — the linker will just find the libs
+# in both places and use the first match.
+
+[target.x86_64-pc-windows-msvc]
+rustflags = [
+  "-C", "link-arg=/LIBPATH:C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\VC\\Tools\\MSVC\\14.51.36231\\lib\\onecore\\x64",
+]

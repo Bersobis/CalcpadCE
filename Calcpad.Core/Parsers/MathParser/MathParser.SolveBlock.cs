@@ -591,10 +591,7 @@ namespace Calcpad.Core
             internal string ToHtml(bool formatEquations)
             {
                 var len = _items.Length;
-                var writer = new HtmlWriter(_parser._settings, _parser.Phasor)
-                {
-                    InlineMatrices = _parser.InlineMatrices
-                };
+                var writer = new HtmlWriter(_parser._settings, _parser.Phasor);
                 if (IsBlock)
                 {
                     var html = new string[len];
@@ -685,10 +682,7 @@ namespace Calcpad.Core
             internal string ToXml()
             {
                 var len = _items.Length;
-                var writer = new XmlWriter(_parser._settings, _parser.Phasor)
-                {
-                    InlineMatrices = _parser.InlineMatrices
-                };
+                var writer = new XmlWriter(_parser._settings, _parser.Phasor);
                 if (IsBlock)
                 {
                     var xml = new string[len];
@@ -773,10 +767,7 @@ namespace Calcpad.Core
             public override string ToString()
             {
                 var len = _items.Length;
-                var writer = new TextWriter(_parser._settings, _parser.Phasor)
-                {
-                    InlineMatrices = _parser.InlineMatrices
-                };
+                var writer = new TextWriter(_parser._settings, _parser.Phasor);
                 if (IsBlock)
                 {
                     var text = new string[len];

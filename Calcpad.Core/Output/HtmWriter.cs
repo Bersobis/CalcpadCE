@@ -296,43 +296,85 @@ namespace Calcpad.Core
                 hp_m = null;
 
             var units = hp_m?.Units;
-            sb.AppendLine("<span class=\"matrix\">");
-            for (int i = 0, nr = matrix.RowCount; i < nr; ++i)
-            {
-                sb.Append("<span class=\"tr\"><span class=\"td\"></span>");
-                if (i == maxCount)
-                {
-                    sb.Insert(sb.Length, "<span class=\"td\">⋮</span>", Math.Min(maxCount, nc));
-                    if (nc > maxCount)
-                        sb.Append("<span class=\"td\">⋱</span><span class=\"td\">⋮</span>");
+            if (inlineMatrices)
+                AppendInline();
+            else
+                AppendGrid();
 
-                    sb.Append("<span class=\"td\"></span></span><span class=\"tr\"><span class=\"td\"></span>");
-                    i = nr - 1;
-                }
-                for (int j = 0; j < nc; ++j)
-                {
-                    if (j == maxCount)
-                    {
-                        sb.Append("<span class=\"td\">⋯</span>");
-                        j = nc - 1;
-                    }
-                    string s;
-                    if (hp_m is null)
-                        s = FormatMatrixValue(matrix[i, j], zeroThreshold);
-                    else
-                    {
-                        var d = hp_m.GetValue(i, j);
-                        s = FormatReal(d, units?.FormatString, zeroSmallElements && Math.Abs(d) < zeroThreshold);
-                    }
-                    sb.Append($"<span class=\"td\">{s}</span>");
-                }
-                sb.AppendLine("<span class=\"td\"></span></span>");
-            }
-            sb.AppendLine("</span>");
             if (units is not null)
                 sb.Append(HairSpace).Append(units.Html);
 
             return sb.ToString();
+
+            void AppendGrid()
+            {
+                sb.AppendLine("<span class=\"matrix\">");
+                for (int i = 0, nr = matrix.RowCount; i < nr; ++i)
+                {
+                    sb.Append("<span class=\"tr\"><span class=\"td\"></span>");
+                    if (i == maxCount)
+                    {
+                        sb.Insert(sb.Length, "<span class=\"td\">⋮</span>", Math.Min(maxCount, nc));
+                        if (nc > maxCount)
+                            sb.Append("<span class=\"td\">⋱</span><span class=\"td\">⋮</span>");
+
+                        sb.Append("<span class=\"td\"></span></span><span class=\"tr\"><span class=\"td\"></span>");
+                        i = nr - 1;
+                    }
+                    for (int j = 0; j < nc; ++j)
+                    {
+                        if (j == maxCount)
+                        {
+                            sb.Append("<span class=\"td\">⋯</span>");
+                            j = nc - 1;
+                        }
+                        sb.Append($"<span class=\"td\">{Cell(i, j)}</span>");
+                    }
+                    sb.AppendLine("<span class=\"td\"></span></span>");
+                }
+                sb.AppendLine("</span>");
+            }
+
+            void AppendInline()
+            {
+                var colSep = VectorSpacing;
+                var rowSep = FormatOperator('|');
+                sb.Append("<b class=\"b0\">[</b>");
+                for (int i = 0, nr = matrix.RowCount; i < nr; ++i)
+                {
+                    if (i > 0)
+                        sb.Append(rowSep);
+
+                    if (i == maxCount)
+                    {
+                        var skipped = nr - maxCount;
+                        sb.Append($"<span title=\"{skipped - Math.Sign(skipped - 1)} rows skipped.\">...</span>").Append(rowSep);
+                        i = nr - 1;
+                    }
+                    for (int j = 0; j < nc; ++j)
+                    {
+                        if (j > 0)
+                            sb.Append(colSep);
+
+                        if (j == maxCount)
+                        {
+                            sb.Append("...");
+                            j = nc - 1;
+                        }
+                        sb.Append(Cell(i, j));
+                    }
+                }
+                sb.Append("<b class=\"b0\">]</b>");
+            }
+
+            string Cell(int i, int j)
+            {
+                if (hp_m is null)
+                    return FormatMatrixValue(matrix[i, j], zeroThreshold);
+
+                var d = hp_m.GetValue(i, j);
+                return FormatReal(d, units?.FormatString, zeroSmallElements && Math.Abs(d) < zeroThreshold);
+            }
         }
 
         internal override string FormatVector(Vector vector)
@@ -348,7 +390,7 @@ namespace Calcpad.Core
 
             var units = hp_v?.Units;
             var len = vector.Length;
-            if (InlineMatrices)
+            if (inlineMatrices)
                 AppendRow();
             else
                 AppendGrid();

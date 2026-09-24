@@ -4,6 +4,8 @@ public class BracketedMatrixRenderTests
 {
     private const string Row = "<span class=\"tr\">";
     private const string Matrix = "<span class=\"matrix\">";
+    private const string Inline = "#settings {\"inlineMatrices\": true}";
+    private const string Grid = "#settings {\"inlineMatrices\": false}";
 
     [Fact]
     public void RowDivisor_RendersOneRowPerDivisor()
@@ -51,44 +53,44 @@ public class BracketedMatrixRenderTests
     }
 
     [Fact]
-    public void GridMatVec_IsTheDefault()
+    public void GridRendering_IsTheDefault()
     {
         Assert.Contains(Matrix, Render("F = 6\n[F; F; F; F]\n"));
     }
 
     [Fact]
-    public void GridMatVec_SwitchesBackFromInlineRendering()
+    public void GridSetting_SwitchesBackFromInlineRendering()
     {
-        var inline = Render("F = 6\n#inlineMatVec\n[F; F; F; F]\n");
-        var restored = Render("F = 6\n#inlineMatVec\n#gridMatVec\n[F; F; F; F]\n");
+        var inline = Render($"F = 6\n{Inline}\n[F; F; F; F]\n");
+        var restored = Render($"F = 6\n{Inline}\n{Grid}\n[F; F; F; F]\n");
 
         Assert.DoesNotContain(Matrix, inline);
         Assert.Contains(Matrix, restored);
     }
 
     [Fact]
-    public void WhenBothDirectivesAppear_TheLastOneWins()
+    public void WhenBothSettingsAppear_TheLastOneWins()
     {
-        var inlineLast = Render("F = 6\n#gridMatVec\n#inlineMatVec\n[F; F; F; F]\n");
-        var gridLast = Render("F = 6\n#inlineMatVec\n#gridMatVec\n[F; F; F; F]\n");
+        var inlineLast = Render($"F = 6\n{Grid}\n{Inline}\n[F; F; F; F]\n");
+        var gridLast = Render($"F = 6\n{Inline}\n{Grid}\n[F; F; F; F]\n");
 
         Assert.DoesNotContain(Matrix, inlineLast);
         Assert.Contains(Matrix, gridLast);
     }
 
     [Fact]
-    public void InlineMatVec_RestoresSingleLineVectorRendering()
+    public void InlineMatrices_RestoresSingleLineVectorRendering()
     {
-        var html = Render("#inlineMatVec\nF = 6\n[F; F; F; F]\n");
+        var html = Render($"{Inline}\nF = 6\n[F; F; F; F]\n");
 
         Assert.DoesNotContain(Matrix, html);
         Assert.Contains("6; 6", html);
     }
 
     [Fact]
-    public void InlineMatVec_RestoresSingleLineMatrixLiteral()
+    public void InlineMatrices_RestoresSingleLineMatrixLiteral()
     {
-        var html = Render("#inlineMatVec\nF = 6\n[F; F|F; F]\n");
+        var html = Render($"{Inline}\nF = 6\n[F; F|F; F]\n");
 
         Assert.Contains("<span class=\"b0\">[</span>", LiteralOf(html));
         Assert.Contains("6; 6", html);
@@ -124,7 +126,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void SingleElementVector_InlineMode_RendersBracketedScalar()
     {
-        var html = Render("#inlineMatVec\n[42]\n");
+        var html = Render($"{Inline}\n[42]\n");
 
         Assert.DoesNotContain(Matrix, html);
     }
@@ -143,7 +145,7 @@ public class BracketedMatrixRenderTests
     public void LargeVector_InlineMode_TruncatesWithEllipsis()
     {
         var source = "[1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20; 21; 22]";
-        var html = Render("#inlineMatVec\n" + source + "\n");
+        var html = Render($"{Inline}\n" + source + "\n");
 
         Assert.Contains("elements skipped", html);
         Assert.DoesNotContain(Matrix, html);
@@ -159,10 +161,10 @@ public class BracketedMatrixRenderTests
     }
 
     [Fact]
-    public void DirectiveResetsToGridAtDocumentStart()
+    public void SettingDoesNotLeakBetweenParses()
     {
-        // A first parse with #inlineMatVec must not bleed into a second independent parse.
-        var firstHtml = Render("#inlineMatVec\n[1; 2; 3]\n");
+        // A first parse that turns inline rendering on must not bleed into a second independent parse.
+        var firstHtml = Render($"{Inline}\n[1; 2; 3]\n");
         var secondHtml = Render("[1; 2; 3]\n");
 
         Assert.DoesNotContain(Matrix, firstHtml);
@@ -170,10 +172,10 @@ public class BracketedMatrixRenderTests
     }
 
     [Fact]
-    public void MultipleDirectiveSwitches_AllTakeEffect()
+    public void MultipleSettingChanges_AllTakeEffect()
     {
-        // inline → grid → inline: each directive must override the previous.
-        var html = Render("#inlineMatVec\n#gridMatVec\n#inlineMatVec\n[1; 2; 3]\n");
+        // inline → grid → inline: each #settings must override the previous.
+        var html = Render($"{Inline}\n{Grid}\n{Inline}\n[1; 2; 3]\n");
 
         Assert.DoesNotContain(Matrix, html);
     }

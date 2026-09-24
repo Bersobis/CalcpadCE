@@ -22,6 +22,8 @@ namespace Calcpad.Core
         protected readonly string formatString = null;
         protected readonly bool formatEquations;
         protected readonly bool zeroSmallElements;
+        /// <summary>Renders matrices and vectors on a single bracketed line instead of as a grid.</summary>
+        protected readonly bool inlineMatrices;
         protected readonly int maxCount = 20;
         protected readonly bool phasor = false;
         protected readonly int degrees = 0;
@@ -35,6 +37,7 @@ namespace Calcpad.Core
             formatString = settings.FormatString;
             formatEquations = settings.FormatEquations;
             zeroSmallElements = settings.ZeroSmallMatrixElements;
+            inlineMatrices = settings.InlineMatrices;
             maxCount = settings.MaxOutputCount;
             degrees = settings.Degrees;
             this.phasor = phasor;
@@ -73,16 +76,13 @@ namespace Calcpad.Core
         internal abstract string FormatBlock(string[] sa);
         internal abstract string CloseCurlyBrackets(string sa, int level);
 
-        /// <summary>Set by <c>#inlineMatVec</c>: renders matrices and vectors as single-line bracketed lists.</summary>
-        internal bool InlineMatrices { get; set; }
-
         /// <summary>Rows of the bracketed group being assembled, kept as cells until the width is known.</summary>
         private readonly List<string[]> _rows = [];
 
         /// <summary>One row of a bracketed group. <c>;</c> separates columns, so a row is never stacked.</summary>
         internal string FormatMatrixRow(string[] cells)
         {
-            if (InlineMatrices)
+            if (inlineMatrices)
                 return string.Join(FormatOperator(';'), cells);
 
             _rows.Add(cells);
@@ -91,14 +91,14 @@ namespace Calcpad.Core
 
         /// <summary>A bracketed group with no row divisor: one row, one cell per <c>;</c>-separated item.</summary>
         internal string FormatBracketedVector(string[] items, int level, int minOffset, int maxOffset) =>
-            InlineMatrices ?
+            inlineMatrices ?
                 AddOffsetBrackets(string.Join(FormatOperator(';'), items), level, minOffset, maxOffset, '[', ']') :
                 WrapMatrix([items], items.Length);
 
         /// <summary>A bracketed group with row divisors. Short rows are padded to keep the brackets square.</summary>
         internal string FormatBracketedMatrix(string[] rows, int level, int minOffset, int maxOffset)
         {
-            if (InlineMatrices)
+            if (inlineMatrices)
                 return AddOffsetBrackets(string.Join(FormatOperator('|'), rows), level, minOffset, maxOffset, '[', ']');
 
             var grid = _rows.ToArray();
