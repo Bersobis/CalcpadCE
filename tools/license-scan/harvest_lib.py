@@ -11,6 +11,7 @@ import re
 import shutil
 import sys
 import tarfile
+import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
@@ -95,6 +96,16 @@ def framework_packs(assets: dict) -> list[tuple[str, str]]:
             if declared and not lower.startswith(declared):
                 continue
             found[pkg_id] = version
+
+    # The SDK supplies its own RID's apphost locally, so it never resolves as a
+    # download -- which would make the inventory depend on the harvesting host.
+    for pkg_id, version in list(found.items()):
+        prefix, _, rid = pkg_id.partition(".Runtime.")
+        if prefix != "Microsoft.NETCore.App" or not rid:
+            continue
+        host = f"Microsoft.NETCore.App.Host.{rid}"
+        found.setdefault(host, version)
+
     return sorted(found.items())
 
 
@@ -122,6 +133,22 @@ def check_shipped_versions(deps_json: str, packs: list[tuple[str, str]]) -> None
             )
 
 
+NUGET_FLATCONTAINER = "https://api.nuget.org/v3-flatcontainer"
+
+
+def fetch_nupkg(pkg_id: str, version: str, dest: Path) -> None:
+    """Pull a pack the restore resolved locally instead of downloading."""
+    lower = pkg_id.lower()
+    url = f"{NUGET_FLATCONTAINER}/{lower}/{version}/{lower}.{version}.nupkg"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with urllib.request.urlopen(url, timeout=60) as r:
+            dest.write_bytes(r.read())
+        print(f"  fetched {pkg_id}/{version} from nuget.org", file=sys.stderr)
+    except OSError as e:
+        print(f"  could not fetch {pkg_id}/{version}: {e}", file=sys.stderr)
+
+
 def collect_nuget(
     assets_path: str, pkgdir: str, dest: str, component: str, self_contained: str = ""
 ) -> None:
@@ -129,9 +156,11 @@ def collect_nuget(
     out = csv.writer(sys.stdout)
     dest_dir = Path(dest)
 
-    def stage(pkg_id: str, version: str) -> None:
+    def stage(pkg_id: str, version: str, fetch: bool = False) -> None:
         lower = pkg_id.lower()
         nupkg = Path(pkgdir) / lower / version / f"{lower}.{version}.nupkg"
+        if not nupkg.is_file() and fetch:
+            fetch_nupkg(pkg_id, version, nupkg)
         if not nupkg.is_file():
             print(f"  missing nupkg: {pkg_id}/{version}", file=sys.stderr)
             return
@@ -153,7 +182,7 @@ def collect_nuget(
         packs = framework_packs(assets)
         check_shipped_versions(self_contained, packs)
         for pkg_id, version in packs:
-            stage(pkg_id, version)
+            stage(pkg_id, version, fetch=True)
 
 
 def cargo_reachable(meta: dict) -> dict[str, str]:

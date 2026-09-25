@@ -26,7 +26,6 @@ readonly -A COMPONENTS=(
   [calcpad-core]="csproj:Calcpad.Core/Calcpad.Core.csproj"
   [calcpad-openxml]="csproj:Calcpad.OpenXml/Calcpad.OpenXml.csproj"
   [calcpad-highlighter]="csproj:Calcpad.Highlighter/Calcpad.Highlighter.csproj"
-  [calcpad-cli]="csproj:Calcpad.Cli/Calcpad.Cli.csproj"
   [calcpad-server]="csproj:Calcpad.Web/backend/Calcpad.Server.csproj"
   [pycalcpad]="csproj:Calcpad.Api/PyCalcpad/PyCalcpad.csproj"
   [calcpad-web-frontend]="npm:Calcpad.Web/frontend/calcpad-web"
@@ -44,7 +43,8 @@ readonly -A SELF_CONTAINED=(
   [calcpad-server]="linux-x64 linux-arm64 win-x64"
 )
 
-# Calcpad.Tests is excluded: xunit/coverlet are build-time only.
+# Calcpad.Tests and Calcpad.Cli are excluded: neither ships in a release.
+# The CLI is built only to render docs examples.
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m warn:\033[0m %s\n' "$*" >&2; }
@@ -74,14 +74,15 @@ harvest_csproj() {
   : >"$csv"
   if [[ -z ${SELF_CONTAINED[$name]:-} ]]; then
     restore || return 1
-    python3 harvest_lib.py collect-nuget "$assets" "$PKGDIR" "$dest" "$name" >>"$csv"
+    python3 harvest_lib.py collect-nuget "$assets" "$PKGDIR" "$dest" "$name" >>"$csv" || return 1
   else
     for rid in ${SELF_CONTAINED[$name]}; do
       log "$name: resolving runtime for $rid"
       restore "$rid" || return 1
       # The built artifact pins the version the notices must cover.
       deps="$(dirname "$csproj")/bin/Release/net10.0/$rid/publish/Calcpad.Server.deps.json"
-      python3 harvest_lib.py collect-nuget "$assets" "$PKGDIR" "$dest" "$name" "$deps" >>"$csv"
+      python3 harvest_lib.py collect-nuget "$assets" "$PKGDIR" "$dest" "$name" "$deps" >>"$csv" \
+        || return 1
     done
     sort -u -o "$csv" "$csv"
   fi
