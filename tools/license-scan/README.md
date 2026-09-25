@@ -18,7 +18,7 @@ hundred packages by hand is not possible; scanning them with FOSSology is how
 the exceptions in [Findings](#findings) were found at all.
 
 What it is *not* is a thing this project clears exhaustively. The corpus runs to
-tens of thousands of files across ten components, and clearing each one in the
+tens of thousands of files across nine components, and clearing each one in the
 Browse UI is not proportionate to a project this size. **We deliberately do not
 clear every resource.** Undecided findings are expected and are not a defect.
 
@@ -64,6 +64,9 @@ clean diff means nothing new needs a human.
 
 Needs `docker`, plus the `dotnet` SDK, `npm` and `cargo` on the host — the
 harvest resolves each closure with the real package managers.
+
+**Use the SDK `global.json` pins**, not merely a compatible one. The patch level decides which packages resolve standalone and which collapse into the shared framework: on 10.0.111 the server's closure carries `Microsoft.Extensions.{DependencyInjection,Logging,Options,Primitives}`
+as separate packages, and on 10.0.112 it does not, because the newer runtime pack subsumes them. It also fixes the runtime pack versions the notices record. Harvest with the wrong SDK and the file describes a build nobody ships.
 
 ```bash
 cd tools/license-scan
@@ -326,7 +329,7 @@ notices file:
 | component | source |
 |---|---|
 | `calcpad-core`, `calcpad-openxml`, `calcpad-highlighter` | libraries |
-| `calcpad-cli`, `calcpad-server`, `pycalcpad` | apps |
+| `calcpad-server`, `pycalcpad` | apps |
 | `calcpad-web-frontend`, `vscode-calcpad` | npm, production deps only |
 | `calcpad-desktop` | npm production deps **and** the Tauri shell's Rust crates |
 | `bundled-assets` | third-party files committed into the repo |
@@ -350,14 +353,15 @@ any crate that only one platform reaches. That takes 553 lock entries down to
 and the four font trees. Nothing else in this tooling would find them, and they
 are all redistributed.
 
-`Calcpad.Tests` is deliberately excluded, as nothing in it is shipped in a release.
+`Calcpad.Tests` and `Calcpad.Cli` are deliberately excluded, as neither is shipped
+in a release. The CLI is still built, but only to render the documentation's
+`.cpd` examples, so nothing it resolves is ever redistributed.
 
 **Runtime packs are different, and depend on how the component is published.**
 `build-desktop.sh` calls `sync-bundled-server.mjs` without
 `--framework-dependent`, so the sidecar under `src-tauri/binaries/` is a
 **self-contained** publish — the whole .NET runtime is redistributed inside the
-installer, and its notices are therefore mandatory. The CLI, by contrast, is
-framework-dependent and redistributes none of it.
+installer, and its notices are therefore mandatory.
 
 `SELF_CONTAINED` in `harvest.sh` names the components that ship a runtime and
 maps each to the `deps.json` the build produced. For those, `collect_nuget`
