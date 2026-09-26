@@ -22,7 +22,8 @@ namespace Calcpad.Core
         protected readonly string formatString = null;
         protected readonly bool formatEquations;
         protected readonly bool zeroSmallElements;
-        /// <summary>Renders matrices and vectors on a single bracketed line instead of as a grid.</summary>
+        /// <summary>Renders the matrices and vectors of the substitution step on a single
+        /// bracketed line instead of as a grid. Calculated results are always a grid.</summary>
         protected readonly bool inlineMatrices;
         protected readonly int maxCount = 20;
         protected readonly bool phasor = false;
@@ -79,7 +80,7 @@ namespace Calcpad.Core
         /// <summary>Rows of the bracketed group being assembled, kept as cells until the width is known.</summary>
         private readonly List<string[]> _rows = [];
 
-        /// <summary>One row of a bracketed group. <c>;</c> separates columns, so a row is never stacked.</summary>
+        /// <summary>Substitution step: one row of a bracketed group. <c>;</c> separates columns.</summary>
         internal string FormatMatrixRow(string[] cells)
         {
             if (inlineMatrices)
@@ -89,13 +90,13 @@ namespace Calcpad.Core
             return string.Empty;
         }
 
-        /// <summary>A bracketed group with no row divisor: one row, one cell per <c>;</c>-separated item.</summary>
+        /// <summary>Substitution step: a bracketed group with no row divisor, one cell per <c>;</c>-separated item.</summary>
         internal string FormatBracketedVector(string[] items, int level, int minOffset, int maxOffset) =>
             inlineMatrices ?
                 AddOffsetBrackets(string.Join(FormatOperator(';'), items), level, minOffset, maxOffset, '[', ']') :
                 WrapMatrix([items], items.Length);
 
-        /// <summary>A bracketed group with row divisors. Short rows are padded to keep the brackets square.</summary>
+        /// <summary>Substitution step: a bracketed group with row divisors. Short rows are padded to keep the brackets square.</summary>
         internal string FormatBracketedMatrix(string[] rows, int level, int minOffset, int maxOffset)
         {
             if (inlineMatrices)

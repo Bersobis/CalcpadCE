@@ -106,8 +106,9 @@ namespace Calcpad.Core
         public bool FormatEquations { get; set; }
         public bool ZeroSmallMatrixElements { get; set; }
         /// <summary>
-        /// Renders matrices and vectors on a single bracketed line. When <see langword="false"/>
-        /// they are rendered as a grid of aligned cells inside full-height brackets.
+        /// Renders the matrices and vectors of the <em>substitution step</em> on a single
+        /// bracketed line. When <see langword="false"/> they are rendered as a grid of aligned
+        /// cells inside full-height brackets. Calculated results are always rendered as a grid.
         /// </summary>
         public bool InlineMatrices { get; set; }
         public bool ShowHiddenOutput { get; set; }

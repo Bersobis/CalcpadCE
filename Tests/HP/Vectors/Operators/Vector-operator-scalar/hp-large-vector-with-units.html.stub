@@ -8,11 +8,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -44,11 +71,38 @@
    +  ( -5
    <i>m</i>
    )  =
-   <b class="b0">[</b>
-   -501.77 -503.04 -500.81 -501.08 -497.85 -497.12 -492.88 -491.15 -485.91 -500 -500 -500 -500 -500 -500 -500 -500 -500 -500 -500
-   <span title="129 elements skipped.">...</span>
-   -500
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-501.77</span>
+     <span class="td">-503.04</span>
+     <span class="td">-500.81</span>
+     <span class="td">-501.08</span>
+     <span class="td">-497.85</span>
+     <span class="td">-497.12</span>
+     <span class="td">-492.88</span>
+     <span class="td">-491.15</span>
+     <span class="td">-485.91</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">-500</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -89,11 +143,38 @@
    ; -5
    <i>m</i>
    )  =
-   <b class="b0">[</b>
-   -501.77 -503.04 -500.81 -501.08 -497.85 -497.12 -492.88 -491.15 -485.91 -500 -500 -500 -500 -500 -500 -500 -500 -500 -500 -500
-   <span title="129 elements skipped.">...</span>
-   -500
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-501.77</span>
+     <span class="td">-503.04</span>
+     <span class="td">-500.81</span>
+     <span class="td">-501.08</span>
+     <span class="td">-497.85</span>
+     <span class="td">-497.12</span>
+     <span class="td">-492.88</span>
+     <span class="td">-491.15</span>
+     <span class="td">-485.91</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">-500</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">-500</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -107,11 +188,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -143,11 +251,38 @@
    − 3.14
    <i>m</i>
    =
-   <b class="b0">[</b>
-   -315.77 -317.04 -314.81 -315.08 -311.85 -311.12 -306.88 -305.15 -299.91 -314 -314 -314 -314 -314 -314 -314 -314 -314 -314 -314
-   <span title="129 elements skipped.">...</span>
-   -314
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-315.77</span>
+     <span class="td">-317.04</span>
+     <span class="td">-314.81</span>
+     <span class="td">-315.08</span>
+     <span class="td">-311.85</span>
+     <span class="td">-311.12</span>
+     <span class="td">-306.88</span>
+     <span class="td">-305.15</span>
+     <span class="td">-299.91</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">-314</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -188,11 +323,38 @@
    ; 3.14
    <i>m</i>
    )  =
-   <b class="b0">[</b>
-   -315.77 -317.04 -314.81 -315.08 -311.85 -311.12 -306.88 -305.15 -299.91 -314 -314 -314 -314 -314 -314 -314 -314 -314 -314 -314
-   <span title="129 elements skipped.">...</span>
-   -314
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-315.77</span>
+     <span class="td">-317.04</span>
+     <span class="td">-314.81</span>
+     <span class="td">-315.08</span>
+     <span class="td">-311.85</span>
+     <span class="td">-311.12</span>
+     <span class="td">-306.88</span>
+     <span class="td">-305.15</span>
+     <span class="td">-299.91</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">-314</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">-314</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -206,11 +368,38 @@
     y
    </var>
    =
-   <b class="b0">[</b>
-   8.98 7.21 2.94 2.17 -1.1 -0.867 -3.13 -1.9 -3.16 -0.929 -1.19 2.04 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">8.98</span>
+     <span class="td">7.21</span>
+     <span class="td">2.94</span>
+     <span class="td">2.17</span>
+     <span class="td">-1.1</span>
+     <span class="td">-0.867</span>
+     <span class="td">-3.13</span>
+     <span class="td">-1.9</span>
+     <span class="td">-3.16</span>
+     <span class="td">-0.929</span>
+     <span class="td">-1.19</span>
+     <span class="td">2.04</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>m</i>
   </span>
  </p>
@@ -244,11 +433,38 @@
    <i>MA</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   79.91 64.15 26.15 19.3 -9.78 -7.72 -27.89 -16.91 -28.17 -8.27 -10.61 18.2 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">79.91</span>
+     <span class="td">64.15</span>
+     <span class="td">26.15</span>
+     <span class="td">19.3</span>
+     <span class="td">-9.78</span>
+     <span class="td">-7.72</span>
+     <span class="td">-27.89</span>
+     <span class="td">-16.91</span>
+     <span class="td">-28.17</span>
+     <span class="td">-8.27</span>
+     <span class="td">-10.61</span>
+     <span class="td">18.2</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>m</i>
    <i>·</i>
    <i>MA</i>
@@ -293,11 +509,38 @@
    <i>MA</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   79.91 64.15 26.15 19.3 -9.78 -7.72 -27.89 -16.91 -28.17 -8.27 -10.61 18.2 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">79.91</span>
+     <span class="td">64.15</span>
+     <span class="td">26.15</span>
+     <span class="td">19.3</span>
+     <span class="td">-9.78</span>
+     <span class="td">-7.72</span>
+     <span class="td">-27.89</span>
+     <span class="td">-16.91</span>
+     <span class="td">-28.17</span>
+     <span class="td">-8.27</span>
+     <span class="td">-10.61</span>
+     <span class="td">18.2</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>m</i>
    <i>·</i>
    <i>MA</i>
@@ -314,11 +557,38 @@
     y
    </var>
    =
-   <b class="b0">[</b>
-   8.98 7.21 2.94 2.17 -1.1 -0.867 -3.13 -1.9 -3.16 -0.929 -1.19 2.04 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">8.98</span>
+     <span class="td">7.21</span>
+     <span class="td">2.94</span>
+     <span class="td">2.17</span>
+     <span class="td">-1.1</span>
+     <span class="td">-0.867</span>
+     <span class="td">-3.13</span>
+     <span class="td">-1.9</span>
+     <span class="td">-3.16</span>
+     <span class="td">-0.929</span>
+     <span class="td">-1.19</span>
+     <span class="td">2.04</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>m</i>
   </span>
  </p>
@@ -359,11 +629,38 @@
     <sup class="unit">-1</sup>
    </span>
    =
-   <b class="b0">[</b>
-   -0.898 -0.721 -0.294 -0.217 0.11 0.0867 0.313 0.19 0.316 0.0929 0.119 -0.204 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-0.898</span>
+     <span class="td">-0.721</span>
+     <span class="td">-0.294</span>
+     <span class="td">-0.217</span>
+     <span class="td">0.11</span>
+     <span class="td">0.0867</span>
+     <span class="td">0.313</span>
+     <span class="td">0.19</span>
+     <span class="td">0.316</span>
+     <span class="td">0.0929</span>
+     <span class="td">0.119</span>
+     <span class="td">-0.204</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>m</i>
    <i class="unit">∕</i>
    <i>MA</i>
@@ -411,11 +708,38 @@
    <i>MA</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   -0.898 -0.721 -0.294 -0.217 0.11 0.0867 0.313 0.19 0.316 0.0929 0.119 -0.204 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-0.898</span>
+     <span class="td">-0.721</span>
+     <span class="td">-0.294</span>
+     <span class="td">-0.217</span>
+     <span class="td">0.11</span>
+     <span class="td">0.0867</span>
+     <span class="td">0.313</span>
+     <span class="td">0.19</span>
+     <span class="td">0.316</span>
+     <span class="td">0.0929</span>
+     <span class="td">0.119</span>
+     <span class="td">-0.204</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>m</i>
    <i class="unit">∕</i>
    <i>MA</i>
@@ -432,11 +756,38 @@
     z
    </var>
    =
-   <b class="b0">[</b>
-   2.23 -1.04 -0.812 -3.08 -1.85 -3.12 -0.884 -1.15 2.09 2.82 7.06 8.79 14.03 16.77 23.01 0 0 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.23</span>
+     <span class="td">-1.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-3.08</span>
+     <span class="td">-1.85</span>
+     <span class="td">-3.12</span>
+     <span class="td">-0.884</span>
+     <span class="td">-1.15</span>
+     <span class="td">2.09</span>
+     <span class="td">2.82</span>
+     <span class="td">7.06</span>
+     <span class="td">8.79</span>
+     <span class="td">14.03</span>
+     <span class="td">16.77</span>
+     <span class="td">23.01</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>mm</i>
   </span>
  </p>
@@ -471,16 +822,50 @@
     -2
    </sup>
    =
-   <b class="b0">[</b>
-   0.201 0.921 1.52 0.105 0.292 0.103 1.28 0.757 0.23 0.126 0.0201 0.0129 0.00508 0.00355 0.00189
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span title="9999978 elements skipped.">...</span>
-   <span class="err">+∞</span>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0.201</span>
+     <span class="td">0.921</span>
+     <span class="td">1.52</span>
+     <span class="td">0.105</span>
+     <span class="td">0.292</span>
+     <span class="td">0.103</span>
+     <span class="td">1.28</span>
+     <span class="td">0.757</span>
+     <span class="td">0.23</span>
+     <span class="td">0.126</span>
+     <span class="td">0.0201</span>
+     <span class="td">0.0129</span>
+     <span class="td">0.00508</span>
+     <span class="td">0.00355</span>
+     <span class="td">0.00189</span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>mm</i>
    <sup class="unit">-2</sup>
   </span>
@@ -521,16 +906,50 @@
     z
    </var>
    ; -2 )  =
-   <b class="b0">[</b>
-   0.201 0.921 1.52 0.105 0.292 0.103 1.28 0.757 0.23 0.126 0.0201 0.0129 0.00508 0.00355 0.00189
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span class="err">+∞</span>
-   <span title="9999978 elements skipped.">...</span>
-   <span class="err">+∞</span>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0.201</span>
+     <span class="td">0.921</span>
+     <span class="td">1.52</span>
+     <span class="td">0.105</span>
+     <span class="td">0.292</span>
+     <span class="td">0.103</span>
+     <span class="td">1.28</span>
+     <span class="td">0.757</span>
+     <span class="td">0.23</span>
+     <span class="td">0.126</span>
+     <span class="td">0.0201</span>
+     <span class="td">0.0129</span>
+     <span class="td">0.00508</span>
+     <span class="td">0.00355</span>
+     <span class="td">0.00189</span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">
+      <span class="err">+∞</span>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>mm</i>
    <sup class="unit">-2</sup>
   </span>
@@ -545,11 +964,38 @@
     z
    </var>
    =
-   <b class="b0">[</b>
-   2.23 -1.04 -0.812 -3.08 -1.85 -3.12 -0.884 -1.15 2.09 2.82 7.06 8.79 14.03 16.77 23.01 0 0 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.23</span>
+     <span class="td">-1.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-3.08</span>
+     <span class="td">-1.85</span>
+     <span class="td">-3.12</span>
+     <span class="td">-0.884</span>
+     <span class="td">-1.15</span>
+     <span class="td">2.09</span>
+     <span class="td">2.82</span>
+     <span class="td">7.06</span>
+     <span class="td">8.79</span>
+     <span class="td">14.03</span>
+     <span class="td">16.77</span>
+     <span class="td">23.01</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>mm</i>
   </span>
  </p>
@@ -584,11 +1030,38 @@
    <i>A</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   2.23 -1.04 -0.812 -3.08 -1.85 -3.12 -0.884 -1.15 2.09 2.82 7.06 8.79 14.03 16.77 23.01 0 0 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.23</span>
+     <span class="td">-1.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-3.08</span>
+     <span class="td">-1.85</span>
+     <span class="td">-3.12</span>
+     <span class="td">-0.884</span>
+     <span class="td">-1.15</span>
+     <span class="td">2.09</span>
+     <span class="td">2.82</span>
+     <span class="td">7.06</span>
+     <span class="td">8.79</span>
+     <span class="td">14.03</span>
+     <span class="td">16.77</span>
+     <span class="td">23.01</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>mm</i>
    <i class="unit">∕</i>
    <i>A</i>
@@ -633,11 +1106,38 @@
    <i>A</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   2.23 -1.04 -0.812 -3.08 -1.85 -3.12 -0.884 -1.15 2.09 2.82 7.06 8.79 14.03 16.77 23.01 0 0 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.23</span>
+     <span class="td">-1.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-3.08</span>
+     <span class="td">-1.85</span>
+     <span class="td">-3.12</span>
+     <span class="td">-0.884</span>
+     <span class="td">-1.15</span>
+     <span class="td">2.09</span>
+     <span class="td">2.82</span>
+     <span class="td">7.06</span>
+     <span class="td">8.79</span>
+     <span class="td">14.03</span>
+     <span class="td">16.77</span>
+     <span class="td">23.01</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>mm</i>
    <i class="unit">∕</i>
    <i>A</i>
@@ -654,11 +1154,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -690,11 +1217,38 @@
    \3.7
    <i>m</i>
    =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -734,11 +1288,38 @@
    ; 3.7
    <i>m</i>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -751,11 +1332,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -784,11 +1392,38 @@
     x
    </var>
    mod 2.7 =
-   <b class="b0">[</b>
-   -1.77 -0.342 -0.812 -1.08 2.15 0.183 1.72 0.75 0.585 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7
-   <span title="129 elements skipped.">...</span>
-   2.7
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-0.342</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">0.183</span>
+     <span class="td">1.72</span>
+     <span class="td">0.75</span>
+     <span class="td">0.585</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">2.7</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -827,11 +1462,38 @@
     x
    </var>
    ; 2.7 )  =
-   <b class="b0">[</b>
-   -1.77 -0.342 -0.812 -1.08 2.15 0.183 1.72 0.75 0.585 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7 2.7
-   <span title="129 elements skipped.">...</span>
-   2.7
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-0.342</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">0.183</span>
+     <span class="td">1.72</span>
+     <span class="td">0.75</span>
+     <span class="td">0.585</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">2.7</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">2.7</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>cm</i>
   </span>
  </p>
@@ -847,11 +1509,38 @@
    =
    <b>vector</b>
    ( 250 )  =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="229 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="229 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -863,9 +1552,34 @@
    =
    <b>range</b>
    ( 1; 20; 1 )  =
-   <b class="b0">[</b>
-   1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">2</span>
+     <span class="td">3</span>
+     <span class="td">4</span>
+     <span class="td">5</span>
+     <span class="td">6</span>
+     <span class="td">7</span>
+     <span class="td">8</span>
+     <span class="td">9</span>
+     <span class="td">10</span>
+     <span class="td">11</span>
+     <span class="td">12</span>
+     <span class="td">13</span>
+     <span class="td">14</span>
+     <span class="td">15</span>
+     <span class="td">16</span>
+     <span class="td">17</span>
+     <span class="td">18</span>
+     <span class="td">19</span>
+     <span class="td">20</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -880,12 +1594,40 @@
     v
    </var>
    ! =
-   <b class="b0">[</b>
-   1 2 6 24 120 720 5040 40320 362880 3628800 39916800 479001600 6227020800 87178291200 1307674368000 20922789888000 355687428096000 6402373705728000 1.22×10
-   <sup>17</sup>
-   2.43×10
-   <sup>18</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">2</span>
+     <span class="td">6</span>
+     <span class="td">24</span>
+     <span class="td">120</span>
+     <span class="td">720</span>
+     <span class="td">5040</span>
+     <span class="td">40320</span>
+     <span class="td">362880</span>
+     <span class="td">3628800</span>
+     <span class="td">39916800</span>
+     <span class="td">479001600</span>
+     <span class="td">6227020800</span>
+     <span class="td">87178291200</span>
+     <span class="td">1307674368000</span>
+     <span class="td">20922789888000</span>
+     <span class="td">355687428096000</span>
+     <span class="td">6402373705728000</span>
+     <span class="td">
+      1.22×10
+      <sup>17</sup>
+     </span>
+     <span class="td">
+      2.43×10
+      <sup>18</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -911,12 +1653,40 @@
     v
    </var>
    )  =
-   <b class="b0">[</b>
-   1 2 6 24 120 720 5040 40320 362880 3628800 39916800 479001600 6227020800 87178291200 1307674368000 20922789888000 355687428096000 6402373705728000 1.22×10
-   <sup>17</sup>
-   2.43×10
-   <sup>18</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">2</span>
+     <span class="td">6</span>
+     <span class="td">24</span>
+     <span class="td">120</span>
+     <span class="td">720</span>
+     <span class="td">5040</span>
+     <span class="td">40320</span>
+     <span class="td">362880</span>
+     <span class="td">3628800</span>
+     <span class="td">39916800</span>
+     <span class="td">479001600</span>
+     <span class="td">6227020800</span>
+     <span class="td">87178291200</span>
+     <span class="td">1307674368000</span>
+     <span class="td">20922789888000</span>
+     <span class="td">355687428096000</span>
+     <span class="td">6402373705728000</span>
+     <span class="td">
+      1.22×10
+      <sup>17</sup>
+     </span>
+     <span class="td">
+      2.43×10
+      <sup>18</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -930,11 +1700,38 @@
     y
    </var>
    =
-   <b class="b0">[</b>
-   2.98 2.21 -1.06 -0.831 -3.1 -1.87 -3.13 -0.9 -1.16 2.07 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.98</span>
+     <span class="td">2.21</span>
+     <span class="td">-1.06</span>
+     <span class="td">-0.831</span>
+     <span class="td">-3.1</span>
+     <span class="td">-1.87</span>
+     <span class="td">-3.13</span>
+     <span class="td">-0.9</span>
+     <span class="td">-1.16</span>
+     <span class="td">2.07</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>min</i>
    <sup class="unit">-1</sup>
   </span>
@@ -969,11 +1766,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1014,11 +1838,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1031,11 +1882,38 @@
     z
    </var>
    =
-   <b class="b0">[</b>
-   7.23 2.96 2.19 -1.08 -0.849 -3.12 -1.88 -3.15 -0.915 -1.18 2.06 2.79 7.03 8.77 14.01 16.75 22.99 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">7.23</span>
+     <span class="td">2.96</span>
+     <span class="td">2.19</span>
+     <span class="td">-1.08</span>
+     <span class="td">-0.849</span>
+     <span class="td">-3.12</span>
+     <span class="td">-1.88</span>
+     <span class="td">-3.15</span>
+     <span class="td">-0.915</span>
+     <span class="td">-1.18</span>
+     <span class="td">2.06</span>
+     <span class="td">2.79</span>
+     <span class="td">7.03</span>
+     <span class="td">8.77</span>
+     <span class="td">14.01</span>
+     <span class="td">16.75</span>
+     <span class="td">22.99</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>h</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1070,11 +1948,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1115,11 +2020,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1132,11 +2064,38 @@
     z
    </var>
    =
-   <b class="b0">[</b>
-   7.23 2.96 2.19 -1.08 -0.849 -3.12 -1.88 -3.15 -0.915 -1.18 2.06 2.79 7.03 8.77 14.01 16.75 22.99 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">7.23</span>
+     <span class="td">2.96</span>
+     <span class="td">2.19</span>
+     <span class="td">-1.08</span>
+     <span class="td">-0.849</span>
+     <span class="td">-3.12</span>
+     <span class="td">-1.88</span>
+     <span class="td">-3.15</span>
+     <span class="td">-0.915</span>
+     <span class="td">-1.18</span>
+     <span class="td">2.06</span>
+     <span class="td">2.79</span>
+     <span class="td">7.03</span>
+     <span class="td">8.77</span>
+     <span class="td">14.01</span>
+     <span class="td">16.75</span>
+     <span class="td">22.99</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>h</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1171,11 +2130,38 @@
    <i>h</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1
-   <span title="9999978 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1216,11 +2202,38 @@
    <i>h</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1
-   <span title="9999978 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1233,11 +2246,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 16.82 23.06 26.79 34.03 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">16.82</span>
+     <span class="td">23.06</span>
+     <span class="td">26.79</span>
+     <span class="td">34.03</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1272,11 +2312,38 @@
    <i>h</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-   <span title="129 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1317,11 +2384,38 @@
    <i>h</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-   <span title="129 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1334,11 +2428,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 16.82 23.06 26.79 34.03 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">16.82</span>
+     <span class="td">23.06</span>
+     <span class="td">26.79</span>
+     <span class="td">34.03</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1373,11 +2494,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1418,11 +2566,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1435,11 +2610,38 @@
     y
    </var>
    =
-   <b class="b0">[</b>
-   2.98 2.21 -1.06 -0.831 -3.1 -1.87 -3.13 -0.9 -1.16 2.07 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.98</span>
+     <span class="td">2.21</span>
+     <span class="td">-1.06</span>
+     <span class="td">-0.831</span>
+     <span class="td">-3.1</span>
+     <span class="td">-1.87</span>
+     <span class="td">-3.13</span>
+     <span class="td">-0.9</span>
+     <span class="td">-1.16</span>
+     <span class="td">2.07</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>min</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1474,11 +2676,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-   <span title="479 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1519,11 +2748,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-   <span title="479 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1537,11 +2793,38 @@
     y
    </var>
    =
-   <b class="b0">[</b>
-   2.98 2.21 -1.06 -0.831 -3.1 -1.87 -3.13 -0.9 -1.16 2.07 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">2.98</span>
+     <span class="td">2.21</span>
+     <span class="td">-1.06</span>
+     <span class="td">-0.831</span>
+     <span class="td">-3.1</span>
+     <span class="td">-1.87</span>
+     <span class="td">-3.13</span>
+     <span class="td">-0.9</span>
+     <span class="td">-1.16</span>
+     <span class="td">2.07</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>min</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1576,11 +2859,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1621,11 +2931,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="479 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="479 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1638,11 +2975,38 @@
     z
    </var>
    =
-   <b class="b0">[</b>
-   7.23 2.96 2.19 -1.08 -0.849 -3.12 -1.88 -3.15 -0.915 -1.18 2.06 2.79 7.03 8.77 14.01 16.75 22.99 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">7.23</span>
+     <span class="td">2.96</span>
+     <span class="td">2.19</span>
+     <span class="td">-1.08</span>
+     <span class="td">-0.849</span>
+     <span class="td">-3.12</span>
+     <span class="td">-1.88</span>
+     <span class="td">-3.15</span>
+     <span class="td">-0.915</span>
+     <span class="td">-1.18</span>
+     <span class="td">2.06</span>
+     <span class="td">2.79</span>
+     <span class="td">7.03</span>
+     <span class="td">8.77</span>
+     <span class="td">14.01</span>
+     <span class="td">16.75</span>
+     <span class="td">22.99</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>h</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1677,11 +3041,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1722,11 +3113,38 @@
    <i>min</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1739,11 +3157,38 @@
     z
    </var>
    =
-   <b class="b0">[</b>
-   7.23 2.96 2.19 -1.08 -0.849 -3.12 -1.88 -3.15 -0.915 -1.18 2.06 2.79 7.03 8.77 14.01 16.75 22.99 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">7.23</span>
+     <span class="td">2.96</span>
+     <span class="td">2.19</span>
+     <span class="td">-1.08</span>
+     <span class="td">-0.849</span>
+     <span class="td">-3.12</span>
+     <span class="td">-1.88</span>
+     <span class="td">-3.15</span>
+     <span class="td">-0.915</span>
+     <span class="td">-1.18</span>
+     <span class="td">2.06</span>
+     <span class="td">2.79</span>
+     <span class="td">7.03</span>
+     <span class="td">8.77</span>
+     <span class="td">14.01</span>
+     <span class="td">16.75</span>
+     <span class="td">22.99</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>h</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1778,11 +3223,38 @@
    <i>h</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1823,11 +3295,38 @@
    <i>h</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0
-   <span title="9999978 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="9999978 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1840,11 +3339,38 @@
     x
    </var>
    =
-   <b class="b0">[</b>
-   -1.77 -3.04 -0.812 -1.08 2.15 2.88 7.12 8.85 14.09 16.82 23.06 26.79 34.03 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-1.77</span>
+     <span class="td">-3.04</span>
+     <span class="td">-0.812</span>
+     <span class="td">-1.08</span>
+     <span class="td">2.15</span>
+     <span class="td">2.88</span>
+     <span class="td">7.12</span>
+     <span class="td">8.85</span>
+     <span class="td">14.09</span>
+     <span class="td">16.82</span>
+     <span class="td">23.06</span>
+     <span class="td">26.79</span>
+     <span class="td">34.03</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1885,11 +3411,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1931,11 +3484,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   3.63 2.36 4.59 4.32 7.55 8.28 12.52 14.25 19.49 22.22 28.46 32.19 39.43 5.4 5.4 5.4 5.4 5.4 5.4 5.4
-   <span title="129 elements skipped.">...</span>
-   5.4
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">3.63</span>
+     <span class="td">2.36</span>
+     <span class="td">4.59</span>
+     <span class="td">4.32</span>
+     <span class="td">7.55</span>
+     <span class="td">8.28</span>
+     <span class="td">12.52</span>
+     <span class="td">14.25</span>
+     <span class="td">19.49</span>
+     <span class="td">22.22</span>
+     <span class="td">28.46</span>
+     <span class="td">32.19</span>
+     <span class="td">39.43</span>
+     <span class="td">5.4</span>
+     <span class="td">5.4</span>
+     <span class="td">5.4</span>
+     <span class="td">5.4</span>
+     <span class="td">5.4</span>
+     <span class="td">5.4</span>
+     <span class="td">5.4</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">5.4</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-1</sup>
   </span>
@@ -1981,11 +3561,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -2031,11 +3638,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   -2.67 -3.94 -1.71 -1.98 1.25 1.98 6.22 7.95 13.19 15.92 22.16 25.89 33.13 -0.9 -0.9 -0.9 -0.9 -0.9 -0.9 -0.9
-   <span title="129 elements skipped.">...</span>
-   -0.9
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-2.67</span>
+     <span class="td">-3.94</span>
+     <span class="td">-1.71</span>
+     <span class="td">-1.98</span>
+     <span class="td">1.25</span>
+     <span class="td">1.98</span>
+     <span class="td">6.22</span>
+     <span class="td">7.95</span>
+     <span class="td">13.19</span>
+     <span class="td">15.92</span>
+     <span class="td">22.16</span>
+     <span class="td">25.89</span>
+     <span class="td">33.13</span>
+     <span class="td">-0.9</span>
+     <span class="td">-0.9</span>
+     <span class="td">-0.9</span>
+     <span class="td">-0.9</span>
+     <span class="td">-0.9</span>
+     <span class="td">-0.9</span>
+     <span class="td">-0.9</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">-0.9</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-1</sup>
   </span>
@@ -2060,11 +3694,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    =
-   <b class="b0">[</b>
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   <span title="129 elements skipped.">...</span>
-   0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -2106,11 +3767,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   -2.09 -7.17 1.75 0.676 13.6 16.53 33.47 40.4 61.34 72.28 97.23 112.18 141.13 5 5 5 5 5 5 5
-   <span title="129 elements skipped.">...</span>
-   5
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-2.09</span>
+     <span class="td">-7.17</span>
+     <span class="td">1.75</span>
+     <span class="td">0.676</span>
+     <span class="td">13.6</span>
+     <span class="td">16.53</span>
+     <span class="td">33.47</span>
+     <span class="td">40.4</span>
+     <span class="td">61.34</span>
+     <span class="td">72.28</span>
+     <span class="td">97.23</span>
+     <span class="td">112.18</span>
+     <span class="td">141.13</span>
+     <span class="td">5</span>
+     <span class="td">5</span>
+     <span class="td">5</span>
+     <span class="td">5</span>
+     <span class="td">5</span>
+     <span class="td">5</span>
+     <span class="td">5</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">5</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-1</sup>
   </span>
@@ -2174,11 +3862,38 @@
    <i>s</i>
    <sup class="unit">-2</sup>
    =
-   <b class="b0">[</b>
-   4.14 10.25 1.66 2.17 5.62 9.31 51.64 79.33 199.39 283.94 532.64 718.96 1159.24 1 1 1 1 1 1 1
-   <span title="129 elements skipped.">...</span>
-   1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">4.14</span>
+     <span class="td">10.25</span>
+     <span class="td">1.66</span>
+     <span class="td">2.17</span>
+     <span class="td">5.62</span>
+     <span class="td">9.31</span>
+     <span class="td">51.64</span>
+     <span class="td">79.33</span>
+     <span class="td">199.39</span>
+     <span class="td">283.94</span>
+     <span class="td">532.64</span>
+     <span class="td">718.96</span>
+     <span class="td">1159.24</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-2</sup>
   </span>
@@ -2226,11 +3941,38 @@
    <i>s</i>
    <sup class="unit">-1</sup>
    )  =
-   <b class="b0">[</b>
-   56.28 62.4 53.8 54.31 57.77 61.46 103.79 131.47 251.54 336.09 584.79 771.1 1211.38 53.14 53.14 53.14 53.14 53.14 53.14 53.14
-   <span title="129 elements skipped.">...</span>
-   53.14
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">56.28</span>
+     <span class="td">62.4</span>
+     <span class="td">53.8</span>
+     <span class="td">54.31</span>
+     <span class="td">57.77</span>
+     <span class="td">61.46</span>
+     <span class="td">103.79</span>
+     <span class="td">131.47</span>
+     <span class="td">251.54</span>
+     <span class="td">336.09</span>
+     <span class="td">584.79</span>
+     <span class="td">771.1</span>
+     <span class="td">1211.38</span>
+     <span class="td">53.14</span>
+     <span class="td">53.14</span>
+     <span class="td">53.14</span>
+     <span class="td">53.14</span>
+     <span class="td">53.14</span>
+     <span class="td">53.14</span>
+     <span class="td">53.14</span>
+     <span class="td">
+      <span title="129 elements skipped.">...</span>
+     </span>
+     <span class="td">53.14</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
    <i>s</i>
    <sup class="unit">-2</sup>
   </span>

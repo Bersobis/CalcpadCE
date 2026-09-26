@@ -10,34 +10,74 @@
     <var>m1</var>
    </b>
    =
-   <b class="b0">[</b>
-   17
-   <i>min</i>
-   -5
-   <i>min</i>
-   0.5
-   <i>min</i>
-   -3.14
-   <i>min</i>
-   <span class="b0">|</span>
-   8
-   <i>min</i>
-   -7.89
-   <i>min</i>
-   0
-   <i>min</i>
-   3.3
-   <i>min</i>
-   <span class="b0">|</span>
-   -12
-   <i>min</i>
-   6.28
-   <i>min</i>
-   4
-   <i>min</i>
-   -1.23
-   <i>min</i>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      17
+      <i>min</i>
+     </span>
+     <span class="td">
+      -5
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.5
+      <i>min</i>
+     </span>
+     <span class="td">
+      -3.14
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      8
+      <i>min</i>
+     </span>
+     <span class="td">
+      -7.89
+      <i>min</i>
+     </span>
+     <span class="td">
+      0
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.3
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -12
+      <i>min</i>
+     </span>
+     <span class="td">
+      6.28
+      <i>min</i>
+     </span>
+     <span class="td">
+      4
+      <i>min</i>
+     </span>
+     <span class="td">
+      -1.23
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -71,34 +111,74 @@
    + 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   17.05
-   <i>min</i>
-   -4.95
-   <i>min</i>
-   0.545
-   <i>min</i>
-   -3.09
-   <i>min</i>
-   <span class="b0">|</span>
-   8.05
-   <i>min</i>
-   -7.84
-   <i>min</i>
-   0.0452
-   <i>min</i>
-   3.35
-   <i>min</i>
-   <span class="b0">|</span>
-   -11.95
-   <i>min</i>
-   6.33
-   <i>min</i>
-   4.05
-   <i>min</i>
-   -1.18
-   <i>min</i>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      17.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      -4.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.545
+      <i>min</i>
+     </span>
+     <span class="td">
+      -3.09
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      8.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      -7.84
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.0452
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.35
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -11.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      6.33
+      <i>min</i>
+     </span>
+     <span class="td">
+      4.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      -1.18
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -136,34 +216,74 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   17.05
-   <i>min</i>
-   -4.95
-   <i>min</i>
-   0.545
-   <i>min</i>
-   -3.09
-   <i>min</i>
-   <span class="b0">|</span>
-   8.05
-   <i>min</i>
-   -7.84
-   <i>min</i>
-   0.0452
-   <i>min</i>
-   3.35
-   <i>min</i>
-   <span class="b0">|</span>
-   -11.95
-   <i>min</i>
-   6.33
-   <i>min</i>
-   4.05
-   <i>min</i>
-   -1.18
-   <i>min</i>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      17.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      -4.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.545
+      <i>min</i>
+     </span>
+     <span class="td">
+      -3.09
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      8.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      -7.84
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.0452
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.35
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -11.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      6.33
+      <i>min</i>
+     </span>
+     <span class="td">
+      4.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      -1.18
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -188,34 +308,74 @@
    − 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   16.95
-   <i>min</i>
-   -5.05
-   <i>min</i>
-   0.455
-   <i>min</i>
-   -3.19
-   <i>min</i>
-   <span class="b0">|</span>
-   7.95
-   <i>min</i>
-   -7.94
-   <i>min</i>
-   -0.0452
-   <i>min</i>
-   3.25
-   <i>min</i>
-   <span class="b0">|</span>
-   -12.05
-   <i>min</i>
-   6.23
-   <i>min</i>
-   3.95
-   <i>min</i>
-   -1.28
-   <i>min</i>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      16.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      -5.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.455
+      <i>min</i>
+     </span>
+     <span class="td">
+      -3.19
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      7.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      -7.94
+      <i>min</i>
+     </span>
+     <span class="td">
+      -0.0452
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.25
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -12.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      6.23
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      -1.28
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -253,34 +413,74 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   16.95
-   <i>min</i>
-   -5.05
-   <i>min</i>
-   0.455
-   <i>min</i>
-   -3.19
-   <i>min</i>
-   <span class="b0">|</span>
-   7.95
-   <i>min</i>
-   -7.94
-   <i>min</i>
-   -0.0452
-   <i>min</i>
-   3.25
-   <i>min</i>
-   <span class="b0">|</span>
-   -12.05
-   <i>min</i>
-   6.23
-   <i>min</i>
-   3.95
-   <i>min</i>
-   -1.28
-   <i>min</i>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      16.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      -5.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      0.455
+      <i>min</i>
+     </span>
+     <span class="td">
+      -3.19
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      7.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      -7.94
+      <i>min</i>
+     </span>
+     <span class="td">
+      -0.0452
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.25
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -12.05
+      <i>min</i>
+     </span>
+     <span class="td">
+      6.23
+      <i>min</i>
+     </span>
+     <span class="td">
+      3.95
+      <i>min</i>
+     </span>
+     <span class="td">
+      -1.28
+      <i>min</i>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -311,46 +511,86 @@
    · 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   0.768
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.226
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.0226
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.142
-   <i>min</i>
-   <sup class="unit">2</sup>
-   <span class="b0">|</span>
-   0.361
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.356
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.149
-   <i>min</i>
-   <sup class="unit">2</sup>
-   <span class="b0">|</span>
-   -0.542
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.284
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.181
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.0556
-   <i>min</i>
-   <sup class="unit">2</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      0.768
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.226
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.0226
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.142
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      0.361
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.356
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.149
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -0.542
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.284
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.181
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.0556
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -388,46 +628,86 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   0.768
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.226
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.0226
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.142
-   <i>min</i>
-   <sup class="unit">2</sup>
-   <span class="b0">|</span>
-   0.361
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.356
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.149
-   <i>min</i>
-   <sup class="unit">2</sup>
-   <span class="b0">|</span>
-   -0.542
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.284
-   <i>min</i>
-   <sup class="unit">2</sup>
-   0.181
-   <i>min</i>
-   <sup class="unit">2</sup>
-   -0.0556
-   <i>min</i>
-   <sup class="unit">2</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      0.768
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.226
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.0226
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.142
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      0.361
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.356
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.149
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      -0.542
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.284
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      0.181
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+      -0.0556
+      <i>min</i>
+      <sup class="unit">2</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -457,13 +737,38 @@
     <i>s</i>
    </span>
    =
-   <b class="b0">[</b>
-   376.38 -110.7 11.07 -69.52
-   <span class="b0">|</span>
-   177.12 -174.69 0 73.06
-   <span class="b0">|</span>
-   -265.68 139.04 88.56 -27.23
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">376.38</span>
+     <span class="td">-110.7</span>
+     <span class="td">11.07</span>
+     <span class="td">-69.52</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">177.12</span>
+     <span class="td">-174.69</span>
+     <span class="td">0</span>
+     <span class="td">73.06</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-265.68</span>
+     <span class="td">139.04</span>
+     <span class="td">88.56</span>
+     <span class="td">-27.23</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -504,13 +809,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   376.38 -110.7 11.07 -69.52
-   <span class="b0">|</span>
-   177.12 -174.69 0 73.06
-   <span class="b0">|</span>
-   -265.68 139.04 88.56 -27.23
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">376.38</span>
+     <span class="td">-110.7</span>
+     <span class="td">11.07</span>
+     <span class="td">-69.52</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">177.12</span>
+     <span class="td">-174.69</span>
+     <span class="td">0</span>
+     <span class="td">73.06</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-265.68</span>
+     <span class="td">139.04</span>
+     <span class="td">88.56</span>
+     <span class="td">-27.23</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -548,46 +878,86 @@
     1.16
    </sup>
    =
-   <b class="b0">[</b>
-   26.75
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   0.448
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="b0">|</span>
-   11.16
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   0
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   3.99
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="b0">|</span>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   8.43
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   4.99
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      26.75
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      0.448
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      11.16
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      0
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      3.99
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      8.43
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      4.99
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -627,46 +997,86 @@
     <var>m1</var>
    </b>
    ; 1.16 )  =
-   <b class="b0">[</b>
-   26.75
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   0.448
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="b0">|</span>
-   11.16
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   0
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   3.99
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="b0">|</span>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   8.43
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   4.99
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <span class="err">Undefined</span>
-   <i>min</i>
-   <sup class="unit">1.16</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      26.75
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      0.448
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      11.16
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      0
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      3.99
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      8.43
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      4.99
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+      <span class="err">Undefined</span>
+      <i>min</i>
+      <sup class="unit">1.16</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -734,13 +1144,38 @@
    \2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   376 -110 11 -69
-   <span class="b0">|</span>
-   177 -174 0 73
-   <span class="b0">|</span>
-   -265 139 88 -27
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">376</span>
+     <span class="td">-110</span>
+     <span class="td">11</span>
+     <span class="td">-69</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">177</span>
+     <span class="td">-174</span>
+     <span class="td">0</span>
+     <span class="td">73</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-265</span>
+     <span class="td">139</span>
+     <span class="td">88</span>
+     <span class="td">-27</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -778,13 +1213,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   376 -110 11 -69
-   <span class="b0">|</span>
-   177 -174 0 73
-   <span class="b0">|</span>
-   -265 139 88 -27
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">376</span>
+     <span class="td">-110</span>
+     <span class="td">11</span>
+     <span class="td">-69</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">177</span>
+     <span class="td">-174</span>
+     <span class="td">0</span>
+     <span class="td">73</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-265</span>
+     <span class="td">139</span>
+     <span class="td">88</span>
+     <span class="td">-27</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -808,13 +1268,38 @@
    2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   376.38 -110.7 11.07 -69.52
-   <span class="b0">|</span>
-   177.12 -174.69 0 73.06
-   <span class="b0">|</span>
-   -265.68 139.04 88.56 -27.23
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">376.38</span>
+     <span class="td">-110.7</span>
+     <span class="td">11.07</span>
+     <span class="td">-69.52</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">177.12</span>
+     <span class="td">-174.69</span>
+     <span class="td">0</span>
+     <span class="td">73.06</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-265.68</span>
+     <span class="td">139.04</span>
+     <span class="td">88.56</span>
+     <span class="td">-27.23</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -852,13 +1337,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   376.38 -110.7 11.07 -69.52
-   <span class="b0">|</span>
-   177.12 -174.69 0 73.06
-   <span class="b0">|</span>
-   -265.68 139.04 88.56 -27.23
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">376.38</span>
+     <span class="td">-110.7</span>
+     <span class="td">11.07</span>
+     <span class="td">-69.52</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">177.12</span>
+     <span class="td">-174.69</span>
+     <span class="td">0</span>
+     <span class="td">73.06</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">-265.68</span>
+     <span class="td">139.04</span>
+     <span class="td">88.56</span>
+     <span class="td">-27.23</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -869,13 +1379,38 @@
     <var>fm</var>
    </b>
    =
-   <b class="b0">[</b>
-   11 22 33 44
-   <span class="b0">|</span>
-   55 66 77 88
-   <span class="b0">|</span>
-   99 100 111 122
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">11</span>
+     <span class="td">22</span>
+     <span class="td">33</span>
+     <span class="td">44</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">55</span>
+     <span class="td">66</span>
+     <span class="td">77</span>
+     <span class="td">88</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">99</span>
+     <span class="td">100</span>
+     <span class="td">111</span>
+     <span class="td">122</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -888,32 +1423,71 @@
     <var>fm</var>
    </b>
    ! =
-   <b class="b0">[</b>
-   39916800 1.12×10
-   <sup>21</sup>
-   8.68×10
-   <sup>36</sup>
-   2.66×10
-   <sup>54</sup>
-   <span class="b0">|</span>
-   1.27×10
-   <sup>73</sup>
-   5.44×10
-   <sup>92</sup>
-   1.45×10
-   <sup>113</sup>
-   1.85×10
-   <sup>134</sup>
-   <span class="b0">|</span>
-   9.33×10
-   <sup>155</sup>
-   9.33×10
-   <sup>157</sup>
-   1.76×10
-   <sup>180</sup>
-   9.88×10
-   <sup>202</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">39916800</span>
+     <span class="td">
+      1.12×10
+      <sup>21</sup>
+     </span>
+     <span class="td">
+      8.68×10
+      <sup>36</sup>
+     </span>
+     <span class="td">
+      2.66×10
+      <sup>54</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      1.27×10
+      <sup>73</sup>
+     </span>
+     <span class="td">
+      5.44×10
+      <sup>92</sup>
+     </span>
+     <span class="td">
+      1.45×10
+      <sup>113</sup>
+     </span>
+     <span class="td">
+      1.85×10
+      <sup>134</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      9.33×10
+      <sup>155</sup>
+     </span>
+     <span class="td">
+      9.33×10
+      <sup>157</sup>
+     </span>
+     <span class="td">
+      1.76×10
+      <sup>180</sup>
+     </span>
+     <span class="td">
+      9.88×10
+      <sup>202</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -938,32 +1512,71 @@
     <var>fm</var>
    </b>
    )  =
-   <b class="b0">[</b>
-   39916800 1.12×10
-   <sup>21</sup>
-   8.68×10
-   <sup>36</sup>
-   2.66×10
-   <sup>54</sup>
-   <span class="b0">|</span>
-   1.27×10
-   <sup>73</sup>
-   5.44×10
-   <sup>92</sup>
-   1.45×10
-   <sup>113</sup>
-   1.85×10
-   <sup>134</sup>
-   <span class="b0">|</span>
-   9.33×10
-   <sup>155</sup>
-   9.33×10
-   <sup>157</sup>
-   1.76×10
-   <sup>180</sup>
-   9.88×10
-   <sup>202</sup>
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">39916800</span>
+     <span class="td">
+      1.12×10
+      <sup>21</sup>
+     </span>
+     <span class="td">
+      8.68×10
+      <sup>36</sup>
+     </span>
+     <span class="td">
+      2.66×10
+      <sup>54</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      1.27×10
+      <sup>73</sup>
+     </span>
+     <span class="td">
+      5.44×10
+      <sup>92</sup>
+     </span>
+     <span class="td">
+      1.45×10
+      <sup>113</sup>
+     </span>
+     <span class="td">
+      1.85×10
+      <sup>134</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">
+      9.33×10
+      <sup>155</sup>
+     </span>
+     <span class="td">
+      9.33×10
+      <sup>157</sup>
+     </span>
+     <span class="td">
+      1.76×10
+      <sup>180</sup>
+     </span>
+     <span class="td">
+      9.88×10
+      <sup>202</sup>
+     </span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -989,13 +1602,38 @@
    ≡ 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   0 0 0 0
-   <span class="b0">|</span>
-   0 0 0 0
-   <span class="b0">|</span>
-   0 0 0 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1033,13 +1671,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0
-   <span class="b0">|</span>
-   0 0 0 0
-   <span class="b0">|</span>
-   0 0 0 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1062,13 +1725,38 @@
    ≠ 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1106,13 +1794,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1135,13 +1848,38 @@
    &lt; 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   0 1 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1179,13 +1917,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   0 1 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1208,13 +1971,38 @@
    &gt; 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   1 0 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1252,13 +2040,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   1 0 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1281,13 +2094,38 @@
    ≥ 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   1 0 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1325,13 +2163,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   1 0 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1354,13 +2217,38 @@
    ≤ 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   0 1 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1398,13 +2286,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   0 1 0 1
-   <span class="b0">|</span>
-   0 1 1 0
-   <span class="b0">|</span>
-   1 0 0 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1430,13 +2343,38 @@
    and 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 0 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1474,13 +2412,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 0 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1503,13 +2466,38 @@
    or 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1547,13 +2535,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <span class="b0">|</span>
-   1 1 1 1
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">1</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1576,13 +2589,38 @@
    xor 2.71
    <i>s</i>
    =
-   <b class="b0">[</b>
-   0 0 0 0
-   <span class="b0">|</span>
-   0 0 1 0
-   <span class="b0">|</span>
-   0 0 0 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>
@@ -1620,13 +2658,38 @@
    ; 2.71
    <i>s</i>
    )  =
-   <b class="b0">[</b>
-   0 0 0 0
-   <span class="b0">|</span>
-   0 0 1 0
-   <span class="b0">|</span>
-   0 0 0 0
-   <b class="b0">]</b>
+   <span class="matrix">
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">1</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+    <span class="tr">
+     <span class="td">
+     </span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">0</span>
+     <span class="td">
+     </span>
+    </span>
+   </span>
   </span>
  </p>
  <p>

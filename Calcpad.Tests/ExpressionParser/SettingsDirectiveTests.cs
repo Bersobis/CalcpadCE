@@ -9,9 +9,10 @@ namespace Calcpad.Tests
             return parser.HtmlResult;
         }
 
-        // Inline rendering uses a bold bracket; grid rendering wraps in <span class="matrix">.
+        // The substitution step is inline on a single bracketed line or a grid of aligned
+        // cells. Calculated results are always the grid, so both markers can coexist.
         private const string Grid = "<span class=\"matrix\">";
-        private const string Inline = "<b class=\"b0\">[</b>";
+        private const string Inline = "<span class=\"b0\">[</span>";
 
         [Fact]
         public void SettingsDirective_AppliesDecimals()
@@ -23,31 +24,61 @@ namespace Calcpad.Tests
         [Fact]
         public void SettingsDirective_AppliesInlineMatrices()
         {
-            var html = Render("#settings {\"inlineMatrices\": true}\nv = [1; 2; 3]");
+            var substitution = SubstitutionOf(Render("F = 6\n#settings {\"inlineMatrices\": true}\n[F; 2; 3]"));
 
-            Assert.DoesNotContain(Grid, html);
-            Assert.Contains(Inline, html);
+            Assert.Contains(Inline, substitution);
+            Assert.DoesNotContain(Grid, substitution);
         }
 
         [Fact]
         public void SettingsDirective_ChangesInlineMatricesMidFile()
         {
-            // Both markers must appear: a renders inline, b renders as a grid again.
+            // a substitutes inline, b substitutes as a grid again. Counting the grids per
+            // equation: a has only its result, b has the literal and the substituted value.
             var html = Render(
-                "#settings {\"inlineMatrices\": true}\na = [1; 2; 3]\n" +
-                "#settings {\"inlineMatrices\": false}\nb = [1; 2; 3]");
+                "F = 6\n#settings {\"inlineMatrices\": true}\na = [1; 2; F]\n" +
+                "#settings {\"inlineMatrices\": false}\nb = [1; 2; F]");
+            var equations = html.Split("<span class=\"eq\">").Skip(1).ToArray();
 
-            Assert.Contains(Inline, html);
-            Assert.Contains(Grid, html);
+            Assert.Equal(3, equations.Length);
+            Assert.Contains(Inline, equations[1]);
+            Assert.Equal(1, CountOccurrences(equations[1], Grid));
+            Assert.Equal(2, CountOccurrences(equations[2], Grid));
         }
 
         [Fact]
         public void SettingsDirective_LeavesInlineAsTheDefault()
         {
-            var html = Render("v = [1; 2; 3]");
+            var html = Render("F = 6\n[F; 2; 3]");
+            var substitution = SubstitutionOf(html);
 
-            Assert.DoesNotContain(Grid, html);
-            Assert.Contains(Inline, html);
+            Assert.Contains(Inline, substitution);
+            Assert.DoesNotContain(Grid, substitution);
+            Assert.Contains(Grid, ResultOf(html));
+        }
+
+        /// <summary>Substitution step of the last equation, i.e. what sits between the two " = ".</summary>
+        private static string SubstitutionOf(string html) => Parts(html) is { Length: > 2 } p ? p[1] : Parts(html)[0];
+
+        private static string ResultOf(string html) => Parts(html)[^1];
+
+        private static string[] Parts(string html)
+        {
+            var start = html.LastIndexOf("<span class=\"eq\">", StringComparison.Ordinal);
+            return html[start..].Split(" = ");
+        }
+
+        private static int CountOccurrences(string text, string value)
+        {
+            var count = 0;
+            var start = 0;
+            while ((start = text.IndexOf(value, start, StringComparison.Ordinal)) >= 0)
+            {
+                ++count;
+                start += value.Length;
+            }
+
+            return count;
         }
 
         [Fact]

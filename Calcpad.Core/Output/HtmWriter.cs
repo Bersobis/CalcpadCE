@@ -296,10 +296,7 @@ namespace Calcpad.Core
                 hp_m = null;
 
             var units = hp_m?.Units;
-            if (inlineMatrices)
-                AppendInline();
-            else
-                AppendGrid();
+            AppendGrid();
 
             if (units is not null)
                 sb.Append(HairSpace).Append(units.Html);
@@ -335,38 +332,6 @@ namespace Calcpad.Core
                 sb.AppendLine("</span>");
             }
 
-            void AppendInline()
-            {
-                var colSep = VectorSpacing;
-                var rowSep = FormatOperator('|');
-                sb.Append("<b class=\"b0\">[</b>");
-                for (int i = 0, nr = matrix.RowCount; i < nr; ++i)
-                {
-                    if (i > 0)
-                        sb.Append(rowSep);
-
-                    if (i == maxCount)
-                    {
-                        var skipped = nr - maxCount;
-                        sb.Append($"<span title=\"{skipped - Math.Sign(skipped - 1)} rows skipped.\">...</span>").Append(rowSep);
-                        i = nr - 1;
-                    }
-                    for (int j = 0; j < nc; ++j)
-                    {
-                        if (j > 0)
-                            sb.Append(colSep);
-
-                        if (j == maxCount)
-                        {
-                            sb.Append("...");
-                            j = nc - 1;
-                        }
-                        sb.Append(Cell(i, j));
-                    }
-                }
-                sb.Append("<b class=\"b0\">]</b>");
-            }
-
             string Cell(int i, int j)
             {
                 if (hp_m is null)
@@ -390,39 +355,12 @@ namespace Calcpad.Core
 
             var units = hp_v?.Units;
             var len = vector.Length;
-            if (inlineMatrices)
-                AppendRow();
-            else
-                AppendGrid();
+            AppendGrid();
 
             if (units is not null)
                 sb.Append(HairSpace).Append(units.Html);
 
             return sb.ToString();
-
-            void AppendRow()
-            {
-                var div = VectorSpacing;
-                sb.Append("<b class=\"b0\">[</b>");
-                for (int i = 0; i < len; ++i)
-                {
-                    if (i > 0)
-                        sb.Append(div);
-
-                    if (i == maxCount)
-                    {
-                        var n = len - maxCount;
-                        sb.Append($"<span title=\"{n - Math.Sign(n - 1)} elements skipped.\">...</span>")
-                            .Append(div);
-                        break;
-                    }
-                    AppendElement(i);
-                }
-                var last = len - 1;
-                if (maxCount < last)
-                    AppendElement(last);
-                sb.Append("<b class=\"b0\">]</b>");
-            }
 
             void AppendGrid()
             {
@@ -443,8 +381,6 @@ namespace Calcpad.Core
 
                 sb.Append(WrapMatrix([cells.ToArray()], cells.Count));
             }
-
-            void AppendElement(int index) => sb.Append(Element(index));
 
             string Element(int index)
             {

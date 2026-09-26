@@ -829,7 +829,7 @@ const SECTION_META: Record<string, { title: string; rows: Record<string, string>
       substitute: 'substitute variables',
       formatEquations: 'format equations professional inline',
       zeroSmallMatrixElements: 'zero small matrix elements scientific notation',
-      inlineMatrices: 'inline matrices vectors grid bracket single line rendering layout cells aligned',
+      inlineMatrices: 'inline matrices vectors grid bracket single line rendering layout cells aligned substitution result',
       showHiddenOutput: 'show hidden output hide debug debugging suppressed',
       maxOutputCount: 'max output count rows columns matrices vectors',
       precision: 'numerical precision integration root finding tolerance',

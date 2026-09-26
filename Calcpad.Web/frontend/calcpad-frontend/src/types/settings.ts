@@ -143,7 +143,7 @@ export const METADATA_SETTINGS_KEYS: MetadataSettingKey[] = [
     { key: 'substitute', label: 'Substitute variables', detail: 'Substitute variable values into expressions', type: 'boolean', def: true },
     { key: 'formatEquations', label: 'Format equations', detail: 'Professional (checked) renders equations in stacked math form; Inline (unchecked) renders them on a single line.', type: 'boolean', def: true },
     { key: 'zeroSmallMatrixElements', label: 'Zero small matrix elements', detail: 'Display very small matrix/vector values as 0 instead of using scientific notation.', type: 'boolean', def: true },
-    { key: 'inlineMatrices', label: 'Inline matrices', detail: 'Print matrices and vectors on a single bracketed line. On (default) uses inline output; off uses a grid of aligned cells inside full-height brackets.', type: 'boolean', def: true },
+    { key: 'inlineMatrices', label: 'Inline matrices', detail: 'Print the matrices and vectors of the substitution step on a single bracketed line. On (default) uses inline output; off uses a grid of aligned cells inside full-height brackets. Calculated results are always printed as a grid.', type: 'boolean', def: true },
     { key: 'showHiddenOutput', label: 'Show hidden output', detail: 'Ignore #hide so suppressed content is rendered anyway. For debugging.', type: 'boolean', def: false },
     { key: 'maxOutputCount', label: 'Max output count', detail: 'Maximum number of rows/columns shown for large matrices and vectors (5–100).', type: 'number', def: 20, min: 5, max: 100 },
     { key: 'isUs', label: 'Non-metric units', detail: 'Selects US or UK definitions for bare unit names that differ between the two systems (gal, ton, cwt, pt, qt, bbl, tonf, therm, etc.).', type: 'boolean', def: true },

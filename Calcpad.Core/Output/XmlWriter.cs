@@ -554,12 +554,9 @@ namespace Calcpad.Core
             return sb.Append("</m:m></m:e></m:d>").ToString();
         }
 
-        private static readonly string RunVectorSpacing = Run(VectorSpacing);
         private static readonly string RunDots = Run("...");
         internal override string FormatVector(Vector vector)
         {
-            var div = RunVectorSpacing;
-            var sb = new StringBuilder();
             const double tol = 1e-14;
             var zeroThreshold = GetMaxVisibleVectorValue(vector) * tol;
             if (zeroThreshold > tol)
@@ -584,9 +581,7 @@ namespace Calcpad.Core
             if (maxCount < last)
                 cells.Add(Element(last));
 
-            var s = inlineMatrices ?
-                AddBrackets(string.Join(div, cells), 0, '[', ']') :
-                WrapMatrix([cells.ToArray()], cells.Count);
+            var s = WrapMatrix([cells.ToArray()], cells.Count);
 
             if (units is not null)
                 s += units.Xml;
