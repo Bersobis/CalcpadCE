@@ -385,6 +385,9 @@ package-lock.json
 # Node
 *.node
 
+# Rust/Cargo local configuration
+.cargo/
+
 # Claude
 **.claude/settings.local.json
 

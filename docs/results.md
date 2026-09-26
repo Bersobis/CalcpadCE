@@ -42,32 +42,6 @@ If an equation gets too long and does not fit on a single line, you can choose t
 - `#split` the equation is split after the "=" symbol
 - `#wrap` the equation is wrapped at the end of the line (default)
 
-Matrices and vectors are rendered either as a structured grid of aligned cells enclosed in brackets that stretch to the full height of the content, or on a single line.
-Choose the way they look in the output with the `inlineMatrices` setting:
-
-- `#settings {"inlineMatrices": false}` matrices and vectors are rendered as a structured grid (default)
-- `#settings {"inlineMatrices": true}` matrices and vectors are rendered on a single line
-
-The setting applies from the point it appears to the rest of the document and has no `#end` form.
-You can change it back and forth as many times as you like; the last one in the document wins.
-Write each directive on a line of its own - only the first directive on a line is read.
-
-For example:
-
-```
-#settings {"inlineMatrices": false}
-A = [1; 2|3; 4]
-
-#settings {"inlineMatrices": true}
-B = [1; 2|3; 4]
-
-#settings {"inlineMatrices": false}
-C = [1; 2|3; 4]
-```
-
-Here *A* and *C* are printed as a grid of cells inside full-height brackets, while *B* is printed as a single line.
-The same switch is available globally, as "Inline Matrices" in the settings panel.
-
 ## Rounding
 
 Rounding is specified by the number of digits *n* after the decimal point.
