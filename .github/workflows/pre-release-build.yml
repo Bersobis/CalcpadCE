@@ -39,6 +39,8 @@ jobs:
         with:
           path: artifacts/
           merge-multiple: true
+          # Artifacts are uploaded raw; the portable build is itself a zip.
+          skip-decompress: true
 
       - name: Generate release notes
         env:
