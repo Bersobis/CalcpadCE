@@ -76,7 +76,7 @@ export function registerFormattingCommands(
 /**
  * The server's mode accounts for macros that switch mode; the text scan covers a cold cache.
  */
-function getParseMode(editor: monaco.editor.IStandaloneCodeEditor, bridge: EditorBridge): ParseMode {
+export function getParseMode(editor: monaco.editor.IStandaloneCodeEditor, bridge: EditorBridge): ParseMode {
     const model = editor.getModel();
     const pos = editor.getPosition();
     if (!model || !pos) return 'cpd';

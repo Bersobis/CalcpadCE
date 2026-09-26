@@ -112,6 +112,27 @@ A macro can also switch mode itself: a multi-line macro containing `#html` switc
 - Toggle comment and paste as comment use `<!-- … -->`.
 - Format Document re-indents directive lines but leaves content lines untouched.
 
+## Links
+
+A bare URL is turned into a link only by `#markdown`. 
+In `#html` write the `<a>` yourself.
+In Calcpad mode use an `'<a href="…">` comment or `#md on` with `[text](url)`.
+
+Links are always confirmed before anything happens, so the URL/filepath can be reviewed before proceeding.
+
+| Scheme         | On click                                                      |
+|----------------|---------------------------------------------------------------|
+| `http`, `https`| Prompts with the URL, then opens in the browser                |
+| `file`         | Prompts with the path, then opens it with the system default   |
+| `#anchor`    | Scrolls to that element in the preview, with no prompt          |
+| anything else  | Ignored, since the app uses URLs for navigation                |
+
+The worksheet template styles headings, paragraphs, and Calcpad's own output, but not the rest of what Markdown produces.
+Blockquotes, fenced code, rules, task lists, and table borders come out as browser defaults. Style them in an `#html` block when a document needs them. 
+The CSS snippets contain some helpful starting points
+
+Link targets do not currently support project/library paths, so only absolute paths will work.
+
 ## `#markdown` vs `#md on`
 
 `#md on` is a lighter toggle that stays in Calcpad mode: calculations still run, and only `'` comment lines are rendered as Markdown, one line at a time. Use `#markdown` for prose, tables and lists that span several lines, and `#md on` to format comments between calculations.

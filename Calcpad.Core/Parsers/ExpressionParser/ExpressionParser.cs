@@ -746,7 +746,7 @@ namespace Calcpad.Core
         {
             if (s.Length > 2 && s[0] == '<' && char.IsLetter(s[1]))
             {
-                var i = s.IndexOf('>');
+                var i = s.TagEndIndex();
                 if (i > 1)
                 {
                     var j = i;

@@ -239,6 +239,7 @@ export {
     getIndentLength,
     splitIndent,
     stripCommentPrefix,
+    stripCpdSnippetWrapper,
     lineHasCommentPrefix,
     isColumnInTextContext,
     getCommentPrefixInsertColumn,

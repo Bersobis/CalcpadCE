@@ -47,6 +47,34 @@ export function stripCommentPrefix(lineText: string): [indent: string, content: 
     return [indent, rest, ''];
 }
 
+const VAL_WRAPPER = /^#(end )?val$/i;
+
+/**
+ * Rewrites a pure-markup snippet written for Calcpad mode so it suits #html/#markdown, where
+ * the #val wrapper is rejected and content needs no comment quotes.
+ *
+ * Anything else is returned untouched: a snippet mixing Calcpad lines with markup (the SVG
+ * ones) only works in Calcpad mode, and a metadata comment is read from the ' comment token,
+ * so it keeps its prefix.
+ */
+export function stripCpdSnippetWrapper(text: string): string {
+    const lines = text.split('\n');
+    const content = lines.filter(line => line.trim() !== '');
+    const isWrapper = (line: string) => VAL_WRAPPER.test(line.trim());
+    if (!content.some(lineHasCommentPrefix)
+        || !content.every(line => isWrapper(line) || lineHasCommentPrefix(line))
+        || content.some(line => line.includes('<!--{')))
+        return text;
+
+    const kept: string[] = [];
+    for (const line of lines) {
+        if (isWrapper(line)) continue;
+        const [indent, rest] = splitIndent(line);
+        kept.push(rest.startsWith("'") ? indent + rest.slice(1) : line);
+    }
+    return kept.join('\n');
+}
+
 /** True if the line already opens a comment (a ' right after its indentation). */
 export function lineHasCommentPrefix(lineText: string): boolean {
     const [, rest] = splitIndent(lineText);

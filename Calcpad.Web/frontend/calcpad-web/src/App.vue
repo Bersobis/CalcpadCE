@@ -548,6 +548,28 @@
       </div>
     </div>
 
+    <!-- External-link prompt. The target comes from the worksheet, so it is shown
+         verbatim (as text, never markup) and the open is the user's decision. -->
+    <div v-if="openLinkState" class="modal-backdrop" @click.self="resolveOpenLink(false)">
+      <div class="modal-card" role="dialog" aria-modal="true">
+        <template v-if="openLinkState.mode === 'file'">
+          <div class="modal-title">Open this file?</div>
+          <div class="modal-message">This path comes from the worksheet. Your system will choose the application that opens it.</div>
+        </template>
+        <template v-else>
+          <div class="modal-title">Open external link?</div>
+          <div class="modal-message">This link comes from the worksheet and will open in your browser.</div>
+        </template>
+        <div class="modal-url">{{ openLinkState.url }}</div>
+        <div class="modal-actions">
+          <button class="modal-btn primary" @click="resolveOpenLink(true)">
+            {{ openLinkState.mode === 'file' ? 'Open File' : 'Open in Browser' }}
+          </button>
+          <button class="modal-btn" @click="resolveOpenLink(false)">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Quick-pick dialog. A single-select list modal (VS Code QuickPick
          analog) used e.g. by the image-storage prompt. -->
     <div v-if="quickPickState" class="modal-backdrop" @click.self="resolveQuickPick(null)">
@@ -1379,7 +1401,7 @@ function senderFrameId(source: MessageEventSource | null): string | null {
 /**
  * True if a message came from one of this app's preview frames. Exposed so the
  * host's own listener in main.ts can apply the same check to the frame-originated
- * messages it handles (previewConsole, navigateToLine, uiValueChange).
+ * messages it handles (previewConsole, navigateToLine, uiValueChange, openExternal).
  */
 function isPreviewFrameSource(source: MessageEventSource | null): boolean {
   return senderFrameId(source) !== null
@@ -1924,11 +1946,41 @@ function injectLineLinks(
     "      post(parseInt(n, 10), lineType);",
     "    });",
     "  });",
+    // Worksheet links are untrusted, and a sandboxed frame may navigate itself — so an
+    // activation never reaches the default action. Recognised schemes are handed to the
+    // host, which prompts before opening; anything else is simply dropped. auxclick is
+    // bound too, since middle-click fires no click event.
+    "  function onLinkActivate(e) {",
+    "    if (e.type === 'auxclick' && e.button !== 1) return;",
+    "    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;",
+    "    if (!a || a.hasAttribute('data-text')) return;",
+    "    var href = a.getAttribute('href') || '';",
+    "    if (!href) return;",
+    "    e.preventDefault();",
+    // srcdoc has no usable document URL, so the default action navigates to
+    // about:srcdoc#id and blanks the frame instead of scrolling.
+    "    if (href.charAt(0) === '#') { scrollToFragment(href.slice(1)); return; }",
+    "    if (!/^(https?|file):/i.test(href)) return;",
+    "    try { window.parent.postMessage({ type: 'openExternal', url: href, groupId: FRAME_ID }, '*'); } catch (_e) {}",
+    "  }",
+    "  function scrollToFragment(raw) {",
+    "    var id = raw;",
+    "    try { id = decodeURIComponent(raw); } catch (_e) {}",
+    "    var t = id ? (document.getElementById(id) || document.getElementsByName(id)[0]) : document.body;",
+    "    if (!t) return;",
+    "    if (window.__calcpadReleaseScroll) window.__calcpadReleaseScroll();",
+    "    t.scrollIntoView({ block: 'start' });",
+    "  }",
+    "  document.addEventListener('click', onLinkActivate);",
+    "  document.addEventListener('auxclick', onLinkActivate);",
     ...(lineLinks ? [
     "  function hideAllLineLinks() {",
     "    document.querySelectorAll('.lineLink').forEach(function(l) { l.style.display = 'none'; });",
     "  }",
+    // The arrow sits at left:-3em inside the .line element, so an inline one would
+    // put it mid-paragraph, and nesting it in an <a> is invalid besides.
     "  document.querySelectorAll('.line').forEach(function(el) {",
+    "    if (el.closest('a[href]') || getComputedStyle(el).display === 'inline') return;",
     "    var id = el.id || '';",
     "    var n = id.indexOf('line-') === 0 ? id.slice(5) : '';",
     "    var src = el.getAttribute('data-source-line') || n;",
@@ -2365,6 +2417,29 @@ function resolveConfirm(choice: ConfirmChoice): void {
   state.resolve(choice)
 }
 
+// ---- External-link prompt ----
+interface OpenLinkState {
+  url: string
+  mode: 'browser' | 'file'
+  resolve: (ok: boolean) => void
+}
+
+const openLinkState = ref<OpenLinkState | null>(null)
+
+function showOpenLink(url: string, mode: OpenLinkState['mode'] = 'browser'): Promise<boolean> {
+  openLinkState.value?.resolve(false)
+  return new Promise(resolve => {
+    openLinkState.value = { url, mode, resolve }
+  })
+}
+
+function resolveOpenLink(ok: boolean): void {
+  const state = openLinkState.value
+  if (!state) return
+  openLinkState.value = null
+  state.resolve(ok)
+}
+
 // ---- In-app quick-pick dialog ----
 interface QuickPickOptionUi {
   label: string
@@ -2448,6 +2523,7 @@ defineExpose({
   setMaxOutputLines,
   setMaxPreviewConsoleMessages,
   showConfirm,
+  showOpenLink,
   showQuickPick,
   // tabs
   setTabs,
