@@ -6,48 +6,15 @@
     <var>m1</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2.31</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">10</span>
-     <span class="td">4.5</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5.5</span>
-     <span class="td">3.14</span>
-     <span class="td">2</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-7</span>
-     <span class="td">8.88</span>
-     <span class="td">-2.22</span>
-     <span class="td">-5.4</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   2.31 0 0 0
+   <span class="b0">|</span>
+   10 4.5 0 0
+   <span class="b0">|</span>
+   -5.5 3.14 2 0
+   <span class="b0">|</span>
+   -7 8.88 -2.22 -5.4
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
   ,
@@ -56,48 +23,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-3.5</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">8</span>
-     <span class="td">6</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-3.5</span>
-     <span class="td">2</span>
-     <span class="td">-1.1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1.5</span>
-     <span class="td">-1.2</span>
-     <span class="td">0.9</span>
-     <span class="td">5</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -3.5 0 0 0
+   <span class="b0">|</span>
+   8 6 0 0
+   <span class="b0">|</span>
+   -3.5 2 -1.1 0
+   <span class="b0">|</span>
+   1.5 -1.2 0.9 5
+   <b class="b0">]</b>
    <i>hg</i>
   </span>
  </p>
@@ -115,48 +49,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1.96</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">10.8</span>
-     <span class="td">5.1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5.85</span>
-     <span class="td">3.34</span>
-     <span class="td">1.89</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6.85</span>
-     <span class="td">8.76</span>
-     <span class="td">-2.13</span>
-     <span class="td">-4.9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1.96 0 0 0
+   <span class="b0">|</span>
+   10.8 5.1 0 0
+   <span class="b0">|</span>
+   -5.85 3.34 1.89 0
+   <span class="b0">|</span>
+   -6.85 8.76 -2.13 -4.9
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
  </p>
@@ -188,48 +89,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1.96</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">10.8</span>
-     <span class="td">5.1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5.85</span>
-     <span class="td">3.34</span>
-     <span class="td">1.89</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6.85</span>
-     <span class="td">8.76</span>
-     <span class="td">-2.13</span>
-     <span class="td">-4.9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1.96 0 0 0
+   <span class="b0">|</span>
+   10.8 5.1 0 0
+   <span class="b0">|</span>
+   -5.85 3.34 1.89 0
+   <span class="b0">|</span>
+   -6.85 8.76 -2.13 -4.9
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
  </p>
@@ -247,48 +115,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2.66</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">9.2</span>
-     <span class="td">3.9</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5.15</span>
-     <span class="td">2.94</span>
-     <span class="td">2.11</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-7.15</span>
-     <span class="td">9</span>
-     <span class="td">-2.31</span>
-     <span class="td">-5.9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   2.66 0 0 0
+   <span class="b0">|</span>
+   9.2 3.9 0 0
+   <span class="b0">|</span>
+   -5.15 2.94 2.11 0
+   <span class="b0">|</span>
+   -7.15 9 -2.31 -5.9
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
  </p>
@@ -320,48 +155,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2.66</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">9.2</span>
-     <span class="td">3.9</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5.15</span>
-     <span class="td">2.94</span>
-     <span class="td">2.11</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-7.15</span>
-     <span class="td">9</span>
-     <span class="td">-2.31</span>
-     <span class="td">-5.9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   2.66 0 0 0
+   <span class="b0">|</span>
+   9.2 3.9 0 0
+   <span class="b0">|</span>
+   -5.15 2.94 2.11 0
+   <span class="b0">|</span>
+   -7.15 9 -2.31 -5.9
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
  </p>
@@ -379,48 +181,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-0.809</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0.1</span>
-     <span class="td">2.7</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3.74</span>
-     <span class="td">2.28</span>
-     <span class="td">-0.22</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">9.52</span>
-     <span class="td">5.53</span>
-     <span class="td">-0.242</span>
-     <span class="td">-2.7</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -0.809 0 0 0
+   <span class="b0">|</span>
+   0.1 2.7 0 0
+   <span class="b0">|</span>
+   3.74 2.28 -0.22 0
+   <span class="b0">|</span>
+   9.52 5.53 -0.242 -2.7
+   <b class="b0">]</b>
    <i>kg</i>
    <sup class="unit">2</sup>
   </span>
@@ -453,48 +222,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-0.809</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0.1</span>
-     <span class="td">2.7</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3.74</span>
-     <span class="td">2.28</span>
-     <span class="td">-0.22</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">9.52</span>
-     <span class="td">5.53</span>
-     <span class="td">-0.242</span>
-     <span class="td">-2.7</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -0.809 0 0 0
+   <span class="b0">|</span>
+   0.1 2.7 0 0
+   <span class="b0">|</span>
+   3.74 2.28 -0.22 0
+   <span class="b0">|</span>
+   9.52 5.53 -0.242 -2.7
+   <b class="b0">]</b>
    <i>kg</i>
    <sup class="unit">2</sup>
   </span>
@@ -516,60 +252,21 @@
     </b>
    </span>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6.6</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">12.5</span>
-     <span class="td">7.5</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">15.71</span>
-     <span class="td">15.7</span>
-     <span class="td">-18.18</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-46.67</span>
-     <span class="td">-74</span>
-     <span class="td">-24.67</span>
-     <span class="td">-10.8</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -6.6
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   12.5 7.5
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   15.71 15.7 -18.18
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   -46.67 -74 -24.67 -10.8
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -603,60 +300,21 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6.6</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">12.5</span>
-     <span class="td">7.5</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">15.71</span>
-     <span class="td">15.7</span>
-     <span class="td">-18.18</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-46.67</span>
-     <span class="td">-74</span>
-     <span class="td">-24.67</span>
-     <span class="td">-10.8</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -6.6
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   12.5 7.5
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   15.71 15.7 -18.18
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   -46.67 -74 -24.67 -10.8
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -674,60 +332,21 @@
    </b>
    <sub>unitless</sub>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   0 0
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   0 0 0
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   0 0 0 0
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
  </p>
@@ -762,60 +381,21 @@
    </b>
    <sub>unitless</sub>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   0 0
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   0 0 0
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   0 0 0 0
+   <b class="b0">]</b>
    <i>kg</i>
   </span>
  </p>
@@ -836,88 +416,44 @@
     <sub>unitless</sub>
    </sup>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      6.92
-      <i>kg</i>
-      <sup class="unit">2.31</sup>
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      10000000000
-      <i>kg</i>
-      <sup class="unit">10</sup>
-     </span>
-     <span class="td">
-      869.87
-      <i>kg</i>
-      <sup class="unit">4.5</sup>
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-      <i>kg</i>
-      <sup class="unit">-5.5</sup>
-     </span>
-     <span class="td">
-      36.34
-      <i>kg</i>
-      <sup class="unit">3.14</sup>
-     </span>
-     <span class="td">
-      4
-      <i>kg</i>
-      <sup class="unit">2</sup>
-     </span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      0
-      <i>kg</i>
-      <sup class="unit">-7</sup>
-     </span>
-     <span class="td">
-      264184380
-      <i>kg</i>
-      <sup class="unit">8.88</sup>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-      <i>kg</i>
-      <sup class="unit">-2.22</sup>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-      <i>kg</i>
-      <sup class="unit">-5.4</sup>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   6.92
+   <i>kg</i>
+   <sup class="unit">2.31</sup>
+   1 1 1
+   <span class="b0">|</span>
+   10000000000
+   <i>kg</i>
+   <sup class="unit">10</sup>
+   869.87
+   <i>kg</i>
+   <sup class="unit">4.5</sup>
+   1 1
+   <span class="b0">|</span>
+   <span class="err">Undefined</span>
+   <i>kg</i>
+   <sup class="unit">-5.5</sup>
+   36.34
+   <i>kg</i>
+   <sup class="unit">3.14</sup>
+   4
+   <i>kg</i>
+   <sup class="unit">2</sup>
+   1
+   <span class="b0">|</span>
+   0
+   <i>kg</i>
+   <sup class="unit">-7</sup>
+   264184380
+   <i>kg</i>
+   <sup class="unit">8.88</sup>
+   <span class="err">Undefined</span>
+   <i>kg</i>
+   <sup class="unit">-2.22</sup>
+   <span class="err">Undefined</span>
+   <i>kg</i>
+   <sup class="unit">-5.4</sup>
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -952,88 +488,44 @@
    </b>
    <sub>unitless</sub>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      6.92
-      <i>kg</i>
-      <sup class="unit">2.31</sup>
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      10000000000
-      <i>kg</i>
-      <sup class="unit">10</sup>
-     </span>
-     <span class="td">
-      869.87
-      <i>kg</i>
-      <sup class="unit">4.5</sup>
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-      <i>kg</i>
-      <sup class="unit">-5.5</sup>
-     </span>
-     <span class="td">
-      36.34
-      <i>kg</i>
-      <sup class="unit">3.14</sup>
-     </span>
-     <span class="td">
-      4
-      <i>kg</i>
-      <sup class="unit">2</sup>
-     </span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      0
-      <i>kg</i>
-      <sup class="unit">-7</sup>
-     </span>
-     <span class="td">
-      264184380
-      <i>kg</i>
-      <sup class="unit">8.88</sup>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-      <i>kg</i>
-      <sup class="unit">-2.22</sup>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-      <i>kg</i>
-      <sup class="unit">-5.4</sup>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   6.92
+   <i>kg</i>
+   <sup class="unit">2.31</sup>
+   1 1 1
+   <span class="b0">|</span>
+   10000000000
+   <i>kg</i>
+   <sup class="unit">10</sup>
+   869.87
+   <i>kg</i>
+   <sup class="unit">4.5</sup>
+   1 1
+   <span class="b0">|</span>
+   <span class="err">Undefined</span>
+   <i>kg</i>
+   <sup class="unit">-5.5</sup>
+   36.34
+   <i>kg</i>
+   <sup class="unit">3.14</sup>
+   4
+   <i>kg</i>
+   <sup class="unit">2</sup>
+   1
+   <span class="b0">|</span>
+   0
+   <i>kg</i>
+   <sup class="unit">-7</sup>
+   264184380
+   <i>kg</i>
+   <sup class="unit">8.88</sup>
+   <span class="err">Undefined</span>
+   <i>kg</i>
+   <sup class="unit">-2.22</sup>
+   <span class="err">Undefined</span>
+   <i>kg</i>
+   <sup class="unit">-5.4</sup>
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1050,60 +542,21 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">12</span>
-     <span class="td">7</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">15</span>
-     <span class="td">15</span>
-     <span class="td">-18</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-46</span>
-     <span class="td">-74</span>
-     <span class="td">-24</span>
-     <span class="td">-10</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -6
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   12 7
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   15 15 -18
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   -46 -74 -24 -10
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1134,60 +587,21 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">12</span>
-     <span class="td">7</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">15</span>
-     <span class="td">15</span>
-     <span class="td">-18</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-46</span>
-     <span class="td">-74</span>
-     <span class="td">-24</span>
-     <span class="td">-10</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -6
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   12 7
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   15 15 -18
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   -46 -74 -24 -10
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1204,60 +618,21 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6.6</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">12.5</span>
-     <span class="td">7.5</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">15.71</span>
-     <span class="td">15.7</span>
-     <span class="td">-18.18</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-46.67</span>
-     <span class="td">-74</span>
-     <span class="td">-24.67</span>
-     <span class="td">-10.8</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -6.6
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   12.5 7.5
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   15.71 15.7 -18.18
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   -46.67 -74 -24.67 -10.8
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1288,60 +663,21 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-6.6</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">12.5</span>
-     <span class="td">7.5</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">15.71</span>
-     <span class="td">15.7</span>
-     <span class="td">-18.18</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-46.67</span>
-     <span class="td">-74</span>
-     <span class="td">-24.67</span>
-     <span class="td">-10.8</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   -6.6
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   12.5 7.5
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   15.71 15.7 -18.18
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   -46.67 -74 -24.67 -10.8
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1350,63 +686,17 @@
     <var>fm</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">10</span>
-     <span class="td">3</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">7</span>
-     <span class="td">8</span>
-     <span class="td">6</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">9</span>
-     <span class="td">12</span>
-     <span class="td">5</span>
-     <span class="td">8</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">14</span>
-     <span class="td">11</span>
-     <span class="td">6</span>
-     <span class="td">13</span>
-     <span class="td">4</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0 0
+   <span class="b0">|</span>
+   10 3 0 0 0
+   <span class="b0">|</span>
+   7 8 6 0 0
+   <span class="b0">|</span>
+   9 12 5 8 0
+   <span class="b0">|</span>
+   14 11 6 13 4
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1419,63 +709,17 @@
     <var>fm</var>
    </b>
    ! =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3628800</span>
-     <span class="td">6</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">5040</span>
-     <span class="td">40320</span>
-     <span class="td">720</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">362880</span>
-     <span class="td">479001600</span>
-     <span class="td">120</span>
-     <span class="td">40320</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">87178291200</span>
-     <span class="td">39916800</span>
-     <span class="td">720</span>
-     <span class="td">6227020800</span>
-     <span class="td">24</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 1 1 1 1
+   <span class="b0">|</span>
+   3628800 6 1 1 1
+   <span class="b0">|</span>
+   5040 40320 720 1 1
+   <span class="b0">|</span>
+   362880 479001600 120 40320 1
+   <span class="b0">|</span>
+   87178291200 39916800 720 6227020800 24
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1500,63 +744,17 @@
     <var>fm</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3628800</span>
-     <span class="td">6</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">5040</span>
-     <span class="td">40320</span>
-     <span class="td">720</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">362880</span>
-     <span class="td">479001600</span>
-     <span class="td">120</span>
-     <span class="td">40320</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">87178291200</span>
-     <span class="td">39916800</span>
-     <span class="td">720</span>
-     <span class="td">6227020800</span>
-     <span class="td">24</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 1 1 1 1
+   <span class="b0">|</span>
+   3628800 6 1 1 1
+   <span class="b0">|</span>
+   5040 40320 720 1 1
+   <span class="b0">|</span>
+   362880 479001600 120 40320 1
+   <span class="b0">|</span>
+   87178291200 39916800 720 6227020800 24
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1576,48 +774,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 1 1 1
+   <span class="b0">|</span>
+   0 0 1 1
+   <span class="b0">|</span>
+   0 0 0 1
+   <span class="b0">|</span>
+   0 0 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1648,48 +813,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 1 1 1
+   <span class="b0">|</span>
+   0 0 1 1
+   <span class="b0">|</span>
+   0 0 0 1
+   <span class="b0">|</span>
+   0 0 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1706,48 +838,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   1 1 1 0
+   <span class="b0">|</span>
+   1 1 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1778,48 +877,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   1 1 1 0
+   <span class="b0">|</span>
+   1 1 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1836,48 +902,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 0 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1908,48 +941,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 0 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1966,48 +966,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   0 1 1 0
+   <span class="b0">|</span>
+   0 1 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2038,48 +1005,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   0 1 1 0
+   <span class="b0">|</span>
+   0 1 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2096,48 +1030,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 1 1 1
+   <span class="b0">|</span>
+   1 1 1 1
+   <span class="b0">|</span>
+   0 1 1 1
+   <span class="b0">|</span>
+   0 1 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2168,48 +1069,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 1 1 1
+   <span class="b0">|</span>
+   1 1 1 1
+   <span class="b0">|</span>
+   0 1 1 1
+   <span class="b0">|</span>
+   0 1 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2226,48 +1094,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 1 1 1
+   <span class="b0">|</span>
+   0 0 1 1
+   <span class="b0">|</span>
+   1 0 0 1
+   <span class="b0">|</span>
+   1 0 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2298,48 +1133,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 1 1 1
+   <span class="b0">|</span>
+   0 0 1 1
+   <span class="b0">|</span>
+   1 0 0 1
+   <span class="b0">|</span>
+   1 0 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2359,48 +1161,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   1 1 1 0
+   <span class="b0">|</span>
+   1 1 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2431,48 +1200,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   1 1 1 0
+   <span class="b0">|</span>
+   1 1 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2489,48 +1225,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   1 1 1 0
+   <span class="b0">|</span>
+   1 1 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2561,48 +1264,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">1</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   1 1 0 0
+   <span class="b0">|</span>
+   1 1 1 0
+   <span class="b0">|</span>
+   1 1 1 1
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2619,48 +1289,15 @@
     <var>m2</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -2691,48 +1328,15 @@
     <var>m2</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <b class="b0">]</b>
   </span>
  </p>
 </div>

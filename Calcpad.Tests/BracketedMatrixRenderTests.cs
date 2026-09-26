@@ -10,7 +10,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void RowDivisor_RendersOneRowPerDivisor()
     {
-        var html = Render("F = 6\n[F; F|F; F]\n");
+        var html = Render($"F = 6\n{Grid}\n[F; F|F; F]\n");
         var literal = LiteralOf(html);
 
         Assert.Equal(2, CountOccurrences(literal, Row));
@@ -21,7 +21,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void NoRowDivisor_RendersSingleRowWithOneCellPerItem()
     {
-        var html = Render("F = 6\n[F; F; F; F]\n");
+        var html = Render($"F = 6\n{Grid}\n[F; F; F; F]\n");
         var literal = LiteralOf(html);
 
         Assert.Equal(1, CountOccurrences(literal, Row));
@@ -32,7 +32,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void StructuredRendering_NeverEmitsSeparators()
     {
-        var html = Render("F = 6\n[F; F|F; F]\n[F; F; F; F]\n");
+        var html = Render($"F = 6\n{Grid}\n[F; F|F; F]\n[F; F; F; F]\n");
 
         Assert.DoesNotContain("6; 6", html);
         Assert.DoesNotContain("<b class=\"b0\">|</b>", html);
@@ -41,7 +41,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void EveryRow_HasEmptyBracketCells()
     {
-        var html = Render("F = 6\n[F; F|F; F]\n[F; F; F; F]\n");
+        var html = Render($"F = 6\n{Grid}\n[F; F|F; F]\n[F; F; F; F]\n");
 
         var rows = html.Split(Row).Skip(1).ToArray();
         Assert.NotEmpty(rows);
@@ -53,9 +53,12 @@ public class BracketedMatrixRenderTests
     }
 
     [Fact]
-    public void GridRendering_IsTheDefault()
+    public void InlineRendering_IsTheDefault()
     {
-        Assert.Contains(Matrix, Render("F = 6\n[F; F; F; F]\n"));
+        var html = Render("F = 6\n[F; F; F; F]\n");
+
+        Assert.DoesNotContain(Matrix, html);
+        Assert.Contains("<b class=\"b0\">[</b>", html);
     }
 
     [Fact]
@@ -101,7 +104,7 @@ public class BracketedMatrixRenderTests
     {
         // B is triangular: 1, 2, 3 and 2 items. Unpadded, :last-child lands in a different
         // column per row and the right bracket comes out stair-stepped.
-        var segments = Render("B = [1|2; 3|4; 5; 6|7; 8]\n").Split(Row).Skip(1).ToArray();
+        var segments = Render($"{Grid}\nB = [1|2; 3|4; 5; 6|7; 8]\n").Split(Row).Skip(1).ToArray();
 
         Assert.Equal(8, segments.Length); // 4 rows for the literal, 4 for the value
         foreach (var segment in segments)
@@ -117,7 +120,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void SingleElementVector_GridMode_RendersAsMatrix()
     {
-        var html = Render("[42]\n");
+        var html = Render($"{Grid}\n[42]\n");
 
         Assert.Contains(Matrix, html);
         Assert.DoesNotContain("42; ", html);
@@ -135,7 +138,7 @@ public class BracketedMatrixRenderTests
     [InlineData("[1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20; 21; 22]")]
     public void LargeVector_TruncatesWithEllipsis(string source)
     {
-        var html = Render(source + "\n");
+        var html = Render($"{Grid}\n" + source + "\n");
 
         Assert.Contains("elements skipped", html);
         Assert.Contains(Matrix, html);
@@ -155,7 +158,7 @@ public class BracketedMatrixRenderTests
     public void VectorWithUnits_GridMode_AppendsUnitsAfterMatrix()
     {
         // hp vectors carry a shared unit that follows the bracket
-        var html = Render("A = vector_hp(3)\nA[1] = 1*m\nA[2] = 2*m\nA[3] = 3*m\nA\n");
+        var html = Render($"{Grid}\nA = vector_hp(3)\nA[1] = 1*m\nA[2] = 2*m\nA[3] = 3*m\nA\n");
 
         Assert.Contains(Matrix, html);
     }
@@ -163,12 +166,12 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void SettingDoesNotLeakBetweenParses()
     {
-        // A first parse that turns inline rendering on must not bleed into a second independent parse.
-        var firstHtml = Render($"{Inline}\n[1; 2; 3]\n");
+        // A first parse that turns grid rendering on must not bleed into a second independent parse.
+        var firstHtml = Render($"{Grid}\n[1; 2; 3]\n");
         var secondHtml = Render("[1; 2; 3]\n");
 
-        Assert.DoesNotContain(Matrix, firstHtml);
-        Assert.Contains(Matrix, secondHtml);
+        Assert.Contains(Matrix, firstHtml);
+        Assert.DoesNotContain(Matrix, secondHtml);
     }
 
     [Fact]
@@ -183,7 +186,7 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void XmlWriter_RendersStructuredMatrix()
     {
-        var xml = RenderAs("[6; 6|6; 6]", parser => parser.ToXml());
+        var xml = RenderAs("[6; 6|6; 6]", parser => parser.ToXml(), grid: true);
 
         Assert.Contains("<m:d>", xml);
         Assert.Contains("<m:mr>", xml);
@@ -193,15 +196,15 @@ public class BracketedMatrixRenderTests
     [Fact]
     public void TextWriter_RendersSingleLineWithoutSeparators()
     {
-        var text = RenderAs("[6; 6|6; 6]", parser => parser.ToString());
+        var text = RenderAs("[6; 6|6; 6]", parser => parser.ToString(), grid: true);
 
         Assert.Contains("[6  6 |6  6]", text);
         Assert.DoesNotContain(";", text);
     }
 
-    private static string RenderAs(string expression, Func<MathParser, string> render)
+    private static string RenderAs(string expression, Func<MathParser, string> render, bool grid = false)
     {
-        var parser = new MathParser(new MathSettings());
+        var parser = new MathParser(new MathSettings { InlineMatrices = !grid });
         parser.Parse(expression);
         parser.Calculate();
         return render(parser);

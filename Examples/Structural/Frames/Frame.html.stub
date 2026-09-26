@@ -70,28 +70,11 @@
    </b>
    <sub>J</sub>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">2</span>
-     <span class="td">3</span>
-     <span class="td">4</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2</span>
-     <span class="td">3</span>
-     <span class="td">4</span>
-     <span class="td">5</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 2 3 4
+   <span class="b0">|</span>
+   2 3 4 5
+   <b class="b0">]</b>
   </span>
   ,
   <span class="eq">
@@ -352,59 +335,34 @@
     <var>c</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">
-      10
-      <sup>20</sup>
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      10
-      <sup>20</sup>
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      0
-      <i>kNm</i>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">5</span>
-     <span class="td">
-      10
-      <sup>20</sup>
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      10
-      <sup>20</sup>
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      10
-      <sup>20</sup>
-      <i>kNm</i>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 10
+   <sup>20</sup>
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   10
+   <sup>20</sup>
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   0
+   <i>kNm</i>
+   <span class="b0">|</span>
+   5 10
+   <sup>20</sup>
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   10
+   <sup>20</sup>
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   10
+   <sup>20</sup>
+   <i>kNm</i>
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -428,65 +386,34 @@
     <var>q</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">
-      10
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      0
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2</span>
-     <span class="td">
-      0
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      -20
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3</span>
-     <span class="td">
-      0
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-      -10
-      <i>kN</i>
-      <i class="unit">∕</i>
-      <i>m</i>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 10
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   0
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   <span class="b0">|</span>
+   2 0
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   -20
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   <span class="b0">|</span>
+   3 0
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   -10
+   <i>kN</i>
+   <i class="unit">∕</i>
+   <i>m</i>
+   <b class="b0">]</b>
   </span>
  </p>
  <p>Load values on elements</p>
@@ -1677,80 +1604,19 @@
    <var>k</var>
    <sub>E</sub>
    ( 1 )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">3210.66</span>
-     <span class="td">12842.6</span>
-     <span class="td">0</span>
-     <span class="td">-3210.66</span>
-     <span class="td">12842.6</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">68627.8</span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">34113.2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">-3210.66</span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">3210.66</span>
-     <span class="td">-12842.6</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">34113.2</span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">68627.8</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1104466 0 0 -1104466 0 0
+   <span class="b0">|</span>
+   0 3210.66 12842.6 0 -3210.66 12842.6
+   <span class="b0">|</span>
+   0 12842.6 68627.8 0 -12842.6 34113.2
+   <span class="b0">|</span>
+   -1104466 0 0 1104466 0 0
+   <span class="b0">|</span>
+   0 -3210.66 -12842.6 0 3210.66 -12842.6
+   <span class="b0">|</span>
+   0 12842.6 34113.2 0 -12842.6 68627.8
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1758,80 +1624,19 @@
    <var>k</var>
    <sub>E</sub>
    ( 2 )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">742765</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-742765</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">5243.46</span>
-     <span class="td">21619.3</span>
-     <span class="td">0</span>
-     <span class="td">-5243.46</span>
-     <span class="td">21619.3</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">21619.3</span>
-     <span class="td">119468</span>
-     <span class="td">0</span>
-     <span class="td">-21619.3</span>
-     <span class="td">58809.3</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-742765</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">742765</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">-5243.46</span>
-     <span class="td">-21619.3</span>
-     <span class="td">0</span>
-     <span class="td">5243.46</span>
-     <span class="td">-21619.3</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">21619.3</span>
-     <span class="td">58809.3</span>
-     <span class="td">0</span>
-     <span class="td">-21619.3</span>
-     <span class="td">119468</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   742765 0 0 -742765 0 0
+   <span class="b0">|</span>
+   0 5243.46 21619.3 0 -5243.46 21619.3
+   <span class="b0">|</span>
+   0 21619.3 119468 0 -21619.3 58809.3
+   <span class="b0">|</span>
+   -742765 0 0 742765 0 0
+   <span class="b0">|</span>
+   0 -5243.46 -21619.3 0 5243.46 -21619.3
+   <span class="b0">|</span>
+   0 21619.3 58809.3 0 -21619.3 119468
+   <b class="b0">]</b>
   </span>
  </p>
  <p>Stiffness matrices obtained in global coordinates</p>
@@ -1846,80 +1651,19 @@
    ( 1 )  ·
    <var>T</var>
    ( 1 )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3210.66</span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">-3210.66</span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">68627.8</span>
-     <span class="td">12842.6</span>
-     <span class="td">0</span>
-     <span class="td">34113.2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-3210.66</span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">3210.66</span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">1104466</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">34113.2</span>
-     <span class="td">12842.6</span>
-     <span class="td">0</span>
-     <span class="td">68627.8</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   3210.66 0 -12842.6 -3210.66 0 -12842.6
+   <span class="b0">|</span>
+   0 1104466 0 0 -1104466 0
+   <span class="b0">|</span>
+   -12842.6 0 68627.8 12842.6 0 34113.2
+   <span class="b0">|</span>
+   -3210.66 0 12842.6 3210.66 0 12842.6
+   <span class="b0">|</span>
+   0 -1104466 0 0 1104466 0
+   <span class="b0">|</span>
+   -12842.6 0 34113.2 12842.6 0 68627.8
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -1933,80 +1677,19 @@
    ( 2 )  ·
    <var>T</var>
    ( 2 )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">699382</span>
-     <span class="td">173535</span>
-     <span class="td">-5243.46</span>
-     <span class="td">-699382</span>
-     <span class="td">-173535</span>
-     <span class="td">-5243.46</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">173535</span>
-     <span class="td">48627.1</span>
-     <span class="td">20973.8</span>
-     <span class="td">-173535</span>
-     <span class="td">-48627.1</span>
-     <span class="td">20973.8</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5243.46</span>
-     <span class="td">20973.8</span>
-     <span class="td">119468</span>
-     <span class="td">5243.46</span>
-     <span class="td">-20973.8</span>
-     <span class="td">58809.3</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-699382</span>
-     <span class="td">-173535</span>
-     <span class="td">5243.46</span>
-     <span class="td">699382</span>
-     <span class="td">173535</span>
-     <span class="td">5243.46</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-173535</span>
-     <span class="td">-48627.1</span>
-     <span class="td">-20973.8</span>
-     <span class="td">173535</span>
-     <span class="td">48627.1</span>
-     <span class="td">-20973.8</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-5243.46</span>
-     <span class="td">20973.8</span>
-     <span class="td">58809.3</span>
-     <span class="td">5243.46</span>
-     <span class="td">-20973.8</span>
-     <span class="td">119468</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   699382 173535 -5243.46 -699382 -173535 -5243.46
+   <span class="b0">|</span>
+   173535 48627.1 20973.8 -173535 -48627.1 20973.8
+   <span class="b0">|</span>
+   -5243.46 20973.8 119468 5243.46 -20973.8 58809.3
+   <span class="b0">|</span>
+   -699382 -173535 5243.46 699382 173535 5243.46
+   <span class="b0">|</span>
+   -173535 -48627.1 -20973.8 173535 48627.1 -20973.8
+   <span class="b0">|</span>
+   -5243.46 20973.8 58809.3 5243.46 -20973.8 119468
+   <b class="b0">]</b>
   </span>
  </p>
  <h4>Global stiffness matrix</h4>
@@ -2016,338 +1699,46 @@
     <var>K</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      10
-      <sup>20</sup>
-     </span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">-3210.66</span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">
-      10
-      <sup>20</sup>
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">68627.8</span>
-     <span class="td">12842.6</span>
-     <span class="td">0</span>
-     <span class="td">34113.2</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-3210.66</span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">702592</span>
-     <span class="td">173535</span>
-     <span class="td">7599.17</span>
-     <span class="td">-699382</span>
-     <span class="td">-173535</span>
-     <span class="td">-5243.46</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">173535</span>
-     <span class="td">1153093</span>
-     <span class="td">20973.8</span>
-     <span class="td">-173535</span>
-     <span class="td">-48627.1</span>
-     <span class="td">20973.8</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">34113.2</span>
-     <span class="td">7599.17</span>
-     <span class="td">20973.8</span>
-     <span class="td">188096</span>
-     <span class="td">5243.46</span>
-     <span class="td">-20973.8</span>
-     <span class="td">58809.3</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-699382</span>
-     <span class="td">-173535</span>
-     <span class="td">5243.46</span>
-     <span class="td">1398763</span>
-     <span class="td">0</span>
-     <span class="td">10486.9</span>
-     <span class="td">-699382</span>
-     <span class="td">173535</span>
-     <span class="td">5243.46</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-173535</span>
-     <span class="td">-48627.1</span>
-     <span class="td">-20973.8</span>
-     <span class="td">0</span>
-     <span class="td">97254.2</span>
-     <span class="td">0</span>
-     <span class="td">173535</span>
-     <span class="td">-48627.1</span>
-     <span class="td">20973.8</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-5243.46</span>
-     <span class="td">20973.8</span>
-     <span class="td">58809.3</span>
-     <span class="td">10486.9</span>
-     <span class="td">0</span>
-     <span class="td">238937</span>
-     <span class="td">-5243.46</span>
-     <span class="td">-20973.8</span>
-     <span class="td">58809.3</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-699382</span>
-     <span class="td">173535</span>
-     <span class="td">-5243.46</span>
-     <span class="td">702592</span>
-     <span class="td">-173535</span>
-     <span class="td">7599.17</span>
-     <span class="td">-3210.66</span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">173535</span>
-     <span class="td">-48627.1</span>
-     <span class="td">-20973.8</span>
-     <span class="td">-173535</span>
-     <span class="td">1153093</span>
-     <span class="td">-20973.8</span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">5243.46</span>
-     <span class="td">20973.8</span>
-     <span class="td">58809.3</span>
-     <span class="td">7599.17</span>
-     <span class="td">-20973.8</span>
-     <span class="td">188096</span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">34113.2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-3210.66</span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">
-      10
-      <sup>20</sup>
-     </span>
-     <span class="td">0</span>
-     <span class="td">-12842.6</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">-1104466</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-      10
-      <sup>20</sup>
-     </span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">12842.6</span>
-     <span class="td">0</span>
-     <span class="td">34113.2</span>
-     <span class="td">-12842.6</span>
-     <span class="td">0</span>
-     <span class="td">
-      10
-      <sup>20</sup>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   10
+   <sup>20</sup>
+   0 -12842.6 -3210.66 0 -12842.6 0 0 0 0 0 0 0 0 0
+   <span class="b0">|</span>
+   0 10
+   <sup>20</sup>
+   0 0 -1104466 0 0 0 0 0 0 0 0 0 0
+   <span class="b0">|</span>
+   -12842.6 0 68627.8 12842.6 0 34113.2 0 0 0 0 0 0 0 0 0
+   <span class="b0">|</span>
+   -3210.66 0 12842.6 702592 173535 7599.17 -699382 -173535 -5243.46 0 0 0 0 0 0
+   <span class="b0">|</span>
+   0 -1104466 0 173535 1153093 20973.8 -173535 -48627.1 20973.8 0 0 0 0 0 0
+   <span class="b0">|</span>
+   -12842.6 0 34113.2 7599.17 20973.8 188096 5243.46 -20973.8 58809.3 0 0 0 0 0 0
+   <span class="b0">|</span>
+   0 0 0 -699382 -173535 5243.46 1398763 0 10486.9 -699382 173535 5243.46 0 0 0
+   <span class="b0">|</span>
+   0 0 0 -173535 -48627.1 -20973.8 0 97254.2 0 173535 -48627.1 20973.8 0 0 0
+   <span class="b0">|</span>
+   0 0 0 -5243.46 20973.8 58809.3 10486.9 0 238937 -5243.46 -20973.8 58809.3 0 0 0
+   <span class="b0">|</span>
+   0 0 0 0 0 0 -699382 173535 -5243.46 702592 -173535 7599.17 -3210.66 0 12842.6
+   <span class="b0">|</span>
+   0 0 0 0 0 0 173535 -48627.1 -20973.8 -173535 1153093 -20973.8 0 -1104466 0
+   <span class="b0">|</span>
+   0 0 0 0 0 0 5243.46 20973.8 58809.3 7599.17 -20973.8 188096 -12842.6 0 34113.2
+   <span class="b0">|</span>
+   0 0 0 0 0 0 0 0 0 -3210.66 0 -12842.6 10
+   <sup>20</sup>
+   0 -12842.6
+   <span class="b0">|</span>
+   0 0 0 0 0 0 0 0 0 0 -1104466 0 0 10
+   <sup>20</sup>
+   0
+   <span class="b0">|</span>
+   0 0 0 0 0 0 0 0 0 12842.6 0 34113.2 -12842.6 0 10
+   <sup>20</sup>
+   <b class="b0">]</b>
   </span>
  </p>
  <h4>Element load vector</h4>

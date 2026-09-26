@@ -203,64 +203,11 @@
    0
    <span class="b0">]</span>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">1.23</span>
-     <span class="td">2.45</span>
-     <span class="td">3.66</span>
-     <span class="td">4.86</span>
-     <span class="td">6.04</span>
-     <span class="td">7.2</span>
-     <span class="td">8.33</span>
-     <span class="td">9.43</span>
-     <span class="td">10.49</span>
-     <span class="td">11.52</span>
-     <span class="td">12.5</span>
-     <span class="td">13.43</span>
-     <span class="td">14.31</span>
-     <span class="td">15.14</span>
-     <span class="td">15.92</span>
-     <span class="td">16.63</span>
-     <span class="td">17.28</span>
-     <span class="td">17.86</span>
-     <span class="td">18.38</span>
-     <span class="td">⋯</span>
-     <span class="td">-3.66</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">⋯</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 1.23 2.45 3.66 4.86 6.04 7.2 8.33 9.43 10.49 11.52 12.5 13.43 14.31 15.14 15.92 16.63 17.28 17.86 18.38 ...-3.66
+   <span class="b0">|</span>
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ...0
+   <b class="b0">]</b>
    <i>mm</i>
   </span>
  </p>
@@ -277,64 +224,11 @@
     <var>x</var>
    </b>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">441.35</span>
-     <span class="td">0</span>
-     <span class="td">497.29</span>
-     <span class="td">0</span>
-     <span class="td">646.1</span>
-     <span class="td">0</span>
-     <span class="td">1048.83</span>
-     <span class="td">0</span>
-     <span class="td">3192.66</span>
-     <span class="td">0</span>
-     <span class="td">-3354.92</span>
-     <span class="td">0</span>
-     <span class="td">-1211.91</span>
-     <span class="td">0</span>
-     <span class="td">-810.84</span>
-     <span class="td">0</span>
-     <span class="td">-664.59</span>
-     <span class="td">0</span>
-     <span class="td">-612.2</span>
-     <span class="td">⋯</span>
-     <span class="td">441.35</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">5120</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">⋯</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   0 441.35 0 497.29 0 646.1 0 1048.83 0 3192.66 0 -3354.92 0 -1211.91 0 -810.84 0 -664.59 0 -612.2 ...441.35
+   <span class="b0">|</span>
+   0 0 0 0 0 0 0 0 0 0 5120 0 0 0 0 0 0 0 0 0 ...0
+   <b class="b0">]</b>
    <i>mm</i>
   </span>
  </p>

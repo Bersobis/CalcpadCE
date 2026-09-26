@@ -9,7 +9,7 @@ namespace Calcpad.Tests
             return parser.HtmlResult;
         }
 
-        // Grid rendering wraps in <span class="matrix">; inline rendering uses a bold bracket.
+        // Inline rendering uses a bold bracket; grid rendering wraps in <span class="matrix">.
         private const string Grid = "<span class=\"matrix\">";
         private const string Inline = "<b class=\"b0\">[</b>";
 
@@ -42,12 +42,12 @@ namespace Calcpad.Tests
         }
 
         [Fact]
-        public void SettingsDirective_LeavesGridAsTheDefault()
+        public void SettingsDirective_LeavesInlineAsTheDefault()
         {
             var html = Render("v = [1; 2; 3]");
 
-            Assert.Contains(Grid, html);
-            Assert.DoesNotContain(Inline, html);
+            Assert.DoesNotContain(Grid, html);
+            Assert.Contains(Inline, html);
         }
 
         [Fact]

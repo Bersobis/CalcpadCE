@@ -193,35 +193,13 @@
    3; 5; 6
    <span class="b0">]</span>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">3</span>
-     <span class="td">2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">5</span>
-     <span class="td">4</span>
-     <span class="td">2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3</span>
-     <span class="td">5</span>
-     <span class="td">6</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 3 2
+   <span class="b0">|</span>
+   5 4 2
+   <span class="b0">|</span>
+   3 5 6
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -236,35 +214,13 @@
    7; 8; 9
    <span class="b0">]</span>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">3</span>
-     <span class="td">2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">7</span>
-     <span class="td">8</span>
-     <span class="td">9</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3</span>
-     <span class="td">5</span>
-     <span class="td">6</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 3 2
+   <span class="b0">|</span>
+   7 8 9
+   <span class="b0">|</span>
+   3 5 6
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -279,35 +235,13 @@
    7; 8; 9
    <span class="b0">]</span>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">7</span>
-     <span class="td">2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">7</span>
-     <span class="td">8</span>
-     <span class="td">9</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3</span>
-     <span class="td">9</span>
-     <span class="td">6</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 7 2
+   <span class="b0">|</span>
+   7 8 9
+   <span class="b0">|</span>
+   3 9 6
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -483,48 +417,15 @@
    4; 7; 8; 9
    <span class="b0">]</span>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2</span>
-     <span class="td">3</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">0</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">4</span>
-     <span class="td">7</span>
-     <span class="td">8</span>
-     <span class="td">9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 0 0 0
+   <span class="b0">|</span>
+   2 3 0 0
+   <span class="b0">|</span>
+   0 0 0 0
+   <span class="b0">|</span>
+   4 7 8 9
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -545,66 +446,23 @@
    </var>
    <sub>jagged</sub>
    )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2</span>
-     <span class="td">3</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">4</span>
-     <span class="td">7</span>
-     <span class="td">8</span>
-     <span class="td">9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   2 3
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   4 7 8 9
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -626,66 +484,23 @@
     <var>jaggedM</var>
    </b>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">2</span>
-     <span class="td">3</span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-      <span class="err">Undefined</span>
-     </span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">4</span>
-     <span class="td">7</span>
-     <span class="td">8</span>
-     <span class="td">9</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   2 3
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="err">Undefined</span>
+   <span class="b0">|</span>
+   4 7 8 9
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -730,24 +545,11 @@
    3; 4
    <span class="b0">]</span>
    =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">3</span>
-     <span class="td">4</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 2
+   <span class="b0">|</span>
+   3 4
+   <b class="b0">]</b>
   </span>
  </p>
  <p>
@@ -758,24 +560,11 @@
     <var>matrix</var>
    </b>
    ; 6 )  =
-   <span class="matrix">
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">1</span>
-     <span class="td">2</span>
-     <span class="td">
-     </span>
-    </span>
-    <span class="tr">
-     <span class="td">
-     </span>
-     <span class="td">6</span>
-     <span class="td">4</span>
-     <span class="td">
-     </span>
-    </span>
-   </span>
+   <b class="b0">[</b>
+   1 2
+   <span class="b0">|</span>
+   6 4
+   <b class="b0">]</b>
   </span>
  </p>
  <h4 style="text-align: center;">TEST HEADER</h4>
