@@ -136,7 +136,7 @@ namespace Calcpad.Core
             Substitute = true;
             FormatEquations = true;
             ZeroSmallMatrixElements = true;
-            InlineMatrices = false;
+            InlineMatrices = true;
             ShowHiddenOutput = false;
             MaxOutputCount = 20;
             Precision = 1e-14;
