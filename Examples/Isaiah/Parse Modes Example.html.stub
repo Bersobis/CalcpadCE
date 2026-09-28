@@ -72,7 +72,10 @@ tables and nested lists all work.
   <li>
    Serviceability limit state
    <ul>
-    <li>1.0 G + 1.0 Q</li>
+    <li>
+     1.0 G + 1.0 Q
+Hello from macro
+    </li>
    </ul>
   </li>
  </ul>
