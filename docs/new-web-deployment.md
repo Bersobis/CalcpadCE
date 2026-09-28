@@ -48,7 +48,7 @@ Two restrictions apply either way:
 All paths are relative to `/api/calcpad`.
 
 | Endpoint | Method | Purpose |
-|----------|--------|---------|
+| -------- | ------ | ------- |
 | `/convert` | POST | Convert a document to an HTML report (with theme + settings) |
 | `/docx` | POST | Generate a Word `.docx` document |
 | `/pdf` | POST | Generate a PDF from rendered HTML |

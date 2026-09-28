@@ -135,6 +135,16 @@ namespace Calcpad.Core
         private static int KeywordLength(Keyword keyword) =>
             KeywordNames[(int)keyword - 1].Length + 1;
 
+        /// <summary>The mode keywords that act in the current mode: any opener, but only the matching #end.</summary>
+        private bool IsActiveModeKeyword(Keyword keyword) => keyword switch
+        {
+            Keyword.Html or Keyword.Cpd or Keyword.Markdown => true,
+            Keyword.End_Html => _parseMode == ParseMode.Html,
+            Keyword.End_Markdown => _parseMode == ParseMode.Markdown,
+            Keyword.End_Cpd => _parseMode == ParseMode.Cpd,
+            _ => false
+        };
+
         KeywordResult ParseKeyword(ReadOnlySpan<char> s, ref Keyword keyword)
         {
             if (_isPausedByUser)
@@ -142,7 +152,7 @@ namespace Calcpad.Core
             else if (s[0] == '#' && keyword == Keyword.None)
                 keyword = GetKeyword(s);
 
-            var isModeKeyword = keyword >= Keyword.Html && keyword <= Keyword.End_Markdown;
+            var isModeKeyword = IsActiveModeKeyword(keyword);
             // Skipped lines must not cache their keyword, or a loop would replay it
             if (_modeSuppressed && !isModeKeyword)
             {
@@ -150,17 +160,12 @@ namespace Calcpad.Core
                 return KeywordResult.Continue;
             }
 
+            // Everything else is content in #html/#markdown, so #if, #tag and #header all pass through
+            if (IsNonCpdMode && !isModeKeyword)
+                keyword = Keyword.None;
+
             if (keyword == Keyword.None)
                 return KeywordResult.None;
-
-            if (IsNonCpdMode && !isModeKeyword)
-            {
-                if (_condition.IsSatisfied)
-                    AppendError(s.ToString(), Messages.Only_mode_directives_are_allowed_in_HTML_or_markdown_mode, _currentLine);
-
-                keyword = Keyword.None;
-                return KeywordResult.Continue;
-            }
 
             switch (keyword)
             {

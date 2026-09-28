@@ -52,9 +52,24 @@ namespace Calcpad.Tests.Highlighter
         [Theory]
         [InlineData("# Title")]
         [InlineData("#hashtag text")]
-        public void UnknownHashLines_AreMarkdownContent(string line)
+        public void UnknownHashLines_KeepMarkdownColouring(string line)
         {
             Assert.Contains(1, Tokenize($"#markdown\n{line}\n#end markdown").RawLines);
+        }
+
+        [Theory]
+        [InlineData("markdown", "#tag")]
+        [InlineData("markdown", "# Title")]
+        [InlineData("markdown", "#end html")]
+        [InlineData("markdown", "#round 2")]
+        [InlineData("html", "#test")]
+        [InlineData("html", "#header { color: red; }")]
+        [InlineData("html", "#end markdown")]
+        public void UnrecognizedKeywords_AreContent(string mode, string line)
+        {
+            var source = $"#{mode}\n{line}\n#end {mode}";
+            Assert.Empty(Lint(source).Diagnostics);
+            Assert.Contains(1, Tokenize(source).RawLines);
         }
 
         [Fact]
@@ -80,21 +95,30 @@ namespace Calcpad.Tests.Highlighter
         }
 
         [Theory]
-        [InlineData("#if 1", "'#if'")]
-        [InlineData("#end if", "'#end if'")]
-        [InlineData("#md on", "'#md on'")]
-        public void CalcpadDirectives_InHtml_ReportCpd3420(string line, string expected)
+        [InlineData("#if 1")]
+        [InlineData("#end if")]
+        [InlineData("#md on")]
+        public void CalcpadDirectives_InHtml_AreContent(string line)
         {
-            var diagnostic = Assert.Single(Lint($"#html\n{line}\n#end html").Diagnostics, d => d.Code == "CPD-3420");
-            Assert.Contains(expected, diagnostic.Message);
+            var source = $"#html\n{line}\n#end html";
+            Assert.Empty(Lint(source).Diagnostics);
+            Assert.Contains(1, Tokenize(source).RawLines);
         }
 
         [Fact]
-        public void MacroDirectives_InHtml_AreAllowed()
+        public void MacroDirectives_InHtml_AreStillDirectives()
         {
-            Assert.DoesNotContain(Lint("#html\n#def tag$ = <b>t</b>\ntag$\n#end html").Diagnostics, d => d.Code == "CPD-3420");
+            var source = "#html\n#def tag$ = <b>t</b>\ntag$\n#end html";
+            Assert.Empty(Lint(source).Diagnostics);
+            Assert.DoesNotContain(1, Tokenize(source).RawLines);
         }
 
+        [Fact]
+        public void ControlBlocks_WrapModeBlocks()
+        {
+            const string source = "#if x > 3\n#html\n<b>big</b>\n#end html\n#else\n#markdown\n*small*\n#end markdown\n#end if";
+            Assert.Empty(Lint($"x = 1\n{source}").Diagnostics);
+        }
         [Fact]
         public void HtmlContent_DoesNotJoinContinuationLines()
         {

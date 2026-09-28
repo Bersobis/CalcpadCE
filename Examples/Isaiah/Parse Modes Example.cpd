@@ -32,7 +32,6 @@
 #end html
 #markdown
 # Parse Modes
-
 A `#markdown` block renders **consecutive** lines together, so paragraphs,
 tables and nested lists all work.
 
@@ -40,12 +39,18 @@ tables and nested lists all work.
 |------|--------|--------|
 | Dead | 5 kN   | 1.35   |
 | Live | 3 kN   | 1.5    |
-
+#cpd
+#pre
+#end cpd
 - Ultimate limit state
   - 1.35 G + 1.5 Q
 - Serviceability limit state
   - 1.0 G + 1.0 Q
-
+#def test$ = Hello from macro
+test$
+#cpd
+#show
+#end cpd
 Emphasis extras: ++inserted++, H~2~O, x^2^, ~~struck~~ and a bare URL
 https://calcpad-ce.org — plus a task list:
 

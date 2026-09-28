@@ -13,7 +13,7 @@ The tables below group them by the kind of problem.
 ### Includes
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-1101 | Error | Malformed `#include` statement |
 | CPD-1102 | Error | Missing `#include` filename |
 | CPD-1103 | Warning | Deprecated `#include` input values |
@@ -21,7 +21,7 @@ The tables below group them by the kind of problem.
 ### Macro definitions
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-2201 | Error | Duplicate macro definition |
 | CPD-2202 | Error | Macro name must end with `$` |
 | CPD-2203 | Error | Macro parameter must end with `$` |
@@ -38,7 +38,7 @@ The tables below group them by the kind of problem.
 ### Brackets and blocks
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-3101 | Error | Unmatched opening parenthesis |
 | CPD-3102 | Error | Unmatched closing parenthesis |
 | CPD-3103 | Error | Unmatched opening square bracket |
@@ -49,7 +49,7 @@ The tables below group them by the kind of problem.
 ### Naming
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-3201 | Error | Invalid variable name (must start with a letter) |
 | CPD-3202 | Error | Invalid function name |
 | CPD-3203 | Error | Function name conflicts with a built-in function |
@@ -60,7 +60,7 @@ The tables below group them by the kind of problem.
 ### Usage
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-3301 | Error | Undefined variable |
 | CPD-3302 | Error | Function called with the wrong number of parameters |
 | CPD-3303 | Error | Undefined macro |
@@ -78,7 +78,7 @@ The tables below group them by the kind of problem.
 ### Semantics
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-3401 | Error | Invalid operator usage |
 | CPD-3402 | Error | Unknown command name |
 | CPD-3403 | Error | Unknown directive |
@@ -98,12 +98,11 @@ The tables below group them by the kind of problem.
 | CPD-3417 | Warning | Duplicate `uiOverrides` metadata comment |
 | CPD-3418 | Warning | `uiOverrides` sharing a comment with another key |
 | CPD-3419 | Warning | Deprecated stored input value |
-| CPD-3420 | Error | Directive not allowed in `#html`/`#markdown` mode |
 
 ### Formatting
 
 | Code | Severity | Meaning |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | CPD-3601 | Warning | Invalid format specifier |
 
 ## Suppressing diagnostics (lint-ignore)

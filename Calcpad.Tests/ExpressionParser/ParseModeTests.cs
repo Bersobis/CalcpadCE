@@ -4,7 +4,6 @@ namespace Calcpad.Tests
 {
     public class ParseModeTests
     {
-        private const string ModeError = "Only #html, #cpd, #markdown";
 
         private static string Render(string source, bool debug = false)
         {
@@ -163,15 +162,29 @@ namespace Calcpad.Tests
         [InlineData("#md on")]
         [InlineData("#end if")]
         [InlineData("#val")]
-        public void CalcpadKeywords_AreRejectedInHtmlMode(string line)
+        [InlineData("#end markdown")]
+        [InlineData("#test")]
+        [InlineData("#header { color: red; }")]
+        public void UnrecognizedKeywords_AreContentInHtmlMode(string line)
         {
-            Assert.Contains(ModeError, Render($"#html\n{line}\n#end html"));
+            Assert.Contains(line, Render($"#html\n{line}\n#end html"));
+        }
+
+        [Theory]
+        [InlineData("#round 2")]
+        [InlineData("#end html")]
+        [InlineData("#tag")]
+        public void UnrecognizedKeywords_AreContentInMarkdownMode(string line)
+        {
+            Assert.Contains(line, Render($"#markdown\n{line}\n#end markdown"));
         }
 
         [Fact]
-        public void CalcpadKeywords_AreRejectedInMarkdownMode()
+        public void ControlBlocks_WrapModeBlocks()
         {
-            Assert.Contains(ModeError, Render("#markdown\n#round 2\n#end markdown"));
+            var html = Render("#if 1 > 2\n#html\n<b>no</b>\n#end html\n#else\n#html\n<b>yes</b>\n#end html\n#end if");
+            Assert.Contains("<b>yes</b>", html);
+            Assert.DoesNotContain("<b>no</b>", html);
         }
 
         [Fact]
@@ -180,7 +193,6 @@ namespace Calcpad.Tests
             var html = Render("#markdown\n# One\n## Two\n#end markdown");
             Assert.Contains(">One</h1>", html);
             Assert.Contains(">Two</h2>", html);
-            Assert.DoesNotContain(ModeError, html);
         }
 
         [Fact]

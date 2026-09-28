@@ -1,12 +1,13 @@
 # Parsing Modes
 
-By default every line of a worksheet is Calcpad: a calculation, or a `'` comment. Three directives change how the lines that follow are parsed:
+By default every line of a worksheet is Calcpad: a calculation, or a `'` comment.
+Three directives change how the lines that follow are parsed:
 
-| Directive   | Lines are…                                     |
-|-------------|------------------------------------------------|
-| `#html`     | output as raw HTML                             |
-| `#markdown` | rendered as Markdown                           |
-| `#cpd`      | parsed as Calcpad again (the default mode)     |
+| Directive | Lines are… |
+| --------- | ---------- |
+| `#html` | output as raw HTML |
+| `#markdown` | rendered as Markdown |
+| `#cpd` | parsed as Calcpad again (the default mode) |
 
 ## `#html`
 
@@ -27,11 +28,13 @@ Opening tags get the source line attached, so click-to-source in the preview sti
 
 ## `#markdown`
 
-Consecutive lines are rendered together, so tables, nested lists, code blocks and multi-line paragraphs work. Leading indentation is kept, and a blank line separates paragraphs:
+Consecutive lines are rendered together, so tables, nested lists, code blocks and multi-line paragraphs work.
+Leading indentation is kept, and a blank line separates paragraphs:
 
 ```text
 #markdown
 ## Load cases
+
 | Case | Load  |
 |------|-------|
 | Dead | 5 kN  |
@@ -42,7 +45,8 @@ Consecutive lines are rendered together, so tables, nested lists, code blocks an
 #end markdown
 ```
 
-Emphasis extras are enabled: `++inserted++`, `~sub~`, `^sup^`, `~~strike~~`, plus task lists and bare URLs. Raw HTML inside Markdown passes through.
+Emphasis extras are enabled: `++inserted++`, `~sub~`, `^sup^`, `~~strike~~`, plus task lists and bare URLs.
+Raw HTML inside Markdown passes through.
 
 ## `#cpd`
 
@@ -60,9 +64,11 @@ A = 2m*3m
 
 ## `#end` forms and nesting
 
-Like the [visibility directives](new-visibility-directives.md), each mode directive pushes the current mode and `#end html`, `#end markdown` or `#end cpd` pops back to it. Without an `#end`, a mode lasts until the next mode directive or the end of the file, so `#html` … `#cpd` also works.
+Like the [visibility directives](new-visibility-directives.md), each mode directive pushes the current mode and its own `#end` form pops back to it.
+Only the `#end` that matches the mode in effect closes a block, so `#end markdown` inside `#html` is content, not a close.
+Without an `#end`, a mode lasts until the next mode directive or the end of the file, so `#html` … `#cpd` also works.
 
-Mode blocks nest inside `#if`, `#for` and the other Calcpad blocks. Close the mode block before the Calcpad block continues, because `#else`, `#end if` and `#loop` are Calcpad keywords:
+Mode blocks nest inside `#if`, `#for` and the other Calcpad blocks, and the Calcpad block keeps working as long as the mode block is closed before it continues:
 
 ```text
 #if x > 3
@@ -78,7 +84,8 @@ Mode blocks nest inside `#if`, `#for` and the other Calcpad blocks. Close the mo
 
 ## Optional condition
 
-Each opener takes an optional condition, evaluated the same way `#if` evaluates one. When it is false, the block is skipped up to its matching `#end`, including any blocks nested in it:
+Each opener takes an optional condition, evaluated the same way `#if` evaluates one.
+When it is false, the block is skipped up to its matching `#end`, including any blocks nested in it:
 
 ```text
 #html showNotes == 1
@@ -86,15 +93,51 @@ Each opener takes an optional condition, evaluated the same way `#if` evaluates 
 #end html
 ```
 
-The mode still changes when the condition is false, so the skipped lines are never parsed as Calcpad. A `#cpd` block with a false condition skips its calculations.
+The mode still changes when the condition is false, so the skipped lines are never parsed as Calcpad.
+A `#cpd` block with a false condition skips its calculations.
 
 ## What is allowed inside
 
-Inside `#html` and `#markdown` blocks, only `#html`, `#markdown`, `#cpd` and their `#end` forms are recognized. Any other Calcpad keyword, such as `#if`, `#hide` or `#md`, is an error, and the linter reports it as [CPD-3420](new-linter.md).
+Inside a mode block the only reserved keywords are the three openers `#html`, `#markdown` and `#cpd`, the `#end` form of the mode in effect.
+Every other line is content, including lines starting with `#`:
 
-A `#` line that isn't a Calcpad keyword is content, so Markdown headings (`# Title`) and text such as `#tag` render normally.
+```text
+#markdown
+# Load cases     ← heading
+#tag             ← content
+#if x > 3        ← content, printed as written
+#end markdown    ← closes the block
+```
 
-Macros work in every mode because they are expanded before the worksheet is parsed. `#def`, `#include` and macro calls can all appear inside a block:
+So `#if`, `#for`, `#hide`, `#md` and the rest do not run inside `#html` or `#markdown`.
+They do work around a mode block, just not in it:
+
+```text
+#if x > 3
+#markdown
+**x is large**
+#end markdown
+#end if
+```
+
+If you need to use output control keywords such as `#pre` and `#post` inside an `#html` or `#markdown` block, switch to `#cpd` mode first:
+
+```text
+#markdown
+Content
+#cpd
+#pre
+#end cpd
+Pre content
+#cpd
+#show
+#end cpd
+More content
+#end markdown
+```
+
+Macros work in every mode because they are expanded before the worksheet is parsed.
+`#def`, `#include` and macro calls can all appear inside an `#html` or `#markdown` block:
 
 ```text
 #def note$(text$) = <div class="note">text$</div>
@@ -103,7 +146,9 @@ note$(Check deflection at midspan.)
 #end html
 ```
 
-A macro can also switch mode itself: a multi-line macro containing `#html` switches mode wherever it is called. This works in the output, but is not recommended unless the entire HTML/Markdown block is contained in the macro. The editor colours HTML and Markdown from the directives written in the file before macros are expanded, so declaring `#html` in a macro and `#end html` in code after the macro is called breaks syntax highlighting.
+A macro can also switch mode itself: a multi-line macro containing `#html` switches mode wherever it is called.
+This works in the output, but is not recommended unless the entire HTML/Markdown block is contained in the macro.
+The editor colours HTML and Markdown from the directives written in the file before macros are expanded, so declaring `#html` in a macro and `#end html` in code after the macro is called breaks syntax highlighting.
 
 ## Editor support
 
@@ -114,25 +159,27 @@ A macro can also switch mode itself: a multi-line macro containing `#html` switc
 
 ## Links
 
-A bare URL is turned into a link only by `#markdown`. 
+A bare URL is turned into a link only by `#markdown`.
 In `#html` write the `<a>` yourself.
 In Calcpad mode use an `'<a href="…">` comment or `#md on` with `[text](url)`.
 
 Links are always confirmed before anything happens, so the URL/filepath can be reviewed before proceeding.
 
-| Scheme         | On click                                                      |
-|----------------|---------------------------------------------------------------|
-| `http`, `https`| Prompts with the URL, then opens in the browser                |
-| `file`         | Prompts with the path, then opens it with the system default   |
-| `#anchor`    | Scrolls to that element in the preview, with no prompt          |
-| anything else  | Ignored, since the app uses URLs for navigation                |
+| Scheme | On click |
+| ------ | -------- |
+| `http`, `https` | Prompts with the URL, then opens in the browser |
+| `file` | Prompts with the path, then opens it with the system default |
+| `#anchor` | Scrolls to that element in the preview, with no prompt |
+| anything else | Ignored, since the app uses URLs for navigation |
 
 The worksheet template styles headings, paragraphs, and Calcpad's own output, but not the rest of what Markdown produces.
-Blockquotes, fenced code, rules, task lists, and table borders come out as browser defaults. Style them in an `#html` block when a document needs them. 
-The CSS snippets contain some helpful starting points
+Blockquotes, fenced code, rules, task lists, and table borders come out as browser defaults.
+Style them in an `#html` block when a document needs them.
+The CSS snippets contain some helpful starting points.
 
 Link targets do not currently support project/library paths, so only absolute paths will work.
 
 ## `#markdown` vs `#md on`
 
-`#md on` is a lighter toggle that stays in Calcpad mode: calculations still run, and only `'` comment lines are rendered as Markdown, one line at a time. Use `#markdown` for prose, tables and lists that span several lines, and `#md on` to format comments between calculations.
+`#md on` is a lighter toggle that stays in Calcpad mode: calculations still run, and only `'` comment lines are rendered as Markdown, one line at a time.
+Use `#markdown` for prose, tables and lists that span several lines, and `#md on` to format comments between calculations.

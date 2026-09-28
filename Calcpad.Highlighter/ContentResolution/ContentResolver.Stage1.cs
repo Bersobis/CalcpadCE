@@ -38,7 +38,7 @@ namespace Calcpad.Highlighter.ContentResolution
 
                 // HTML/markdown content never continues, e.g. CSS lines ending in ';'
                 var trimmed = line.AsSpan().Trim();
-                if (parseModes.Mode != ParseMode.Cpd && !ParseModeTracker.IsDirective(trimmed))
+                if (parseModes.Mode != ParseMode.Cpd && !ParseModeTracker.IsDirective(trimmed, parseModes.Mode))
                     shouldContinue = false;
                 else
                     parseModes.Apply(trimmed);

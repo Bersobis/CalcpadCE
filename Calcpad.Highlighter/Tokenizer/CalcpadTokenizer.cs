@@ -132,7 +132,7 @@ namespace Calcpad.Highlighter.Tokenizer
                 if (parseModes.Mode != ParseMode.Cpd)
                 {
                     _result.LineModes[lineNum] = parseModes.Mode;
-                    if (_mode != TokenizerMode.Macro && !inMacroBody && !ParseModeTracker.IsDirective(trimmed))
+                    if (_mode != TokenizerMode.Macro && !inMacroBody && !ParseModeTracker.IsDirective(trimmed, parseModes.Mode))
                     {
                         _result.RawLines.Add(lineNum);
                         AddRawLineMacroTokens(lineMemory.Span, lineNum++);

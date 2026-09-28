@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Calcpad.Highlighter.Linter.Constants;
 using Calcpad.Highlighter.Linter.Models;
 
 namespace Calcpad.Highlighter.Tokenizer
@@ -18,7 +17,7 @@ namespace Calcpad.Highlighter.Tokenizer
         /// <summary>Applies a trimmed line, returning true when it was a mode directive.</summary>
         public bool Apply(ReadOnlySpan<char> trimmedLine)
         {
-            if (IsEndDirective(trimmedLine))
+            if (IsEndDirective(trimmedLine, Mode))
             {
                 Mode = _stack.Count > 0 ? _stack.Pop() : ParseMode.Cpd;
                 return true;
@@ -32,39 +31,19 @@ namespace Calcpad.Highlighter.Tokenizer
             return false;
         }
 
-        public static bool IsModeDirective(ReadOnlySpan<char> trimmedLine) =>
-            IsEndDirective(trimmedLine) || TryGetOpener(trimmedLine, out _);
-
         public static bool IsMacroDirective(ReadOnlySpan<char> trimmedLine) =>
             StartsWithWord(trimmedLine, "#def") || StartsWithWord(trimmedLine, "#end def") ||
             StartsWithWord(trimmedLine, "#include");
 
         /// <summary>
-        /// True when the line starts with a known keyword. Anything else, such as a markdown
-        /// heading or "#tag", is content in #html/#markdown mode, as it is for Core.
+        /// The lines still parsed as Calcpad inside #html/#markdown: any mode opener, the #end of
+        /// the current mode, and the macro directives Core expands beforehand. Everything else,
+        /// including #if, a markdown heading and "#tag", is content, as it is for Core.
         /// </summary>
-        public static bool IsDirective(ReadOnlySpan<char> trimmedLine)
-        {
-            if (trimmedLine.Length < 2 || trimmedLine[0] != '#' || !char.IsLetter(trimmedLine[1]))
-                return false;
-
-            var firstEnd = trimmedLine.IndexOfAny(' ', '\t');
-            if (firstEnd < 0)
-                return IsKnownKeyword(trimmedLine.ToString());
-
-            if (IsKnownKeyword(trimmedLine[..firstEnd].ToString()))
-                return true;
-
-            var rest = trimmedLine[firstEnd..].TrimStart();
-            var secondEnd = rest.IndexOfAny(' ', '\t');
-            var second = secondEnd < 0 ? rest : rest[..secondEnd];
-            return IsKnownKeyword($"{trimmedLine[..firstEnd]} {second}");
-        }
-
-        private static bool IsKnownKeyword(string keyword) =>
-            CalcpadBuiltIns.Keywords.Contains(keyword) ||
-            CalcpadBuiltIns.ControlBlockKeywords.Contains(keyword) ||
-            CalcpadBuiltIns.EndKeywords.Contains(keyword);
+        public static bool IsDirective(ReadOnlySpan<char> trimmedLine, ParseMode mode) =>
+            TryGetOpener(trimmedLine, out _) ||
+            IsEndDirective(trimmedLine, mode) ||
+            IsMacroDirective(trimmedLine);
 
         private static bool TryGetOpener(ReadOnlySpan<char> s, out ParseMode mode)
         {
@@ -82,8 +61,13 @@ namespace Calcpad.Highlighter.Tokenizer
             return true;
         }
 
-        private static bool IsEndDirective(ReadOnlySpan<char> s) =>
-            StartsWithWord(s, "#end html") || StartsWithWord(s, "#end cpd") || StartsWithWord(s, "#end markdown");
+        /// <summary>Only the #end of the mode in effect closes a block; the others are content.</summary>
+        private static bool IsEndDirective(ReadOnlySpan<char> s, ParseMode mode) => mode switch
+        {
+            ParseMode.Html => StartsWithWord(s, "#end html"),
+            ParseMode.Markdown => StartsWithWord(s, "#end markdown"),
+            _ => StartsWithWord(s, "#end html") || StartsWithWord(s, "#end cpd") || StartsWithWord(s, "#end markdown")
+        };
 
         private static bool StartsWithWord(ReadOnlySpan<char> s, ReadOnlySpan<char> word) =>
             s.StartsWith(word, StringComparison.OrdinalIgnoreCase) &&

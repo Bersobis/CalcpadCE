@@ -54,7 +54,7 @@ namespace Calcpad.Highlighter.Prettifier
                 var trimmed = rawLine.Trim();
 
                 // Leading whitespace is significant in markdown, and HTML keeps the author's layout
-                if (parseModes.Mode != ParseMode.Cpd && !ParseModeTracker.IsDirective(trimmed))
+                if (parseModes.Mode != ParseMode.Cpd && !ParseModeTracker.IsDirective(trimmed, parseModes.Mode))
                 {
                     sb.Append(rawLine).Append(lineEnding);
                     continue;
