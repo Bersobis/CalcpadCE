@@ -813,6 +813,22 @@ select option {
     white-space: pre-wrap;
     margin-bottom: 14px;
 }
+/* The URL is worksheet-controlled and may be long: wrap it rather than let it
+   stretch the dialog, and keep it visually separate from our own wording. */
+.modal-url {
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: var(--calcpad-font-size-md);
+    background: var(--vscode-editor-background, #1e1e1e);
+    border: 1px solid var(--vscode-widget-border, #474747);
+    border-radius: 3px;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    max-height: 6em;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    user-select: text;
+}
+
 .modal-actions {
     display: flex;
     justify-content: flex-end;

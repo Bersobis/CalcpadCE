@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
-import { pdfResponseError, isBrowserNotFound, installPdfBrowser, CalcpadApiClient, combineSignals, resolveEffectivePdfSettings, pdfSettingsFromDocument, parseConvertErrorHeader, findMetadataCommentBlock, serializeMetadataComment, computeMetadataBlock, buildSourceDefinitionResolver, extractBodyHtml, UiOverrideStore, writeUiOverrides, extractUiControls, variantRender, inlineImageSources, createReferenceResolver, isCompiledPath, documentHasUiDirectives, COMPILED_EXTENSION, MAX_COMPILED_IMAGE_TOTAL_BYTES, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MAX_HTML_MIRROR_CHARS, MAX_INLINE_IMAGE_TOTAL_BYTES, previewSizeLimitChars, previewLimitNoticeHtml, formatSize, truncateForOutput, consoleRelayGuardScript, coerceLogLevel, setLogLevel, getLogLevel, ConnectionMonitor } from 'calcpad-frontend';
+import { pdfResponseError, isBrowserNotFound, installPdfBrowser, CalcpadApiClient, combineSignals, resolveEffectivePdfSettings, pdfSettingsFromDocument, parseConvertErrorHeader, findMetadataCommentBlock, serializeMetadataComment, computeMetadataBlock, buildSourceDefinitionResolver, extractBodyHtml, UiOverrideStore, writeUiOverrides, extractUiControls, variantRender, inlineImageSources, createReferenceResolver, isCompiledPath, documentHasUiDirectives, COMPILED_EXTENSION, MAX_COMPILED_IMAGE_TOTAL_BYTES, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MAX_HTML_MIRROR_CHARS, MAX_INLINE_IMAGE_TOTAL_BYTES, previewSizeLimitChars, previewLimitNoticeHtml, formatSize, truncateForOutput, consoleRelayGuardScript, coerceLogLevel, setLogLevel, getLogLevel, ConnectionMonitor , getParseModeAt} from 'calcpad-frontend';
 import type { PdfSettings as FrontendPdfSettings, ExportVariant, UiControl, UiOverrides, CalcpadError } from 'calcpad-frontend';
 import { CalcpadServerLinter } from './calcpadServerLinter';
 import { CalcpadSemanticTokensProvider, semanticTokensLegend } from './calcpadSemanticTokensProvider';
@@ -695,6 +695,9 @@ function getLineLinkScript(scrollToLine?: number, includeLinks: boolean = true):
                     document.querySelectorAll('.lineLink').forEach(function(l) { l.style.display = 'none'; });
                 }
                 document.querySelectorAll('.line').forEach(function(el) {
+                    // The arrow sits at left:-3em inside the .line element, so an inline
+                    // one would put it mid-paragraph, and nesting it in an <a> is invalid.
+                    if (el.closest('a[href]') || getComputedStyle(el).display === 'inline') return;
                     var id = el.id || '';
                     var n = id.indexOf('line-') === 0 ? id.slice(5) : '';
                     // Prefer data-source-line (set by Calcpad.Core when the line came from
@@ -1971,7 +1974,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // Initialize comment formatter
         outputChannel.appendLine('Initializing comment formatter...', 'verbose');
-        const commentFormatter = new CommentFormatter(outputChannel);
+        const commentFormatter = new CommentFormatter(outputChannel, definitionsService);
         const commentFormatterDisposables = commentFormatter.registerCommands();
 
         // Initialize insert manager (snippet service)
@@ -2143,6 +2146,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     vueUiProvider = new CalcpadVueUIProvider(context.extensionUri, context, settingsManager, insertManager);
     vueUiProvider.getSourceEditor = () => vscode.window.activeTextEditor ?? previewSourceEditor;
+    vueUiProvider.getParseMode = (document, line) =>
+        definitionsService?.getCachedParseMode(document.uri.toString(), line)
+        ?? getParseModeAt(i => document.lineAt(i).text, line);
     // Both fall back to previewSourceEditor: a setting is usually changed with the sidebar
     // focused while a *preview panel* holds the editor area, and a webview panel being active
     // means there is no activeTextEditor at all. Without the fallback the re-render these

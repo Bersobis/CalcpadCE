@@ -8,7 +8,7 @@ import { discardMetadataDraft } from 'calcpad-frontend/vue/metadata-drafts';
 import { MessageBridge } from './services/message-bridge';
 import { WorkspaceStateStore, isResultMode, type ResultMode, type WorkspaceLayout } from './services/workspace-state';
 import { buildApiSettings } from 'calcpad-frontend/types/settings';
-import { ConnectionMonitor, setLogLevel, coerceLogLevel } from 'calcpad-frontend';
+import { ConnectionMonitor, setLogLevel, coerceLogLevel, stripCpdSnippetWrapper } from 'calcpad-frontend';
 import {
     findMetadataCommentBlock,
     serializeMetadataComment,
@@ -45,7 +45,7 @@ import {
 import { attachQuickTyper } from './editor/quick-type';
 import { attachOperatorReplacer } from './editor/operator-replacer';
 import { attachAutoIndenter } from './editor/auto-indent';
-import { registerFormattingCommands } from './editor/formatting-commands';
+import { registerFormattingCommands, getParseMode } from './editor/formatting-commands';
 import { registerFormatDocumentProvider } from './editor/format-document';
 import { setActiveDocumentKeyResolver, getActiveDocumentKey, type EditorBridge } from './editor/bridge';
 import { EditorGroup } from './editor/editor-group';
@@ -61,6 +61,9 @@ import './editor/workers';
 
 /** Runtime check: are we running inside a Tauri webview? */
 const isTauri = typeof (window as any).__TAURI_INTERNALS__ !== 'undefined';
+
+/** Link schemes a worksheet may ask to open outside the app. */
+const EXTERNAL_LINK_SCHEMES = /^(https?|file):/i;
 
 // Server URL: the ?server= query param, then VITE_SERVER_URL, then same origin.
 function getServerUrl(): string {
@@ -1144,6 +1147,17 @@ async function bootstrap(): Promise<void> {
         }
         : undefined;
 
+    // Registered before the include opener, which is unshifted ahead of it and so still
+    // claims its own URIs first. Monaco's default would otherwise window.open() an http
+    // link and navigate the app window itself for any other scheme.
+    monaco.editor.registerLinkOpener({
+        open(resource) {
+            const url = resource.toString();
+            if (!EXTERNAL_LINK_SCHEMES.test(url)) return false;
+            return openExternalLink(url).then(() => true);
+        },
+    });
+
     if (tauriBridge) {
         const bridge = tauriBridge;
         // Shared by both openers below — the definition-provider's Ctrl+click/F12
@@ -1251,9 +1265,14 @@ async function bootstrap(): Promise<void> {
     activeBridge.onInsertText = (text: string) => {
         const selection = editor.getSelection();
         if (selection) {
+            // Markup snippets are written for Calcpad mode; an #html/#markdown block takes
+            // the same content without the #val wrapper or the ' quotes.
+            const insert = getParseMode(editor, activeBridge) === 'cpd'
+                ? text
+                : stripCpdSnippetWrapper(text);
             editor.executeEdits('calcpad-insert', [{
                 range: selection,
-                text,
+                text: insert,
                 forceMoveMarkers: true,
             }]);
         }
@@ -1399,7 +1418,44 @@ async function bootstrap(): Promise<void> {
             }
             return;
         }
+
+        // A link in the rendered worksheet. The frame has already blocked the
+        // navigation; the scheme is re-checked here because the message crosses
+        // from untrusted content.
+        if (data.type === 'openExternal') {
+            if (!fromPreview) return;
+            void openExternalLink(String(data.url ?? ''));
+            return;
+        }
     });
+
+    /** Prompts with the target, then hands it to the OS. Shared by the preview and the editor. */
+    async function openExternalLink(url: string): Promise<void> {
+        if (!EXTERNAL_LINK_SCHEMES.test(url)) return;
+        const isFile = /^file:/i.test(url);
+        // A browser cannot act on a file:// URL, so there is nothing to offer.
+        if (isFile && !isTauri) return;
+        try {
+            // A malformed file: URL from the worksheet throws here and is reported below.
+            const target = isFile ? fileUrlToPath(url) : url;
+            if (!(await appInstance.showOpenLink(target, isFile ? 'file' : 'browser'))) return;
+            if (isTauri) {
+                const opener = await import('@tauri-apps/plugin-opener');
+                if (isFile) await opener.openPath(target);
+                else await opener.openUrl(url);
+            } else {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
+        } catch (e) {
+            appInstance.appendOutput('error', `Could not open ${url}: ${describeError(e)}`);
+        }
+    }
+
+    function fileUrlToPath(url: string): string {
+        const path = decodeURIComponent(new URL(url).pathname);
+        // Windows paths arrive as /C:/... from the URL form.
+        return /^\/[A-Za-z]:/.test(path) ? path.slice(1) : path;
+    }
 
     appInstance.appendOutput('info', `CalcpadCE Web started — server: ${serverUrl}`);
 
