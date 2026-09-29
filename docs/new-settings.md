@@ -50,6 +50,8 @@ Your default page setup for [PDF export](new-exports.md#pdf-export).
 | **Date** | on/off | The timestamp in the header. |
 | **Document title** | text | Header title. Empty falls back to the file name. |
 | **Timestamp format** | .NET format string, e.g. `M/d/yyyy h:mm tt` | How the header timestamp is written. |
+| **Show header/footer lines** | Both / Header only / Footer only / None | Which separator lines to draw. The header and footer text is unaffected. |
+| **Header/Footer line color** | hex color, e.g. `#b3b3b3` | Color of the header/footer separator lines. |
 
 **Reset PDF Settings** restores just this section, leaving everything else alone.
 
