@@ -248,8 +248,9 @@ interface PdfOptions {
   marginBottom?: string;     // Bottom margin (default: "0.75in")
   marginLeft?: string;       // Left margin (default: "0.5in")
 
-  // Header and footer content. The bands are always drawn; these control what
-  // goes in them, and an empty/omitted value simply leaves that slot blank.
+  // Header and footer content. An empty/omitted value simply leaves that slot blank.
+  headerFooterLines?: string; // Separator lines drawn: "both" | "header" | "footer" | "none" (default: "both")
+  lineColor?: string;        // Separator line color, "#rrggbb" (default: "#b3b3b3")
   documentTitle?: string;    // Header, left, bold
   showPageNumbers?: boolean; // "Page n of m", footer right (default: true)
   showDate?: boolean;        // Timestamp, header right (default: true)

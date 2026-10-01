@@ -590,9 +590,14 @@ namespace Calcpad.Server.Services
 
         private byte[] EnhancePdf(byte[] pdfBytes, PdfSettingsDto options)
         {
+            var lines = (options.HeaderFooterLines ?? PdfSettingsDefaults.HeaderFooterLines).ToLowerInvariant();
+            bool headerLine = lines is "both" or "header";
+            bool footerLine = lines is "both" or "footer";
+
             using var inputStream = new MemoryStream(pdfBytes);
             var document = PdfReader.Open(inputStream, PdfDocumentOpenMode.Modify);
 
+            var ctx = SetupHeaderFooterContext(options.LineColor);
             for (int i = 0; i < document.PageCount; i++)
             {
                 var page = document.Pages[i];
@@ -601,8 +606,8 @@ namespace Calcpad.Server.Services
                 double width = page.Width.Point;
                 double height = page.Height.Point;
 
-                DrawHeader(gfx, width, height, options);
-                DrawFooter(gfx, width, height, i + 1, document.PageCount, options);
+                DrawHeader(gfx, width, ctx, headerLine, options);
+                DrawFooter(gfx, width, height, i + 1, document.PageCount, ctx, footerLine, options);
             }
 
             using var outputStream = new MemoryStream();
@@ -612,14 +617,21 @@ namespace Calcpad.Server.Services
 
         private readonly record struct HeaderFooterContext(double Margin, XPen LinePen, XSolidBrush GrayBrush);
 
-        private static HeaderFooterContext SetupHeaderFooterContext() => new(
+        private static HeaderFooterContext SetupHeaderFooterContext(string? lineColor) => new(
             Margin: 20,
-            LinePen: new XPen(XColor.FromArgb(179, 179, 179), 0.5),
+            LinePen: new XPen(ParseLineColor(lineColor), 0.5),
             GrayBrush: new XSolidBrush(XColor.FromArgb(77, 77, 77)));
 
-        private void DrawHeader(XGraphics gfx, double width, double height, PdfSettingsDto options)
+        private static XColor ParseLineColor(string? hex)
         {
-            var ctx = SetupHeaderFooterContext();
+            if (hex is null || !PdfSettingsDto.HexColor.IsMatch(hex))
+                hex = PdfSettingsDefaults.LineColor;
+            var rgb = Convert.ToInt32(hex[1..], 16);
+            return XColor.FromArgb((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+        }
+
+        private void DrawHeader(XGraphics gfx, double width, HeaderFooterContext ctx, bool drawLine, PdfSettingsDto options)
+        {
             var font = new XFont("Helvetica", 10);
             var boldFont = new XFont("Helvetica", 12, XFontStyleEx.Bold);
             var smallFont = new XFont("Helvetica", 8);
@@ -631,7 +643,8 @@ namespace Calcpad.Server.Services
 
             // Separator line below header text
             double lineY = headerY + 25;
-            gfx.DrawLine(ctx.LinePen, margin, lineY, width - margin, lineY);
+            if (drawLine)
+                gfx.DrawLine(ctx.LinePen, margin, lineY, width - margin, lineY);
 
             // Document title (top-left, bold)
             if (!string.IsNullOrEmpty(options.DocumentTitle))
@@ -652,9 +665,8 @@ namespace Calcpad.Server.Services
         }
 
         private void DrawFooter(XGraphics gfx, double width, double height,
-            int pageNumber, int totalPages, PdfSettingsDto options)
+            int pageNumber, int totalPages, HeaderFooterContext ctx, bool drawLine, PdfSettingsDto options)
         {
-            var ctx = SetupHeaderFooterContext();
             var font = new XFont("Helvetica", 8);
             var centerFont = new XFont("Helvetica", 10);
 
@@ -663,7 +675,8 @@ namespace Calcpad.Server.Services
 
             // Separator line above footer
             double lineY = footerY - 5;
-            gfx.DrawLine(ctx.LinePen, margin, lineY, width - margin, lineY);
+            if (drawLine)
+                gfx.DrawLine(ctx.LinePen, margin, lineY, width - margin, lineY);
 
             // Right side: Page numbers
             if (options.ShowPageNumbers ?? PdfSettingsDefaults.ShowPageNumbers)

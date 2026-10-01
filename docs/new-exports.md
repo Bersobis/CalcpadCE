@@ -59,7 +59,7 @@ On Linux, if no browser is found, the app shows you the exact package to install
 - **Paper size** — Letter, Legal, Tabloid, Ledger, or A0–A6.
 - **Orientation** — portrait or landscape.
 - **Margins** — set each edge independently. A unit is required: `2cm`, `1.5cm`, `0.5in`, `12mm`.
-- **Header and footer** — The title, the timestamp, and the page number can each be set or hidden.
+- **Header and footer** — The title, the timestamp, and the page number can each be set or hidden. The separator lines can be turned off or colored as desired.
 
 Every option, with its accepted values, is listed under [Settings → PDF Export](new-settings.md#pdf-export).
 
