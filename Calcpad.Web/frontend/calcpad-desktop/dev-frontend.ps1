@@ -37,7 +37,7 @@ function Start-Watcher([string]$Prefix, [string]$Script, [string]$Log) {
     Start-Process -PassThru -WindowStyle Hidden -FilePath 'powershell' `
         -WorkingDirectory $ScriptDir `
         -RedirectStandardOutput $Log -RedirectStandardError "$Log.err" `
-        -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $LocalNpm,
+        -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$LocalNpm`"",
                       '--prefix', $Prefix, 'run', $Script
 }
 
