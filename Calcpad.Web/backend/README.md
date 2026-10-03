@@ -46,7 +46,6 @@ Documented in [API_SCHEMA.md](API_SCHEMA.md). Summary:
 - `POST /api/calcpad/definitions` — symbol index
 - `POST /api/calcpad/symbol-at-position` — the symbol under a cursor and all its occurrences
 - `GET  /api/calcpad/snippets` — autocomplete catalog
-- `GET  /api/github/status`, `/file`, `/contents`, `/issues`, `POST /commit` — GitHub proxy (`GITHUB_TOKEN` stays server-side)
 - `POST /api/calcpad/prettify` — pretty-print Calcpad source
 - `POST /api/calcpad/cpdz/decode`, `/cpdz/encode` — compiled `.cpdz` worksheets
 - `POST /api/calcpad/portable/bundle`, `/portable/package` — self-contained worksheet and ZIP export
@@ -70,6 +69,5 @@ Documented in [API_SCHEMA.md](API_SCHEMA.md). Summary:
 | `CALCPAD_CONTENT_CACHE_SIZE_LIMIT` | `50000` | Flattened source lines budgeted across the resolved-content cache |
 | `BROWSER_PATH` | *(auto-detect)* | Chromium-family executable used for PDF export |
 | `ALLOW_CHROMIUM_DOWNLOAD` | `false` | Lets the render path download Chromium on its own |
-| `GITHUB_TOKEN` | *(unset — GitHub routes answer 503)* | Personal access token for the `/api/github/*` proxy routes. Never sent to clients |
 
 `--urls` is a command-line flag only; `ASPNETCORE_URLS` is overridden by the host's own `UseUrls` call.

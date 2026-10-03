@@ -50,9 +50,6 @@ namespace Calcpad.Server.Services
             });
             builder.Services.AddSingleton<ContentResolutionCache>();
 
-            // GitHub proxy; reads GITHUB_TOKEN from the environment (see GitHubService).
-            builder.Services.AddSingleton<GitHubService>();
-
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(CorsPolicyName, policy =>
