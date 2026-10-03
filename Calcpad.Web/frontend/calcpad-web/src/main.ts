@@ -1768,14 +1768,12 @@ async function bootstrap(): Promise<void> {
         const [
             { listen: tauriListen },
             { getCurrentWindow },
-            { exit: processExit },
             tauriClipboard,
             { invoke: tauriInvoke },
             { exists: fileExists },
         ] = await Promise.all([
             import('@tauri-apps/api/event'),
             import('@tauri-apps/api/window'),
-            import('@tauri-apps/plugin-process'),
             import('@tauri-apps/plugin-clipboard-manager'),
             import('@tauri-apps/api/core'),
             import('@tauri-apps/plugin-fs'),
@@ -2703,6 +2701,7 @@ async function bootstrap(): Promise<void> {
 
         // ---- Close-with-unsaved guard ----
         let isExiting = false;
+        let allowWindowClose = false;
 
         // Only a wedged webview should ever reach this cap.
         const CLOSE_WAIT_CAP_MS = 120_000;
@@ -2758,7 +2757,7 @@ async function bootstrap(): Promise<void> {
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
             unlisten();
-            return !cancelled;
+            return !cancelled && await windowCount() === 1;
         }
 
         /** The sidecar, the stores and the process belong to the window that goes last. */
@@ -2770,11 +2769,11 @@ async function bootstrap(): Promise<void> {
                 try { await serverManager.dispose(); }
                 catch (e) { appInstance.appendOutput('debug', `serverManager.dispose() rejected: ${e}`); }
             }
-            // The store's own write is debounced, which processExit would outrun.
             try { await workspace.flush(); }
             catch (e) { appInstance.appendOutput('debug', `workspace.flush() rejected: ${e}`); }
-            appInstance.appendOutput('debug', 'Exit path: calling process.exit()');
-            void processExit(0);
+            appInstance.appendOutput('debug', 'Exit path: closing the final window');
+            allowWindowClose = true;
+            await getCurrentWindow().close();
         }
 
         async function windowCount(): Promise<number> {
@@ -2824,9 +2823,9 @@ async function bootstrap(): Promise<void> {
         }
 
         // Intercept the window close button so unsaved tabs get their save prompt
-        // before Tauri tears down the webview. tryExit() calls processExit() on
-        // confirmation; if the user cancels, the window stays open.
+        // before Tauri tears down the webview.
         await getCurrentWindow().onCloseRequested(async (event) => {
+            if (allowWindowClose) return;
             event.preventDefault();
             void tryExit();
         });
