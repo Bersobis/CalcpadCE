@@ -1,9 +1,11 @@
 /**
  * Structural checks on `CalcpadMathField.vue`.
  *
- * There is no DOM in this suite, so the real SFC is compiled and its template inspected.
- * That pins the failure this file was written for: `<math-field>` must live *inside* the
- * element `field()` queries, or every call returns null and the component is inert.
+ * The component has never been mounted in a browser — there is no DOM environment in this
+ * suite — so these tests render it through `@vue/server-renderer`, which compiles the real
+ * template and exercises the setup block's initial state. That is enough to pin the
+ * failure this file was written for: the `<math-field>` must live *inside* the element
+ * `field()` queries, or every call to it returns null and the component is inert.
  */
 
 import { readFileSync } from 'node:fs';
@@ -17,7 +19,7 @@ import { renderToString } from '@vue/server-renderer';
 import { calcpadToAst } from '../src/math/calcpad';
 import { astToLatex, latexToCalcpad } from '../src/math/latex';
 
-const file = fileURLToPath(new URL('../src/vue/components/CalcpadMathField.vue', import.meta.url));
+const file = fileURLToPath(new URL('../src/vue/CalcpadMathField.vue', import.meta.url));
 const source = readFileSync(file, 'utf8');
 
 /** Depth-first walk with the enclosing elements, since the parser sets no `parent`. */

@@ -23,8 +23,12 @@ const val = (name: string, v: string): string =>
     `<${w(name)} ${w('val')}="${escapeXmlAttr(v)}"/>`;
 
 /**
- * Upright run properties. Calcpad uses `<m:nor/>`; `<m:sty m:val="p"/>` is equally valid
- * but would give one document two unit styles, so the engine's spelling is the default.
+ * Upright run properties, matching `XmlWriter.NormalText` plus the Cambria Math font it
+ * applies to units. Calcpad marks upright text with `<m:nor/>`; `<m:sty m:val="p"/>` is
+ * equally valid OMML and is what Word itself writes, but emitting the other one in the
+ * same document would give two different unit styles for the same kind of run, so the
+ * engine's form is the default. `setUnitStyle` switches dialects for callers that need
+ * the Word spelling.
  */
 let unitStyle = '<m:nor/>';
 
