@@ -2098,6 +2098,11 @@ async function bootstrap(): Promise<void> {
             return true;
         };
 
+        async function openNewWindow(): Promise<void> {
+            try { await tauriInvoke('new_window'); }
+            catch (err) { appInstance.appendOutput('error', `Could not open a new window: ${err}`); }
+        }
+
         // ---- Per-group Tauri wiring (commands + drafts + drop) ----
         function wireGroupTauri(group: EditorGroup): void {
             const ed = group.editor;
@@ -2116,6 +2121,9 @@ async function bootstrap(): Promise<void> {
             });
             ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyN, () => {
                 group.tabs.newUntitled();
+            });
+            ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.KeyW, () => {
+                void openNewWindow();
             });
             ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyP, () => {
                 appInstance.togglePreview();
@@ -2449,8 +2457,7 @@ async function bootstrap(): Promise<void> {
                     break;
 
                 case 'new-window':
-                    try { await tauriInvoke('new_window'); }
-                    catch (err) { appInstance.appendOutput('error', `Could not open a new window: ${err}`); }
+                    await openNewWindow();
                     break;
 
                 case 'close-tab': {
@@ -2630,6 +2637,11 @@ async function bootstrap(): Promise<void> {
                 return;
             }
             if (!e.ctrlKey || e.metaKey) return;
+            if ((e.key === 'w' || e.key === 'W') && e.altKey && !e.shiftKey) {
+                e.preventDefault();
+                void openNewWindow();
+                return;
+            }
             // Ctrl+S / Ctrl+Shift+S — fallback when focus is outside the editor.
             if ((e.key === 's' || e.key === 'S') && !e.altKey) {
                 e.preventDefault();
