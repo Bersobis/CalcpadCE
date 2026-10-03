@@ -7,17 +7,7 @@ import path from 'path';
 // still overrides the dev proxy target when developers point at an already-
 // running Calcpad.Server.
 export default defineConfig(() => ({
-    plugins: [
-        vue({
-            template: {
-                // MathLive ships custom elements. Without this, Vue tries to resolve
-                // `math-field` as a component and logs an unknown-element warning per use.
-                compilerOptions: {
-                    isCustomElement: (tag) => tag.startsWith('math-'),
-                },
-            },
-        }),
-    ],
+    plugins: [vue()],
     define: {
         'import.meta.env.VITE_PLATFORM': JSON.stringify('web'),
     },
@@ -50,7 +40,6 @@ export default defineConfig(() => ({
             'monaco-editor/esm/vs/language/html/html.worker',
             'monaco-editor/esm/vs/language/css/css.worker',
             'vue',
-            'mathlive',
         ],
     },
     // Tauri consumes JS on the same port during `tauri dev`; keep the port
