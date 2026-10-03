@@ -328,3 +328,68 @@ export {
     pathRootTokenOptions,
     hasDanglingCloseBrace,
 } from './text/directives';
+
+// =============================================================================
+// Maths transpiler — Calcpad source ⇄ AST ⇄ LaTeX ⇄ OMML
+// =============================================================================
+// Powers the WYSIWYG equation canvas. LaTeX is the interchange with MathLive; see
+// src/math/latex.ts for why ASCIIMath and MathJSON were measured and rejected.
+
+export type {
+    MathJSON,
+    MathJSONBase,
+    MathNumber,
+    MathIdentifier,
+    MathText,
+    MathOperator,
+    MathGroup,
+    MathFrac,
+    MathSqrt,
+    MathRoot,
+    MathSup,
+    MathSub,
+    MathDelimited,
+    MathUnits,
+    MathStatements,
+    MathFunction,
+} from './math/mathjson';
+
+export {
+    calcpadToAst,
+    astToCalcpad,
+    splitWorksheet,
+    tokenize,
+    isUnitName,
+    parseDialect,
+} from './math/calcpad';
+export type { ParseOptions } from './math/calcpad';
+
+export { astToLatex, latexToAst, latexToCalcpad } from './math/latex';
+
+export {
+    mathJsonToOmmlBody,
+    wrapInOMath,
+    setUnitStyle,
+    ommlToCalcpadText,
+    ommlNodeToCalcpad,
+    MATH_NS,
+    WORD_NS,
+} from './math/omml';
+
+export {
+    parseXml,
+    serialize,
+    escapeXmlText,
+    escapeXmlAttr,
+    decodeEntities,
+    documentElement,
+    localName,
+    attr,
+    isElement,
+    textContent,
+    XmlParseError,
+} from './math/xml';
+export type { XmlElement, XmlNode, XmlText } from './math/xml';
+
+export { checkLine, checkCorpus, classify, formatReport } from './math/roundTrip';
+export type { CorpusReport, CorpusInput, LineResult, LatexValidator } from './math/roundTrip';
