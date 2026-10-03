@@ -1,11 +1,6 @@
 /**
- * Calcpad text syntax: tokenizer, recursive-descent parser to MathJSON, and printer
- * back to Calcpad source.
- *
- * Syntax implemented (see `Setup/AI/Work/CALCPAD_LANGUAGE_REFERENCE_FOR_CLAUDE.md`):
- * numbers, Unicode-letter variables, implicit multiplication, `+ - * / \ ^ !`,
- * `_` subscripts, `( )` grouping, `[ ]` vectors, `;` and `,` separators,
- * `root(x; n)` / `sqrt(x)`, factorial `!`, and the unit delimiter `|`.
+ * Calcpad text syntax: tokenizer, recursive-descent parser to MathJSON, and printer back
+ * to Calcpad source. See `Setup/AI/Work/CALCPAD_LANGUAGE_REFERENCE_FOR_CLAUDE.md`.
  */
 
 import type { MathJSON, MathNumber } from './mathjson';
@@ -62,16 +57,9 @@ export function isUnitName(name: string): boolean {
 }
 
 /**
- * Calcpad unit symbols overlap heavily with plausible variable names (`a`, `c`, `h`, `m`,
- * `s`, `t`, `w`, `y` are all units). The engine resolves this with full type and unit
- * checking; a syntax-only parser cannot, so ambiguity is resolved conservatively:
- *
- * - a two-or-more character unit name is always a unit (`kN`, `MPa`, `kg`, `mm`);
- * - a one-character name is a unit only where nothing else is possible — directly after
- *   a numeric literal (`50m`), or on the right of the `|` unit delimiter.
- *
- * Guessing the other way would silently turn variables into units, which is worse than
- * leaving a unit to be inferred later.
+ * Calcpad unit symbols overlap with plausible variable names (`a`, `c`, `m`, `s`, `w` are
+ * all units), so a multi-character name is always a unit and a one-character name only
+ * where nothing else is possible. Guessing the other way would turn variables into units.
  */
 function isUnambiguousUnit(name: string): boolean {
     return name.length > 1 && isUnitName(name);
@@ -648,13 +636,9 @@ export function parseDialect(script: string, options: ParseOptions): MathJSON {
 }
 
 /**
- * Splits a Calcpad script into the equation lines a canvas view would turn into editable
- * regions. Comments, directives, plotting blocks and SVG drawing commands are returned in
- * `other` so the caller can pass them through byte-for-byte.
- *
- * A line counts as an equation when it is non-blank and does not open with `'`, `"`,
- * `#` or `$`, and is not a drawing command. Drawing commands embed SVG markup and
- * label strings, so they are rendering directives rather than maths.
+ * Splits a script into the equation lines a canvas view would make editable. Comments,
+ * directives, plotting blocks and SVG drawing calls go to `other` to pass through
+ * byte-for-byte; drawing calls embed SVG markup, so they are directives, not maths.
  */
 export function splitWorksheet(script: string): { equations: { text: string; line: number }[]; other: string[] } {
     const equations: { text: string; line: number }[] = [];

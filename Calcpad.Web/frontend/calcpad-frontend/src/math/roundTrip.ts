@@ -1,18 +1,8 @@
 /**
- * Round-trip measurement over a real corpus.
- *
- * Three properties are checked per equation line, in increasing strictness:
- *
- *  1. `textStable`   — `calcpad → AST → calcpad` reproduces the input. The property the
- *                      whole design rests on: the canvas must never rewrite a document.
- *  2. `astStable`    — the AST itself survives the trip, so a visual edit of a subtree
- *                      cannot silently re-associate the rest.
- *  3. `latexOk`      — `astToLatex` is accepted by MathLive's real LaTeX parser and
- *                      produces real MathML. This is the leg that proves the output
- *                      renders as actual maths rather than merely looking plausible.
- *
- * Failures are bucketed by a coarse construct tag so the report says *which part of the
- * language* is unsafe to edit graphically, not just how many lines broke.
+ * Round-trip measurement over a real corpus: `textStable` (the canvas must never rewrite
+ * a document), `astStable`, and `latexOk` (MathLive's real parser accepts the output).
+ * Failures are bucketed by a construct tag so the report says which part of the language
+ * is unsafe to edit graphically.
  */
 
 import { astToLatex } from './latex';

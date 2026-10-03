@@ -1,24 +1,9 @@
 /**
- * Calcpad AST ⇄ LaTeX — the bridge to MathLive.
+ * Calcpad AST ⇄ LaTeX — the bridge to MathLive, whose primary format is LaTeX.
  *
- * ## Why LaTeX and not ASCIIMath
- *
- * MathLive's `math-field` reads and writes LaTeX natively (`setValue(latex)` /
- * `getValue('latex')`), and LaTeX is its *primary* format. ASCIIMath is also accepted
- * (`format: 'ascii-math'`) and is closer to Calcpad's linear syntax, but probing
- * MathLive 0.111 showed it silently lacks the two constructs Calcpad needs most:
- *
- * | Written in ASCIIMath | What MathLive 0.111 actually renders |
- * | --- | --- |
- * | `text(kN/m^2)` | the variable `text` followed by `(kN/m^2)` |
- * | `root(x,3)`     | the variable `root` followed by `(x,3)` |
- *
- * Both degrade into a mis-rendered variable of the same name — a silent, plausible-looking
- * failure. LaTeX handles them correctly: `\text{kN/m^2}` becomes an upright `<mtext>` and
- * `\sqrt[3]{x}` becomes `<mroot>`.
- *
- * `mathlive/ssr` exposes `validateLatex` and `convertLatexToMathMl`, so this path is
- * verifiable outside a browser; `roundTrip.ts` does exactly that over the real corpus.
+ * ASCIIMath looks closer to Calcpad but MathLive 0.111 renders `text(kN/m^2)` and
+ * `root(x,3)` as variables named `text` and `root` — a silent, plausible-looking
+ * failure. `tests/calcpadMath.test.ts` covers the macro set MathLive really emits.
  */
 
 import { astToCalcpad } from './calcpad';

@@ -1,10 +1,6 @@
 /**
- * Minimal, dependency-free XML support.
- *
- * The transpiler runs in the browser, in the VS Code extension host and under Node
- * (tests), so `DOMParser` is not universally available and adding an XML dependency to
- * the shared library is not worth it. This module covers exactly what MathML/OMML
- * needs: elements, attributes, text and CDATA, comments, namespaces and entities.
+ * Minimal, dependency-free XML support. The module runs in the browser, the VS Code
+ * extension host and Node, where `DOMParser` is not always available.
  */
 
 export interface XmlElement {

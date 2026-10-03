@@ -1,26 +1,16 @@
 /**
- * The MathJSON dialect exchanged by this module.
+ * The MathJSON dialect exchanged by this module. Node names follow the
+ * Shorthand/MathLive conventions; `normalize` also accepts the generic Shorthand
+ * spellings below, so the OMML writer has one shape per construct to handle.
  *
- * Node names follow the Shorthand/MathLive conventions (`Number`, `Identifier`,
- * `Operator`, `Group`, `Text`, `Function`, `Root`, `Sqrt`) and add `Frac`, `Sup`,
- * `Sub`, `Units` and `Delimited`, which map 1:1 onto the OMML constructs Calcpad emits.
- *
- * Every node carries an optional `latex` hint, and the OMML writer additionally
- * understands the generic Shorthand spellings of the same structures:
- *
- * | Structure | Canonical node            | Also accepted                                    | OMML                  |
- * | --------- | ------------------------- | ------------------------------------------------ | --------------------- |
- * | number    | `{ type: "Number", n }`   |                                                  | `<m:r><m:t>`          |
- * | variable  | `{ type: "Identifier" }`  |                                                  | `<m:r><m:t>`          |
- * | text      | `{ type: "Text", text }`   |                                                  | `<m:r>` + properties  |
- * | fraction  | `{ type: "Frac" }`        | `Operator` with `op: "/"` or `"÷"`               | `<m:f><m:num><m:den>` |
- * | square rt | `{ type: "Sqrt" }`        | `Root` without `index`, `Operator` `op: "√"`      | `<m:rad>` degHide     |
- * | n-th root | `{ type: "Root" }`        | `Operator` with `op: "root"`                     | `<m:rad><m:deg>`      |
- * | power     | `{ type: "Sup" }`         | `Operator` with `op: "^"`                        | `<m:sSup>`            |
- * | subscript | `{ type: "Sub" }`         | `Operator` with `op: "_"`                        | `<m:sSub>`            |
- * | group     | `{ type: "Group" }`       | `Operator` with `op: "("`                        | `<m:d>` parentheses   |
- * | delimiters| `{ type: "Delimited" }`   |                                                  | `<m:d>` beg/endChr    |
- * | units     | `{ type: "Units" }`       |                                                  | `<m:sty m:val="p"/>`  |
+ * | Structure | Canonical node | Also accepted | OMML |
+ * | --- | --- | --- | --- |
+ * | fraction | `Frac` | `Operator` `/`, `÷` | `<m:f>` |
+ * | square rt | `Sqrt` | `Root` without `index`, `Operator` `√` | `<m:rad>` degHide |
+ * | n-th root | `Root` | `Operator` `root` | `<m:rad><m:deg>` |
+ * | power | `Sup` | `Operator` `^` | `<m:sSup>` |
+ * | subscript | `Sub` | `Operator` `_` | `<m:sSub>` |
+ * | group | `Group` | `Operator` `(` | `<m:d>` |
  */
 
 export interface MathJSONBase {
