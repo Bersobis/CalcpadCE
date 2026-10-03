@@ -377,3 +377,57 @@ export interface UiConvertOptions {
      */
     hideErrorLines?: boolean;
 }
+
+// ============================================
+// GitHub API Types (server proxy)
+// ============================================
+
+/** Whether the server has a `GITHUB_TOKEN` and can proxy GitHub requests. */
+export interface GitHubStatus {
+    configured: boolean;
+}
+
+export interface GitHubFile {
+    name: string;
+    path: string;
+    /** Blob sha, needed as `sha` when committing an update to this file. */
+    sha: string;
+    size: number;
+    content: string;
+}
+
+export interface GitHubDirectoryEntry {
+    name: string;
+    path: string;
+    /** `file`, `dir` or `symlink`/`submodule` from the contents API. */
+    type: string;
+    size: number;
+    sha: string;
+}
+
+export interface GitHubIssue {
+    number: number;
+    title: string;
+    state: string;
+    htmlUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    labels: string[];
+}
+
+export interface GitHubCommitRequest {
+    owner: string;
+    repo: string;
+    path: string;
+    message: string;
+    content: string;
+    /** Blob sha of the version being replaced; omit to create the file. */
+    sha?: string;
+    branch?: string;
+}
+
+export interface GitHubCommit {
+    contentSha: string;
+    commitSha: string;
+    htmlUrl: string;
+}

@@ -32,6 +32,12 @@ export type {
     CpdzEncodeResponse,
     PortableBundleResult,
     PortablePackageResult,
+    GitHubStatus,
+    GitHubFile,
+    GitHubDirectoryEntry,
+    GitHubIssue,
+    GitHubCommitRequest,
+    GitHubCommit,
 } from './types/api';
 export { CalcpadTokenType, CalcpadTypeId } from './types/api';
 

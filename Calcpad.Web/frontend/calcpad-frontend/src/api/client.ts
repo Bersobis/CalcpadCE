@@ -18,6 +18,12 @@ import type {
     CpdzEncodeResponse,
     PortableBundleResult,
     PortablePackageResult,
+    GitHubStatus,
+    GitHubFile,
+    GitHubDirectoryEntry,
+    GitHubIssue,
+    GitHubCommitRequest,
+    GitHubCommit,
 } from '../types/api';
 import type { SnippetsResponse } from '../types/snippets';
 
@@ -312,6 +318,40 @@ export class CalcpadApiClient {
         return this.get<{ level: string; available: string[] }>('/api/calcpad/log-level', 'LogLevel');
     }
 
+    /** Whether the server has a `GITHUB_TOKEN` and can proxy GitHub requests. */
+    public async githubStatus(): Promise<GitHubStatus | null> {
+        return this.get<GitHubStatus>('/api/github/status', 'GitHubStatus');
+    }
+
+    /** A file's content from a repository, with the blob sha needed to commit an update. */
+    public async githubFile(
+        owner: string, repo: string, path: string, gitRef?: string,
+    ): Promise<GitHubFile | null> {
+        const endpoint = `/api/github/file?${githubQuery({ owner, repo, path, ref: gitRef })}`;
+        return this.get<GitHubFile>(endpoint, 'GitHubFile');
+    }
+
+    /** Directory listing for browsing a repository from the Files tab. */
+    public async githubContents(
+        owner: string, repo: string, path: string, gitRef?: string,
+    ): Promise<GitHubDirectoryEntry[] | null> {
+        const endpoint = `/api/github/contents?${githubQuery({ owner, repo, path, ref: gitRef })}`;
+        return this.get<GitHubDirectoryEntry[]>(endpoint, 'GitHubContents');
+    }
+
+    /** Open or closed issues for a repository, newest first. */
+    public async githubIssues(
+        owner: string, repo: string, state: 'open' | 'closed' = 'open',
+    ): Promise<GitHubIssue[] | null> {
+        const endpoint = `/api/github/issues?${githubQuery({ owner, repo, state })}`;
+        return this.get<GitHubIssue[]>(endpoint, 'GitHubIssues');
+    }
+
+    /** Creates or updates a file through the server's GitHub proxy. */
+    public async githubCommit(request: GitHubCommitRequest): Promise<GitHubCommit | null> {
+        return this.post<GitHubCommit>('/api/github/commit', request, 'GitHubCommit');
+    }
+
     public async prettify(
         content: string,
         indentUnit?: string,
@@ -534,6 +574,15 @@ export class CalcpadApiClient {
             this.logger.appendLine(`[${tag}] Error: ${error instanceof Error ? error.message : String(error)}`, 'warning');
         }
     }
+}
+
+/** Query string for the GitHub proxy routes; omits values the caller left undefined. */
+function githubQuery(params: Record<string, string | undefined>): string {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined) query.set(key, value);
+    }
+    return query.toString();
 }
 
 export function parseConvertErrorHeader(response: Response): CalcpadError[] {
