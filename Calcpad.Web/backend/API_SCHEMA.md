@@ -50,11 +50,6 @@ Launches that do not set the variable (a `dotnet run` during development, the sa
 - [POST /portable/bundle](#post-portablebundle)
 - [POST /portable/package](#post-portablepackage)
 - [GET /snippets](#get-snippets)
-- [GET /github/status](#get-githubstatus)
-- [GET /github/file](#get-githubfile)
-- [GET /github/contents](#get-githubcontents)
-- [GET /github/issues](#get-githubissues)
-- [POST /github/commit](#post-githubcommit)
 - [Usage Notes](#usage-notes)
 - [Environment Variables](#environment-variables)
 
@@ -1046,113 +1041,6 @@ GET /api/calcpad/snippets?category=Functions/Trigonometric
 
 ---
 
-## GET /github/status
-
-Whether the server has a `GITHUB_TOKEN` and can proxy GitHub requests. Clients hide GitHub UI when `configured` is `false` — the rest of the GitHub routes answer `503` with the same story.
-
-**Response:**
-```json
-{ "configured": true }
-```
-
----
-
-## GET /github/file
-
-A file's content from a GitHub repository, base64-decoded by the server. `sha` is the blob id, needed as `sha` in [POST /github/commit](#post-githubcommit) when updating the file.
-
-**Query Parameters:**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| owner | string | Repository owner |
-| repo | string | Repository name |
-| path | string | Path within the repository |
-| ref | string | Optional branch or tag; defaults to the repository's default branch |
-
-**Response:**
-```typescript
-interface GitHubFile {
-  name: string;
-  path: string;
-  sha: string;    // Blob sha, pass as `sha` when committing an update
-  size: number;
-  content: string; // Decoded file text
-}
-```
-
----
-
-## GET /github/contents
-
-Directory listing for browsing a repository. Answers `422` when the path names a file rather than a directory. Same query parameters as [GET /github/file](#get-githubfile).
-
-**Response:**
-```typescript
-interface GitHubDirectoryEntry {
-  name: string;
-  path: string;
-  type: string;  // "file", "dir", "symlink" or "submodule"
-  size: number;
-  sha: string;
-}
-```
-
----
-
-## GET /github/issues
-
-Issues for a repository, newest first. Pull requests are filtered out.
-
-**Query Parameters:**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| owner | string | Repository owner |
-| repo | string | Repository name |
-| state | string | Optional. `open` (default), `closed` or `all` |
-
-**Response:**
-```typescript
-interface GitHubIssue {
-  number: number;
-  title: string;
-  state: string;
-  htmlUrl: string;
-  createdAt: string;
-  updatedAt: string;
-  labels: string[];
-}
-```
-
----
-
-## POST /github/commit
-
-Creates or updates a file through GitHub's contents API. Omit `sha` to create the file; pass the current blob's `sha` (from [GET /github/file](#get-githubfile)) to update it.
-
-**Request:**
-```typescript
-interface GitHubCommitRequest {
-  owner: string;
-  repo: string;
-  path: string;
-  message: string;   // Commit message
-  content: string;   // New file text (the server base64-encodes it)
-  sha?: string;      // Blob sha of the version being replaced
-  branch?: string;   // Defaults to the repository's default branch
-}
-```
-
-**Response:**
-```typescript
-interface GitHubCommit {
-  contentSha: string;
-  commitSha: string;
-  htmlUrl: string;
-}
-```
-
----
-
 ## Usage Notes
 
 1. **Line and column numbers are zero-based** — The first line is line 0, and the first character is column 0.
@@ -1185,7 +1073,6 @@ interface GitHubCommit {
 | `CALCPAD_CONTENT_CACHE_SIZE_LIMIT` | `50000` | Flattened source lines budgeted across the resolved-content cache shared by lint/highlight/definitions |
 | `BROWSER_PATH` | *(auto-detect)* | Chromium-family executable for PDF export. Also `BrowserPath` in `appsettings.json` |
 | `ALLOW_CHROMIUM_DOWNLOAD` | `false` | Lets the render path download Chromium on its own. Also `AllowChromiumDownload` in `appsettings.json` |
-| `GITHUB_TOKEN` | *(unset — GitHub routes answer 503)* | GitHub personal access token used by the `/github/*` proxy routes. Never sent to clients |
 
 `ASPNETCORE_URLS` is ignored: the host always calls `UseUrls`, which overrides it. Use `--urls` on the command line.
 
