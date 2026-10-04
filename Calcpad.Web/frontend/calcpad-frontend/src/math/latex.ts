@@ -11,7 +11,7 @@ import { formatNumberAsCalcpad } from './mathjson';
 import type { MathJSON } from './mathjson';
 
 const PREC: Record<string, number> = {
-    '=': 1, '|': 2,
+    '=': 1, '←': 1, '|': 2, '∠': 2,
     '+': 3, '-': 3,
     '*': 4, '/': 4, '÷': 4, '\\': 4, '⦼': 4, 'mod': 4,
 };
@@ -58,6 +58,9 @@ export function astToLatex(node: MathJSON): string {
             return `${node.left ?? '['}${body}${node.right ?? ']'}`;
         }
 
+        case 'Matrix':
+            return matrixToLatex(node);
+
         case 'Units':
             return `\\text{${unitPlainText(node)}}`;
 
@@ -94,9 +97,20 @@ export function astToLatex(node: MathJSON): string {
             return operatorToLatex(node);
 
         // A quoted literal is not part of the equation; it labels one. `1' - for |Mx|`
-        // is the number `1` described by the text after it.
-        case 'QuotedText':
-            return `\\text{${tex(node.text)}}`;
+        // is the number `1` described by the text after it. The quote character goes
+        // *inside* the group so the reader can tell a label from a unit run: both are
+        // `\text{…}`, and without the quote `'kN·m` came back as attached units, which
+        // silently changed what the line means.
+        //
+        // A closed literal gets its closing quote inside the group too, doubled so it
+        // cannot be confused with a quote that is part of the text. `A_s = 84'` has no
+        // closer, and re-adding one gave `84''`, which Calcpad reads as an escaped quote.
+        case 'QuotedText': {
+            const body = tex(node.text);
+            return node.closed === false
+                ? `\\text{${node.quote}${body}}`
+                : `\\text{${node.quote}${body}${node.quote}${node.quote}}`;
+        }
 
         // Calcpad's own output (`XmlWriter.AppendSubscript`) puts the dot inside the
         // subscript, so `x.1` reads as an indexed element rather than a decimal.
@@ -105,8 +119,19 @@ export function astToLatex(node: MathJSON): string {
     }
 }
 
+/**
+ * Calcpad has exactly one matrix syntax — `[a; b|c; d]` — so every matrix is emitted as
+ * `bmatrix`. It is also the environment MathLive treats as an editable grid: `&` and `\\`
+ * move between cells and rows, which is what makes a matrix editable in place.
+ */
+function matrixToLatex(n: Extract<MathJSON, { type: 'Matrix' }>): string {
+    const rows = n.rows.map((row) => row.map(astToLatex).join(' & ')).join('\\\\');
+    return `\\begin{bmatrix}${rows}\\end{bmatrix}`;
+}
+
 function operatorToLatex(n: Extract<MathJSON, { type: 'Operator' }>): string {
     if (n.form === 'postfix' || n.op === '!') {
+        // MathLive reads a bare `!` as factorial and renders it, so nothing to encode.
         return `${astToLatex(n.args[0] ?? { type: 'Number', n: 0 })}!`;
     }
     if (n.form === 'prefix' && n.op === '-') return `-${astToLatex(n.args[0])}`;
@@ -122,8 +147,19 @@ function operatorToLatex(n: Extract<MathJSON, { type: 'Operator' }>): string {
     // Division becomes a real stacked fraction, which is what the canvas wants to show;
     // a bare `/` would typeset as a slash.
     if (n.op === '/' || n.op === '÷') {
-        return `\\frac{${astToLatex(a)}}{${astToLatex(b)}}`;
+        // `÷` is Calcpad's *inline* division: the same value as `/`, typeset as a slash
+        // rather than a bar. `\frac` would also change the meaning in pro mode (`//`).
+        return n.op === '÷'
+            ? `${astToLatex(a)}\\text{÷}${astToLatex(b)}`
+            : `\\frac{${astToLatex(a)}}{${astToLatex(b)}}`;
     }
+
+    // `⦼` modulo, `\` integer division, `←` outer assignment and `∠` phasor have no TeX
+    // spelling at all, so they travel as upright text the reader can identify.
+    if (n.op === '⦼') return `${astToLatex(a)}\\text{⦼}${astToLatex(b)}`;
+    if (n.op === '\\') return `${astToLatex(a)}\\text{\\textbackslash}${astToLatex(b)}`;
+    if (n.op === '←') return `${astToLatex(a)}\\text{←}${astToLatex(b)}`;
+    if (n.op === '∠') return `${astToLatex(a)}\\text{∠}${astToLatex(b)}`;
 
     const prec = PREC[n.op] ?? 2;
     const sign = n.op === '*' ? (n.implicit ? ' ' : '\\cdot ') : tex(n.op);
@@ -186,11 +222,71 @@ const MACRO_OPS: Record<string, string> = {
     '\\equiv': '=', '\\land': '&&', '\\wedge': '&&', '\\lor': '||', '\\vee': '||',
 };
 
+/**
+ * Calcpad operators with no TeX equivalent. Each is carried inside a `\text{}` group:
+ * MathLive renders the character upright and the reader recovers it, so the glyph survives
+ * the round trip instead of being dropped as an unknown symbol.
+ *
+ * Measured against the engine, which decides what may be folded rather than preserved:
+ * it *rejects* `∖` for integer division (so `\` has to survive verbatim), and *accepts*
+ * both `x₁` and `x_1` (so those two are interchangeable -- see `normalize`).
+ */
+const TEXT_OPERATORS: Record<string, string> = {
+    '÷': '÷', '⦼': '⦼', '←': '←', '∠': '∠',
+};
+
 const COMPARISON = new Set(['<', '>', '<=', '>=', '!=', '==']);
+
+/**
+ * Strips an inner `{\mathrm{…}}` or `{…}` wrapper from a macro body. MathLive writes a
+ * named function as `\operatorname{\mathrm{if}}`, and reading the braces literally gave a
+ * variable named `\mathrm{if}`.
+ */
+function unbracedName(body: string): string {
+    const wrapped = body.match(/^\s*\\mathrm\s*\{([^{}]*)\}\s*$/);
+    if (wrapped !== null) return wrapped[1];
+    const braces = body.match(/^\s*\{([^{}]*)\}\s*$/);
+    return braces ? braces[1] : body;
+}
+
+/**
+ * Greek macros MathLive emits once the user *types* a Greek letter, against the Unicode
+ * Calcpad writes. Without this, `\sigma` fell through to a variable literally named
+ * `sigma` -- so editing any Greek equation silently renamed every symbol in it.
+ */
+const GREEK_MACROS: Record<string, string> = {
+    '\\alpha': 'α', '\\beta': 'β', '\\gamma': 'γ', '\\delta': 'δ',
+    '\\epsilon': 'ε', '\\varepsilon': 'ε', '\\zeta': 'ζ', '\\eta': 'η',
+    '\\theta': 'θ', '\\vartheta': 'ϑ', '\\iota': 'ι', '\\kappa': 'κ',
+    '\\lambda': 'λ', '\\mu': 'μ', '\\nu': 'ν', '\\xi': 'ξ',
+    '\\omicron': 'ο', '\\pi': 'π', '\\varpi': 'ϖ', '\\rho': 'ρ',
+    '\\varrho': 'ϱ', '\\sigma': 'σ', '\\varsigma': 'ς', '\\tau': 'τ',
+    '\\upsilon': 'υ', '\\phi': 'φ', '\\varphi': 'ϕ', '\\chi': 'χ',
+    '\\psi': 'ψ', '\\omega': 'ω',
+    '\\Gamma': 'Γ', '\\Delta': 'Δ', '\\Theta': 'Θ', '\\Lambda': 'Λ',
+    '\\Xi': 'Ξ', '\\Pi': 'Π', '\\Sigma': 'Σ', '\\Upsilon': 'Υ',
+    '\\Phi': 'Φ', '\\Psi': 'Ψ', '\\Omega': 'Ω',
+};
+
+/** True for a Greek macro MathLive emits and Calcpad spells as a Unicode letter. */
+function greekFromMacro(cmd: string): string | null {
+    return GREEK_MACROS[cmd] ?? null;
+}
 const LOGICAL = new Set(['&&', '||']);
 
 /** Characters `binary()` reads as an operator, as opposed to one spelled as a macro. */
 const OP_CHARS = '+-*/=<>|^_';
+
+/**
+ * A letter that can be part of a symbol name: ASCII plus the Greek and other Unicode
+ * letters Calcpad writes bare (`δ`, `σ_cp`, `ρ_L`). MathLive accepts and emits these
+ * unescaped, so restricting the reader to `[A-Za-z]` silently turned every Greek symbol
+ * into the number `0` on the way back — the worst failure mode, since the equation still
+ * looked plausible.
+ */
+const LETTER = /[\p{L}]/u;
+/** `_` ends a name: it is Calcpad's subscript operator, not part of the symbol. */
+const NAME_CHAR = /[\p{L}\p{N}]/u;
 
 /** Macros that only affect spacing or sizing, carrying no structure. */
 const SPACING_MACROS = new Set([
@@ -258,6 +354,36 @@ class LatexReader {
         return cmd;
     }
 
+    /** The next `{...}` body without consuming it, or null when there is no group here. */
+    private peekGroup(): string | null {
+        const save = this.i;
+        const body = this.group();
+        this.i = save;
+        return body === '' ? null : body;
+    }
+
+    /**
+     * Arguments written without parentheses, separated by `;` or `,` as MathLive emits
+     * them once a bracketed call is flattened. Returns nothing when the cursor is at an
+     * operator or the end, so a bare function name is not mistaken for a call.
+     */
+    private bareArgs(): MathJSON[] {
+        const save = this.i;
+        const args: MathJSON[] = [];
+        this.skip();
+        if (!LETTER.test(this.s[this.i] ?? '') && !/[0-9(.-]/.test(this.s[this.i] ?? '')) {
+            this.i = save;
+            return args;
+        }
+        for (;;) {
+            args.push(this.expression());
+            this.skip();
+            if (this.s[this.i] === ';' || this.s[this.i] === ',') { this.i++; continue; }
+            break;
+        }
+        return args;
+    }
+
     parse(): MathJSON {
         return this.juxtaposed();
     }
@@ -295,7 +421,7 @@ class LatexReader {
         const c = this.s[this.i];
         if (c === undefined) return false;
         if ('+-*/=<>|^_)],'.includes(c)) return false;
-        return /[0-9A-Za-z([{\\]/.test(c);
+        return /[0-9([{\\]/.test(c) || LETTER.test(c);
     }
 
     /**
@@ -325,6 +451,32 @@ class LatexReader {
         return args;
     }
 
+    /**
+     * Reads `\begin{env} … \end{env}` for the matrix environments. `&` divides cells and
+     * `\\` divides rows. A column-specification argument (`array`'s `{cc}`) is skipped.
+     *
+     * Calcpad has one matrix syntax — `[a; b|c; d]` — so every environment reads back as
+     * a bracketed matrix regardless of which delimiter the LaTeX used.
+     */
+    private matrixEnvironment(): MathJSON {
+        const start = this.i;
+        const env = this.group();
+        this.skip();
+        if (this.s[this.i] === '{') this.group();
+        const end = this.s.indexOf(`\\end{${env}}`, this.i);
+        if (end < 0) {
+            this.i = start;
+            return { type: 'Number', n: 0 };
+        }
+        const body = this.s.slice(this.i, end);
+        this.i = end + `\\end{${env}}`.length;
+
+        const rows = body.split(/\\\\/).map((row) =>
+            row.split('&').map((cell) => parseLatex(cell)));
+        if (rows.length > 1) return { type: 'Matrix', rows, left: '[', right: ']' };
+        return { type: 'Delimited', body: rows[0] ?? [], left: '[', right: ']' };
+    }
+
     private expression(): MathJSON {
         return this.binary(1);
     }
@@ -347,14 +499,28 @@ class LatexReader {
                 // structure, so skip the sizing command and let `primary()` see the char.
                 if (cmd === '\\left' || cmd === '\\right') { this.i = at + cmd.length; continue; }
                 if (SPACING_MACROS.has(cmd)) continue;
-                const mapped = MACRO_OPS[cmd];
-                if (mapped === undefined) {
+                // A Calcpad-only operator travelling as `\text{⦼}`. It is an infix operator
+                // here, not a factor, so it has to be taken in the operator loop rather
+                // than falling through to `primary()`.
+                if (cmd === '\\text') {
+                    const body = this.peekGroup();
+                    if (body !== null && (TEXT_OPERATORS[body] !== undefined || body === '\\textbackslash')) {
+                        this.group();
+                        op = body === '\\textbackslash' ? '\\' : body;
+                    } else {
+                        this.i = at;
+                        break;
+                    }
+                } else {
+                    const mapped = MACRO_OPS[cmd];
+                    if (mapped === undefined) {
                     // Not an operator — rewind and let `primary()` handle the macro
-                    // (`\frac`, `\sqrt`, `\text`, …).
-                    this.i = at;
-                    break;
+                        // (`\frac`, `\sqrt`, `\text`, …).
+                        this.i = at;
+                        break;
+                    }
+                    op = mapped;
                 }
-                op = mapped;
             } else if (OP_CHARS.includes(this.s[this.i] ?? '')) {
                 op = this.s[this.i];
                 width = 1;
@@ -377,7 +543,10 @@ class LatexReader {
                 continue;
             }
 
-            const right = op === '=' ? this.juxtaposed() : this.binary(prec + 1);
+            // `=` and `←` are assignments, so their right side takes everything to its right --
+            // `a ← 5` is one assignment, not a product. Matches `parseAssignment` in the
+            // Calcpad parser, which is where the emitter's tree comes from.
+            const right = op === '=' || op === '←' ? this.juxtaposed() : this.binary(prec + 1);
             left = { type: 'Operator', op, args: [left, right], form: 'infix' };
         }
         return left;
@@ -409,6 +578,13 @@ class LatexReader {
                 node = { type: 'Sub', base: node, sub: this.primary() };
                 continue;
             }
+            // `5!` is factorial. MathLive both accepts and emits the bare `!`, but the
+            // reader used to drop it, so committing an edited `n = 5!` silently lost it.
+            if (this.s[this.i] === '!' && this.s[this.i + 1] !== '=') {
+                this.i++;
+                node = { type: 'Operator', op: '!', args: [node], form: 'postfix' };
+                continue;
+            }
             break;
         }
         return node;
@@ -426,14 +602,35 @@ class LatexReader {
             // `\left` / `\right` size the delimiter that follows; the delimiter carries
             // the structure, so drop the sizing command and re-read.
             if (cmd === '\\left' || cmd === '\\right') { this.i = at + cmd.length; return this.primary(); }
+            if (cmd === '\\begin') return this.matrixEnvironment();
+            // Greek first: `\sigma` must become `σ`, not a variable named `sigma`.
+            const greek = greekFromMacro(cmd);
+            if (greek !== null) return { type: 'Identifier', sym: greek };
             switch (cmd) {
                 case '\\frac': {
                     // Kept as `/` rather than a `Frac` node: MathLive renders `\frac` as a
                     // stacked fraction regardless, and preserving the slash keeps the
                     // author's `w*L^2/8` intact. The `Frac` form is reserved for an
                     // explicit fraction such as one parsed from OMML `<m:f>`.
-                    const num = parseLatex(this.group());
-                    const den = parseLatex(this.group());
+                    //
+                    // Both arguments may arrive without braces once a single digit is typed
+                    // (`\frac{1}2` comes back as `\frac12`), so each falls back to one atom.
+                    const arg = (): MathJSON => {
+                        if (this.s[this.i] === '{') return parseLatex(this.group());
+                        // Measured against MathLive: a multi-digit value keeps its braces
+                        // (`\frac{12}{3}`, `\frac{1}{2.5}`), so a brace-less argument is
+                        // always a *single* digit. `\frac12` is therefore one over the other,
+                        // and taking the whole run gave `12 / 0`.
+                        if (/[0-9]/.test(this.s[this.i] ?? '')) {
+                            const digit = this.s[this.i];
+                            this.i++;
+                            return { type: 'Number', n: Number(digit), raw: digit };
+                        }
+                        if (this.s[this.i] === '.') return this.primary();
+                        return this.primary();
+                    };
+                    const num = arg();
+                    const den = arg();
                     return { type: 'Operator', op: '/', args: [num, den], form: 'infix' };
                 }
                 case '\\sqrt': {
@@ -442,20 +639,76 @@ class LatexReader {
                         const end = this.s.indexOf(']', this.i);
                         const index = end < 0 ? '' : this.s.slice(this.i + 1, end);
                         this.i = end < 0 ? this.s.length : end + 1;
-                        return { type: 'Root', index: parseLatex(index), radicand: parseLatex(this.group()) };
+                        const radicand = this.s[this.i] === '{'
+                            ? parseLatex(this.group())
+                            : this.primary();
+                        return { type: 'Root', index: parseLatex(index), radicand };
                     }
-                    return { type: 'Sqrt', radicand: parseLatex(this.group()) };
+                    // MathLive drops the braces once a single atom is typed into the slot --
+                    // `\sqrt{9}` becomes `\sqrt9`. With no group there is still a radicand, so
+                    // one factor is read; otherwise the empty group parsed as the number `0`
+                    // and the radical came back as `sqrt(0)9`.
+                    if (this.s[this.i] === '{') return { type: 'Sqrt', radicand: parseLatex(this.group()) };
+                    return { type: 'Sqrt', radicand: this.primary() };
                 }
-                case '\\text':
-                    return { type: 'Text', text: this.group(), unit: true };
+                case '\\text': {
+                    const body = this.group();
+                    // A Calcpad-only operator carried as upright text (`\text{⦼}`). It binds
+                    // to what came before it, so it is read as an infix operator and the
+                    // operand is taken by the caller's precedence loop.
+                    if (body === '\\textbackslash') return { type: 'Operator', op: '\\', args: [], form: 'infix' };
+                    if (TEXT_OPERATORS[body] !== undefined) {
+                        return { type: 'Operator', op: body, args: [], form: 'infix' };
+                    }
+                    // A leading quote marks a label (`QuotedText`), not a unit run.
+                    const q = body[0];
+                    if (q === "'" || q === '"') {
+                        const doubled = q + q;
+                        const closed = body.length >= 2 + 1 && body.endsWith(doubled);
+                        return {
+                            type: 'QuotedText',
+                            text: closed ? body.slice(1, -2) : body.slice(1),
+                            quote: q,
+                            closed,
+                        };
+                    }
+                    return { type: 'Text', text: body, unit: true };
+                }
                 case '\\mathrm': {
-                    const sym = this.group();
+                    // `\_` is TeX's escape for a literal underscore, and a Calcpad name may
+                    // end in one (`h_`, `V_Rd_c_`). Reading it back as the escape would
+                    // leave a stray backslash in the document, so it is unescaped here.
+                    const sym = this.group().replace(/\\_/g, '_');
                     const args = this.callArgs();
                     if (args === null) return { type: 'Identifier', sym };
                     return functionOrSpecial(sym, args);
                 }
                 case ',': case ';': case ':': case '!':
                     return { type: 'Number', n: 0 };
+                // `\placeholder{…}` is MathLive's empty slot, left behind by the insert
+                // buttons and by any template the user has not filled in yet. Reading it as
+                // an ordinary name wrote a variable literally called `placeholder` into the
+                // document -- so it reads as an empty group instead.
+                case '\\placeholder': {
+                    this.group();
+                    return { type: 'Group', body: [] };
+                }
+                // `\operatorname{abs}(x)` is how MathLive renders any *named* function --
+                // `abs`, `min`, `if` and the rest are not built-in LaTeX. Without this the
+                // macro name survived as a variable, giving `operatorname abs(x)`.
+                case '\\operatorname': {
+                    // MathLive nests the name: `\operatorname{\mathrm{if}}`. Either shape
+                    // means "a function Calcpad names", not a product of variables.
+                    const name = unbracedName(this.group());
+                    const args = this.callArgs();
+                    if (args !== null) return functionOrSpecial(name, args);
+                    // MathLive also drops the parentheses once the arguments are typed out
+                    // (`\operatorname{if}1;2;3`). Without this the name became a bare
+                    // variable and every argument was left behind in the line.
+                    const bare = this.bareArgs();
+                    if (bare.length) return functionOrSpecial(name, bare);
+                    return { type: 'Identifier', sym: name };
+                }
                 default: {
                     // `\sin`, `\cos`, … arrive without parentheses, so they only become a
                     // call when arguments actually follow; otherwise they are a name.
@@ -481,9 +734,9 @@ class LatexReader {
             return { type: 'Number', n: Number.isFinite(n) ? n : 0 };
         }
 
-        if (/[A-Za-z]/.test(c)) {
+        if (LETTER.test(c)) {
             let j = this.i;
-            while (j < this.s.length && /[A-Za-z]/.test(this.s[j])) j++;
+            while (j < this.s.length && NAME_CHAR.test(this.s[j])) j++;
             const name = this.s.slice(this.i, j);
             this.i = j;
             const args = this.callArgs();
@@ -512,6 +765,10 @@ class LatexReader {
                 }
             }
             if (this.s[this.i] === ']') this.i++;
+            // MathLive also writes a grid as `\left[\begin{array}…\end{array}\right]`,
+            // which reaches here as a bracketed list holding one matrix. The outer
+            // brackets are the matrix's own, so they are not a second pair.
+            if (body.length === 1 && body[0].type === 'Matrix') return body[0];
             return { type: 'Delimited', body, left: '[', right: ']' };
         }
 

@@ -355,6 +355,7 @@ export type {
     MathSup,
     MathSub,
     MathDelimited,
+    MathMatrix,
     MathUnits,
     MathStatements,
     MathFunction,
@@ -364,6 +365,7 @@ export {
     calcpadToAst,
     astToCalcpad,
     splitWorksheet,
+    isEquationLine,
     tokenize,
     isUnitName,
     parseDialect,
@@ -399,3 +401,6 @@ export type { XmlElement, XmlNode, XmlText } from './math/xml';
 
 export { checkLine, checkCorpus, classify, formatReport } from './math/roundTrip';
 export type { CorpusReport, CorpusInput, LineResult, LatexValidator } from './math/roundTrip';
+
+export { applyMatrixOp, hasMatrix, matrixSize } from './math/matrixOps';
+export type { MatrixOp } from './math/matrixOps';

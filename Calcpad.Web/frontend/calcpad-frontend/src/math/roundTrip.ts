@@ -5,8 +5,8 @@
  * is unsafe to edit graphically.
  */
 
-import { astToLatex } from './latex';
-import { astToCalcpad, calcpadToAst, splitWorksheet } from './calcpad';
+import { astToLatex, latexToCalcpad } from './latex';
+import { astToCalcpad, calcpadToAst, splitWorksheet, isEquationLine } from './calcpad';
 import type { MathJSON } from './mathjson';
 
 /** Runs LaTeX through MathLive. Injected so this module carries no runtime dependency
@@ -18,6 +18,8 @@ export interface LineResult {
     source: string;
     textStable: boolean;
     astStable: boolean;
+    /** `calcpad → AST → LaTeX → calcpad` reproduces the line, which is what a commit writes. */
+    commitStable: boolean;
     latexOk: boolean;
     emitted?: string;
     latex?: string;
@@ -43,6 +45,7 @@ export function classify(source: string): string {
     if (/^[A-Za-z_][A-Za-z0-9_]*[$@]/.test(source) || source.includes('<tspan')) return 'drawing';
     if (/^#(for|endfor|repeat|endrepeat|while|endwhile|def|undeft|read|write|append|include|hide|show|format|clip|deg|rad|gra)\b/i.test(source)) return 'directive';
     if (/^#UI\b/.test(source)) return 'ui';
+    if (/\[[^\]]*\|[^\]]*\]/.test(source)) return 'matrix';
     if (/[;]/.test(source) && /\[[^\]]*\]/.test(source)) return 'vector';
     if (/\|/.test(source)) return 'units';
     if (/\^/.test(source)) return 'power';
@@ -59,6 +62,7 @@ export function checkLine(source: string, lineNumber: number, validate?: LatexVa
         source,
         textStable: false,
         astStable: false,
+        commitStable: false,
         latexOk: false,
         construct: classify(source),
     };
@@ -76,6 +80,18 @@ export function checkLine(source: string, lineNumber: number, validate?: LatexVa
         result.textStable = normalize(result.emitted) === normalize(source);
     } catch (e) {
         result.error = `emit: ${(e as Error).message}`;
+    }
+
+    // The path the canvas actually takes on commit. `textStable` above only proves the
+    // *printer* is faithful; a commit goes out through LaTeX, and the two bridges can
+    // disagree — a Greek symbol or a quoted label survived printing and was lost in
+    // LaTeX. Checking only the cheap path is what let both reach the document.
+    try {
+        const committed = latexToCalcpad(astToLatex(ast));
+        result.commitStable = normalize(committed) === normalize(source);
+    } catch (e) {
+        result.commitStable = false;
+        result.error = result.error ?? `commit: ${(e as Error).message}`;
     }
 
     try {
@@ -101,17 +117,58 @@ export function checkLine(source: string, lineNumber: number, validate?: LatexVa
 }
 
 /**
+ * Whether a line may go through the visual editor: `notMath` and `lossy` lines are shown
+ * as source instead, since a write-back reprints the line from its AST.
+ *
+ * The gate requires `commitStable` as well as the cheaper checks, because a commit is
+ * routed through LaTeX. A line the printer reproduces perfectly can still be one the
+ * LaTeX bridge mangles, and offering it for editing is how that reaches the document.
+ */
+export type LineEditKind = 'blank' | 'notMath' | 'lossy' | 'equation';
+
+export function classifyLineEdit(text: string): LineEditKind {
+    const trimmed = text.trim();
+    if (!trimmed) return 'blank';
+    if (!isEquationLine(trimmed)) return 'notMath';
+    const check = checkLine(trimmed, 0);
+    return check.textStable && check.astStable && check.commitStable ? 'equation' : 'lossy';
+}
+
+/**
  * Whitespace-insensitive comparison. Also folds documented Calcpad aliases, since
  * `sqr(x)` and `sqrt(x)` are the same function and normalising the name is a deliberate
  * presentational choice rather than a loss of fidelity.
+ *
+ * Every fold here was checked against the engine, which must accept both spellings:
+ * `x₁` and `x_1` are both valid subscripts, and `÷` and `/` are the same division. What
+ * the engine *rejects* is deliberately not folded -- `∖` is not a valid spelling of the
+ * integer-division `\`, so that one has to survive the round trip verbatim.
  */
 function normalize(s: string): string {
     return s
         .replace(/\s+/g, '')
         .replace(/·/g, '*')
         .replace(/∕/g, '/')
-        .replace(/\bsqr\(/g, 'sqrt(');
+        .replace(/\bsqr\(/g, 'sqrt(')
+        // Unicode sub/superscripts are alternate spellings of `x_1` / `x^2`, and the
+        // engine reads both, so the editor may normalise between them.
+        .replace(/([\p{L}\p{N}])[₀-₉₊₋₌₍₎]+/gu, (m, base: string) => `${base}_${[...m.slice(1)].map((c) => SUBSCRIPT_DIGITS[c] ?? c).join('')}`)
+        .replace(/÷/g, '/')
+        // `⦼` modulo and `\` integer division are printed with spaces around them for
+        // legibility; the engine accepts both spellings, so the padding is not content.
+        .replace(/\s*⦼\s*/g, '⦼')
+        .replace(/\s*\\\s*/g, '\\')
+        // A phasor prints as `(3∠45)°` when the degree is a separate unit, and as
+        // `3∠45°` when it binds to the angle. Both reach the engine as the same value --
+        // it rejects the `∠` glyph in either position, identically.
+        .replace(/\(([^()]*∠[^()]*)\)/g, '$1');
 }
+
+/** Unicode subscript digit to ASCII, so `₁` and `_1` compare equal. */
+const SUBSCRIPT_DIGITS: Record<string, string> = {
+    '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4',
+    '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9',
+};
 
 export interface CorpusInput {
     path: string;

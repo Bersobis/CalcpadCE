@@ -13,9 +13,13 @@
  * own `mathlive/vue` export is a Vue 2 shim with no MathJSON or event forwarding, so
  * the binding is written out rather than inherited.
  */
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { calcpadToAst } from '../math/calcpad';
-import { astToLatex, latexToCalcpad } from '../math/latex';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { calcpadToAst } from '../../math/calcpad';
+import { astToLatex, latexToCalcpad } from '../../math/latex';
+import { applyMatrixOp, matrixSize } from '../../math/matrixOps';
+import type { MatrixOp } from '../../math/matrixOps';
+import { hasEmptyPlaceholder } from '../../math/insertTemplates';
+import type { MathFieldHandle } from '../../math/mathFieldTools';
 
 const props = withDefaults(defineProps<{
     /** Calcpad source for this expression, e.g. `A = 0.01m^2`. */
@@ -30,6 +34,13 @@ const emit = defineEmits<{
     'update:modelValue': [value: string];
     commit: [value: string];
     invalid: [value: string, error: string];
+    /** Something worth saying that is not a failure, e.g. an inserted template's empty slot. */
+    hint: [text: string];
+    /**
+     * This field has started or stopped being the toolbar's target. The handle is always
+     * sent, so the host can tell *which* field withdrew and ignore a stale one.
+     */
+    active: [handle: MathFieldHandle, active: boolean];
 }>();
 
 /** MathLive upgrades `MathfieldElement` globally when the custom element is defined. */
@@ -38,6 +49,8 @@ type MathfieldElement = HTMLElement & {
     focus(): void;
     blur(): void;
     executeCommand(command: string): void;
+    /** A command with arguments, e.g. `['insert', '\\sqrt{#0}']`. */
+    executeCommand(command: [string, string]): void;
     setValue(value?: string, options?: Record<string, unknown>): void;
     getValue(format?: string): string;
 };
@@ -99,13 +112,37 @@ function endEdit(commit: boolean): void {
         refresh();
         return;
     }
-    if (next === props.modelValue.trim()) {
+    // A template that was inserted but never filled in reads back as `sqrt(())`, which the
+    // engine rejects. Writing it would replace a good line with a broken one, so the field
+    // stays open instead and the user is told why.
+    if (hasEmptyPlaceholder(el.value)) {
+        emit('invalid', next, 'the inserted template still has an empty slot — fill it in, or press Esc to cancel');
+        editing.value = true;
+        return;
+    }
+    if (sameMeaning(next, props.modelValue)) {
         refresh();
         return;
     }
 
     emit('update:modelValue', next);
     emit('commit', next);
+}
+
+/**
+ * Printing canonicalises whitespace (`A = 1` → `A=1`), so comparing text would fire a
+ * commit for a line the user only clicked into. Node spans are dropped: they record
+ * positions in the original text, which differ for inputs that differ only that way.
+ */
+function sameMeaning(a: string, b: string): boolean {
+    const shape = (text: string): string => {
+        try {
+            return JSON.stringify(calcpadToAst(text), (key, value) => (key === 'source' ? undefined : value));
+        } catch {
+            return text.trim();
+        }
+    };
+    return shape(a) === shape(b);
 }
 
 function onInput(): void {
@@ -115,14 +152,89 @@ function onInput(): void {
     if (el) latex.value = el.value;
 }
 
+/** The size of the bracketed literal, or null when the expression holds none. */
+const size = computed(() => matrixSize(props.modelValue));
+
+/** Dispatches a MathLive command, which is where its undo history lives. */
+function command(name: string): void {
+    const el = field();
+    if (!el) return;
+    el.focus();
+    el.executeCommand(name);
+    latex.value = el.value;
+}
+
+/**
+ * Inserts a template at the caret. The field is left in edit mode with the slot selected so
+ * the user types straight into it -- an inserted-but-empty template is a syntax error
+ * (`Invalid syntax: "( )"`), and committing one would write a broken line to the document.
+ */function insert(latexTemplate: string): void {
+    const el = field();
+    if (!el) return;
+    beginEdit();
+    el.focus();
+    el.executeCommand(['insert', latexTemplate]);
+    latex.value = el.value;
+    emit('hint', 'Inserted — fill in the empty slot, or press Esc to cancel. Nothing is written until it is.');
+}
+
+/**
+ * Reshapes the matrix and commits it at once, rather than leaving the field waiting for
+ * a blur the user may not make. The document is still the source of truth: this is the
+ * same write-back path a typed edit takes.
+ */
+function reshape(op: MatrixOp): void {
+    if (props.readonly) return;
+    const next = applyMatrixOp(props.modelValue, op);
+    if (next === props.modelValue) return;
+
+    latex.value = toLatexOrEmpty(next);
+    const el = field();
+    if (el) {
+        writing = true;
+        el.setValue(latex.value, { silenceNotifications: true });
+        writing = false;
+        el.focus();
+    }
+    emit('update:modelValue', next);
+    emit('commit', next);
+}
+
+/** True while this field is the one the docked toolbar should act on. */
+const isTarget = computed(() => !props.readonly && editing.value);
+
+/**
+ * What the docked toolbar calls. Built once and stable, so the toolbar can hold it across
+ * renders; `size` stays a getter because a resize changes it in place.
+ */
+const handle: MathFieldHandle = {
+    get size() {
+        return size.value;
+    },
+    insert,
+    command,
+    reshape,
+};
+
+/**
+ * Becoming the toolbar's target follows edit mode, so the controls arrive with the caret
+ * and leave with it. The handle travels with the flag: watchers run in creation order, so
+ * moving between two fields has the old one releasing *after* the new one claims, and a
+ * bare null would let that stale release cancel the toolbar the user is now looking at.
+ */
+watch(isTarget, (on) => emit('active', handle, on));
+
 onMounted(() => {
     refresh();
-    const el = field();
-    el?.addEventListener('input', onInput);
+    field()?.addEventListener('input', onInput);
 });
 
 onBeforeUnmount(() => {
     field()?.removeEventListener('input', onInput);
+    // Re-keying the region list destroys this field and builds another in its place. The
+    // toolbar holds a direct reference, so without this it would keep driving a detached
+    // element and the buttons would silently do nothing.
+    if (isTarget.value) emit('active', handle, false);
 });
 
 watch(() => props.modelValue, refresh);

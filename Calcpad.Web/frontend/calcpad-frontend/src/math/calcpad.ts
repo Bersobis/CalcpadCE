@@ -67,6 +67,19 @@ function isUnambiguousUnit(name: string): boolean {
 
 type TokenType = 'number' | 'ident' | 'op' | 'lparen' | 'rparen' | 'lbracket' | 'rbracket' | 'comma' | 'semi' | 'text' | 'eof';
 
+/**
+ * Attaches a trailing `_` to whatever it decorates. Calcpad writes it inside the name
+ * (`V_Rd_c_`), and it may land on an identifier or on the subscript it follows, so both
+ * have to keep it for the round trip to be faithful.
+ */
+function appendUnderscore(node: MathJSON): MathJSON {
+    if (node.type === 'Identifier') return { ...node, sym: node.sym + '_' };
+    if (node.type === 'Sub') return { ...node, sub: appendUnderscore(node.sub) };
+    if (node.type === 'Sup') return { ...node, sup: appendUnderscore(node.sup) };
+    if (node.type === 'Index') return { ...node, index: appendUnderscore(node.index) };
+    return node;
+}
+
 interface Token {
     type: TokenType;
     value: string;
@@ -75,14 +88,23 @@ interface Token {
     end: number;
 }
 
-const MULTI_CHAR_OPS = ['≤', '≥', '≠', '≡', '∧', '∨', '⊕', '⦼', '∗', '·', '÷'];
+// `←` (assignment to an outer scope) and `∠` (phasor angle) are operators in
+// `docs/quick-reference.md`. Leaving them out made the tokenizer read them as variable
+// names, so `a ← 5` parsed as `a * ← * 5` and the glyph was lost on the way back.
+const MULTI_CHAR_OPS = ['≤', '≥', '≠', '≡', '∧', '∨', '⊕', '⦼', '∗', '·', '÷', '←', '∠'];
 const SINGLE_CHAR_OPS = '+-*/\\^!<>=|_';
 
 const isDigit = (c: string): boolean => c >= '0' && c <= '9';
 const isIdentStart = (c: string): boolean => /\p{L}|\p{Nl}/u.test(c);
 // `_` is deliberately not an identifier character: in Calcpad it is the subscript
 // operator, so `s_1` must lex as `s`, `_`, `1` rather than one name.
-const isIdentPart = (c: string): boolean => /[\p{L}\p{Nl}\p{Nd}′″‴⁗]/u.test(c);
+//
+// The Unicode subscript digits are the other documented spelling of the same thing
+// (`x₁` and `x_1` both name `x` with subscript 1), so they continue a name rather than
+// standing alone as one.
+const SUBSCRIPT_DIGIT_CLASS = '\\u2080-\\u2089';
+const isIdentPart = (c: string): boolean =>
+    new RegExp(`[\\p{L}\\p{Nl}\\p{Nd}${SUBSCRIPT_DIGIT_CLASS}′″‴⁗]`, 'u').test(c);
 
 export function tokenize(src: string): Token[] {
     const tokens: Token[] = [];
@@ -192,6 +214,9 @@ const BINARY_PRECEDENCE: Record<string, number> = {
     '-': 3,
     '∗': 4, '*': 4, '·': 4,
     '/': 4, '÷': 4, '\\': 4, '⦼': 4,
+    // `←` assigns to an outer scope and `∠` builds a phasor. Both sit at assignment
+    // level; without a precedence the parser consumed the left side and dropped the right.
+    '←': 1, '∠': 2,
 };
 
 const RIGHT_ASSOCIATIVE = new Set(['^']);
@@ -212,6 +237,8 @@ class Parser {
     private pos = 0;
     /** Non-zero while parsing the target of a `|` unit delimiter. */
     private unitDepth = 0;
+    /** Non-zero inside `[...]`, where `|` divides matrix rows instead. */
+    private bracketDepth = 0;
 
     constructor(private readonly tokens: Token[], private readonly options: ParseOptions = {}, private readonly source?: string) {}
 
@@ -282,12 +309,13 @@ class Parser {
         }
 
         const lhs = this.parseBinary(2);
-        if (this.at('op', '=')) {
+        if (this.at('op', '=') || this.at('op', '←')) {
+            const op = this.peek().value;
             this.next();
             const rhs = this.parseAssignment();
             return {
                 type: 'Operator',
-                op: '=',
+                op,
                 args: [lhs, rhs],
                 form: 'infix',
                 source: this.span(from, this.pos),
@@ -308,6 +336,7 @@ class Parser {
             const prec = op !== undefined ? BINARY_PRECEDENCE[op] : undefined;
 
             let effective: number | undefined;
+            if (op === '|' && this.bracketDepth > 0) break;
             if (prec !== undefined) effective = prec;
             else if (isCompare) effective = 2.5;
             else if (isLogical) effective = 2.25;
@@ -429,12 +458,18 @@ class Parser {
                 continue;
             }
             if (this.at('op', '_')) {
-                // A `_` with nothing subscriptable after it is Calcpad's line-continuation
-                // marker, not an operator: `V_Rd_c_ = …` defines `V_Rd_c`, and
+                // A `_` with nothing subscriptable after it is part of the *name*, not an
+                // operator: the engine defines `V_Rd_c_` by `V_Rd_c_ = …`, and
                 // `max(a; V_Rd_c_)` names the same thing. Treating it as a subscript
-                // invented the operand `0` and printed `V_Rd_c_0`.
+                // invented the operand `0` and printed `V_Rd_c_0`; dropping it outright
+                // renamed the variable to `V_Rd_c`. It is carried on the identifier so
+                // both survive the round trip verbatim.
+                //
+                // Only a `_` at the very end of a line is the continuation marker, and
+                // `splitWorksheet` has already joined those before parsing.
                 if (!this.startsFactor(this.peek(1))) {
                     this.next();
+                    node = appendUnderscore(node);
                     continue;
                 }
                 this.next();
@@ -486,9 +521,16 @@ class Parser {
 
         if (t.type === 'lbracket') {
             this.next();
-            const body = this.parseSequenceUntil('rbracket');
+            // Inside `[...]` a `|` is a row divider, never a unit target — the same call
+            // `MathParser.Input.cs` makes for `TokenTypes.RowDivisor`.
+            this.bracketDepth++;
+            const rows = this.parseMatrixRows();
+            this.bracketDepth--;
             this.expect('rbracket');
-            return { type: 'Delimited', body, left: '[', right: ']', source: this.span(from, this.pos) };
+            if (rows.length > 1) {
+                return { type: 'Matrix', rows, left: '[', right: ']', source: this.span(from, this.pos) };
+            }
+            return { type: 'Delimited', body: rows[0] ?? [], left: '[', right: ']', source: this.span(from, this.pos) };
         }
 
         if (t.type === 'text') {
@@ -590,6 +632,24 @@ class Parser {
         return items;
     }
 
+    /**
+     * The rows of a `[...]` literal: `,`/`;` divide cells, `|` divides rows. An empty
+     * literal yields one empty row so `[]` round-trips rather than becoming a matrix.
+     */
+    private parseMatrixRows(): MathJSON[][] {
+        const rows: MathJSON[][] = [];
+        let row: MathJSON[] = [];
+        if (this.at('rbracket') || this.at('eof')) return [row];
+        for (;;) {
+            row.push(this.parseAssignment());
+            if (this.eat('comma') || this.eat('semi')) continue;
+            if (this.eat('op', '|')) { rows.push(row); row = []; continue; }
+            break;
+        }
+        rows.push(row);
+        return rows;
+    }
+
     private expect(type: TokenType): boolean {
         return this.eat(type);
     }
@@ -640,6 +700,19 @@ export function parseDialect(script: string, options: ParseOptions): MathJSON {
  * directives, plotting blocks and SVG drawing calls go to `other` to pass through
  * byte-for-byte; drawing calls embed SVG markup, so they are directives, not maths.
  */
+/** Whether a line is maths a canvas renders as an equation; the rest pass through as-is. */
+export function isEquationLine(text: string): boolean {
+    if (!text) return false;
+    if (/^[A-Za-z_][A-Za-z0-9_]*[$@]/.test(text) || text.includes('<tspan')) return false;
+    if (/\$[A-Z][A-Za-z]*\s*\{/.test(text)) return false;
+    // HTML is only meaningful inside a `$Plot{…}` or `$Map{…}` body. On its own line the
+    // engine rejects it -- `Invalid syntax: "< /"` -- so treating a bare `<b>bold</b>` as
+    // an equation offered the canvas a field over text that does not even parse.
+    if (/^\s*<\/?[A-Za-z!]/.test(text)) return false;
+    return !text.startsWith('#') && !text.startsWith('$')
+        && !text.startsWith("'") && !text.startsWith('"');
+}
+
 export function splitWorksheet(script: string): { equations: { text: string; line: number }[]; other: string[] } {
     const equations: { text: string; line: number }[] = [];
     const other: string[] = [];
@@ -652,17 +725,7 @@ export function splitWorksheet(script: string): { equations: { text: string; lin
         let text = raw[i].trim();
         while (/_$/.test(text) && i + 1 < raw.length) {
             text = `${text.slice(0, -1).trimEnd()} ${raw[++i].trim()}`;
-        }
-
-        const isDrawing = /^[A-Za-z_][A-Za-z0-9_]*[$@]/.test(text) || text.includes('<tspan');
-        // `$Sum{…}`, `$Plot{…}` and friends are macro calls, not maths to typeset.
-        const isMacro = /\$[A-Z][A-Za-z]*\s*\{/.test(text);
-        const skip = !text
-            || isDrawing || isMacro
-            || text.startsWith('#') || text.startsWith('$')
-            || text.startsWith("'") || text.startsWith('"');
-
-        if (skip) {
+        }        if (!isEquationLine(text)) {
             for (let k = startLine - 1; k <= i; k++) other.push(raw[k]);
             continue;
         }
@@ -784,13 +847,24 @@ export function astToCalcpad(node: MathJSON): string {
             return parts.reduce((acc, part) => acc + implicitGap(acc, part) + part);
         }
 
-        case 'Group':
-            return `(${astToCalcpad(node.body[0] ?? emptyNumber())})`;
+        case 'Group': {
+            // An empty group is an unfilled `\placeholder{}` slot, so it prints as
+            // parentheses with nothing in them rather than inventing the number `0`.
+            if (node.body.length === 0) return '()';
+            return `(${astToCalcpad(node.body[0])})`;
+        }
 
         case 'Delimited': {
             const left = node.left ?? '[';
             const right = node.right ?? ']';
             return `${left}${node.body.map(astToCalcpad).join('; ')}${right}`;
+        }
+
+        case 'Matrix': {
+            const left = node.left ?? '[';
+            const right = node.right ?? ']';
+            const rows = node.rows.map((row) => row.map(astToCalcpad).join('; ')).join('|');
+            return `${left}${rows}${right}`;
         }
 
         case 'Frac':

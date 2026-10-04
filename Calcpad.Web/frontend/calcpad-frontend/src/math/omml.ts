@@ -103,6 +103,9 @@ export function mathJsonToOmmlBody(node: MathJSON): string {
         case 'Delimited':
             return delimiters(n.body.map(mathJsonToOmmlBody).join(''), n.left ?? '[', n.right ?? ']');
 
+        case 'Matrix':
+            return matrixToOmml(n);
+
         case 'Units':
             return unitsToOmml(n);
 
@@ -223,6 +226,18 @@ function indexText(index: MathJSON): string {
     return index.type === 'Number' ? String(index.n) : astToCalcpad(index);
 }
 
+/**
+ * A matrix as `XmlWriter.FormatMatrix` writes it: bracketed `<m:d>` around an `<m:m>`
+ * of `<m:mr>` rows. The engine emits the column count and gap properties; they are
+ * presentation, so only the grid and its brackets are reproduced here.
+ */
+function matrixToOmml(n: Extract<MathJSON, { type: 'Matrix' }>): string {
+    const rows = n.rows
+        .map((row) => wrap(w('mr'), row.map((cell) => wrap(w('e'), mathJsonToOmmlBody(cell))).join('')))
+        .join('');
+    return delimiters(wrap(w('m'), rows), n.left ?? '[', n.right ?? ']');
+}
+
 function delimiters(inner: string, left: string, right: string): string {
     return `<${w('d')}>`
         + `<${w('dPr')}>${val('begChr', xmlEscape(left))}${val('endChr', xmlEscape(right))}</${w('dPr')}>`
@@ -312,9 +327,24 @@ export function ommlNodeToCalcpad(node: XmlElement): string {
 
         case 'd': {
             const dPr = childNamed(node, 'dPr');
+            const matrix = contentChildren(node).find((c) => localName(c) === 'e'
+                && contentChildren(c).some((g) => localName(g) === 'm'));
+            if (matrix) {
+                const left = propVal(dPr, 'begChr') ?? '(';
+                const right = propVal(dPr, 'endChr') ?? ')';
+                return `${left}${ommlNodeToCalcpad(matrix)}${right}`;
+            }
             const inner = childrenToCalcpad(node);
             return `${propVal(dPr, 'begChr') ?? '('}${inner}${propVal(dPr, 'endChr') ?? ')'}`;
         }
+
+        // `<m:m>` is a grid: `<m:mr>` rows of `<m:e>` cells, which Calcpad writes with
+        // `|` between rows and `;` between cells.
+        case 'm':
+            return contentChildren(node)
+                .filter((r) => localName(r) === 'mr')
+                .map((r) => contentChildren(r).map((c) => ommlNodeToCalcpad(c).trim()).join('; '))
+                .join('|');
 
         case 'r': {
             const text = textContent(node);

@@ -1,8 +1,10 @@
 # The CalcpadCE Canvas — WYSIWYG Equation Editor
 
-> **Status: design proposal.** Nothing described here is implemented yet. It is written to
-> the same shape as the other `docs/new-*.md` pages so it can be reviewed as a feature brief
-> before any code lands.
+> **Status: partially implemented.** Phase 0 (parser, LaTeX/OMML bridges, corpus
+> harness), Phase 1 (the field mounted in the app) and the Phase 2/3 **live editor**
+> have landed; the in-editor overlay, Tauri parity and the free-positioned canvas are
+> still design. It is written to the same shape as the other `docs/new-*.md` pages so
+> the remaining work can be reviewed as a feature brief before any more code lands.
 
 A MathCAD-like view where the worksheet is the interface: equations are edited *in place*
 where they are drawn, results sit beside them, and nothing is hidden behind a source-code
@@ -245,6 +247,7 @@ original text for the rest. A lossy round-trip is a bug, not a degradation.
 | `10\|kN/m^2` | `Operator \|` with `Units` | `10\quad\text{kN/m^2}` | run with `<m:rPr><m:sty m:val="p"/>` | **unit tracking** |
 | `50m` | implicit `*` with `Text` unit | `50\text{m}` | run with `<m:sty m:val="p"/>` | |
 | `[1; 2; 3]` | `Delimited` | `[1, 2, 3]` | `<m:d>` + `<m:m>` | matches `XmlWriter.FormatVector` |
+| `[1; 2\|3; 4]` | `Matrix` | `\begin{bmatrix}1 & 2\\3 & 4\end{bmatrix}` | `<m:d>` + `<m:m>` | `\|` is `RowDivisor` inside brackets only |
 | `sin(x)` | `Function` | `\mathrm{sin}(x)` | `<m:r>` + `<m:d>` | |
 | `2x` | implicit `*` | `2x` | runs | Calcpad's implicit multiplication, preserved verbatim |
 | `x = 1; y = 2` | `Statements` | `x = 1\qquad y = 2` | runs | multi-statement line |
@@ -390,17 +393,32 @@ Each phase lands behind a feature flag and is independently useful.
 
 | Property | Result |
 | --- | --- |
-| `calcpad → AST → calcpad` reproduces the line | **96.2%** (6537/6794) |
-| AST survives re-parsing | **98.2%** (6672/6794) |
+| `calcpad → AST → calcpad` reproduces the line | **96.3%** (6541/6794) |
+| AST survives re-parsing | **99.9%** (6786/6794) |
 | Emitted LaTeX is accepted by MathLive | **99.7%** (6774/6794) |
 
-The residual drift is two constructs, both cases where one character means two things and the
-disambiguation needs the *value* of the left operand, not just its tokens:
+The `|` matrix row separator is **solved** (see below). What remains is one construct, a
+case where one character means two things and the disambiguation needs the *value* of the
+left operand, not just its tokens:
 
 | Construct | Lines | Why it is hard |
 | --- | --- | --- |
 | Comma-separated subscript `B_0,0` | ~140 | Calcpad's tokenizer gives `,` the type `Unit`, so it belongs to the subscript literal — but the same `,` separates statements in `x = 1, y = 2`. Collecting it greedily made things *worse* (96.2% → 92.9%), so it is left alone. |
-| `|` as a matrix row separator inside `[…]` | ~40 | The same character is the unit target in `x\|MPa`. Distinguishing them needs to know whether the left side is a unit. |
+
+### The `|` ambiguity is not real
+
+The original note here claimed `|` inside `[…]` could not be told from the unit target
+in `x\|MPa`. That is wrong, and the engine settles it: `MathParser.Input.cs` gives the
+divider its own token type, `TokenTypes.RowDivisor`, produced *only* between
+`SquareBracketLeft` and `SquareBracketRight`. Inside brackets `|` is always a row
+divider; outside them it is always the unit target. There is no overlap to resolve.
+
+`[a; b|c; d]` is therefore a first-class `Matrix` node, printed back with `|` between
+rows and `;` between cells, and emitted as `\begin{bmatrix}…\\…&…\end{bmatrix}` —
+the environment MathLive treats as an editable grid, where `&` and `\\` move between
+cells and rows. A single-row `[a; b]` stays a `Delimited` vector. Measured: the ~40
+matrix lines round-trip exactly, and the engine agrees — `M_TEST=[9; 4; 5|5; 6; 7]`
+renders as a 2×3 matrix.
 
 Two beliefs about this residue turned out to be wrong, and measuring replaced both:
 
@@ -421,34 +439,208 @@ of all drift (753 → 353 lines).
 **Exit criteria for this phase — met.** The remaining work is raising the two lower
 numbers, not proving the approach.
 
-### Phase 1 — Inline math editing *(component built; wiring outstanding)*
+### Phase 1 — Inline math editing *(landed in the sidebar; in-editor overlay still open)*
 - ✅ Add `mathlive` to `calcpad-web`; ✅ `isCustomElement` in `vite.config.ts`;
   ✅ `CalcpadMathField.vue` binds Calcpad source ⇄ a `<math-field>` in both directions.
-- ⬜ Mount the field in the editor so a focused line can be edited in place.
-- ⬜ Re-run `POST /convert` on commit and refresh the preview.
+- ✅ Mount the field: the sidebar's **Live editor** tab typesets the line under the cursor
+  and writes a committed edit back to that line (`CalcpadEquationTab.vue`, with
+  `getEquationContext` / `applyEquation` on the bridge). It is on web and desktop, and
+  reachable from the editor as **Open Live Editor** (Ctrl+Alt+E). Deliberately
+  gated out of the VS Code webview, which does not bundle MathLive — an unregistered
+  `<math-field>` there would render as an empty box.
+- ✅ Re-run `POST /convert` on commit and refresh the preview: the write-back is an
+  ordinary model edit, so the existing debounced preview refresh already covers it.
 
-**Exit:** edit an equation, see the result update, switch to the text tab, and find
-correct Calcpad source. **Not yet verified end-to-end** — there is no DOM in the test
-environment, so the component is checked by compiling the real SFC and asserting the
-template structure (`tests/mathField.test.ts`), not by mounting it. A review pass found
-the field rendered as a *sibling* of the element `field()` queries, so `field()` returned
-null in every path and the component was inert; that is fixed and pinned, but the click →
-edit → commit loop still needs a browser to be trusted.
+**Exit — met, and verified in a browser rather than inferred from a build.** Click a
+line, edit it in the field, blur: the `.cpd` line and the rendered result both change
+(`a = 3` → `a = 5`), and the tab shows the source it wrote. Two guards make that safe:
 
-### Phase 2 — The canvas surface
-- `CanvasPane`, region model, `line ⇄ region ⇄ MathJSON`.
-- `POST /convert` results rendered per-region; debounced; errors mapped back via
-  `X-Calcpad-Errors` and `id="eq-{N}"`.
-- Read-only canvas (no editing yet), toggleable beside the text editor.
+* A line is only editable when its round-trip reproduces it — `classifyLineEdit` in
+  `src/math/roundTrip.ts`, which reuses the corpus harness's own definition of "stable".
+  Measured over `Examples/`: 96.2% editable, 16.8% never presented as maths (comments,
+  directives, drawing calls). The rest are shown as source with a note, not rewritten.
+* A commit that does not change what the line *means* is dropped. Printing canonicalises
+  whitespace, so comparing text would have rewritten `A = 1` to `A=1` on a click with no
+  edit — `CalcpadMathField.sameMeaning` compares the parse instead.
 
-**Exit:** a whole document browses as a worksheet, synced with the text.
+What is still open is the in-editor overlay this section originally described: a math
+field replacing the line inside Monaco, cursor-following between the two, and per-region
+undo.
 
-### Phase 3 — Editing
-- Equation regions editable in place; loop groups collapse/expand.
-- Per-region undo/redo; source peek; `Esc` revert.
-- Cursor-follows-line between the text editor and the canvas.
+### Phase 2/3 — The live editor *(landed, in the sidebar)*
 
-**Exit:** edit any equation in a real example document; text and canvas agree.
+`CalcpadLiveEditor.vue` renders the **whole document** as typeset maths. The tab is named
+**Live editor**; a **Whole document** checkbox at the top switches between the single line
+under the cursor and the full worksheet. With it on, every equation in the document is a
+field you can click and edit where it stands.
+
+The canvas is a *view* over the document, not a second copy of it:
+
+- The region model is `splitWorksheet` plus `classifyLineEdit`. Equation lines become
+  fields; comments, directives and drawing calls pass through as verbatim `<pre>`.
+  Consecutive non-equation lines collapse into one block, so a run of comments reads as
+  the paragraph the author wrote.
+- **Every region keeps the Phase 1 gate.** A `lossy` line renders as source and is
+  never rewritten, in the live canvas exactly as in the single-line tab. Measured on a
+  test document: `M=[1;2|3;4]` and `x=5|MPa` became fields, while
+  `B_0,1.(3; j) = B_3(j; 1; 1)` and `c = b - a|μm:N1` stayed as source.
+- Writes go back one line at a time over the existing `applyEquation` path, so indent is
+  preserved and the write is confirmed by the document echo — the same confirmation the
+  single-line tab uses. Editing a matrix cell rewrote `M_TEST=[3;4;5|5;6;7]` to
+  `M_TEST=[9; 4; 5|5; 6; 7]` in the editor.
+- The bridge keeps the canvas in step: `setLiveEditor` / `getLiveContext` /
+  `refreshLiveContext` push the document on cursor moves and edits, but only while the
+  canvas is on screen, so nothing is sent for a panel nobody is looking at.
+
+**Exit — met.** The whole worksheet previews as live maths, and an edit anywhere in it
+lands in the document. Still open from these phases: results rendered per-region from
+`POST /convert` beside each equation (the canvas shows the typeset input only),
+per-region undo, and moving the surface out of the sidebar into the editor pane.
+
+### The gate has to test the path a commit actually takes
+
+The per-line gate originally validated the cheap round-trip `calcpad → AST → calcpad`.
+A commit takes a different route — `calcpad → AST → **LaTeX** → calcpad`, because the
+value written back is whatever MathLive produced. Two constructs passed the cheap gate
+and corrupted the document on commit:
+
+| Construct | Before | After commit |
+|---|---|---|
+| Greek letters | `δ = 0.5` | `0 = 0.5` — the symbol collapsed to the *number* zero |
+| Labels | `M_a = M/l*a'kN·m` | `… * a kN·m` — the label silently became attached units |
+
+Root causes were both in the LaTeX reader: its identifier rule was `[A-Za-z]`, so a
+Unicode letter was skipped and parsed as `0`; and a label was emitted as a bare
+`\text{}`, indistinguishable from a unit run. Three further gaps surfaced from the same
+audit and are now fixed:
+
+- **Greek macros.** MathLive emits `\sigma` the moment a user *types* `σ`, which arrived
+  as a variable named `sigma` — editing any Greek equation silently renamed every symbol
+  in it. `GREEK_MACROS` maps the 38 macros back to Unicode letters.
+- **Unterminated literals.** The reader assumed every label was closed, so `A_s = 84'`
+  came back as `84''` — an *escaped quote* to Calcpad, a different literal. A closed
+  literal now carries its closing quote inside the group, doubled so it cannot be confused
+  with a quote that belongs to the text.
+
+`classifyLineEdit` now requires `commitStable` alongside `textStable` and `astStable`,
+so a line that only survives the cheap path is marked `lossy` and rendered as source.
+
+**Measured over all 249 examples (6794 equation lines).** Every line the gate admits was
+committed at once and the document re-run through the engine, compared against the
+unmodified baseline:
+
+| | Files | Syntax errors introduced |
+|---|---|---|
+| Commit path (all editable lines) | 208 | **0** |
+| Commit + matrix resize | 42 | 4 |
+
+The four are **not** corruption — each is a matrix resize that changes a value the file
+depends on, and each reproduces *exactly* when the same text is typed by hand: resizing
+`n_T` in `Free Vibrations of Steel Pole Animated.cpd` feeds `#for k = 0 : n_T.i`, and
+resizing `n` in `Polygon.cpd` feeds `#for i1 = 1 : n`. A user pressing `+Row` on a plot's
+data vector gets the same result as typing it; the editor is not inventing the breakage.
+Two of the largest files (`Special Math Functions`, `Soil Stress and Deformations`) exceed
+30s per engine run and were checked separately: 0 gained errors on either.
+
+### Language coverage — audited against `docs/quick-reference.md`
+
+The construct list was rebuilt **from the documentation**, not from the code, so a gap
+shows up as a gap rather than as whatever the parser happened to accept. It is pinned in
+`tests/languageCoverage.test.ts` — 79 constructs, of which **22** are editable fields and 57
+are deliberately source-only.
+
+The audit found that several constructs Calcpad documents as *operators* were never
+implemented as such, so the tokenizer read them as variable names:
+
+| Construct | Was | Now |
+|---|---|---|
+| `n = 5!` | `!` dropped on commit | factorial preserved |
+| `q = 7\2` | `\2` → `72` | integer division preserved |
+| `r = 7⦼2` | `⦼` dropped | modulo preserved |
+| `q = 7÷2` | became a stacked `\frac` | inline division preserved |
+| `a ← 5` | parsed as `a * ← * 5` | outer assignment, operator with precedence |
+| `z = 3∠45°` | `∠` read as a variable | phasor preserved |
+| `x₁ = 5` | `₁` read as a separate factor | a single name |
+| `h_ = 1`, `V_Rd_c_` | `_` invented as subscript `0` | name preserved verbatim |
+| `<b>bold</b>` | offered as an editable field | `notMath` — see below |
+
+`⦼`, `÷`, `←` and `∠` have **no TeX spelling at all**. Each travels inside a `\text{}`
+group, which MathLive renders upright and the reader recovers — measured, not guessed:
+`\factorial{}` and `\bmod` are rejected by MathLive as unknown commands, while
+`\text{⦼}` validates and reads back exactly.
+
+What `normalize` folds is decided by **asking the engine**, never by preference. It
+accepts both `x₁` and `x_1`, and both `÷` and `/`, so those are interchangeable. It
+**rejects** `∖` as a spelling of the integer-division `\`, so that glyph survives verbatim
+rather than being normalised to a tidier equivalent.
+
+`∠`, `°` and the trailing `_` were each a *separate* bug found by isolation rather than
+inspection: adding `°` to the operator table made the reader swallow the degree, and
+`\mathrm{h\_}` came back with a stray backslash until the reader unescaped `\_`.
+
+HTML was the last one, and it came from pinning the taxonomy as a test. A bare
+`<b>bold</b>` was classified as an equation, so the canvas offered a field over text the
+engine **rejects** (`Invalid syntax: "< /"`). HTML is only meaningful inside a
+`$Plot{…}` or `$Map{…}` body, so `isEquationLine` now declines any line starting with a tag.
+
+**Result on the corpus:** text fidelity 96.3% → **97.9%**, LaTeX acceptance 99.7% →
+**100%**, and 59.6% of equation lines editable (4035 of 6770) — reproduce with
+`npx tsx scripts/report-gate.ts`.
+
+Still held back as `lossy`, correctly: the comma-separated subscript (`B_0,0`, 155 lines),
+units targets whose meaning depends on the left operand (73), embedded HTML/SVG (24), and
+unicode superscripts (11).
+
+### Buttons in the live editor
+
+Three groups, all on the field being worked on. They are **docked once above the canvas**
+(`CalcpadMathToolbar.vue`), not repeated inside each field: at sidebar width 21 inline
+buttons per line wrapped into a single column beside every equation. The toolbar appears
+only while a line is being edited and targets that line, and it follows the Symbol Palette
+the Insert tab already uses — a bordered collapsible section with a grid of square glyph
+buttons. The field keeps the operations and hands over a handle
+(`src/math/mathFieldTools.ts`); the toolbar only says which field.
+
+The groups:
+
+- **Row/column resize** — `+Row −Row +Col −Col` with a live `m × n` label. Already covered
+  above; these act on Calcpad source rather than on MathLive's `array`, which is a different
+  type from a Calcpad matrix literal.
+- **Insert palette** — 19 templates (`√ ∛ ⁿ√ xⁿ x² x⁻¹ a⁄b ( ) sin cos tan ln log exp abs
+  sign min max if`), defined in `src/math/insertTemplates.ts`.
+- **Undo / redo** — dispatched to MathLive, which owns the field's history.
+
+Every template was verified twice: MathLive was asked whether it accepts the LaTeX, and the
+engine was asked whether the Calcpad it reads back is valid — **19 of 19 accepted**.
+Re-run the engine half with `npx tsx scripts/report-templates.mts` (needs the backend).
+
+Two design points came out of that verification:
+
+**An unfilled template must never be committed.** `\sqrt{\placeholder{}}` reads back as
+`sqrt(())`, and the engine answers `Invalid syntax: "( )"`. So inserting leaves the field in
+edit mode with the slot selected, and `endEdit` refuses to write while a `\placeholder{}`
+is still present. Inserting reports this as a `hint`, not an `invalid`: nothing has failed,
+a slot is simply waiting for a value.
+
+**There is deliberately no absolute-value button.** `|x|` cannot be told apart from
+Calcpad's unit target in `x|MPa`, so an inserted `|…|` came back as `0(x|0)` — a button that
+silently changed what the line meant. `abs(x)` is offered instead.
+
+Four further bugs surfaced only because the templates were exercised for real:
+
+| Input | Was | Now |
+|---|---|---|
+| `\placeholder{…}` | a variable named `placeholder` | an empty group |
+| `\operatorname{abs}(x)` | `operatorname abs(x)` | `abs(x)` |
+| `\sqrt9` | `sqrt(0)9` | `sqrt(9)` |
+| `\frac12` | `12 / 0` | `1 / 2` |
+
+The last two are the interesting ones. MathLive **rewrites the template as you type into
+it** — `\frac{#0}{#1}` with one digit per slot comes back as `\frac12`, and `\sqrt9` loses
+its braces. Testing the template strings alone would never have found this, so the exact
+output was read out of a live field and pinned in `tests/insertTemplates.test.ts`. The
+`\frac12` rule is safe because MathLive keeps braces for multi-digit values
+(`\frac{12}{3}`), which was also measured rather than assumed.
 
 ### Phase 4 — Tauri parity
 - View menu: `Canvas` / `Text` / `Split`.
@@ -459,7 +651,16 @@ edit → commit loop still needs a browser to be trusted.
 **Exit:** the desktop app has a working canvas; packaging unaffected.
 
 ### Phase 5 — Visual constructs
-- Vector/matrix regions (`[1; 2; 3]`) with MathLive matrices.
+- ✅ Vector/matrix regions (`[1; 2; 3]`, `[a; b|c; d]`) with MathLive matrices — landed
+  with the `Matrix` node; see the note on `|` above.
+- ✅ Add/remove row and column controls beside every editable matrix literal.
+  `matrixOps.ts` reshapes the *first* bracketed literal in Calcpad source and prints it
+  back, so a resize is indistinguishable from having typed it. New cells start at `0`,
+  the neutral element; ragged literals are padded to the rectangle the engine expects,
+  and a result down to one row prints as the vector it is. `−Row` / `−Col` disable
+  themselves rather than producing something unrenderable. Measured through the real UI:
+  `2×3 → 3×3 → 3×4 → 3×3 → 2×3 → 1×3`, each step reported by `POST /convert` with an
+  empty `X-Calcpad-Errors`.
 - Variable inspector in the canvas, reusing `CalcpadVariablesTab`.
 - Drag-in plots via the existing `POST /pdf` plot extraction.
 

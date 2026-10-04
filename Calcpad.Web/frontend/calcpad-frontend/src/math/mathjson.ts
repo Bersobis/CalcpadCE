@@ -97,6 +97,19 @@ export interface MathDelimited extends MathJSONBase {
     right?: string;
 }
 
+/**
+ * A matrix literal, `[a; b | c; d]`. Calcpad's own lexer treats `|` inside `[...]` as a
+ * row divider and never as a unit target (`MathParser.Input.cs`, `TokenTypes.RowDivisor`),
+ * so the two uses of `|` cannot collide: the unit target only occurs outside brackets.
+ * A single-row `[a; b]` stays a `Delimited` vector.
+ */
+export interface MathMatrix extends MathJSONBase {
+    type: 'Matrix';
+    rows: MathJSON[][];
+    left?: string;
+    right?: string;
+}
+
 /** A unit expression; every text run inside is emitted as an upright styled run. */
 export interface MathUnits extends MathJSONBase {
     type: 'Units';
@@ -164,6 +177,7 @@ export type MathJSON =
     | MathSup
     | MathSub
     | MathDelimited
+    | MathMatrix
     | MathUnits
     | MathStatements
     | MathFunction
@@ -198,6 +212,8 @@ export function childrenOf(node: MathJSON): MathJSON[] {
         case 'Units':
         case 'Statements':
             return node.body;
+        case 'Matrix':
+            return node.rows.flat();
         default:
             return [];
     }

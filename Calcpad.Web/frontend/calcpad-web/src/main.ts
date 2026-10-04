@@ -1,4 +1,8 @@
 import * as monaco from 'monaco-editor';
+// Registers <math-field> for the Equation tab's visual editor, from the bundled copy
+// rather than MathLive's CDN loader so the desktop build stays offline.
+import 'mathlive';
+import 'mathlive/fonts.css';
 import { createApp, nextTick } from 'vue';
 import App from './App.vue';
 import pkg from '../package.json';
@@ -130,7 +134,7 @@ function getSampleContent(): string {
 
 a = 3
 b = 4
-c = √(a² + b²)
+c = sqrt(a^2 + b^2)
 `;
 }
 
@@ -923,6 +927,19 @@ async function bootstrap(): Promise<void> {
             },
         });
 
+        // Opens the sidebar's Live editor tab on the line under the cursor.
+        ed.addAction({
+            id: 'calcpad.editEquationVisually',
+            label: 'Open Live Editor',
+            keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.KeyE],
+            contextMenuGroupId: 'navigation',
+            contextMenuOrder: 1.7,
+            run: () => {
+                sidebarInstance.switchView?.('calcpad');
+                sidebarInstance.switchTab?.('equation');
+            },
+        });
+
         // Content changes: refresh this group's definitions cache + preview,
         // retire its cached #UI controls, and (only when this is the active group) the
         // sidebar TOC.
@@ -931,6 +948,8 @@ async function bootstrap(): Promise<void> {
         let tocTimer: ReturnType<typeof setTimeout> | null = null;
         group.disposables.push(
             ed.onDidChangeModelContent(() => {
+                // A no-op unless the live canvas is on screen.
+                if (group === activeGroup) activeBridge.refreshLiveContext();
                 if (definitionsTimer) clearTimeout(definitionsTimer);
                 definitionsTimer = setTimeout(() => {
                     invalidateUiControls(group);
@@ -958,6 +977,8 @@ async function bootstrap(): Promise<void> {
                     if (metadataContextTimer) clearTimeout(metadataContextTimer);
                     metadataContextTimer = setTimeout(() => {
                         activeBridge.handleMessage({ type: 'getMetadataContext' });
+                        activeBridge.handleMessage({ type: 'getEquationContext' });
+                        activeBridge.refreshLiveContext(ed.getPosition()?.lineNumber - 1);
                     }, 150);
                 }
                 if (editorBridge.getExtraSetting('previewCursorSync') !== 'true') return;
