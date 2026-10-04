@@ -10,6 +10,8 @@ on:
 jobs:
   build-desktop-windows:
     runs-on: windows-latest
+    env:
+      CALCPAD_VERSION: ${{ inputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -34,9 +36,6 @@ jobs:
         with:
           workspaces: Calcpad.Web/frontend/calcpad-desktop/src-tauri
 
-      - name: Set version
-        run: node Calcpad.Web/frontend/scripts/bump-versions.mjs set ${{ inputs.version }}
-
       - name: Install frontend dependencies
         run: |
           npm ci --prefix Calcpad.Web/frontend/calcpad-frontend
@@ -58,7 +57,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path artifacts -Force | Out-Null
-          Copy-Item Calcpad.Web/frontend/calcpad-desktop/src-tauri/target/portable/CalcpadCE-portable-win64.zip `
+          Copy-Item "Calcpad.Web/frontend/calcpad-desktop/src-tauri/target/portable/CalcpadCE-portable-${{ inputs.version }}.zip" `
             -Destination "artifacts/CalcpadCE-portable-${{ inputs.version }}.zip"
 
       - name: Verify third-party notices

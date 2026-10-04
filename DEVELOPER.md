@@ -84,6 +84,15 @@ A local webserver will spawn to serve the rendered documentation:
 
 `mkdocs serve`
 
+## Application versions
+
+Change the application version only in `Directory.Build.props`.
+Local desktop, web, extension UI, and server builds use that version.
+PR and main CI append the short Git revision.
+Release tags must match the props version with a leading `v`.
+The VS Code plugin uses a development placeholder when building locally.
+Release packaging uses the resolved version.
+
 ## Creating a Release
 
 Releasing is automated via GitHub Actions.
