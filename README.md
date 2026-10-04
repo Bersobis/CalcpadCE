@@ -107,11 +107,13 @@ If you are planning a major feature, we recommend opening a Discussion first to 
 Download and install the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [Node.js](https://nodejs.org/) 22+ and [Rust](https://rustup.rs/).
 
 The desktop app is a [Tauri](https://tauri.app/) shell around the CalcpadCE web frontend, with the calculation server bundled as a sidecar.
-Install the frontend dependencies, stage the sidecar, then start it:
+Install dependencies in all three frontend projects shown below, stage the sidecar, then start it:
 
 ```shell
 git clone https://github.com/imartincei/CalcpadCE.git
 cd CalcpadCE/Calcpad.Web/frontend/calcpad-frontend
+npm install
+cd ../calcpad-web
 npm install
 cd ../calcpad-desktop
 npm install
