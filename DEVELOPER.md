@@ -103,7 +103,7 @@ The tag you push decides which workflow runs:
 | `vX.Y.Z` | `stable-release-build.yml` | Stable release, marked "Latest" |
 | `vX.Y.Z-<suffix>`, e.g. `v8.0.0-beta.1` or `v8.0.0-rc.2` | `pre-release-build.yml` | Pre-release, **not** marked "Latest" |
 
-Both build the same artifacts via `build-all.yml`: the Windows portable zip, the Linux desktop packages (`.deb`, `.rpm`, `.pkg.tar.zst`), and the VS Code extension.
+Both build the same artifacts: the Windows MSI and setup installers, the Windows portable zip, the Linux desktop packages (`.deb`, `.rpm`, `.pkg.tar.zst`), and the VS Code extension.
 
 Items marked with 🫵, require an action by you.
 
@@ -119,7 +119,6 @@ Items marked with 🫵, require an action by you.
   - fixes which addressed only unreleased code
 - 🫵 Click on "Publish Release".
 - 🫵 Run the `Publish to WinGet` workflow manually, passing the release tag.
-  It is manual until a Windows installer ships: see `winget-publish.yml`.
 - 🫵 Write an announcement on GitHub Discussions.
 - 🫵 Bump the version in `Directory.Build.props`
 

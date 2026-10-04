@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-import { resolveVersion, rpmVersion } from '../../../tools/version.mjs';
+import { resolveVersion, rpmVersion, windowsInstallerVersion } from '../../../tools/version.mjs';
 
 const directory = fileURLToPath(new URL('.', import.meta.url));
 const [command, ...rawArgs] = process.argv.slice(2);
@@ -29,7 +29,12 @@ if (command === 'dev' || (command === 'build' && stagedIndex === -1)) {
         : ['stage-sidecar.sh']);
 }
 
-function tauri(action, options, config = { version: process.env.CALCPAD_VERSION }) {
+function tauri(action, options, config = {
+    version: process.env.CALCPAD_VERSION,
+    ...(windows ? { bundle: { windows: {
+        wix: { version: windowsInstallerVersion(process.env.CALCPAD_VERSION) },
+    } } } : {}),
+}) {
     run(process.execPath, [resolve(directory, 'node_modules/@tauri-apps/cli/tauri.js'), action,
         '--config', `src-tauri/tauri.${windows ? 'windows' : 'linux'}.conf.json`,
         '--config', JSON.stringify(config), ...options]);
