@@ -112,6 +112,7 @@ Items marked with 🫵, require an action by you.
 - 🫵 Run the `Publish to WinGet` workflow manually, passing the release tag.
   It is manual until a Windows installer ships: see `winget-publish.yml`.
 - 🫵 Write an announcement on GitHub Discussions.
+- 🫵 Bump the version in `Directory.Build.props`
 
 ### Pre-Release
 
@@ -130,6 +131,7 @@ The steps:
 - A pre-release draft is created on the repo's Releases page.
 - 🫵 Edit the draft to say what is being tested and what feedback you want.
 - 🫵 Click on "Publish Release".
+- 🫵 Bump the version in `Directory.Build.props`
 
 In most cases, there is no announcement step on Github: a pre-release is published for testers and is not broadcast.
 Pre-releases should be posted on Discord, and major pre-releases can also be posted in a Github Discussion.

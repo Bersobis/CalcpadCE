@@ -753,7 +753,7 @@
         {
           "id": "calcpad-ui",
           "title": "CalcpadCE",
-          "icon": "./calcpad-icon.png"
+          "icon": "./media/calcpad-activity.svg"
         }
       ]
     },
