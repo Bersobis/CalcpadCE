@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { resolveVersion } from '../../../../tools/version.mjs';
 /**
  * Bundle the .NET server into a frontend app's bin directory.
  *
@@ -393,7 +393,7 @@ function main() {
         const publishCmd = args.frameworkDependent
             ? `dotnet publish "${CSPROJ}" -c ${args.configuration} --no-self-contained`
             : `dotnet publish "${CSPROJ}" -c ${args.configuration} -r ${rid} --self-contained true`;
-        run(publishCmd, BACKEND_DIR);
+        run(`${publishCmd} -p:Version=${resolveVersion()} -p:IncludeSourceRevisionInInformationalVersion=false`, BACKEND_DIR);
     } else {
         console.log('[sync-bundled-server] --skip-build given, reusing existing publish output');
     }
