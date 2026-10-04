@@ -20,8 +20,6 @@ import { resolveVersion } from '../../../../tools/version.mjs';
  *   --framework-dependent  Emit a slim, framework-dependent bundle instead of
  *                          a self-contained one. Smaller (~3 MB vs ~80 MB)
  *                          but requires the user to have .NET 10 installed.
- *                          Only safe for vscode-calcpad — calcpad-desktop
- *                          ships standalone and must be self-contained.
  *   --configuration=<c>    Debug | Release (default: Release)
  *   --skip-build           Reuse an existing publish directory; only re-mirror
  *   --keep-skia-natives    Keep the published `runtimes/` tree (SkiaSharp +
@@ -129,7 +127,7 @@ function publishOutputDir(rid, frameworkDependent, configuration) {
     const tfm = 'net10.0';
     const base = join(BACKEND_DIR, 'bin', configuration, tfm);
     return frameworkDependent
-        ? join(base, 'publish')
+        ? join(base, rid, 'publish-framework-dependent')
         : join(base, rid, 'publish');
 }
 
@@ -390,8 +388,9 @@ function main() {
     if (args.keepSkiaNatives) console.log('[sync-bundled-server] keeping published runtimes/ tree');
 
     if (!args.skipBuild) {
+        if (args.frameworkDependent) rmSync(publishOutputDir(rid, true, args.configuration), { recursive: true, force: true });
         const publishCmd = args.frameworkDependent
-            ? `dotnet publish "${CSPROJ}" -c ${args.configuration} --no-self-contained`
+            ? `dotnet publish "${CSPROJ}" -c ${args.configuration} -r ${rid} --no-self-contained -o "${publishOutputDir(rid, true, args.configuration)}"`
             : `dotnet publish "${CSPROJ}" -c ${args.configuration} -r ${rid} --self-contained true`;
         run(`${publishCmd} -p:Version=${resolveVersion()} -p:IncludeSourceRevisionInInformationalVersion=false`, BACKEND_DIR);
     } else {

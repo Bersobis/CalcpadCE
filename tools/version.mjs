@@ -30,6 +30,10 @@ export function archVersion(version) {
     return version.replace(/[-+]/g, '.');
 }
 
+export function windowsInstallerVersion(version) {
+    return version.split(/[-+]/)[0];
+}
+
 export function rpmVersion(version) {
     const [, core, prerelease, metadata] = version.match(/^(\d+\.\d+\.\d+)(?:-([^+]+))?(?:\+(.+))?$/);
     return {
