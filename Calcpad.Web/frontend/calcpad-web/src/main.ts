@@ -1,7 +1,6 @@
 import * as monaco from 'monaco-editor';
 import { createApp, nextTick } from 'vue';
 import App from './App.vue';
-import pkg from '../package.json';
 import CalcpadAppVue from 'calcpad-frontend/vue/components/CalcpadApp.vue';
 import { initMessaging } from 'calcpad-frontend/vue/services/messaging';
 import { discardMetadataDraft } from 'calcpad-frontend/vue/metadata-drafts';
@@ -181,8 +180,7 @@ async function bootstrap(): Promise<void> {
     // stores, so the main window owns everything there can only be one of.
     let isPrimaryWindow = true;
     let windowLabel = 'main';
-    // The bundle's version, not package.json's, on desktop.
-    let appVersion = pkg.version;
+    const appVersion = import.meta.env.VITE_APP_VERSION;
     let bridge: MessageBridge | null = null;
     let tauriBridge: import('./services/tauri-bridge').TauriMessageBridge | null = null;
     let serverManager: import('./services/server-manager').TauriServerManager | null = null;
@@ -196,8 +194,6 @@ async function bootstrap(): Promise<void> {
     if (isTauri) {
         windowLabel = (await import('@tauri-apps/api/window')).getCurrentWindow().label;
         isPrimaryWindow = windowLabel === 'main';
-        try { appVersion = await (await import('@tauri-apps/api/app')).getVersion(); }
-        catch { /* falls back to package.json */ }
         // Tauri desktop: the Rust layer owns the Calcpad.Server sidecar
         // (spawn, kill on exit, port discovery). This manager just tracks
         // its URL and surfaces crashes to the Output panel.
