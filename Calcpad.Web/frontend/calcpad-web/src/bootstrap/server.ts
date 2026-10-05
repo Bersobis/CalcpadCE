@@ -1,7 +1,7 @@
 import type { AppInstance } from '../editor/app-instance';
 import type { PlatformBridge } from '../services/platform';
 import { ConnectionMonitor, setLogLevel, coerceLogLevel, toDisplayLogLevel } from 'calcpad-frontend';
-import type { CalcpadLogLevel } from 'calcpad-frontend';
+import type { CalcpadLogLevel, ServerLifecycleState } from 'calcpad-frontend';
 
 export interface ServerDependencies {
     appInstance: AppInstance;
@@ -10,7 +10,7 @@ export interface ServerDependencies {
     onServerLog: (line: string, stream: 'stdout' | 'stderr') => void;
     onUrlChanged: (newUrl: string) => void;
     onCrashExhausted: (crashOutput: string) => void;
-    onStatusChanged: (state: string, detail: string) => void;
+    onStatusChanged: (state: ServerLifecycleState, detail: string) => void;
 }
 
 export class ServerManager {
@@ -20,7 +20,7 @@ export class ServerManager {
 
     start(): void {
         this.connectionMonitor = new ConnectionMonitor({
-            probe: (timeoutMs: number) => this.deps.platform.bridge.bridge.api.checkHealth(timeoutMs),
+            probe: (timeoutMs: number) => this.deps.platform.bridge.api.checkHealth(timeoutMs),
             onStatusChanged: (status) => this.deps.appInstance.setServerStatus(status),
             onRecovered: () => { /* handled by caller */ },
             log: (msg: string) => this.deps.appInstance.appendOutput('info', `[Server] ${msg}`),
@@ -32,7 +32,7 @@ export class ServerManager {
         this.connectionMonitor?.stop();
     }
 
-    applyLifecycle(state: string, detail: string): void {
+    applyLifecycle(state: ServerLifecycleState, detail: string): void {
         this.connectionMonitor?.applyLifecycle(state, detail);
     }
 

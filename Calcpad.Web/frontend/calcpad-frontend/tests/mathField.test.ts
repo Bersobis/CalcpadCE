@@ -217,7 +217,9 @@ describe('CalcpadMathField hands its operations to the toolbar', () => {
     it('refuses to commit an unfilled template', () => {
         // `sqrt(\placeholder{})` reads back as `sqrt(())`, which the engine rejects with
         // `Invalid syntax: "( )"`. Committing it would replace a good line with a broken one.
-        expect(fieldSource).toContain('hasEmptyPlaceholder(el.value)');
+        // The guard covers this and every other incomplete field, so the commit path is
+        // checked once rather than per template shape.
+        expect(fieldSource).toMatch(/checkCommit\(source, next\)/);
     });
 
     it('does not offer a handle on a read-only field', () => {

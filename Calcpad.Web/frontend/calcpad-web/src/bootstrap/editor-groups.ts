@@ -13,7 +13,10 @@ import { isCompiledPath } from 'calcpad-frontend';
 
 export interface EditorGroupsDependencies {
     appInstance: AppInstance;
-    editorBridge: EditorBridge;
+    editorBridge: EditorBridge & {
+        handleMessage(msg: Record<string, unknown>): void;
+        refreshLiveContext(line?: number): void;
+    };
     platform: PlatformBridge;
     getResultMode: () => ResultMode;
     isPreviewVisible: () => boolean;
@@ -125,7 +128,7 @@ export class EditorGroupManager {
         attachAutoIndenter(ed);
         registerFormattingCommands(ed, this.deps.editorBridge);
 
-        group.diagnostics = setupDiagnostics(ed, this.deps.platform.bridge.bridge.api, () => {
+        group.diagnostics = setupDiagnostics(ed, this.deps.editorBridge.api, () => {
             const sev = this.deps.editorBridge.getExtraSetting('linterMinSeverity');
             return (sev === 'error' || sev === 'warning') ? sev : 'information';
         }, undefined, `lint:${group.id}`);

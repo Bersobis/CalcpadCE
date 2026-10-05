@@ -92,7 +92,15 @@ describe('classifyLineEdit decides what the canvas may edit', () => {
         expect(classifyLineEdit('B_1,1.(3; j) = B_3(j; 1; 1)')).toBe('lossy');
         // The unit target: `|` outside brackets attaches units to the whole left side.
         expect(classifyLineEdit('c = b - a|μm:N1')).toBe('lossy');
-        expect(classifyLineEdit('cbrt(x)')).toBe('lossy');
+    });
+
+    it('edits the aliases docs/quick-reference.md lists beside the canonical spelling', () => {
+        // `cbrt(x)` and `root(x; 3)` are the same function, and the printer emits the
+        // `root` form. Treating that alias difference as loss kept every cubic root out
+        // of the canvas for a spelling the engine accepts either way -- the same reason
+        // `sqr`/`sqrt` has always been folded.
+        expect(classifyLineEdit('cbrt(x)')).toBe('equation');
+        expect(classifyLineEdit('sqr(x)')).toBe('equation');
     });
 });
 

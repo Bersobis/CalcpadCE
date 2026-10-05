@@ -23,7 +23,15 @@ export interface InsertTemplate {
     /** MathLive LaTeX inserted at the cursor. */
     latex: string;
     /** Group heading in the palette. */
-    group: 'Roots and powers' | 'Fractions' | 'Grouping' | 'Common functions';
+    group:
+        | 'Roots and powers'
+        | 'Fractions'
+        | 'Grouping'
+        | 'Common functions'
+        | 'Rounding and integers'
+        | 'Complex'
+        | 'Logic'
+        | 'Vectors and matrices';
 }
 
 export const INSERT_TEMPLATES: InsertTemplate[] = [
@@ -53,6 +61,47 @@ export const INSERT_TEMPLATES: InsertTemplate[] = [
     { label: 'min', title: 'Minimum — min(#0)', latex: '\\operatorname{min}(#0)', group: 'Common functions' },
     { label: 'max', title: 'Maximum — max(#0)', latex: '\\operatorname{max}(#0)', group: 'Common functions' },
     { label: 'if', title: 'Conditional — if(#0; #1; #2)', latex: '\\operatorname{if}(#0;#1;#2)', group: 'Common functions' },
+
+    // Rounding and integers. The doc lists these next to the trig block, and they are the
+    // functions most often reached for after typing a quotient -- which is why there was no
+    // button for any of them.
+    { label: 'round', title: 'Round to nearest — round(#0)', latex: '\\operatorname{round}(#0)', group: 'Rounding and integers' },
+    { label: '⌊⌋', title: 'Round down — floor(#0)', latex: '\\operatorname{floor}(#0)', group: 'Rounding and integers' },
+    { label: '⌈⌉', title: 'Round up — ceiling(#0)', latex: '\\operatorname{ceiling}(#0)', group: 'Rounding and integers' },
+    { label: 'trunc', title: 'Round toward zero — trunc(#0)', latex: '\\operatorname{trunc}(#0)', group: 'Rounding and integers' },
+    { label: 'mod', title: 'Remainder — mod(#0; #1)', latex: '\\operatorname{mod}(#0;#1)', group: 'Rounding and integers' },
+    { label: 'gcd', title: 'Greatest common divisor — gcd(#0; #1)', latex: '\\operatorname{gcd}(#0;#1)', group: 'Rounding and integers' },
+    { label: 'lcm', title: 'Least common multiple — lcm(#0; #1)', latex: '\\operatorname{lcm}(#0;#1)', group: 'Rounding and integers' },
+
+    // Complex.
+    { label: 're', title: 'Real part — re(#0)', latex: '\\operatorname{re}(#0)', group: 'Complex' },
+    { label: 'im', title: 'Imaginary part — im(#0)', latex: '\\operatorname{im}(#0)', group: 'Complex' },
+    { label: 'conj', title: 'Conjugate — conj(#0)', latex: '\\operatorname{conj}(#0)', group: 'Complex' },
+    { label: 'phase', title: 'Phase — phase(#0)', latex: '\\operatorname{phase}(#0)', group: 'Complex' },
+
+    // Logic. `if` and `min`/`max` are already above; these are the rest of the doc's
+    // "Conditional and Logical" block.
+    { label: 'switch', title: 'Selective evaluation — switch(#0; #1; #2)', latex: '\\operatorname{switch}(#0;#1;#2)', group: 'Logic' },
+    { label: 'not', title: 'Logical NOT — not(#0)', latex: '\\operatorname{not}(#0)', group: 'Logic' },
+    { label: 'and', title: 'Logical AND — and(#0; #1)', latex: '\\operatorname{and}(#0;#1)', group: 'Logic' },
+    { label: 'or', title: 'Logical OR — or(#0; #1)', latex: '\\operatorname{or}(#0;#1)', group: 'Logic' },
+    { label: 'xor', title: 'Logical XOR — xor(#0; #1)', latex: '\\operatorname{xor}(#0;#1)', group: 'Logic' },
+
+    // Vectors and matrices. The bracketed literals go through `;`, the separator the
+    // printer emits and the one Calcpad documents for them.
+    { label: '[ ]', title: 'Vector — [#0; #1]', latex: '[#0;#1]', group: 'Vectors and matrices' },
+    { label: 'M[ ]', title: 'Matrix row — [#0, #1]', latex: '[#0,#1]', group: 'Vectors and matrices' },
+    { label: 'len', title: 'Vector length — len(#0)', latex: '\\operatorname{len}(#0)', group: 'Vectors and matrices' },
+    { label: 'norm', title: 'Vector norm — norm(#0)', latex: '\\operatorname{norm}(#0)', group: 'Vectors and matrices' },
+    { label: 'unit', title: 'Normalized vector — unit(#0)', latex: '\\operatorname{unit}(#0)', group: 'Vectors and matrices' },
+    { label: 'dot', title: 'Scalar product — dot(#0; #1)', latex: '\\operatorname{dot}(#0;#1)', group: 'Vectors and matrices' },
+    { label: 'cross', title: 'Cross product — cross(#0; #1)', latex: '\\operatorname{cross}(#0;#1)', group: 'Vectors and matrices' },
+    { label: 'det', title: 'Determinant — det(#0)', latex: '\\det(#0)', group: 'Vectors and matrices' },
+    { label: 'trace', title: 'Trace — trace(#0)', latex: '\\operatorname{trace}(#0)', group: 'Vectors and matrices' },
+    { label: 'rank', title: 'Rank — rank(#0)', latex: '\\operatorname{rank}(#0)', group: 'Vectors and matrices' },
+    { label: 'transp', title: 'Transpose — transp(#0)', latex: '\\operatorname{transp}(#0)', group: 'Vectors and matrices' },
+    { label: 'inverse', title: 'Inverse — inverse(#0)', latex: '\\operatorname{inverse}(#0)', group: 'Vectors and matrices' },
+    { label: 'lsolve', title: 'Solve system — lsolve(#0; #1)', latex: '\\operatorname{lsolve}(#0;#1)', group: 'Vectors and matrices' },
 ];
 
 /** Unique group names, in the order the templates declare them. */

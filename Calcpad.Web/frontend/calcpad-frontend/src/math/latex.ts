@@ -82,9 +82,13 @@ export function astToLatex(node: MathJSON): string {
             return `${astToLatex(node.base)}_{${astToLatex(node.sub)}}`;
 
         case 'Statements':
-            // A canvas renders each statement as its own field; side by side here they
-            // stay visually separated rather than collapsing into one product.
-            return node.body.map(astToLatex).join('\\qquad ');
+            // `;` travels as upright text rather than `\qquad`, which the reader treats as
+            // mere spacing: a line holding `x = 1; y = 2` came back as the single product
+            // `x=1(y=2)`. A comma separator stays spacing -- it is indistinguishable from a
+            // subscript comma (`σ_max,Ed`), so splitting on it would tear names apart.
+            const sep = node.seps[0] === ',' ? '\\qquad ' : '\\text{;}';
+            return node.body.map(astToLatex).join(sep)
+                + (node.trailing === ';' ? '\\text{;}' : node.trailing === ',' ? '\\qquad ' : '');
 
         case 'Function': {
             const name = node.subscript
@@ -155,14 +159,17 @@ function operatorToLatex(n: Extract<MathJSON, { type: 'Operator' }>): string {
     }
 
     // `⦼` modulo, `\` integer division, `←` outer assignment and `∠` phasor have no TeX
-    // spelling at all, so they travel as upright text the reader can identify.
-    if (n.op === '⦼') return `${astToLatex(a)}\\text{⦼}${astToLatex(b)}`;
+    // spelling at all, so they travel as upright text the reader can identify. The same
+    // holds for the comparison and logical glyphs, which TeX would either render as an
+    // unrelated relation or drop outright.
+    if (TEXT_OPERATORS[n.op] !== undefined) {
+        return `${astToLatex(a)}\\text{${n.op}}${astToLatex(b)}`;
+    }
     if (n.op === '\\') return `${astToLatex(a)}\\text{\\textbackslash}${astToLatex(b)}`;
-    if (n.op === '←') return `${astToLatex(a)}\\text{←}${astToLatex(b)}`;
-    if (n.op === '∠') return `${astToLatex(a)}\\text{∠}${astToLatex(b)}`;
 
     const prec = PREC[n.op] ?? 2;
-    const sign = n.op === '*' ? (n.implicit ? ' ' : '\\cdot ') : tex(n.op);
+    const isProduct = n.op === '*' || n.op === '·' || n.op === '∗';
+    const sign = isProduct ? (n.implicit ? ' ' : '\\cdot ') : tex(n.op);
     const left = needsParens(a, prec) ? `(${astToLatex(a)})` : astToLatex(a);
     const right = needsParens(b, prec + 1) ? `(${astToLatex(b)})` : astToLatex(b);
     return `${left}${sign}${right}`;
@@ -213,13 +220,24 @@ function unitPlainText(node: MathJSON): string {
  * `a<=b` → `a\le b`, `a>=b` → `a\ge b`, `a!=b` → `a\ne b`, `a and b` → `a\land b`,
  * `a times b` → `a\times b`. Anything absent here becomes a *variable of that name*,
  * which is the silent failure mode documented at the top of this file.
+ *
+ * Each maps to the glyph `docs/quick-reference.md` spells that operator with, so the
+ * commit writes back the documented form. `\oplus` was missing and `\equiv` was mapped
+ * to assignment `=`, so editing `a ⊕ b` wrote the variable `oplus` and editing `a ≡ b`
+ * turned the comparison into the definition `a=b`.
  */
 const MACRO_OPS: Record<string, string> = {
     '\\times': '*', '\\cdot': '*', '\\ast': '*', '\\div': '/', '\\over': '/',
-    '\\le': '<=', '\\leq': '<=', '\\lt': '<',
-    '\\ge': '>=', '\\geq': '>=', '\\gt': '>',
-    '\\ne': '!=', '\\neq': '!=',
-    '\\equiv': '=', '\\land': '&&', '\\wedge': '&&', '\\lor': '||', '\\vee': '||',
+    '\\le': '≤', '\\leq': '≤', '\\lt': '<',
+    '\\ge': '≥', '\\geq': '≥', '\\gt': '>',
+    '\\ne': '≠', '\\neq': '≠',
+    '\\equiv': '≡',
+    '\\land': '∧', '\\wedge': '∧',
+    '\\lor': '∨', '\\vee': '∨',
+    '\\oplus': '⊕',
+    '\\angle': '∠',
+    '\\gets': '←', '\\larr': '←',
+    '\\textbackslash': '\\',
 };
 
 /**
@@ -233,9 +251,14 @@ const MACRO_OPS: Record<string, string> = {
  */
 const TEXT_OPERATORS: Record<string, string> = {
     '÷': '÷', '⦼': '⦼', '←': '←', '∠': '∠',
+    // Comparison and logical operators. Emitted raw they were read as an unknown symbol
+    // and dropped, so committing `a ≡ b` silently wrote `a` to the document.
+    '≡': '≡', '≠': '≠', '≤': '≤', '≥': '≥', '∧': '∧', '∨': '∨', '⊕': '⊕',
 };
 
-const COMPARISON = new Set(['<', '>', '<=', '>=', '!=', '==']);
+// Both spellings appear: the ASCII forms arrive from TeX macros (`\le` → `<=`), the
+// Calcpad glyphs from the `\text{}` operators the emitter writes for them.
+const COMPARISON = new Set(['<', '>', '<=', '>=', '!=', '==', '≤', '≥', '≠', '≡']);
 
 /**
  * Strips an inner `{\mathrm{…}}` or `{…}` wrapper from a macro body. MathLive writes a
@@ -272,7 +295,7 @@ const GREEK_MACROS: Record<string, string> = {
 function greekFromMacro(cmd: string): string | null {
     return GREEK_MACROS[cmd] ?? null;
 }
-const LOGICAL = new Set(['&&', '||']);
+const LOGICAL = new Set(['&&', '||', '∧', '∨', '⊕']);
 
 /** Characters `binary()` reads as an operator, as opposed to one spelled as a macro. */
 const OP_CHARS = '+-*/=<>|^_';
@@ -285,8 +308,12 @@ const OP_CHARS = '+-*/=<>|^_';
  * looked plausible.
  */
 const LETTER = /[\p{L}]/u;
-/** `_` ends a name: it is Calcpad's subscript operator, not part of the symbol. */
-const NAME_CHAR = /[\p{L}\p{N}]/u;
+/**
+ * `_` ends a name: it is Calcpad's subscript operator, not part of the symbol.
+ * The subscript block and the documented name characters join it, so `x₊` and `Δ°C`
+ * read back as the single names they are rather than being dropped as stray symbols.
+ */
+const NAME_CHAR = /[\p{L}\p{N}\u2032\u2033\u2034\u2057\u203E\u2221\u00B0\u2080-\u208E]/u;
 
 /** Macros that only affect spacing or sizing, carrying no structure. */
 const SPACING_MACROS = new Set([
@@ -296,6 +323,63 @@ const SPACING_MACROS = new Set([
 
 function parseLatex(src: string): MathJSON {
     return new LatexReader(src).parse();
+}
+
+/**
+ * A top-level statement separator the emitter wrote. Only `;` counts: `,` is equally a
+ * subscript character, so `σ_max,Ed` reaches the emitter as two comma-separated statements
+ * and splitting on it would tear that name apart. Calcpad cannot tell the two apart either
+ * -- `classifyLineEdit` keeps such lines out of the canvas for the same reason.
+ */
+const STATEMENT_SEP = /\\text\s*\{;\}/;
+
+/**
+ * Splits a source on statement separators that are not inside a group. Returns
+ * `[{ text, sep }, …]` with `sep` carrying the punctuation, or an empty array when the
+ * source holds a single statement.
+ */
+function splitStatements(src: string): { text: string; sep: string }[] {
+    const parts: { text: string; sep: string }[] = [];
+    let depth = 0;
+    let start = 0;
+    for (let i = 0; i < src.length; i++) {
+        const c = src[i];
+        // The separator is itself a macro, so it has to be recognised before the general
+        // escaped-character skip -- which would otherwise step over `\text` one letter at
+        // a time and leave `x=1;y=2` to be read as one product.
+        if (c === '\\' && depth === 0) {
+            const m = STATEMENT_SEP.exec(src.slice(i));
+            if (m) {
+                parts.push({ text: src.slice(start, i), sep: ';' });
+                i += m[0].length - 1;
+                start = i + 1;
+                continue;
+            }
+        }
+        if (c === '\\') { i++; continue; }
+        if (c === '{') { depth++; continue; }
+        if (c === '}') { depth--; continue; }
+    }
+    if (parts.length === 0) return parts;
+    parts.push({ text: src.slice(start), sep: '' });
+    return parts;
+}
+
+/** Builds the `Statements` node for a source that `splitStatements` found separators in. */
+function statementsNode(src: string, parts: { text: string; sep: string }[]): MathJSON {
+    const body: MathJSON[] = [];
+    const seps: string[] = [];
+    let trailing = '';
+    for (const [i, part] of parts.entries()) {
+        const last = i === parts.length - 1;
+        if (last && part.text.trim() === '') {
+            trailing = parts[i - 1]?.sep ?? ';';
+            break;
+        }
+        body.push(parseLatex(part.text));
+        if (!last) seps.push(part.sep);
+    }
+    return { type: 'Statements', body, seps, trailing, source: [0, src.length] };
 }
 
 /** `sqrt`/`root` become their own node types; every other name is a function call. */
@@ -362,6 +446,20 @@ class LatexReader {
         return body === '' ? null : body;
     }
 
+    /** Consumes `_{…}` and returns the body, or null when the cursor is not on one. */
+    private peekSubscript(): string | null {
+        const save = this.i;
+        this.skip();
+        if (this.s[this.i] !== '_') return null;
+        this.i++;
+        const body = this.group();
+        if (body === '') {
+            this.i = save;
+            return null;
+        }
+        return body;
+    }
+
     /**
      * Arguments written without parentheses, separated by `;` or `,` as MathLive emits
      * them once a bracketed call is flattened. Returns nothing when the cursor is at an
@@ -385,6 +483,11 @@ class LatexReader {
     }
 
     parse(): MathJSON {
+        // `\text{;}` / `\text{,}` is how the emitter marks the boundary between two
+        // statements on one line. Left as spacing, `x = 1; y = 2` read back as the single
+        // product `x=1(y=2)`, so the separator has to become structure again.
+        const statements = splitStatements(this.s);
+        if (statements.length > 1) return statementsNode(this.s, statements);
         return this.juxtaposed();
     }
 
@@ -421,7 +524,25 @@ class LatexReader {
         const c = this.s[this.i];
         if (c === undefined) return false;
         if ('+-*/=<>|^_)],'.includes(c)) return false;
+        // An operator macro begins with a backslash like any other factor-starting macro, so
+        // absorbing it as a juxtaposed factor dropped the operator and left an implicit
+        // product: `a + b ∧ c` came back as `a + b and c`, and `a+b∧c` as `a + b*c`. Both
+        // spellings MathLive uses are covered -- a `\text{∧}` glyph and a `\land` macro.
+        if (c === '\\' && this.atOperatorMacro()) return false;
         return /[0-9([{\\]/.test(c) || LETTER.test(c);
+    }
+
+    /** True when the cursor is on a macro that `binary()` reads as an infix operator. */
+    private atOperatorMacro(): boolean {
+        const save = this.i;
+        const cmd = this.command();
+        let isOperator = MACRO_OPS[cmd] !== undefined;
+        if (cmd === '\\text') {
+            const body = this.peekGroup();
+            isOperator = body !== null && (TEXT_OPERATORS[body] !== undefined || body === '\\textbackslash');
+        }
+        this.i = save;
+        return isOperator;
     }
 
     /**
@@ -489,8 +610,8 @@ class LatexReader {
             // A macro has already consumed its own characters; a bare operator character
             // still has to be stepped over.
             let width = 0;
+            const at = this.i;
             if (this.s[this.i] === '\\') {
-                const at = this.i;
                 const cmd = this.command();
                 // A punctuation macro (`\,` `\;` `\!` `\:`) has no letters, so `command()`
                 // returns a lone backslash. Skip two characters and carry on.
@@ -534,7 +655,14 @@ class LatexReader {
                 if (COMPARISON.has(op)) prec = 2.5;
                 else if (LOGICAL.has(op)) prec = 2.25;
             }
-            if (prec === undefined || prec < minPrec) break;
+            if (prec === undefined || prec < minPrec) {
+                // A macro operator was already consumed by `command()`/`group()`. Giving it
+                // back is what keeps a chained comparison readable: in `a≡b∧c` the `∧` binds
+                // looser than `≡`, so the inner call declines it -- and without rewinding,
+                // the operator was dropped and `c` was absorbed as a juxtaposed factor.
+                if (width === 0) this.i = at;
+                break;
+            }
             this.i += width;
 
             if (op === '|') {
@@ -546,7 +674,22 @@ class LatexReader {
             // `=` and `←` are assignments, so their right side takes everything to its right --
             // `a ← 5` is one assignment, not a product. Matches `parseAssignment` in the
             // Calcpad parser, which is where the emitter's tree comes from.
-            const right = op === '=' || op === '←' ? this.juxtaposed() : this.binary(prec + 1);
+            let right = op === '=' || op === '←' ? this.juxtaposed() : this.binary(prec + 1);
+            // A juxtaposed factor binds tighter than `+`/`-`, as it does in TeX and in
+            // Calcpad: `3 - 2i` is a complex number, not `(3 - 2) * i`. Reading only the
+            // leading term of the right operand split the product and left `i` to be
+            // multiplied onto the whole subtraction -- a silently different value.
+            if (op === '+' || op === '-') {
+                for (;;) {
+                    this.skip();
+                    // `\quad` marks a unit target, not a factor. Swallowing it here would
+                    // turn `c = b - a|μm` into a product with the word `quad` in it.
+                    if (this.s.startsWith('\\quad', this.i)) break;
+                    if (!this.startsTerm()) break;
+                    const factor = this.expression();
+                    right = { type: 'Operator', op: '*', implicit: true, args: [right, factor], form: 'infix' };
+                }
+            }
             left = { type: 'Operator', op, args: [left, right], form: 'infix' };
         }
         return left;
@@ -679,9 +822,21 @@ class LatexReader {
                     // end in one (`h_`, `V_Rd_c_`). Reading it back as the escape would
                     // leave a stray backslash in the document, so it is unescaped here.
                     const sym = this.group().replace(/\\_/g, '_');
+                    // A subscripted function name (`extract_rows(M; i)`, `log_2(x)`) is
+                    // emitted upright with the subscript on the base. Reading the name
+                    // alone left the call's arguments stranded, so `extract_rows(M; i)`
+                    // came back as the one-argument `extract_rows(M)` -- a silent loss of
+                    // every argument past the first.
+                    const subscript = this.peekSubscript();
                     const args = this.callArgs();
-                    if (args === null) return { type: 'Identifier', sym };
-                    return functionOrSpecial(sym, args);
+                    if (subscript === null) {
+                        if (args === null) return { type: 'Identifier', sym };
+                        return functionOrSpecial(sym, args);
+                    }
+                    if (args === null) {
+                        return { type: 'Sub', base: { type: 'Identifier', sym }, sub: parseLatex(subscript) };
+                    }
+                    return functionOrSpecial(`${sym}_${astToCalcpad(parseLatex(subscript))}`, args);
                 }
                 case ',': case ';': case ':': case '!':
                     return { type: 'Number', n: 0 };
@@ -729,9 +884,15 @@ class LatexReader {
         if (/[0-9.]/.test(c)) {
             let j = this.i;
             while (j < this.s.length && /[0-9.]/.test(this.s[j])) j++;
-            const n = Number(this.s.slice(this.i, j));
+            // Scientific notation is one number to Calcpad (`1.5e-3`), and the emitter
+            // passes it through verbatim. Reading only the mantissa turned it into the
+            // product `1.5(e - 3)` on the way back.
+            const exponent = /^[eE][+-]?\d/.exec(this.s.slice(j));
+            if (exponent) j += exponent[0].length;
+            const raw = this.s.slice(this.i, j);
             this.i = j;
-            return { type: 'Number', n: Number.isFinite(n) ? n : 0 };
+            const n = Number(raw);
+            return { type: 'Number', n: Number.isFinite(n) ? n : 0, raw };
         }
 
         if (LETTER.test(c)) {
@@ -760,7 +921,10 @@ class LatexReader {
                 for (;;) {
                     body.push(this.expression());
                     this.skip();
-                    if (this.s[this.i] === ',') { this.i++; continue; }
+                    // Calcpad separates the elements of `[a; b]` with either punctuation, and
+                    // only `,` was read here, so `[2;3]` came back as `[2]` -- every element
+                    // after the first dropped, with nothing to show that it had happened.
+                    if (this.s[this.i] === ',' || this.s[this.i] === ';') { this.i++; continue; }
                     break;
                 }
             }

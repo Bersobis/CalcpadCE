@@ -92,6 +92,17 @@ interface Token {
 // `docs/quick-reference.md`. Leaving them out made the tokenizer read them as variable
 // names, so `a ← 5` parsed as `a * ← * 5` and the glyph was lost on the way back.
 const MULTI_CHAR_OPS = ['≤', '≥', '≠', '≡', '∧', '∨', '⊕', '⦼', '∗', '·', '÷', '←', '∠'];
+
+// The doc lists an ASCII spelling beside every operator that has a glyph. They are the
+// same operators, so each is folded to its glyph at the tokenizer: read literally, `a == b`
+// lexed as `a = = b` and came back as the assignment `a=(0=b)` -- a silently different
+// line. Order matters, longest first, so `<*` is not read as `<` and `*`.
+const ASCII_ALIASES: Record<string, string> = {
+    '==': '≡', '!=': '≠', '<=': '≤', '>=': '≥',
+    '&&': '∧', '||': '∨', '^^': '⊕',
+    '%%': '⦼', '//': '÷', '<<': '∠', '<*': '←',
+};
+const ASCII_OPS = Object.keys(ASCII_ALIASES).sort((a, b) => b.length - a.length);
 const SINGLE_CHAR_OPS = '+-*/\\^!<>=|_';
 
 const isDigit = (c: string): boolean => c >= '0' && c <= '9';
@@ -101,10 +112,12 @@ const isIdentStart = (c: string): boolean => /\p{L}|\p{Nl}/u.test(c);
 //
 // The Unicode subscript digits are the other documented spelling of the same thing
 // (`x₁` and `x_1` both name `x` with subscript 1), so they continue a name rather than
-// standing alone as one.
-const SUBSCRIPT_DIGIT_CLASS = '\\u2080-\\u2089';
+// standing alone as one. The rest of the subscript block and the special symbols are the
+// remaining documented name characters; `x₊` and `x₋` are single names, not `x` times an
+// operator, so they have to continue the name like a digit does.
+const SUBSCRIPT_DIGIT_CLASS = '\\u2080-\\u208E';
 const isIdentPart = (c: string): boolean =>
-    new RegExp(`[\\p{L}\\p{Nl}\\p{Nd}${SUBSCRIPT_DIGIT_CLASS}′″‴⁗]`, 'u').test(c);
+    new RegExp(`[\\p{L}\\p{Nl}\\p{Nd}${SUBSCRIPT_DIGIT_CLASS}′″‴⁗‾∡°]`, 'u').test(c);
 
 export function tokenize(src: string): Token[] {
     const tokens: Token[] = [];
@@ -180,6 +193,13 @@ export function tokenize(src: string): Token[] {
         if (c === ']') { tokens.push({ type: 'rbracket', value: c, start, end: ++i }); continue; }
         if (c === ',' || c === ';') {
             tokens.push({ type: c === ',' ? 'comma' : 'semi', value: c, start, end: ++i });
+            continue;
+        }
+
+        const alias = ASCII_OPS.find((op) => src.startsWith(op, i));
+        if (alias !== undefined) {
+            i += alias.length;
+            tokens.push({ type: 'op', value: ASCII_ALIASES[alias], start, end: i });
             continue;
         }
 

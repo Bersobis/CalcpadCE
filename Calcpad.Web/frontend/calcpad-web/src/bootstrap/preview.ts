@@ -93,8 +93,8 @@ export class PreviewRenderer {
                 : undefined;
             const write = this.deps.platform.bridge.mayWrite(mode === 'report', mode === 'ui');
             result = mode === 'unwrapped'
-                ? await this.deps.platform.bridge.bridge.api.convertUnwrapped(content, apiSettings, undefined, theme, { key: `preview:${group.id}`, write })
-                : await this.deps.platform.bridge.bridge.api.convert(
+                ? await this.deps.platform.bridge.api.convertUnwrapped(content, apiSettings, undefined, theme, { key: `preview:${group.id}`, write })
+                : await this.deps.platform.bridge.api.convert(
                     content, apiSettings, 'html', mode === 'report', undefined, theme, ui,
                     mode === 'report' ? true : undefined, { key: `preview:${group.id}`, write });
         } catch (err) {

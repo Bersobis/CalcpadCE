@@ -16,7 +16,6 @@ export interface ProblemItem {
 export interface QuickPickOption {
     label: string;
     detail?: string;
-    value: string;
 }
 
 export interface QuickPickResult {
@@ -35,7 +34,7 @@ export interface ConfirmOptions {
 export interface TabSnapshot {
     id: string;
     title: string;
-    filePath?: string;
+    filePath?: string | null;
     dirty: boolean;
     isActive: boolean;
 }

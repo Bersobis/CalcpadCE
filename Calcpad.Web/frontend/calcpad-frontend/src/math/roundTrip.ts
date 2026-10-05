@@ -147,9 +147,22 @@ export function classifyLineEdit(text: string): LineEditKind {
 function normalize(s: string): string {
     return s
         .replace(/\s+/g, '')
+        // The doc lists an ASCII spelling beside each operator glyph; the printer emits the
+        // glyph, so the two are the same operator and must compare equal. Longest first:
+        // `<*` must not be read as `<`, nor `//` as `/`.
+        .replace(/==/g, '≡').replace(/!=/g, '≠')
+        .replace(/<=/g, '≤').replace(/>=/g, '≥')
+        .replace(/&&/g, '∧').replace(/\|\|/g, '∨').replace(/\^\^/g, '⊕')
+        .replace(/%%/g, '⦼').replace(/\/\//g, '÷')
+        .replace(/<</g, '∠').replace(/<\*/g, '←')
         .replace(/·/g, '*')
         .replace(/∕/g, '/')
         .replace(/\bsqr\(/g, 'sqrt(')
+        // `cbrt(x)` is the documented spelling of `root(x; 3)`, and the printer canonicalises
+        // it to the `root` form. Folding the alias -- as `sqr`/`sqrt` already are -- keeps a
+        // cubic-root line editable instead of dropping it out of the canvas for a
+        // difference the engine treats as none.
+        .replace(/\bcbrt\((\s*[^;,]*?)\s*\)/g, 'root($1;3)')
         // Unicode sub/superscripts are alternate spellings of `x_1` / `x^2`, and the
         // engine reads both, so the editor may normalise between them.
         .replace(/([\p{L}\p{N}])[₀-₉₊₋₌₍₎]+/gu, (m, base: string) => `${base}_${[...m.slice(1)].map((c) => SUBSCRIPT_DIGITS[c] ?? c).join('')}`)

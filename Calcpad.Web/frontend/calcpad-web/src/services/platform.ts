@@ -1,5 +1,4 @@
-import type { MessageBridge } from './message-bridge';
-import type { TauriMessageBridge } from './tauri-bridge';
+import type { BaseMessageBridge } from 'calcpad-frontend';
 
 export interface PlatformCapabilities {
     readonly isTauri: boolean;
@@ -8,7 +7,7 @@ export interface PlatformCapabilities {
 }
 
 export interface PlatformBridge {
-    readonly bridge: MessageBridge | TauriMessageBridge;
+    readonly bridge: BaseMessageBridge;
     readonly capabilities: PlatformCapabilities;
 
     inlineDocumentImages(html: string, budget: unknown): Promise<string>;

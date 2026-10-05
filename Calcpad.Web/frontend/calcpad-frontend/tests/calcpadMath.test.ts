@@ -152,13 +152,15 @@ describe('MathLive-shaped LaTeX reads back', () => {
     // Every string below is the real output of `mathlive@0.111` for the corresponding
     // input, measured rather than guessed. A macro missing from `MACRO_OPS` does not
     // fail — it becomes a variable named after itself, so these are the cases that
-    // silently corrupt an expression.
+    // silently corrupt an expression. Each reads back as the glyph
+    // `docs/quick-reference.md` spells the operator with; the ASCII alias the doc lists
+    // beside it is the same operator and `normalize` treats them as equal.
     it.each([
-        ['a\\le b', 'a <= b'],
-        ['a\\ge b', 'a >= b'],
-        ['a\\ne b', 'a != b'],
-        ['a\\land b', 'a && b'],
-        ['a\\lor b', 'a || b'],
+        ['a\\le b', 'a ≤ b'],
+        ['a\\ge b', 'a ≥ b'],
+        ['a\\ne b', 'a ≠ b'],
+        ['a\\land b', 'a ∧ b'],
+        ['a\\lor b', 'a ∨ b'],
         ['a\\times b', 'a * b'],
         ['a\\cdot b', 'a * b'],
         ['a<b', 'a < b'],

@@ -18,7 +18,8 @@ import { calcpadToAst } from '../../math/calcpad';
 import { astToLatex, latexToCalcpad } from '../../math/latex';
 import { applyMatrixOp, matrixSize } from '../../math/matrixOps';
 import type { MatrixOp } from '../../math/matrixOps';
-import { hasEmptyPlaceholder } from '../../math/insertTemplates';
+import { checkCommit } from '../../math/commitGuard';
+import { wrapInsert, stripProvisionalTimes, TIMES } from '../../math/insertMultiply';
 import type { MathFieldHandle } from '../../math/mathFieldTools';
 
 const props = withDefaults(defineProps<{
@@ -53,6 +54,8 @@ type MathfieldElement = HTMLElement & {
     executeCommand(command: [string, string]): void;
     setValue(value?: string, options?: Record<string, unknown>): void;
     getValue(format?: string): string;
+    /** Caret offsets, as the `(start, end)` pairs of the selection. */
+    readonly selection: { ranges: [number, number][]; direction: string };
 };
 
 const host = ref<HTMLElement | null>(null);
@@ -61,6 +64,9 @@ const latex = ref('');
 
 /** Set by `setValue` to suppress the `input` event it would otherwise cause. */
 let writing = false;
+
+/** Set when the last insert ended with a multiplication sign this editor added. */
+let provisionalTimes = false;
 
 function field(): MathfieldElement | null {
     return (host.value?.querySelector('math-field') as MathfieldElement | null) ?? null;
@@ -82,6 +88,9 @@ function toLatexOrEmpty(source: string): string {
 }
 
 function refresh(): void {
+    // The field is being rebuilt from the document, so any sign an insert left provisional
+    // is gone with it. Clearing here stops a later edit losing a `·` the user typed.
+    provisionalTimes = false;
     latex.value = toLatexOrEmpty(props.modelValue);
     const el = field();
     if (!el || writing) return;
@@ -106,17 +115,20 @@ function endEdit(commit: boolean): void {
         return;
     }
 
-    const next = latexToCalcpad(el.value).trim();
+    const source = withoutProvisionalTimes(el);
+    const next = latexToCalcpad(source).trim();
     if (!next) {
         emit('invalid', next, 'empty expression');
         refresh();
         return;
     }
-    // A template that was inserted but never filled in reads back as `sqrt(())`, which the
-    // engine rejects. Writing it would replace a good line with a broken one, so the field
-    // stays open instead and the user is told why.
-    if (hasEmptyPlaceholder(el.value)) {
-        emit('invalid', next, 'the inserted template still has an empty slot — fill it in, or press Esc to cancel');
+    // The reader is forgiving, so `next` is not automatically a line worth writing: a
+    // half-typed `a +` comes back as `a + 0`, and an unfilled template as `sqrt(())`.
+    // Both are valid Calcpad carrying a value nobody asked for, and there is no error
+    // afterwards to show that it happened. The field stays open and the user is told why.
+    const verdict = checkCommit(source, next);
+    if (!verdict.ok) {
+        emit('invalid', next, verdict.reason ?? 'that is not a complete expression');
         editing.value = true;
         return;
     }
@@ -168,14 +180,39 @@ function command(name: string): void {
  * Inserts a template at the caret. The field is left in edit mode with the slot selected so
  * the user types straight into it -- an inserted-but-empty template is a syntax error
  * (`Invalid syntax: "( )"`), and committing one would write a broken line to the document.
- */function insert(latexTemplate: string): void {
+ *
+ * MathLive would otherwise glue the template to whatever already sits at the caret, which
+ * is read as multiplication by MathLive and not always by Calcpad: `a` with `2` inserted
+ * after it comes out as `a2`, one variable rather than a product. An explicit `·` is added
+ * on whichever side has an operand, so what the user sees is what the document keeps.
+ */
+function insert(latexTemplate: string): void {
     const el = field();
     if (!el) return;
     beginEdit();
     el.focus();
-    el.executeCommand(['insert', latexTemplate]);
+    const wrapped = wrapInsert(latexTemplate, ...aroundCaret(el));
+    // Remembered so a commit can tell a `·` this editor put there from one the user typed.
+    // Left dangling it would read as `* 0`, so the guard would refuse the commit; that is
+    // right for a half-typed `+` and wrong for a sign nobody asked to finish.
+    provisionalTimes = wrapped.trimEnd().endsWith(TIMES);
+    el.executeCommand(['insert', wrapped]);
     latex.value = el.value;
     emit('hint', 'Inserted — fill in the empty slot, or press Esc to cancel. Nothing is written until it is.');
+}
+
+/** The field's LaTeX with a still-unused trailing sign from an insert taken off. */
+function withoutProvisionalTimes(el: MathfieldElement): string {
+    if (!provisionalTimes) return el.value;
+    provisionalTimes = false;
+    return stripProvisionalTimes(el.value);
+}
+
+/** The LaTeX before and after the caret, for `wrapInsert` to judge. */
+function aroundCaret(el: MathfieldElement): [string, string] {
+    const range = el.selection.ranges[0] ?? [0, 0];
+    const source = el.value;
+    return [source.slice(0, range[0]), source.slice(range[1])];
 }
 
 /**

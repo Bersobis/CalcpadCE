@@ -10,7 +10,7 @@ import { discardMetadataDraft } from 'calcpad-frontend/vue/metadata-drafts';
 import { MessageBridge } from './services/message-bridge';
 import { WorkspaceStateStore, isResultMode, type ResultMode, type WorkspaceLayout } from './services/workspace-state';
 import { buildApiSettings } from 'calcpad-frontend/types/settings';
-import { setLogLevel, coerceLogLevel, stripCpdSnippetWrapper } from 'calcpad-frontend';
+import { ConnectionMonitor, setLogLevel, coerceLogLevel, stripCpdSnippetWrapper } from 'calcpad-frontend';
 import {
     findMetadataCommentBlock,
     serializeMetadataComment,
@@ -24,6 +24,7 @@ import {
 import { registerCalcpadLanguage, registerCalcpadTheme, remeasureEditorFontsWhenReady, resolveEditorFontFamily } from './editor/setup';
 import { setAppTheme, coerceAppTheme, getResolvedAppTheme, onAppThemeChanged } from './editor/app-theme';
 import { registerSemanticTokensProvider } from './editor/semantic-tokens';
+import { setupDiagnostics } from './editor/diagnostics';
 import { registerCompletionProvider } from './editor/completions';
 import { registerIncludeCompletionProvider } from './editor/include-completions';
 import { registerHoverProvider } from './editor/hover';
@@ -35,6 +36,9 @@ import {
     type IncludeFileOpener,
     type IncludeUriResolver,
 } from './editor/references';
+import { attachQuickTyper } from './editor/quick-type';
+import { attachOperatorReplacer } from './editor/operator-replacer';
+import { attachAutoIndenter } from './editor/auto-indent';
 import { registerFormattingCommands, getParseMode } from './editor/formatting-commands';
 import { registerFormatDocumentProvider } from './editor/format-document';
 import { setActiveDocumentKeyResolver, getActiveDocumentKey, type EditorBridge } from './editor/bridge';
@@ -196,7 +200,7 @@ async function bootstrap(): Promise<void> {
     (window as any).monaco = monaco;
 
     const app = createApp(App, { isDesktop: isTauri });
-    const appInstance = app.mount('#app') as AppInstance;
+    const appInstance = app.mount('#app') as unknown as AppInstance;
 
     activeBridge.setQuickPick(async ({ title, placeholder, options }) => {
         const index = await appInstance.showQuickPick({
@@ -226,10 +230,14 @@ async function bootstrap(): Promise<void> {
     let activeGroup!: EditorGroup;
     let editor!: monaco.editor.IStandaloneCodeEditor;
     let tabs!: TabManager;
+    const groupWireHooks: ((g: EditorGroup) => void)[] = [];
 
     const editorGroupManager = new EditorGroupManager({
         appInstance,
-        editorBridge,
+        editorBridge: editorBridge as EditorBridge & {
+            handleMessage(msg: Record<string, unknown>): void;
+            refreshLiveContext(line?: number): void;
+        },
         platform: null as unknown as PlatformBridge,
         getResultMode: () => appInstance.getResultMode(),
         isPreviewVisible: () => appInstance.isPreviewVisible(),
@@ -739,7 +747,7 @@ async function bootstrap(): Promise<void> {
                     metadataContextTimer = setTimeout(() => {
                         activeBridge.handleMessage({ type: 'getMetadataContext' });
                         activeBridge.handleMessage({ type: 'getEquationContext' });
-                        activeBridge.refreshLiveContext(ed.getPosition()?.lineNumber - 1);
+                        activeBridge.refreshLiveContext((ed.getPosition()?.lineNumber ?? 1) - 1);
                     }, 150);
                 }
                 if (editorBridge.getExtraSetting('previewCursorSync') !== 'true') return;
@@ -1579,7 +1587,7 @@ async function bootstrap(): Promise<void> {
             const restored = activePath ? tabs.findByPath(activePath) : null;
             if (restored) tabs.activate(restored.id);
             applyCompiledWorksheetMode(activeGroup);
-            for (shouldAutoEnterUiMode(activeGroup)) autoEnterUiMode();
+            if (shouldAutoEnterUiMode(activeGroup)) autoEnterUiMode();
         }
 
         await restoreSession();
