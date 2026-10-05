@@ -17,6 +17,8 @@ export class EditorGroup {
     diagnostics: { refresh(): Promise<void> } | null = null;
     /** Listeners/commands to tear down when the group is disposed. */
     readonly disposables: monaco.IDisposable[] = [];
+    /** Timers that must be cleared when the group is disposed. */
+    private readonly timers = new Set<ReturnType<typeof setTimeout>>();
 
     constructor(id: string, container: HTMLElement, options?: CalcpadEditorOptions) {
         this.id = id;
@@ -24,7 +26,19 @@ export class EditorGroup {
         this.tabs = new TabManager(this.editor, `${id}-`);
     }
 
+    /** Register a timer for automatic cleanup on dispose. */
+    trackTimer(timer: ReturnType<typeof setTimeout>): void {
+        this.timers.add(timer);
+    }
+
+    /** Clear all tracked timers. */
+    clearTimers(): void {
+        for (const t of this.timers) clearTimeout(t);
+        this.timers.clear();
+    }
+
     dispose(): void {
+        this.clearTimers();
         for (const d of this.disposables) {
             try { d.dispose(); } catch { /* ignore */ }
         }
