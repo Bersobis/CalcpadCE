@@ -3,7 +3,6 @@ import 'mathlive';
 import 'mathlive/fonts.css';
 import { createApp, nextTick } from 'vue';
 import App from './App.vue';
-import pkg from '../package.json';
 import CalcpadAppVue from 'calcpad-frontend/vue/components/CalcpadApp.vue';
 import { initMessaging } from 'calcpad-frontend/vue/services/messaging';
 import { discardMetadataDraft } from 'calcpad-frontend/vue/metadata-drafts';
@@ -151,7 +150,10 @@ async function bootstrap(): Promise<void> {
     let serverUrl: string;
     let isPrimaryWindow = true;
     let windowLabel = 'main';
-    let appVersion = pkg.version;
+    // The build stamps the version in, which is what the web build reports. The Tauri
+    // path below replaces it with the installed desktop app's own version, so this stays
+    // `let`: upstream made it `const` only because nothing reassigned it there.
+    let appVersion = import.meta.env.VITE_APP_VERSION;
     let bridge: MessageBridge | null = null;
     let tauriBridge: import('./services/tauri-bridge').TauriMessageBridge | null = null;
     let serverManager: import('./services/server-manager').TauriServerManager | null = null;
@@ -163,8 +165,13 @@ async function bootstrap(): Promise<void> {
     if (isTauri) {
         windowLabel = (await import('@tauri-apps/api/window')).getCurrentWindow().label;
         isPrimaryWindow = windowLabel === 'main';
+        // Tauri desktop: the Rust layer owns the Calcpad.Server sidecar
+        // (spawn, kill on exit, port discovery). This manager just tracks
+        // its URL and surfaces crashes to the Output panel.
+        // The installed desktop app carries its own version, which the stamped one
+        // does not, so prefer what Tauri reports.
         try { appVersion = await (await import('@tauri-apps/api/app')).getVersion(); }
-        catch { /* falls back to package.json */ }
+        catch { /* falls back to the version stamped at build time */ }
         const { TauriServerManager } = await import('./services/server-manager');
         serverManager = new TauriServerManager({
             appendLine: (msg: string, level?: CalcpadLogLevel) => pendingServerLogs.push({ msg, level }),
