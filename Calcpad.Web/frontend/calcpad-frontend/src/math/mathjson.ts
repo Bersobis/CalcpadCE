@@ -184,19 +184,7 @@ export type MathJSON =
     | MathQuotedText
     | MathIndex;
 
-/** Narrowing helpers; `node.type` alone is enough but these read better at call sites. */
-export function isNumber(n: MathJSON): n is MathNumber {
-    return n.type === 'Number';
-}
-
-export function isIdentifier(n: MathJSON): n is MathIdentifier {
-    return n.type === 'Identifier';
-}
-
-export function isText(n: MathJSON): n is MathText {
-    return n.type === 'Text';
-}
-
+/** Narrowing helper; `node.type` alone is enough but this reads better at call sites. */
 export function isOperator(n: MathJSON, ...ops: string[]): n is MathOperator {
     return n.type === 'Operator' && (ops.length === 0 || ops.includes(n.op));
 }

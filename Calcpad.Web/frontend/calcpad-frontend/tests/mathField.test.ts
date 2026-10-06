@@ -304,6 +304,17 @@ describe('the toolbar is docked once, not per line', () => {
         expect(toolbarSource).toContain('v-show="paletteOpen"');
     });
 
+    it('offers Insert even before an equation is clicked', () => {
+        // Mounted on the mode, not a field, so Insert is reachable before any equation.
+        expect(liveSource).toMatch(/<CalcpadMathToolbar[\s\S]*?v-if="active"/);
+        expect(toolbarSource).toContain(':disabled="!handle"');
+    });
+
+    it('offers Insert on the line before it is clicked', () => {
+        // Mounted on the line being an equation, not on the field claiming it.
+        expect(tabSource).toMatch(/<CalcpadMathToolbar[\s\S]*?v-if="kind === 'equation'"/);
+    });
+
     it('gives every control a real button, not a role=button span nested in one', () => {
         // Undo/redo used to live inside the header <button> as role=button spans: nested
         // interactive content, unreachable in the tab order the way a button should be.

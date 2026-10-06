@@ -40,6 +40,7 @@
           class="math-tools__btn"
           :title="b.title"
           :aria-label="b.title"
+          :disabled="!handle"
           @mousedown.prevent
           @click="command(b.command)"
         >{{ b.label }}</button>

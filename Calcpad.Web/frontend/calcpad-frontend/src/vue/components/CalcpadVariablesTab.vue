@@ -159,8 +159,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { writeClipboard } from '../services/clipboard'
+import { useContextMenu } from '../composables/context-menu'
 import type { VariablesData, VariableItem } from '../types'
 
 // Props
@@ -185,44 +186,13 @@ const emit = defineEmits<{
 }>()
 
 // State
-interface VariableContextMenu {
-  x: number
-  y: number
-  name: string
-  definition: string
-}
-
-const contextMenu = ref<VariableContextMenu | null>(null)
+const { contextMenu, openContextMenu: openAt, closeContextMenu } =
+  useContextMenu<{ name: string; definition: string }>()
 
 const openContextMenu = (e: MouseEvent, item: VariableItem) => {
   const parts = [item.params ? `Parameters: ${item.params}` : '', item.definition ?? '']
-  contextMenu.value = {
-    x: e.clientX,
-    y: e.clientY,
-    name: item.name,
-    definition: parts.filter(Boolean).join('\n'),
-  }
+  openAt(e, { name: item.name, definition: parts.filter(Boolean).join('\n') })
 }
-
-const closeContextMenu = () => {
-  contextMenu.value = null
-}
-
-const onDocumentInteraction = (e: MouseEvent | KeyboardEvent) => {
-  if (!contextMenu.value) return
-  if (e instanceof KeyboardEvent && e.key !== 'Escape') return
-  closeContextMenu()
-}
-
-onMounted(() => {
-  document.addEventListener('mousedown', onDocumentInteraction)
-  document.addEventListener('keydown', onDocumentInteraction)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('mousedown', onDocumentInteraction)
-  document.removeEventListener('keydown', onDocumentInteraction)
-})
 
 const onCopyName = () => {
   const m = contextMenu.value

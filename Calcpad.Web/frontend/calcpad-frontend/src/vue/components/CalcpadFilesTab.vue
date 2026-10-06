@@ -63,11 +63,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { FileNode } from '../types'
 import FileTreeNode from './FileTreeNode.vue'
 import type { ContextMenuPayload } from './FileTreeNode.vue'
 import { writeClipboard } from '../services/clipboard'
+import { useContextMenu } from '../composables/context-menu'
 
 interface Props {
   openedFolder: string | null
@@ -179,36 +180,12 @@ const onRefresh = () => {
 
 // ---- Context menu ----
 
-interface ContextMenuState {
-  node: FileNode
-  x: number
-  y: number
-}
-const contextMenu = ref<ContextMenuState | null>(null)
+const { contextMenu, openContextMenu: openAt, closeContextMenu } =
+  useContextMenu<{ node: FileNode }>()
 
 const handleContextMenu = (payload: ContextMenuPayload) => {
-  contextMenu.value = { node: payload.node, x: payload.x, y: payload.y }
+  openAt(payload, { node: payload.node })
 }
-
-const closeContextMenu = () => {
-  contextMenu.value = null
-}
-
-const onDocumentInteraction = (e: MouseEvent | KeyboardEvent) => {
-  if (!contextMenu.value) return
-  if (e instanceof KeyboardEvent && e.key !== 'Escape') return
-  closeContextMenu()
-}
-
-onMounted(() => {
-  document.addEventListener('mousedown', onDocumentInteraction)
-  document.addEventListener('keydown', onDocumentInteraction)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('mousedown', onDocumentInteraction)
-  document.removeEventListener('keydown', onDocumentInteraction)
-})
 
 const relativePathFor = (fullPath: string): string => {
   if (!props.openedFolder) return fullPath

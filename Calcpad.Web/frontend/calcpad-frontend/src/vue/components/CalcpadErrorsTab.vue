@@ -38,9 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
 import type { CalcpadError } from '../../types/api'
 import { writeClipboard } from '../services/clipboard'
+import { useContextMenu } from '../composables/context-menu'
 
 interface Props {
   errors?: CalcpadError[]
@@ -54,41 +54,15 @@ defineEmits<{
   'go-to-line': [line: number]
 }>()
 
-interface ErrorContextMenu {
-  x: number
-  y: number
-  error: CalcpadError | null
-}
-
-const contextMenu = ref<ErrorContextMenu | null>(null)
+const { contextMenu, openContextMenu: openAt, closeContextMenu } =
+  useContextMenu<{ error: CalcpadError | null }>()
 
 /** Matches the Problems panel's format. */
 const formatError = (err: CalcpadError): string =>
   `[Ln ${err.sourceLine}] ${err.source}: ${err.message}`
 
-const openContextMenu = (e: MouseEvent, error: CalcpadError | null) => {
-  contextMenu.value = { x: e.clientX, y: e.clientY, error }
-}
-
-const closeContextMenu = () => {
-  contextMenu.value = null
-}
-
-const onDocumentInteraction = (e: MouseEvent | KeyboardEvent) => {
-  if (!contextMenu.value) return
-  if (e instanceof KeyboardEvent && e.key !== 'Escape') return
-  closeContextMenu()
-}
-
-onMounted(() => {
-  document.addEventListener('mousedown', onDocumentInteraction)
-  document.addEventListener('keydown', onDocumentInteraction)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('mousedown', onDocumentInteraction)
-  document.removeEventListener('keydown', onDocumentInteraction)
-})
+/** Template entry point: anchors the menu at the pointer. */
+const openContextMenu = (e: MouseEvent, error: CalcpadError | null) => openAt(e, { error })
 
 const onCopyError = () => {
   const err = contextMenu.value?.error

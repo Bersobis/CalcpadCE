@@ -13,9 +13,10 @@
     </div>
 
     <!-- One toolbar for the whole canvas, above the content: at sidebar width 21 inline
-         buttons per line wrapped into a single column beside each equation. -->
+         buttons per line wrapped into a single column beside each equation. It rides on
+         the mode (`active`), not a field, so Insert works before any equation is clicked. -->
     <CalcpadMathToolbar
-      v-if="handle"
+      v-if="active"
       :handle="handle"
     />
 

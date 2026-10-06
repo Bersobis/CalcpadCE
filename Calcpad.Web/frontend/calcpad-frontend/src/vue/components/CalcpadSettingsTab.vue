@@ -643,6 +643,7 @@ import {
   DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MIN_CONSOLE_MESSAGES_PER_DOCUMENT,
   MAX_CONSOLE_MESSAGES_PER_DOCUMENT,
 } from '../../services/preview-limits'
+import { usePersistentCollapse } from '../composables/persistent-collapse'
 
 // Props
 interface Props {
@@ -918,23 +919,7 @@ const SECTION_META: Record<string, { title: string; rows: Record<string, string>
   }
 }
 
-const STORAGE_KEY = 'calcpad.settings.collapsed'
-const collapsed = reactive<Record<string, boolean>>({})
-try {
-  Object.assign(collapsed, JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'))
-} catch {
-  // ignore unavailable/corrupt storage
-}
-watch(collapsed, () => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(collapsed))
-  } catch {
-    // ignore unavailable storage
-  }
-}, { deep: true })
-
-const isCollapsed = (id: string) => !!collapsed[id]
-const toggle = (id: string) => { collapsed[id] = !collapsed[id] }
+const { collapsed, isCollapsed, toggle } = usePersistentCollapse('calcpad.settings.collapsed')
 const bodyVisible = (id: string) => searchActive.value || !collapsed[id]
 
 const setAll = (value: boolean) => {

@@ -32,7 +32,7 @@
           />
         </div>
         <CalcpadMathToolbar
-          v-if="kind === 'equation' && handle"
+          v-if="kind === 'equation'"
           :handle="handle"
         />
         <pre v-else class="equation-raw">{{ text }}</pre>

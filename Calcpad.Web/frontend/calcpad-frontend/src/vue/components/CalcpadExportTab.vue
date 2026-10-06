@@ -145,12 +145,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { ExportVariant } from '../../types/api'
 import type { WriteMode } from '../../types/settings'
 import { WRITE_MODE_OPTIONS } from '../../types/settings'
 import type { VersionConfig } from '../types'
 import { DEFAULT_VERSION_CONFIG } from '../types'
+import { usePersistentCollapse } from '../composables/persistent-collapse'
 
 export interface PlotSummary {
   index: number
@@ -249,23 +250,7 @@ defineEmits<{
 
 // In localStorage rather than component state because CalcpadApp renders this tab with
 // v-if: the component is destroyed on every tab switch, so a ref would reset each time.
-const STORAGE_KEY = 'calcpad.export.collapsed'
-const collapsed = reactive<Record<string, boolean>>({})
-try {
-  Object.assign(collapsed, JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'))
-} catch {
-  // ignore unavailable/corrupt storage
-}
-watch(collapsed, () => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(collapsed))
-  } catch {
-    // ignore unavailable storage
-  }
-}, { deep: true })
-
-const isCollapsed = (id: string) => !!collapsed[id]
-const toggle = (id: string) => { collapsed[id] = !collapsed[id] }
+const { collapsed, isCollapsed, toggle } = usePersistentCollapse('calcpad.export.collapsed')
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
