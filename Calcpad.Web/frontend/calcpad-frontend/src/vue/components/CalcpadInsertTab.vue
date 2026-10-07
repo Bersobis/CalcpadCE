@@ -42,6 +42,87 @@
       </button>
     </div>
 
+    <!-- Whole entities, as opposed to the palette's single symbols. Both insert as
+         snippets, so the cursor lands in the first field and tab walks the rest. -->
+    <div class="entity-insert-container">
+      <div class="entity-insert-row">
+        <button
+          class="entity-insert-btn"
+          :class="{ active: functionPickerOpen }"
+          title="Insert a function call at the cursor"
+          @click="toggleFunctionPicker"
+        >
+          Insert Function
+        </button>
+        <button
+          class="entity-insert-btn"
+          :class="{ active: matrixFormOpen }"
+          title="Insert a matrix at the cursor"
+          @click="toggleMatrixForm"
+        >
+          Insert Matrix
+        </button>
+      </div>
+
+      <div v-if="functionPickerOpen" class="entity-panel">
+        <input
+          v-model="functionFilter"
+          class="entity-input"
+          type="text"
+          placeholder="Filter functions..."
+          @keydown.escape="functionPickerOpen = false"
+        />
+        <div class="entity-options">
+          <button
+            v-for="item in functionItems"
+            :key="item.tag"
+            class="entity-option"
+            :title="buildTooltip(item)"
+            @click="insertFunction(item)"
+          >
+            {{ formatDisplayText(item) }}
+          </button>
+          <div v-if="functionItems.length === 0" class="entity-empty">
+            No function matches that filter.
+          </div>
+          <div v-else-if="functionMatches.length > FUNCTION_PICKER_LIMIT" class="entity-hint">
+            Showing first {{ FUNCTION_PICKER_LIMIT }} of {{ functionMatches.length }} — type to narrow.
+          </div>
+        </div>
+      </div>
+
+      <div v-if="matrixFormOpen" class="entity-panel">
+        <div class="entity-size-row">
+          <label class="entity-size-field">
+            <span>Rows</span>
+            <input
+              v-model.number="matrixRows"
+              class="entity-input entity-number"
+              type="number"
+              :min="1"
+              :max="MATRIX_MAX_SIZE"
+              @keydown.escape="matrixFormOpen = false"
+            />
+          </label>
+          <label class="entity-size-field">
+            <span>Columns</span>
+            <input
+              v-model.number="matrixCols"
+              class="entity-input entity-number"
+              type="number"
+              :min="1"
+              :max="MATRIX_MAX_SIZE"
+              @keydown.escape="matrixFormOpen = false"
+            />
+          </label>
+        </div>
+        <div class="entity-size-actions">
+          <button class="entity-insert-btn primary" @click="insertMatrix">Insert Matrix</button>
+          <button class="entity-insert-btn" @click="matrixFormOpen = false">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="searchTerm && filteredItems.length === 0" class="no-items">
       No items found for "{{ searchTerm }}"
     </div>
@@ -84,7 +165,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import type { InsertItem } from '../types'
-import { replaceParameterPlaceholders } from '../../text/snippet-insert'
+import {
+  replaceParameterPlaceholders,
+  buildInsertSnippet,
+  buildMatrixLiteralSnippet,
+  MATRIX_MAX_SIZE,
+} from '../../text/snippet-insert'
 
 // Props
 interface Props {
@@ -96,12 +182,59 @@ const props = defineProps<Props>()
 // Emits
 const emit = defineEmits<{
   insertText: [text: string]
+  insertSnippet: [text: string]
   insertImage: []
 }>()
 
 // State
 const searchTerm = ref('')
 const symbolsPaletteOpen = ref(false)
+
+// ---- Entity insertion (functions and matrices) ----
+// The picker lists function snippets only; the matrix form cannot guess a shape, so
+// it asks for rows x columns and builds a literal of that size.
+const FUNCTION_PICKER_LIMIT = 60
+const functionPickerOpen = ref(false)
+const functionFilter = ref('')
+const matrixFormOpen = ref(false)
+const matrixRows = ref(3)
+const matrixCols = ref(3)
+
+const functionMatches = computed((): InsertItem[] => {
+  const term = functionFilter.value.trim().toLowerCase()
+  return props.insertItems.filter(item => {
+    if (!(item.categoryPath ?? '').startsWith('Functions')) return false
+    if (!term) return true
+    return (item.label ?? '').toLowerCase().includes(term)
+      || item.tag.toLowerCase().includes(term)
+      || (item.description ?? '').toLowerCase().includes(term)
+  })
+})
+
+const functionItems = computed((): InsertItem[] => functionMatches.value.slice(0, FUNCTION_PICKER_LIMIT))
+
+const toggleFunctionPicker = (): void => {
+  functionPickerOpen.value = !functionPickerOpen.value
+  if (functionPickerOpen.value) {
+    matrixFormOpen.value = false
+    functionFilter.value = ''
+  }
+}
+
+const toggleMatrixForm = (): void => {
+  matrixFormOpen.value = !matrixFormOpen.value
+  if (matrixFormOpen.value) functionPickerOpen.value = false
+}
+
+const insertFunction = (item: InsertItem): void => {
+  emit('insertSnippet', buildInsertSnippet(item))
+  functionPickerOpen.value = false
+}
+
+const insertMatrix = (): void => {
+  emit('insertSnippet', buildMatrixLiteralSnippet(matrixRows.value, matrixCols.value))
+  matrixFormOpen.value = false
+}
 // All symbol groups start collapsed; users open them on demand.
 const openSymbolGroups = ref<Set<string>>(new Set())
 
@@ -588,6 +721,128 @@ watch(
 
 .image-insert-btn:hover {
   background: var(--vscode-button-hoverBackground);
+}
+
+/* ---- Entity insertion ---- */
+.entity-insert-container {
+  margin-bottom: 12px;
+}
+
+.entity-insert-row {
+  display: flex;
+  gap: 4px;
+}
+
+.entity-insert-btn {
+  flex: 1;
+  padding: 6px 4px;
+  background: var(--vscode-button-secondaryBackground, var(--vscode-button-background));
+  color: var(--vscode-button-secondaryForeground, var(--vscode-button-foreground));
+  border: 1px solid var(--vscode-widget-border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-sm);
+  font-family: var(--vscode-font-family);
+  white-space: nowrap;
+}
+
+.entity-insert-btn:hover {
+  border-color: var(--vscode-focusBorder);
+}
+
+.entity-insert-btn.active {
+  border-color: var(--vscode-focusBorder);
+  background: var(--vscode-list-hoverBackground);
+}
+
+.entity-insert-btn.primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  flex: 0 0 auto;
+  padding: 4px 10px;
+}
+
+.entity-insert-btn.primary:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+
+.entity-panel {
+  margin-top: 6px;
+  padding: 6px;
+  border: 1px solid var(--vscode-widget-border);
+  border-radius: 3px;
+  background: var(--vscode-sideBar-background);
+}
+
+.entity-input {
+  width: 100%;
+  padding: 4px 6px;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  color: var(--vscode-input-foreground);
+  border-radius: 3px;
+  font-size: var(--calcpad-font-size-sm);
+  font-family: var(--vscode-font-family);
+}
+
+.entity-input:focus {
+  outline: none;
+  border-color: var(--vscode-focusBorder);
+}
+
+.entity-options {
+  max-height: 240px;
+  overflow-y: auto;
+  margin-top: 6px;
+}
+
+.entity-option {
+  display: block;
+  width: 100%;
+  padding: 3px 6px;
+  margin: 1px 0;
+  background: var(--vscode-editor-background);
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-sm);
+  font-family: monospace;
+  color: var(--vscode-editor-foreground);
+  text-align: left;
+}
+
+.entity-option:hover {
+  background: var(--vscode-list-hoverBackground);
+  border-color: var(--vscode-focusBorder);
+}
+
+.entity-empty,
+.entity-hint {
+  padding: 4px 2px;
+  color: var(--vscode-descriptionForeground);
+  font-size: var(--calcpad-font-size-xs);
+  font-style: italic;
+}
+
+.entity-size-row {
+  display: flex;
+  gap: 6px;
+}
+
+.entity-size-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--calcpad-font-size-xs);
+  color: var(--vscode-descriptionForeground);
+}
+
+.entity-size-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 8px;
 }
 
 .no-items {

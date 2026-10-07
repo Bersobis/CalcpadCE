@@ -1,4 +1,14 @@
-import type { InsertItem } from '../types/snippets';
+/**
+ * The shape these helpers actually read. Two `InsertItem` interfaces exist —
+ * one for the snippet payloads the server sends (`types/snippets`, `description`
+ * required) and one the Vue components consume (`vue/types`, `description`
+ * optional) — and both satisfy this, so the helpers work with either.
+ */
+export interface SnippetSource {
+    tag: string;
+    label?: string;
+    parameters?: { name: string }[];
+}
 
 const SNIPPET_PLACEHOLDER = '§';
 
@@ -11,7 +21,7 @@ function escapeSnippetText(text: string): string {
  * the tag with a `${N:name}` tab stop defaulting to the parameter name (`...` for variadic
  * placeholders). Output is compatible with both Monaco and VS Code snippet insertion.
  */
-export function buildInsertSnippet(item: InsertItem): string {
+export function buildInsertSnippet(item: SnippetSource): string {
     const segments = item.tag.split(SNIPPET_PLACEHOLDER);
     let result = escapeSnippetText(segments[0]);
     for (let i = 1; i < segments.length; i++) {
@@ -24,7 +34,7 @@ export function buildInsertSnippet(item: InsertItem): string {
 }
 
 /** True when the snippet's tag contains at least one `§` placeholder. */
-export function hasSnippetPlaceholders(item: InsertItem): boolean {
+export function hasSnippetPlaceholders(item: SnippetSource): boolean {
     return item.tag.includes(SNIPPET_PLACEHOLDER);
 }
 
@@ -52,6 +62,34 @@ export function replaceParameterPlaceholders(
  * Format the display label for an InsertItem: prefers `item.label` over the
  * tag, then substitutes `§` placeholders with parameter names.
  */
-export function formatInsertLabel(item: InsertItem): string {
+export function formatInsertLabel(item: SnippetSource): string {
     return replaceParameterPlaceholders(item.label || item.tag, item);
+}
+
+/** Largest matrix the literal builder will emit, so a typo cannot insert thousands of cells. */
+export const MATRIX_MAX_SIZE = 12
+
+function matrixDimension(value: number): number {
+    if (!Number.isFinite(value)) return 1
+    return Math.min(MATRIX_MAX_SIZE, Math.max(1, Math.trunc(value)));
+}
+
+/**
+ * Build a square-bracket matrix literal snippet `rows` x `cols`. Calcpad separates
+ * columns with `;` and rows with `|` (docs/matrices.md), so `[1; 2|3; 4]` is a 2x2.
+ * Every cell is its own tab stop, letting the user type straight across the grid.
+ */
+export function buildMatrixLiteralSnippet(rows: number, cols: number, name = 'A'): string {
+    const rowCount = matrixDimension(rows)
+    const colCount = matrixDimension(cols)
+    let stop = 0
+    const body: string[] = []
+    for (let r = 0; r < rowCount; r++) {
+        const cells: string[] = []
+        for (let c = 0; c < colCount; c++) {
+            cells.push('${' + (++stop) + ':0}')
+        }
+        body.push(cells.join('; '))
+    }
+    return name + ' = [' + body.join('|') + ']'
 }

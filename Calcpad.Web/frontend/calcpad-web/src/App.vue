@@ -97,6 +97,16 @@
                 >
                   <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2.5" y="2.5" width="11" height="11" rx="1"/><line x1="9" y1="2.5" x2="9" y2="13.5"/><path d="M9.5 3h4v10h-4z" fill="currentColor" stroke="none" opacity="0.5"/></svg>
                 </button>
+                <button
+                  class="tab-action"
+                  :class="{ active: liveVisible }"
+                  @click="toggleLiveDisplay"
+                  :title="liveVisible ? 'Hide the live display pane' : 'Show the live display pane'"
+                  :aria-label="liveVisible ? 'Hide the live display pane' : 'Show the live display pane'"
+                  :aria-pressed="liveVisible"
+                >
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 1.5 4 9h3.2L6 14.5 12 6.8H8.4z" fill="currentColor"/></svg>
+                </button>
               </div>
               <button
                 v-if="isSplit && gi > 0"
@@ -285,6 +295,33 @@
       </div>
 
     </div>
+
+    <!-- Live Display: per-line server-rendered math beside the editor. -->
+    <template v-if="liveVisible && !uiModeFullscreen">
+      <div
+        class="pane-divider"
+        :class="{ dragging: draggingLiveDivider }"
+        @mousedown="onLiveDividerMouseDown"
+        title="Drag to resize"
+        role="separator"
+        aria-orientation="vertical"
+      ></div>
+      <div class="preview-pane live-pane" :style="{ width: liveWidthRatio * 100 + '%' }">
+        <div class="preview-toolbar" @contextmenu.prevent>
+          <span>Live Display</span>
+          <span class="spacer"></span>
+          <button class="toolbar-btn" @click="toggleLiveDisplay" title="Hide the live display">✕</button>
+        </div>
+        <CalcpadLiveDisplay
+          class="live-display-body"
+          :source="liveText"
+          :dark="previewTheme === 'dark'"
+          :convert="runLiveConvert"
+          @navigate="onLiveNavigate"
+          @edit-line="onLiveEdit"
+        />
+      </div>
+    </template>
 
     <!-- Editor ↔ results divider. Nothing to resize in UI mode. -->
     <div
@@ -581,8 +618,10 @@ import {
   type PreviewScrollState,
   type ServerStatus,
   type DisplayLogLevel,
+  type LiveRender,
 } from 'calcpad-frontend'
 import type { ResultMode, WorkspaceLayout } from './services/workspace-state'
+import CalcpadLiveDisplay from './live-display/CalcpadLiveDisplay.vue'
 
 const props = withDefaults(defineProps<{ isDesktop?: boolean }>(), { isDesktop: false })
 
@@ -700,6 +739,7 @@ const tabStripEls = new Map<string, HTMLElement>()
 const tabStripElIds = new WeakMap<Element, string>()
 const tabStripOverflowIds = ref<Set<string>>(new Set())
 let tabStripResizeObserver: ResizeObserver | null = null
+let layoutResizeObserver: ResizeObserver | null = null
 
 function setTabStripOverflow(id: string, overflowing: boolean): void {
   if (tabStripOverflowIds.value.has(id) === overflowing) return
@@ -816,13 +856,28 @@ function loadPaneRatio(key: string, fallback: number): number {
 
 const previewWidthRatio = ref<number>(loadPaneRatio('calcpad.previewWidthRatio', 0.45))
 const draggingPreviewDivider = ref(false)
+const liveWidthRatio = ref<number>(loadPaneRatio('calcpad.liveWidthRatio', 0.28))
+const draggingLiveDivider = ref(false)
 const uiPrintWidthRatio = ref<number>(loadPaneRatio('calcpad.uiPrintWidthRatio', 0.5))
 const draggingUiPrintDivider = ref(false)
+
+// Pixel floors, converted to fractions of the layout at drag time, so every pane
+// stays usable however wide the window is.
+const EDITOR_MIN_PX = 280
+const LIVE_MIN_PX = 180
+
+function sidebarFraction(layoutWidth: number): number {
+  return sidebarVisible.value ? (sidebarWidth.value + DIVIDER_PX) / layoutWidth : 0
+}
+
+// Width of `.pane-divider` / `.resize-handle`, which the flex layout also lays out.
+const DIVIDER_PX = 4
 
 // Drives `.app-layout.resizing`, which kills pointer-events on the iframes: a cursor
 // crossing into one mid-drag would otherwise steal the mousemove/mouseup.
 const isAnyDividerDragging = computed(() =>
-  isResizing.value || draggingEditorDivider.value || draggingPreviewDivider.value || draggingUiPrintDivider.value)
+  isResizing.value || draggingEditorDivider.value || draggingPreviewDivider.value
+  || draggingLiveDivider.value || draggingUiPrintDivider.value)
 
 function previewPaneStyle(): Record<string, string> | undefined {
   if (uiModeFullscreen.value) {
@@ -846,13 +901,44 @@ function onPreviewDividerMouseDown(e: MouseEvent): void {
   const onMove = (ev: MouseEvent) => {
     moved = true
     const frac = (rect.right - ev.clientX) / rect.width
-    previewWidthRatio.value = Math.min(PANE_RATIO_MAX, Math.max(PANE_RATIO_MIN, frac))
+    // The live pane keeps its width, so the editor's floor bounds the preview here.
+    const max = Math.max(0, 1 - sidebarFraction(rect.width) - EDITOR_MIN_PX / rect.width
+      - (liveVisible.value ? liveWidthRatio.value + DIVIDER_PX / rect.width : 0))
+    previewWidthRatio.value = Math.min(PANE_RATIO_MAX, Math.max(PANE_RATIO_MIN, frac, 0), max)
   }
   const onUp = () => {
     draggingPreviewDivider.value = false
     window.removeEventListener('mousemove', onMove)
     window.removeEventListener('mouseup', onUp)
     if (moved) localStorage.setItem('calcpad.previewWidthRatio', String(previewWidthRatio.value))
+  }
+  window.addEventListener('mousemove', onMove)
+  window.addEventListener('mouseup', onUp)
+}
+
+function onLiveDividerMouseDown(e: MouseEvent): void {
+  e.preventDefault()
+  draggingLiveDivider.value = true
+  const container = (e.currentTarget as HTMLElement).closest('.app-layout') as HTMLElement | null
+  if (!container) return
+  const rect = container.getBoundingClientRect()
+  let moved = false
+  const onMove = (ev: MouseEvent) => {
+    moved = true
+    // The preview keeps its width, so the live pane's right edge is fixed by it.
+    const frac = (rect.right - ev.clientX) / rect.width
+      - (previewVisible.value ? previewWidthRatio.value : 0)
+    // Both the live pane and the preview hold their width, so the editor's floor has to
+    // cover the preview too — otherwise growing the live pane squeezes the editor below it.
+    const max = Math.max(0, 1 - sidebarFraction(rect.width) - (EDITOR_MIN_PX + DIVIDER_PX) / rect.width
+      - (previewVisible.value ? previewWidthRatio.value : 0))
+    liveWidthRatio.value = Math.min(max, Math.max(LIVE_MIN_PX / rect.width, frac, 0))
+  }
+  const onUp = () => {
+    draggingLiveDivider.value = false
+    window.removeEventListener('mousemove', onMove)
+    window.removeEventListener('mouseup', onUp)
+    if (moved) localStorage.setItem('calcpad.liveWidthRatio', String(liveWidthRatio.value))
   }
   window.addEventListener('mousemove', onMove)
   window.addEventListener('mouseup', onUp)
@@ -1420,6 +1506,67 @@ function setServerStatus(status: ServerStatus): void {
 
 const sidebarVisible = ref(true)
 const previewVisible = ref(true)
+// Live Display: the per-line rendered view between the editor and the preview.
+const liveVisible = ref(true)
+const liveText = ref('')
+
+function setLiveDocumentText(text: string): void {
+  liveText.value = text
+}
+
+/**
+ * Gives the editor its pixel floor back when the panes' remembered ratios came from a wider
+ * window (or a narrower one): the preview yields first, then the live pane, each to its own
+ * minimum. Shrink-only, so it can run from a resize observer without ratcheting the panes down.
+ */
+function fitPanesToLayout(): void {
+  const layout = document.querySelector('.app-layout') as HTMLElement | null
+  const width = layout?.clientWidth ?? 0
+  if (!width || !liveVisible.value) return
+  const divider = DIVIDER_PX / width
+  // Room left for the live pane plus the preview once the sidebar and the editor's floor are paid.
+  const spare = 1 - sidebarFraction(width) - (EDITOR_MIN_PX + DIVIDER_PX) / width
+    - (previewVisible.value ? divider : 0)
+  if (previewVisible.value) {
+    previewWidthRatio.value = Math.min(previewWidthRatio.value, Math.max(PANE_RATIO_MIN, spare - liveWidthRatio.value))
+  }
+  const liveRoom = spare - (previewVisible.value ? previewWidthRatio.value : 0)
+  liveWidthRatio.value = Math.min(liveWidthRatio.value, Math.max(LIVE_MIN_PX / width, liveRoom))
+}
+
+function toggleLiveDisplay(): void {
+  liveVisible.value = !liveVisible.value
+  // After the flip: the fit reads the new visibility to know what has to fit.
+  if (liveVisible.value) fitPanesToLayout()
+}
+
+function isLiveDisplayVisible(): boolean {
+  return liveVisible.value
+}
+
+// Set by main.ts: renders the whole document through the shared /api/calcpad/convert
+// endpoint, so the pane draws from the same engine as the preview. One request per
+// document keeps every line consistent with the lines it depends on.
+const onLiveConvertRequest = ref<((source: string, key: string) => Promise<LiveRender | null>) | null>(null)
+const onLiveNavigateRequest = ref<((line: number) => void) | null>(null)
+
+function runLiveConvert(source: string, key: string): Promise<LiveRender | null> {
+  return onLiveConvertRequest.value
+    ? onLiveConvertRequest.value(source, key)
+    : Promise.resolve(null)
+}
+
+function onLiveNavigate(line: number): void {
+  onLiveNavigateRequest.value?.(line)
+}
+
+// Set by main.ts: replaces one source line, which flows back through the editor
+// model — so an in-pane edit lands in the undo stack and the preview alike.
+const onLiveEditRequest = ref<((line: number, text: string) => void) | null>(null)
+
+function onLiveEdit(line: number, text: string): void {
+  onLiveEditRequest.value?.(line, text)
+}
 // Groups with an in-flight preview render; drives the "Calculating…" overlay.
 const previewLoadingGroups = ref(new Set<string>())
 const previewLoading = computed(() => previewLoadingGroups.value.size > 0)
@@ -2222,6 +2369,13 @@ onMounted(async () => {
     }
   })
   for (const el of tabStripEls.values()) tabStripResizeObserver.observe(el)
+
+  fitPanesToLayout()
+  const layoutEl = document.querySelector('.app-layout')
+  if (layoutEl) {
+    layoutResizeObserver = new ResizeObserver(() => fitPanesToLayout())
+    layoutResizeObserver.observe(layoutEl)
+  }
 })
 
 onBeforeUnmount(() => {
@@ -2230,6 +2384,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('message', onPreviewWindowMessage)
   tabStripResizeObserver?.disconnect()
   tabStripResizeObserver = null
+  layoutResizeObserver?.disconnect()
+  layoutResizeObserver = null
 })
 
 // ---- In-app confirm dialog ----
@@ -2394,5 +2550,12 @@ defineExpose({
   runFocusedPreviewClipboardAction,
   openFindInFocusedPreview,
   onOpenFullHtmlRequest,
+  // live display
+  setLiveDocumentText,
+  toggleLiveDisplay,
+  isLiveDisplayVisible,
+  onLiveConvertRequest,
+  onLiveNavigateRequest,
+  onLiveEditRequest,
 })
 </script>

@@ -485,6 +485,39 @@ export class CalcpadApiClient {
     }
 
     /**
+     * Renders a whole worksheet once and splits the result into one entry per
+     * source line, for the live display pane.
+     *
+     * The pane used to ask for one line at a time, sending the document prefix
+     * up to that line on every request. That made the server re-parse a growing
+     * prefix for each line — quadratic work — and it could only be trusted while
+     * nothing earlier had changed. One request per document renders every line
+     * from the same pass, so a line's output can never disagree with the lines it
+     * depends on, and the whole pane costs a single round trip.
+     *
+     * Returns the rendered inner HTML per line (0-based, `null` where the line
+     * produced no output) plus the engine's own errors, which the pane uses to
+     * mark rows and to validate the line being edited. A `null` *result* means
+     * the request failed.
+     *
+     * `opts.key` supersedes an older request for the same key, so a new keystroke
+     * cancels the render it replaced.
+     */
+    public async convertLines(
+        content: string,
+        settings: unknown,
+        sourceFilePath?: string,
+        opts?: { key?: string },
+    ): Promise<LiveRender | null> {
+        const result = await this.convert(
+            content, settings, 'html', false,
+            sourceFilePath, undefined, undefined, true, opts,
+        );
+        if (!result || result instanceof ArrayBuffer) return null;
+        return { lines: splitRenderedLines(result.html, content), errors: result.errors };
+    }
+
+    /**
      * Runs an arbitrary request with the same per-key supersession as the
      * built-in methods above, for a caller whose request body isn't shaped
      * like any of them (e.g. an endpoint-specific extra field none of the
@@ -594,6 +627,45 @@ export function parseConvertErrorHeader(response: Response): CalcpadError[] {
     } catch {
         return [];
     }
+}
+
+/** The id prefix the engine puts on each rendered line's element (`id="line-7"`). */
+const LINE_ANCHOR_PREFIX = 'line-';
+
+/** One whole-document render, split into the pieces the live display needs. */
+export interface LiveRender {
+    /** Rendered inner HTML per 0-based source line; `null` where nothing was rendered. */
+    lines: (string | null)[];
+    /** The engine's errors for the document, each tagged with its source line. */
+    errors: CalcpadError[];
+}
+
+/**
+ * Split a rendered worksheet into one entry per source line.
+ *
+ * The engine's debug mode tags every rendered line with `id="line-N"`, N being
+ * the 1-based *output* line. For a document with no macros or includes the
+ * output lines line up one-to-one with the source, so N is the source line. When
+ * they diverge the extra output lines belong to a macro or loop body and are
+ * folded back onto the source line that produced them by the caller's own
+ * alignment, so only the first match for a given N is kept.
+ *
+ * Exported for the unit tests; the client's `convertLines` is the caller.
+ */
+export function splitRenderedLines(html: string, source: string): (string | null)[] {
+    const lineCount = source.split('\n').length;
+    const lines: (string | null)[] = new Array(lineCount).fill(null);
+    if (typeof DOMParser === 'undefined') return lines;
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    // Indexed rather than `for…of`: the shared tsconfig's `lib` omits DOM.Iterable.
+    const anchors = doc.querySelectorAll<HTMLElement>(`[id^="${LINE_ANCHOR_PREFIX}"]`);
+    for (let i = 0; i < anchors.length; i++) {
+        const el = anchors[i];
+        const n = Number(el.id.slice(LINE_ANCHOR_PREFIX.length));
+        if (!Number.isInteger(n) || n < 1 || n > lineCount) continue;
+        if (lines[n - 1] === null) lines[n - 1] = el.innerHTML;
+    }
+    return lines;
 }
 
 /**

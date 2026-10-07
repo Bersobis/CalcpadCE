@@ -15,7 +15,6 @@ export interface EditorGroupsDependencies {
     appInstance: AppInstance;
     editorBridge: EditorBridge & {
         handleMessage(msg: Record<string, unknown>): void;
-        refreshLiveContext(line?: number): void;
     };
     platform: PlatformBridge;
     getResultMode: () => ResultMode;
@@ -151,7 +150,6 @@ export class EditorGroupManager {
                 if (group === this.activeGroup) {
                     group.trackTimer(setTimeout(() => {
                         this.deps.editorBridge.handleMessage({ type: 'getMetadataContext' });
-                        this.deps.editorBridge.handleMessage({ type: 'getEquationContext' });
                     }, 150));
                 }
             }),

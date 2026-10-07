@@ -632,6 +632,11 @@ select option {
     flex: 1;
 }
 
+/* The Live Display pane reuses the preview pane shell at its own floor. */
+.live-pane {
+    min-width: 180px;
+}
+
 /* Report pane beside the input form. Splits the window with it via the
    `.pane-divider` between them; flex:1 here is just the fallback when that
    divider (and the report pane itself) isn't rendered. */

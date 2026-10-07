@@ -1,6 +1,4 @@
 import * as monaco from 'monaco-editor';
-import 'mathlive';
-import 'mathlive/fonts.css';
 import { createApp, nextTick } from 'vue';
 import App from './App.vue';
 import CalcpadAppVue from 'calcpad-frontend/vue/components/CalcpadApp.vue';
@@ -243,7 +241,6 @@ async function bootstrap(): Promise<void> {
         appInstance,
         editorBridge: editorBridge as EditorBridge & {
             handleMessage(msg: Record<string, unknown>): void;
-            refreshLiveContext(line?: number): void;
         },
         platform: null as unknown as PlatformBridge,
         getResultMode: () => appInstance.getResultMode(),
@@ -602,9 +599,10 @@ async function bootstrap(): Promise<void> {
         tabs = group.tabs;
         (window as any).calcpadTabs = tabs;
         (window as any).calcpadActiveEditor = editor;
-        appInstance.setActiveGroup(group.id);
-        refreshProblemsFor(group);
-        activeBridge.refreshHeadings();
+    appInstance.setActiveGroup(group.id);
+    refreshProblemsFor(group);
+    appInstance.setLiveDocumentText(group.editor.getValue());
+    activeBridge.refreshHeadings();
         refreshUiDirtyIndicator();
         syncInputMode();
         if (appInstance.isPreviewVisible()) void refreshPreviewFor(group);
@@ -711,24 +709,12 @@ async function bootstrap(): Promise<void> {
             },
         });
 
-        ed.addAction({
-            id: 'calcpad.editEquationVisually',
-            label: 'Open Live Editor',
-            keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.KeyE],
-            contextMenuGroupId: 'navigation',
-            contextMenuOrder: 1.7,
-            run: () => {
-                sidebarInstance.switchView?.('calcpad');
-                sidebarInstance.switchTab?.('equation');
-            },
-        });
-
         let definitionsTimer: ReturnType<typeof setTimeout> | null = null;
         let previewTimer: ReturnType<typeof setTimeout> | null = null;
         let tocTimer: ReturnType<typeof setTimeout> | null = null;
         group.disposables.push(
             ed.onDidChangeModelContent(() => {
-                if (group === activeGroup) activeBridge.refreshLiveContext();
+                if (group === activeGroup) appInstance.setLiveDocumentText(ed.getValue());
                 if (definitionsTimer) clearTimeout(definitionsTimer);
                 definitionsTimer = setTimeout(() => {
                     invalidateUiControls(group);
@@ -753,8 +739,6 @@ async function bootstrap(): Promise<void> {
                     if (metadataContextTimer) clearTimeout(metadataContextTimer);
                     metadataContextTimer = setTimeout(() => {
                         activeBridge.handleMessage({ type: 'getMetadataContext' });
-                        activeBridge.handleMessage({ type: 'getEquationContext' });
-                        activeBridge.refreshLiveContext((ed.getPosition()?.lineNumber ?? 1) - 1);
                     }, 150);
                 }
                 if (editorBridge.getExtraSetting('previewCursorSync') !== 'true') return;
@@ -773,6 +757,7 @@ async function bootstrap(): Promise<void> {
             applyCompiledWorksheetMode(group);
             const enteringUi = shouldAutoEnterUiMode(group);
             refreshProblemsFor(group);
+            if (group === activeGroup) appInstance.setLiveDocumentText(group.editor.getValue());
             void group.diagnostics?.refresh();
             if (!enteringUi && appInstance.isPreviewVisible()) void refreshPreviewFor(group);
             if (group === activeGroup) activeBridge.refreshHeadings();
@@ -866,6 +851,31 @@ async function bootstrap(): Promise<void> {
     appInstance.onGroupFocusRequest = (groupId: string) => {
         const g = groups.get(groupId);
         if (g) setActiveGroup(g);
+    };
+
+    // The Live Display renders the whole document in one request, so every line is drawn
+    // from the same pass as the lines it depends on. `key` scopes supersession: the pane's
+    // document render and its per-line live preview cancel only their own predecessors.
+    // The active file's path rides along so `#include` resolves, as it does in the preview.
+    appInstance.onLiveConvertRequest = async (source: string, key: string) => {
+        const settings = buildApiSettings(activeBridge.getSettings());
+        const sourceFilePath = activeGroup.tabs.activeTab?.filePath ?? undefined;
+        return await activeBridge.api.convertLines(source, settings, sourceFilePath, { key });
+    };
+
+    appInstance.onLiveNavigateRequest = (line: number) => {
+        activeGroup.editor.revealLineInCenter(line);
+        activeGroup.editor.setPosition({ lineNumber: line, column: 1 });
+        activeGroup.editor.focus();
+    };
+
+    // Editing in the Live Display rewrites the source line through the editor model, so the
+    // pane cannot drift from the document and the change lands in undo and the preview.
+    appInstance.onLiveEditRequest = (line: number, text: string) => {
+        const model = activeGroup.editor.getModel();
+        if (!model || line < 1 || line > model.getLineCount()) return;
+        const range = new monaco.Range(line, 1, line, model.getLineMaxColumn(line));
+        activeGroup.editor.executeEdits('calcpad-live-edit', [{ range, text, forceMoveMarkers: true }]);
     };
 
     const openIncludeFile: IncludeFileOpener | undefined = tauriBridge
@@ -1005,17 +1015,35 @@ async function bootstrap(): Promise<void> {
             appInstance.setMaxPreviewConsoleMessages(messages);
     }
 
-    activeBridge.onInsertText = (text: string) => {
+    /**
+     * Monaco's tab-stop contribution; not part of the public editor API types.
+     * `dispose` is declared only to satisfy `IEditorContribution`, which
+     * `getContribution` constrains its type argument to — the controller is never
+     * disposed through this reference.
+     */
+    interface SnippetController { insert(snippet: string): void; dispose(): void }
+
+    activeBridge.onInsertText = (text: string, snippet?: boolean) => {
         const selection = editor.getSelection();
         if (selection) {
             const insert = getParseMode(editor, activeBridge) === 'cpd'
                 ? text
                 : stripCpdSnippetWrapper(text);
-            editor.executeEdits('calcpad-insert', [{
-                range: selection,
-                text: insert,
-                forceMoveMarkers: true,
-            }]);
+            // A snippet has to go through Monaco's tab-stop controller, which owns the
+            // selection and the undo step; a plain insert stays a single executeEdits.
+            const controller = snippet
+                ? editor.getContribution<SnippetController>('snippetController2')
+                : null;
+            if (controller) {
+                editor.setPosition(selection.getStartPosition());
+                controller.insert(insert);
+            } else {
+                editor.executeEdits('calcpad-insert', [{
+                    range: selection,
+                    text: insert,
+                    forceMoveMarkers: true,
+                }]);
+            }
         }
         editor.focus();
     };

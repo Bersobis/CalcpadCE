@@ -1,5 +1,5 @@
 import type { ResultMode, WorkspaceLayout } from '../services/workspace-state';
-import type { DisplayLogLevel, CalcpadLogLevel } from 'calcpad-frontend';
+import type { DisplayLogLevel, CalcpadLogLevel, LiveRender } from 'calcpad-frontend';
 
 export interface ProblemItem {
     severity: number;
@@ -76,6 +76,18 @@ export interface AppInstance {
     addGroup(id: string): void;
     removeGroup(groupId: string): void;
     getEditorContainer(id: string): HTMLElement | null;
+
+    // ---- live display ----
+    /** Push the active document into the Live Display pane. */
+    setLiveDocumentText(text: string): void;
+    /**
+     * Renders the whole document for the pane. `key` scopes request
+     * supersession, so the pane's document render and its live preview cancel
+     * only their own predecessors and never each other.
+     */
+    onLiveConvertRequest: ((source: string, key: string) => Promise<LiveRender | null>) | null;
+    onLiveNavigateRequest: ((line: number) => void) | null;
+    onLiveEditRequest: ((line: number, text: string) => void) | null;
 
     onSplitRequest: (() => void) | null;
     onCloseGroupRequest: ((groupId: string) => void) | null;

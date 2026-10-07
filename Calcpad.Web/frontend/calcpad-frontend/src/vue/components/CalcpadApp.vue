@@ -89,16 +89,8 @@
         v-if="pane.activeTab === 'insert'"
         :insert-items="insertItems"
         @insert-text="handleInsertText"
+        @insert-snippet="handleInsertSnippet"
         @insert-image="handleInsertImage"
-      />
-      <CalcpadEquationTab
-        v-else-if="pane.activeTab === 'equation'"
-        :line="equationContext.line"
-        :text="equationContext.text"
-        :lines="liveContext.lines"
-        :live="liveEditor"
-        @update:live="setLiveEditor"
-        @apply="handleApplyEquation"
       />
       <CalcpadTocTab
         v-else-if="pane.activeTab === 'toc'"
@@ -217,7 +209,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CalcpadInsertTab from './CalcpadInsertTab.vue'
-import CalcpadEquationTab from './CalcpadEquationTab.vue'
 import CalcpadTocTab from './CalcpadTocTab.vue'
 import CalcpadSettingsTab from './CalcpadSettingsTab.vue'
 import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
@@ -320,16 +311,6 @@ const prettifyIndentSize = ref(4)
 const prettifyTrimTrailing = ref(true)
 
 const metadataBlock = ref<MetadataCommentBlock | null>(null)
-const equationContext = ref<{ line: number; text: string }>({ line: -1, text: '' })
-const liveContext = ref<{ lines: string[]; line: number }>({ lines: [], line: -1 })
-const liveEditor = ref(false)
-
-/** Tells the host whether to keep pushing the document at the live canvas. */
-const setLiveEditor = (active: boolean) => {
-  liveEditor.value = active
-  postMessage({ type: 'setLiveEditor', active })
-  if (active) postMessage({ type: 'getLiveContext' })
-}
 // #UI controls of the last input-form render, null until the host resolves them.
 const uiControls = ref<UiControl[] | null>(null)
 
@@ -343,10 +324,6 @@ const tabs = computed<Tab[]>(() => {
     { id: 'export', label: 'Export' },
     { id: 'errors', label: 'Errors' }
   ]
-  // Needs MathLive, which the VS Code webview does not bundle.
-  if (props.versionConfig.isWebOrDesktop) {
-    base.splice(1, 0, { id: 'equation', label: 'Live editor' })
-  }
   // The metadata comment editor is driven by editor cursor tracking, available
   // in the VS Code webview and the desktop app (both host a real editor).
   if (props.versionConfig.isVSCode || props.versionConfig.isDesktop) {
@@ -361,7 +338,7 @@ const tabs = computed<Tab[]>(() => {
  * on source have nothing to act on there, so their content is shown inert: TOC, Export
  * and Settings still work, since a filled-in worksheet is still navigated and exported.
  */
-const SOURCE_TABS = ['insert', 'equation', 'variables', 'formatting', 'errors', 'metadata']
+const SOURCE_TABS = ['insert', 'variables', 'formatting', 'errors', 'metadata']
 const INPUT_MODE_NOTE = 'Unavailable in input mode — this acts on the document source, which the input form does not edit.'
 const inputMode = ref(false)
 const tabUnavailable = (tabId: string) => inputMode.value && SOURCE_TABS.includes(tabId)
@@ -476,12 +453,6 @@ const activateTab = (pane: Pane, tabId: string) => {
     postMessage({ type: 'getMetadataContext' })
   }
 
-  // Same for the equation under the cursor when opening the Equation tab
-  if (tabId === 'equation') {
-    postMessage({ type: 'getEquationContext' })
-    if (liveEditor.value) postMessage({ type: 'getLiveContext' })
-  }
-
   // Fetch the current document's plots the first time the Export tab is opened.
   // Users can refresh manually after that.
   if (tabId === 'export' && plots.value.length === 0 && !plotsLoading.value) {
@@ -544,6 +515,16 @@ const handleInsertText = (text: string) => {
   postMessage({
     type: 'insertText',
     text
+  })
+}
+
+// Same channel as a plain insert, flagged so the host expands `$1` tab stops and
+// drops the cursor into the first empty field.
+const handleInsertSnippet = (text: string) => {
+  postMessage({
+    type: 'insertText',
+    text,
+    snippet: true
   })
 }
 
@@ -764,10 +745,6 @@ const handleMetadataDraftDirty = (payload: { docKey: string; dirty: boolean }) =
   postMessage({ type: 'metadataDraftDirty', docKey: payload.docKey, dirty: payload.dirty })
 }
 
-const handleApplyEquation = (line: number, text: string) => {
-  postMessage({ type: 'applyEquation', line, text })
-}
-
 // Message handler
 const handleMessage = (event: MessageEvent) => {
   const message = event.data
@@ -865,18 +842,6 @@ const handleMessage = (event: MessageEvent) => {
       break
     case 'metadataContext':
       metadataBlock.value = message.block ?? null
-      break
-    case 'equationContext':
-      equationContext.value = {
-        line: typeof message.line === 'number' ? message.line : -1,
-        text: typeof message.text === 'string' ? message.text : '',
-      }
-      break
-    case 'liveContext':
-      liveContext.value = {
-        lines: Array.isArray(message.lines) ? message.lines : [],
-        line: typeof message.line === 'number' ? message.line : -1,
-      }
       break
     case 'metadataDraftDiscard':
       discardMetadataDraft(String(message.docKey ?? ''))

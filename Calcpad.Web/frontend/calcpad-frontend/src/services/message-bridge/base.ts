@@ -116,7 +116,8 @@ export abstract class BaseMessageBridge {
     protected snippetService: CalcpadSnippetService;
     protected definitionsService: CalcpadDefinitionsService;
     protected settings: CalcpadSettings;
-    protected _onInsertText: ((text: string) => void) | null = null;
+    /** `snippet` asks the host to expand the text as a tab-stop snippet rather than insert it verbatim. */
+    protected _onInsertText: ((text: string, snippet?: boolean) => void) | null = null;
     protected _onGoToLine: ((line: number) => boolean) | null = null;
     protected quickPick: QuickPickFn | null = null;
     private _uiOverridesProvider: (() => Record<string, string> | undefined) | null = null;
@@ -155,7 +156,7 @@ export abstract class BaseMessageBridge {
     /** Persist an arbitrary extra preference. */
     abstract setExtraSetting(key: string, value: string): void;
 
-    set onInsertText(handler: (text: string) => void) {
+    set onInsertText(handler: (text: string, snippet?: boolean) => void) {
         this._onInsertText = handler;
     }
 
@@ -283,7 +284,7 @@ export abstract class BaseMessageBridge {
                 this.handleGetVariables();
                 break;
             case 'insertText':
-                if (this._onInsertText) this._onInsertText(message.text);
+                if (this._onInsertText) this._onInsertText(message.text, message.snippet === true);
                 break;
             case 'insertImage':
                 this.handleInsertImage();
@@ -387,18 +388,6 @@ export abstract class BaseMessageBridge {
                 break;
             case 'getMetadataContext':
                 this.handleGetMetadataContext();
-                break;
-            case 'getEquationContext':
-                this.pushEquationContext();
-                break;
-            case 'getLiveContext':
-                this.pushLiveContext();
-                break;
-            case 'setLiveEditor':
-                this.setLiveEditor(!!message.active);
-                break;
-            case 'applyEquation':
-                this.handleApplyEquation(message);
                 break;
             case 'updateMetadata':
                 this.handleUpdateMetadata(message);
@@ -1142,74 +1131,6 @@ export abstract class BaseMessageBridge {
         const block = pos ? computeMetadataBlock(lines, pos.lineNumber - 1, buildSourceDefinitionResolver(lines)) : null;
         if (block) block.docKey = this.getMetadataDocKey();
         this.postToVue({ type: 'metadataContext', block });
-    }
-
-    /** Pushes the line under the cursor to the Equation tab, on request and on cursor moves. */
-    private pushEquationContext(): void {
-        const editor = this.getActiveMonacoEditor();
-        const model = editor?.getModel();
-        const pos = editor?.getPosition();
-        const line = pos ? pos.lineNumber - 1 : -1;
-        const text = model && line >= 0 ? (model.getValue().split(/\r?\n/)[line] ?? '') : '';
-        this.postToVue({ type: 'equationContext', line, text });
-    }
-
-    /** The whole active document, which the live canvas typesets line by line. */
-    private pushLiveContext(): void {
-        const lines = this.getActiveMonacoEditor()?.getModel()?.getValue().split(/\r?\n/) ?? [];
-        this.postToVue({ type: 'liveContext', lines, line: this._liveLine });
-    }
-
-    /**
-     * Whether the live canvas is on screen. Left on, the host pushes the document on
-     * every cursor move and edit, so it stays in step with the text being typed.
-     */
-    private _liveEditor = false;
-    private _liveLine = -1;
-
-    private setLiveEditor(active: boolean): void {
-        this._liveEditor = active;
-        if (active) this.pushLiveContext();
-        else this.postToVue({ type: 'liveContext', lines: null, line: -1 });
-    }
-
-    /** Refreshes the live canvas if it is showing. Safe to call on every keystroke. */
-    public refreshLiveContext(line = -1): void {
-        if (!this._liveEditor) return;
-        this._liveLine = line;
-        this.pushLiveContext();
-    }
-
-    /** Writes a committed visual edit back over the line it came from, indent preserved. */
-    private handleApplyEquation(msg: { line?: number; text?: string }): void {
-        const editor = this.getActiveMonacoEditor();
-        const model = editor?.getModel();
-        if (!editor || !model || typeof msg.line !== 'number' || typeof msg.text !== 'string') return;
-        const lines = model.getValue().split(/\r?\n/);
-        if (msg.line < 0 || msg.line >= lines.length || !msg.text.trim()) return;
-
-        const lineNumber = msg.line + 1;
-        const current = lines[msg.line];
-        // Echoed unchanged so the panel can tell an applied write from a refused one.
-        if (current === msg.text) {
-            this.pushEquationContext();
-            this.refreshLiveContext(msg.line);
-            return;
-        }
-
-        const indent = /^[ \t]*/.exec(current)?.[0] ?? '';
-        editor.executeEdits('calcpad-equation', [{
-            range: {
-                startLineNumber: lineNumber,
-                startColumn: 1,
-                endLineNumber: lineNumber,
-                endColumn: model.getLineMaxColumn(lineNumber),
-            },
-            text: indent + msg.text,
-        }]);
-        editor.setPosition({ lineNumber, column: model.getLineMaxColumn(lineNumber) });
-        this.pushEquationContext();
-        this.refreshLiveContext(lineNumber - 1);
     }
 
     /** 0-based index of the line equal to `text`, closest to `near`; null if none. */

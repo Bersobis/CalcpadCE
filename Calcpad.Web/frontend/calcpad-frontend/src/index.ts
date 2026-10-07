@@ -92,7 +92,8 @@ export type {
 } from './types/snippets';
 
 // --- API Client --------------------------------------------------------------
-export { CalcpadApiClient, API_TOKEN_HEADER, parseConvertErrorHeader, combineSignals } from './api/client';
+export type { LiveRender } from './api/client';
+export { CalcpadApiClient, API_TOKEN_HEADER, parseConvertErrorHeader, splitRenderedLines, combineSignals } from './api/client';
 export {
     BROWSER_NOT_FOUND,
     BrowserNotFoundError,
@@ -213,6 +214,19 @@ export {
 export {
     findQuickTypeReplacement,
 } from './text/quick-type';
+export type {
+    TextSelection,
+    PaletteResult,
+    PaletteAction,
+    PaletteGroup,
+} from './text/math-palette';
+export {
+    MATH_PALETTE,
+    PALETTE_GROUPS,
+    paletteAction,
+    paletteGroup,
+    searchPalette,
+} from './text/math-palette';
 export {
     buildInsertSnippet,
     hasSnippetPlaceholders,
@@ -335,72 +349,73 @@ export {
     hasDanglingCloseBrace,
 } from './text/directives';
 
-// =============================================================================
-// Maths transpiler — Calcpad source ⇄ AST ⇄ LaTeX ⇄ OMML
-// =============================================================================
-// Powers the WYSIWYG equation canvas. LaTeX is the interchange with MathLive; see
-// src/math/latex.ts for why ASCIIMath and MathJSON were measured and rejected.
-
+// --- MathML graphical editor ------------------------------------------------
 export type {
-    MathJSON,
-    MathJSONBase,
-    MathNumber,
-    MathIdentifier,
-    MathText,
-    MathOperator,
-    MathGroup,
-    MathFrac,
-    MathSqrt,
-    MathRoot,
-    MathSup,
-    MathSub,
-    MathDelimited,
-    MathMatrix,
-    MathUnits,
-    MathStatements,
-    MathFunction,
-} from './math/mathjson';
-
+    MathMlNode,
+    MathMlElement,
+    MathMlText,
+    MathMlName,
+    CalcpadParseResult,
+    EditabilityCheck,
+    Anchor,
+    EditorSelection,
+    EditResult,
+    StructureKind,
+} from './mathml';
 export {
-    calcpadToAst,
-    astToCalcpad,
-    splitWorksheet,
-    isEquationLine,
-    tokenize,
-    isUnitName,
-    parseDialect,
-} from './math/calcpad';
-export type { ParseOptions } from './math/calcpad';
-
-export { astToLatex, latexToAst, latexToCalcpad } from './math/latex';
-
-export {
-    mathJsonToOmmlBody,
-    wrapInOMath,
-    setUnitStyle,
-    ommlToCalcpadText,
-    ommlNodeToCalcpad,
-    MATH_NS,
-    WORD_NS,
-} from './math/omml';
-
-export {
-    parseXml,
-    serialize,
-    escapeXmlText,
-    escapeXmlAttr,
-    decodeEntities,
-    documentElement,
-    localName,
-    attr,
+    el,
+    txt,
     isElement,
-    textContent,
-    XmlParseError,
-} from './math/xml';
-export type { XmlElement, XmlNode, XmlText } from './math/xml';
-
-export { checkLine, checkCorpus, classify, formatReport } from './math/roundTrip';
-export type { CorpusReport, CorpusInput, LineResult, LatexValidator } from './math/roundTrip';
-
-export { applyMatrixOp, hasMatrix, matrixSize } from './math/matrixOps';
-export type { MatrixOp } from './math/matrixOps';
+    isText,
+    isToken,
+    tokenText,
+    token,
+    tokenName,
+    cloneNode,
+    pathKey,
+    parsePathKey,
+    nodeAt,
+    elementAt,
+    parentOf,
+    equalNodes,
+    rootOf,
+    expressionOf,
+    SLOT_NAMES,
+    serializeMathMl,
+    serializeWithPaths,
+    parseMathMl,
+    parseExpression,
+    hasUnmodelledElement,
+    calcpadLineToMathMl,
+    mathMlToCalcpadLine,
+    checkGraphicallyEditable,
+    lineToMathMlMarkup,
+    needsMultiply,
+    anchorsOf,
+    sameAnchor,
+    canonicalize,
+    anchorIndex,
+    firstAnchor,
+    lastAnchor,
+    moveHorizontal,
+    moveToStartOfLine,
+    moveToEndOfLine,
+    moveVertical,
+    orderedSelection,
+    hasSelection,
+    selectionText,
+    hasEmptySlot,
+    tokenNameFor,
+    buildStructure,
+    mergeable,
+    insertText,
+    insertPair,
+    insertCall,
+    deleteBackward,
+    deleteForward,
+    deleteSelection,
+    applyCharacter,
+    applyCharacterToSelection,
+    deleteBackwardInSelection,
+    deleteForwardInSelection,
+} from './mathml';
