@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
+  anchorForClick,
   anchorIndex,
   applyCharacterToSelection,
   buildStructure,
@@ -12,16 +13,19 @@ import {
   insertCall,
   insertPair,
   insertText,
+  isToken,
   lastAnchor,
   mathMlToCalcpadLine,
   moveHorizontal,
   moveToEndOfLine,
   moveToStartOfLine,
   moveVertical,
+  nodeAt,
   orderedSelection,
-  parsePathKey,
   pathKey,
+  sameAnchor,
   serializeWithPaths,
+  tokenText,
 } from 'calcpad-frontend'
 import type { Anchor, EditResult, EditorSelection, MathMlElement, PaletteAction, StructureKind } from 'calcpad-frontend'
 
@@ -280,7 +284,8 @@ function onKeydown(event: KeyboardEvent): void {
 /**
  * Map a pointer position to a caret anchor. `caretRangeFromPoint` resolves to the
  * text position under the pointer, and the `data-path` on the nearest tagged
- * ancestor turns that back into a tree path.
+ * ancestor turns that back into a tree path — the shared `anchorForClick` does
+ * the tree half, so this only has to find the DOM point.
  */
 function anchorFromPoint(x: number, y: number): Anchor | null {
   const doc = document as Document & {
@@ -296,24 +301,57 @@ function anchorFromPoint(x: number, y: number): Anchor | null {
       fallback.collapse(true)
       return fallback
     })()
-  if (!range) return null
-
-  const node = range.startContainer
-  const element = node.nodeType === Node.TEXT_NODE ? node.parentElement : node as Element | null
-  const tagged = element?.closest?.('[data-path]') ?? null
-  const path = tagged ? parsePathKey(tagged.getAttribute('data-path') ?? '') : null
-  if (!path) return null
-  return node.nodeType === Node.TEXT_NODE
-    ? { kind: 'char', path, offset: range.startOffset }
-    : { kind: 'gap', path, index: range.startOffset }
+  if (!range || !root.value) return null
+  return anchorForClick(root.value, { node: range.startContainer, offset: range.startOffset })
 }
+
+/** The two ends of the token at an anchor, for a double-click selection. */
+function tokenSpanAt(anchor: Anchor): EditorSelection {
+  const node = nodeAt(root.value!, anchor.path)
+  const text = node && isToken(node) ? tokenText(node) ?? '' : ''
+  const length = text.length
+  const start: Anchor = { kind: 'char', path: anchor.path, offset: 0 }
+  const end: Anchor = { kind: 'char', path: anchor.path, offset: Math.max(length, 1) }
+  return { anchor: start, focus: end }
+}
+
+/**
+ * Dragging inside the tagged surface extends the selection from where the press
+ * landed. Because every anchor is canonical, a drag crosses token and slot
+ * boundaries exactly as Left/Right would, which is what makes dragging across a
+ * fraction or an exponent behave.
+ */
+let dragging = false
 
 function onPointerDown(event: MouseEvent): void {
   if (!root.value) return
   event.preventDefault()
-  const anchor = anchorFromPoint(event.clientX, event.clientY)
   surfaceEl.value?.focus()
-  if (anchor) setCaret(anchor, event.shiftKey)
+  const anchor = anchorFromPoint(event.clientX, event.clientY)
+  if (!anchor) return
+
+  // A double click selects the whole token under the pointer, the usual editor
+  // idiom, and is the quickest way to replace an operand.
+  if (event.detail >= 2) {
+    selection.value = tokenSpanAt(anchor)
+    render()
+    publish()
+    return
+  }
+  setCaret(anchor, event.shiftKey)
+  dragging = true
+}
+
+function onPointerMove(event: MouseEvent): void {
+  if (!dragging || !root.value) return
+  const anchor = anchorFromPoint(event.clientX, event.clientY)
+  if (!anchor) return
+  if (sameAnchor(selection.value.focus, anchor)) return
+  setCaret(anchor, true)
+}
+
+function endDrag(): void {
+  dragging = false
 }
 
 function onFocus(): void {
@@ -323,6 +361,7 @@ function onFocus(): void {
 
 function onBlur(): void {
   focused.value = false
+  dragging = false
   window.getSelection()?.removeAllRanges()
 }
 
@@ -383,7 +422,30 @@ function focus(): void {
   surfaceEl.value?.focus()
 }
 
-defineExpose({ applyPalette, focus })
+/**
+ * Move the caret to an anchor and focus, without touching the text. Used when a
+ * click lands on an already-open expression, so the caret follows the pointer
+ * rather than jumping to the end.
+ */
+function seekAnchor(anchor: Anchor): void {
+  if (!root.value) return
+  setCaret(anchor, false)
+  focus()
+}
+
+/**
+ * Resolve a viewport point to a caret and focus. The host replays the click that
+ * opened the row, so the caret lands under the pointer on the first render —
+ * the surface is the only place the rendered tree carries `data-path`, so it is
+ * the only place the point can be mapped.
+ */
+function seekPoint(x: number, y: number): void {
+  focus()
+  const anchor = anchorFromPoint(x, y)
+  if (anchor) setCaret(anchor, false)
+}
+
+defineExpose({ applyPalette, focus, seekAnchor, seekPoint })
 
 // ---- status -----------------------------------------------------------------
 
@@ -427,6 +489,9 @@ onBeforeUnmount(() => {
         tabindex="0"
         @keydown="onKeydown"
         @mousedown="onPointerDown"
+        @mousemove="onPointerMove"
+        @mouseup="endDrag"
+        @mouseleave="endDrag"
         @focus="onFocus"
         @blur="onBlur"
       >
@@ -446,7 +511,8 @@ onBeforeUnmount(() => {
 
       <p class="mathml-help">
         <kbd>/</kbd> fraction · <kbd>^</kbd> power · <kbd>_</kbd> subscript · <kbd>(</kbd> brackets ·
-        <kbd>←</kbd><kbd>→</kbd> move · <kbd>↑</kbd><kbd>↓</kbd> between slots · <kbd>Esc</kbd> cancel
+        <kbd>←</kbd><kbd>→</kbd> move · <kbd>↑</kbd><kbd>↓</kbd> between slots · drag to select ·
+        <kbd>Esc</kbd> cancel
       </p>
     </template>
   </div>
@@ -483,6 +549,9 @@ onBeforeUnmount(() => {
   font-size: 17px;
   line-height: 1.5;
   color: var(--vscode-editor-foreground, #ccc);
+  /* The surface draws its own caret and selection, so the browser's text
+     selection must not fight it during a drag. */
+  user-select: none;
 }
 /* The caret is drawn here because a non-editable surface gets none of its own. */
 .mathml-caret {

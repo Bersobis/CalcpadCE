@@ -361,6 +361,8 @@ export type {
     EditorSelection,
     EditResult,
     StructureKind,
+    DomPoint,
+    LineEditorModel,
 } from './mathml';
 export {
     el,
@@ -418,4 +420,11 @@ export {
     applyCharacterToSelection,
     deleteBackwardInSelection,
     deleteForwardInSelection,
+    taggedPath,
+    anchorFromDomPoint,
+    anchorForClick,
+    lineEditorModel,
+    clearLineEditorCache,
+    partialTypesetMarkup,
+    plainMarkup,
 } from './mathml';

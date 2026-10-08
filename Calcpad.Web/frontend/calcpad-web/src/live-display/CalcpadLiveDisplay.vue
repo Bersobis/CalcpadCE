@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick, onBeforeUnmount } from 'vue'
 import type { CalcpadError, EditabilityCheck, LiveRender, PaletteAction, TextSelection } from 'calcpad-frontend'
-import { checkGraphicallyEditable } from 'calcpad-frontend'
+import { checkGraphicallyEditable, partialTypesetMarkup } from 'calcpad-frontend'
 import CalcpadMathPalette from './CalcpadMathPalette.vue'
 import CalcpadMathMlEditor from './CalcpadMathMlEditor.vue'
 import { findMatrixLiteral, findCallArguments, applySpans, spanText } from './live-edit'
@@ -121,6 +121,22 @@ watch(() => props.source, () => scheduleRender(), { immediate: true })
 
 // ---- in-place editing -------------------------------------------------------
 
+/**
+ * A viewport point a click landed on, replayed against the editing surface once
+ * it renders.
+ *
+ * The resting row shows the server's markup — the evaluated result and all — which
+ * carries no `data-path` tags, so its click position cannot be mapped to the tree
+ * directly. Instead the raw point is kept and the surface is asked to resolve it
+ * after mount, using the same `caretRangeFromPoint` + `data-path` mapping it uses
+ * for its own clicks. That both preserves the result on the resting row and lands
+ * the caret under the pointer.
+ */
+interface ClickPoint {
+  x: number
+  y: number
+}
+
 const paneEl = ref<HTMLElement | null>(null)
 const editing = ref<number | null>(null)
 /** The whole line as it stands in the editor; every field writes back into it. */
@@ -131,6 +147,8 @@ const literal = ref<MatrixLiteral | null>(null)
 const call = ref<CallArguments | null>(null)
 const cellValues = ref<string[][]>([])
 const argValues = ref<string[]>([])
+/** Where a click inside the rendered row landed, so the surface can open with the caret there. Cleared once consumed. */
+const pendingPoint = ref<ClickPoint | null>(null)
 /**
  * The field a palette button should write into. Tracked rather than read from
  * `document.activeElement`, because the palette's own search box can hold focus
@@ -195,18 +213,26 @@ function rowDiagnostics(index: number): { message: string; severity: string }[] 
   return errors.map(error => ({ message: error.message, severity: 'error' }))
 }
 
-function openEditor(index: number): void {
+function openEditor(index: number, point: ClickPoint | null = null): void {
   const row = rows.value[index]
   if (!row || row.state === 'empty') return
   editable.value = row.text
   editing.value = index
   lastField.value = null
   graphicalIncomplete.value = false
+  pendingPoint.value = point
   editability.value = checkGraphicallyEditable(row.text)
   refreshStructure()
   resetPreview()
   if (useGraphical.value) {
-    void nextTick(() => mathEditor.value?.focus())
+    void nextTick(() => {
+      // The surface resolves the click point itself, using the same mapping as its
+      // own clicks, so the caret lands under the pointer on the first render.
+      const target = pendingPoint.value
+      pendingPoint.value = null
+      if (target) mathEditor.value?.seekPoint(target.x, target.y)
+      else mathEditor.value?.focus()
+    })
     return
   }
   // Land in the line field with the caret at the end, so the palette has a target
@@ -487,12 +513,27 @@ function applyPalette(action: PaletteAction): void {
 
 // ---- rendered markup --------------------------------------------------------
 
+/**
+ * The edited line typeset instantly from the local MathML tree.
+ *
+ * The server render is the authority — it evaluates the expression and carries
+ * the result — but it is a round trip away, and waiting for it leaves the row
+ * blank as you type. The tree is already local, so the *expression* can be
+ * typeset with no request at all; the evaluated result then lands on top when
+ * the debounced preview resolves. Editing therefore feels immediate without
+ * introducing a second source of truth for the result.
+ */
+const localTypeset = computed(() => partialTypesetMarkup(editable.value))
+
 /** The markup a row shows: the live preview while editing, the last render otherwise. */
 function rowHtml(index: number): string {
   if (editing.value !== index) return rows.value[index]?.html ?? ''
-  // While editing, show only the live preview — never the committed markup, which
-  // would be the pre-edit result.
-  return previewState.value === 'ready' ? previewHtml.value : ''
+  // The server's own render wins the moment it lands: it is the one that keeps the
+  // result and the formatting consistent with the rest of the document.
+  if (previewState.value === 'ready') return previewHtml.value
+  // Until then, the local typeset keeps the expression on screen rather than
+  // leaving the row blank or showing the stale pre-edit result.
+  return localTypeset.value
 }
 
 /**
@@ -513,7 +554,12 @@ function renderedCell(target: EventTarget | null): { row: number; col: number } 
   return row < 0 || col < 0 ? null : { row, col }
 }
 
+/**
+ * Clicking a rendered expression opens it for in-place editing, with the caret
+ * under the pointer; clicking the line number still navigates the source editor.
+ */
 function onRowClick(index: number, event: MouseEvent): void {
+  // A rendered matrix cell routes into its own field, as before.
   const cell = renderedCell(event.target)
   if (cell) {
     if (editing.value !== index) openEditor(index)
@@ -521,7 +567,21 @@ function onRowClick(index: number, event: MouseEvent): void {
     focusField({ kind: 'cell', row: cell.row, col: cell.col }, { start: 0, end: 0 }, true)
     return
   }
-  emit('navigate', index + 1)
+  // Clicking the line number is the "go to source" affordance; a click anywhere
+  // else in the rendered expression edits it in place.
+  if ((event.target as HTMLElement | null)?.closest?.('.live-line-num')) {
+    emit('navigate', index + 1)
+    return
+  }
+  const row = rows.value[index]
+  if (!row || row.state === 'empty') {
+    emit('navigate', index + 1)
+    return
+  }
+  // Already open: a click inside the surface keeps the row open and lets the
+  // surface place its own caret, exactly as a click inside a text field would.
+  if (editing.value === index) return
+  openEditor(index, { x: event.clientX, y: event.clientY })
 }
 
 // ---- teardown ---------------------------------------------------------------
@@ -538,11 +598,26 @@ onBeforeUnmount(() => {
     <div v-for="(row, i) in rows" :key="i" class="live-line">
       <div
         class="live-row"
-        :class="[row.state, { editing: editing === i, previewing: editing === i && previewState === 'pending' }]"
-        :title="'Source line ' + (i + 1) + ' — click to open it in the editor'"
+        :class="[
+          row.state,
+          {
+            editing: editing === i,
+            previewing: editing === i && previewState === 'pending',
+            // Only a row with rendered output is editable in place.
+            editable: row.state === 'ready' || row.state === 'source',
+          },
+        ]"
+        :title="row.state === 'ready' || row.state === 'source'
+          ? 'Line ' + (i + 1) + ' — click the expression to edit it in place, or the line number to open the source'
+          : 'Source line ' + (i + 1) + ' — click to open it in the editor'"
         @click="onRowClick(i, $event)"
       >
-        <span class="live-line-num">{{ i + 1 }}</span>
+        <span
+          class="live-line-num"
+          role="button"
+          tabindex="-1"
+          title="Open source line in the editor"
+        >{{ i + 1 }}</span>
         <div class="live-line-body">
           <span v-if="row.state === 'pending'" class="live-pending">…</span>
           <span v-else-if="row.state === 'failed'" class="live-failed">—</span>
@@ -700,6 +775,23 @@ onBeforeUnmount(() => {
 .live-row:hover {
   background: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.12));
 }
+/* A row with rendered output is editable in place: outline the expression on
+   hover so the click target is obvious, and hint at the pencil affordance. */
+.live-row.editable .live-line-body {
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  outline-offset: 1px;
+}
+.live-row.editable:hover .live-line-body {
+  outline-color: var(--vscode-focusBorder, #007acc);
+  cursor: text;
+}
+.live-row.editable:hover .live-line-body::after {
+  content: '✎';
+  margin-left: 6px;
+  color: var(--vscode-descriptionForeground, #808080);
+  font-size: var(--calcpad-font-size-xs, 11px);
+}
 .live-row.empty {
   min-height: 1.2em;
   cursor: default;
@@ -725,6 +817,13 @@ onBeforeUnmount(() => {
   line-height: 150%;
   color: var(--vscode-editorLineNumber-foreground, #6e7681);
   user-select: none;
+}
+/* The line number is the "open the source" target, distinct from the expression
+   beside it, so it gets its own hover treatment and the pointer that says so. */
+.live-row.editable:hover .live-line-num {
+  cursor: pointer;
+  color: var(--vscode-editor-foreground, #ccc);
+  text-decoration: underline;
 }
 .live-line-body {
   flex: 1;

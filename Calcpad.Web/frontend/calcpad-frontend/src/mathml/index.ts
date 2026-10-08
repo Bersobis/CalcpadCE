@@ -32,6 +32,12 @@ export {
 export { serializeMathMl, serializeWithPaths } from './serialize';
 export { parseMathMl, parseExpression, hasUnmodelledElement } from './parse';
 
+export type { DomPoint } from './hit-test';
+export { taggedPath, anchorFromDomPoint, anchorForClick } from './hit-test';
+
+export { lineEditorModel, clearLineEditorCache, partialTypesetMarkup, plainMarkup } from './line-model';
+export type { LineEditorModel } from './line-model';
+
 export type { CalcpadParseResult, EditabilityCheck } from './calcpad';
 export {
     calcpadLineToMathMl,
