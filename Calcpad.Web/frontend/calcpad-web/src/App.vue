@@ -1562,10 +1562,10 @@ function onLiveNavigate(line: number): void {
 
 // Set by main.ts: replaces one source line, which flows back through the editor
 // model — so an in-pane edit lands in the undo stack and the preview alike.
-const onLiveEditRequest = ref<((line: number, text: string) => void) | null>(null)
+const onLiveEditRequest = ref<((line: number, text: string, endLine?: number) => void) | null>(null)
 
-function onLiveEdit(line: number, text: string): void {
-  onLiveEditRequest.value?.(line, text)
+function onLiveEdit(line: number, text: string, endLine?: number): void {
+  onLiveEditRequest.value?.(line, text, endLine)
 }
 // Groups with an in-flight preview render; drives the "Calculating…" overlay.
 const previewLoadingGroups = ref(new Set<string>())

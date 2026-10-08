@@ -93,7 +93,14 @@ export type {
 
 // --- API Client --------------------------------------------------------------
 export type { LiveRender } from './api/client';
-export { CalcpadApiClient, API_TOKEN_HEADER, parseConvertErrorHeader, splitRenderedLines, combineSignals } from './api/client';
+export {
+    CalcpadApiClient,
+    API_TOKEN_HEADER,
+    parseConvertErrorHeader,
+    splitRenderedLines,
+    splitRenderedBlocks,
+    combineSignals,
+} from './api/client';
 export {
     BROWSER_NOT_FOUND,
     BrowserNotFoundError,
@@ -413,6 +420,7 @@ export {
     insertText,
     insertPair,
     insertCall,
+    insertTable,
     deleteBackward,
     deleteForward,
     deleteSelection,
@@ -427,4 +435,34 @@ export {
     clearLineEditorCache,
     partialTypesetMarkup,
     plainMarkup,
+    applyPaletteAction,
 } from './mathml';
+
+// --- HTML and Markdown regions ----------------------------------------------
+// `ParseMode` is exported once, from `./text/comment-formatting` above.
+export type { LineMode, MarkupBlock, MarkupCheck, MarkupEditability, MarkupCommitResult } from './markup';
+export {
+    openerMode,
+    isEndDirective,
+    parseModeMap,
+    markupBlocks,
+    markupBlockAt,
+    MARKDOWN_BLOCK_TAGS,
+    MARKDOWN_INLINE_TAGS,
+    ALLOWED_ATTRIBUTES,
+    isModelledTag,
+    htmlToMarkdown,
+    checkMarkupHtml,
+    stripLineAnchors,
+    markupBlockHtml,
+    hasBalancedTags,
+    checkMarkupEditable,
+    commitMarkupBlock,
+} from './markup';
+
+
+// --- Vue helpers -------------------------------------------------------------
+export { singleTemplateRef } from './vue/template-ref';
+
+// --- Palette command menu ----------------------------------------------------
+export { rankPalette, wrapIndex } from './text/palette-search';

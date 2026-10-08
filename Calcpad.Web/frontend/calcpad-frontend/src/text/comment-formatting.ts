@@ -1,6 +1,11 @@
+import type { ParseMode } from '../markup/parse-modes';
+import { isEndDirective, openerMode } from '../markup/parse-modes';
+
 export type InlineFormat = 'bold' | 'italic' | 'underline' | 'subscript' | 'superscript';
 export type CommentFormat = 'html' | 'markdown';
-export type ParseMode = 'cpd' | CommentFormat;
+// The mode type and the directive rules live with the markup module, so the
+// formatting hotkeys and the rich-text editor cannot disagree about what a line is.
+export type { ParseMode };
 
 export const HTML_INLINE: Record<InlineFormat, [string, string]> = {
     bold: ['<strong>', '</strong>'],
@@ -120,21 +125,24 @@ export function getCommentPrefixInsertColumn(lineText: string, selectionColumn?:
 
 /**
  * Parse mode in effect at the 0-based `line`, from the #html/#cpd/#markdown directives above it.
- * Openers push and any #end form pops, as in ExpressionParser.
+ *
+ * Only the `#end` matching the mode in effect pops, as in `ExpressionParser`: an
+ * `#end markdown` inside `#html` is content, not a close, so a tracker that popped
+ * on any `#end` would report Calcpad for lines the engine still parses as HTML.
  */
 export function getParseModeAt(getLine: (index: number) => string, line: number): ParseMode {
     const stack: ParseMode[] = [];
     let mode: ParseMode = 'cpd';
     for (let i = 0; i < line; i++) {
         const text = getLine(i).trim();
-        if (/^#end (html|cpd|markdown)(\s|$)/i.test(text)) {
+        if (isEndDirective(text, mode)) {
             mode = stack.pop() ?? 'cpd';
             continue;
         }
-        const opener = /^#(html|cpd|markdown)(\s|$)/i.exec(text);
-        if (opener) {
+        const opened = openerMode(text);
+        if (opened) {
             stack.push(mode);
-            mode = opener[1].toLowerCase() as ParseMode;
+            mode = opened;
         }
     }
     return mode;

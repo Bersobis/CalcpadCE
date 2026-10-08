@@ -38,7 +38,7 @@ export interface EditResult {
 }
 
 /** The structures the editor can build from the operand before the caret. */
-export type StructureKind = 'fraction' | 'power' | 'subscript' | 'sqrt' | 'root';
+export type StructureKind = 'fraction' | 'power' | 'subscript' | 'sqrt' | 'root' | 'cbrt';
 
 /** Brackets the editor writes as a matched pair, and which Calcpad rejects empty. */
 const OPEN_BRACKETS = new Set(['(', '[', '{']);
@@ -359,12 +359,17 @@ function structureFor(kind: StructureKind, content: MathMlNode[]): MathMlElement
         case 'subscript': return el('msub', [slot(content), slot([])]);
         case 'sqrt': return el('msqrt', [slot(content)]);
         case 'root': return el('mroot', [slot(content), slot([])]);
+        // The cube root is `root(x; 3)` with the degree already filled in — the
+        // button says cube root, so it must not leave the degree empty and wait.
+        case 'cbrt': return el('mroot', [slot(content), slot([el('mn', [txt('3')])])]);
     }
 }
 
 /** Where the caret lands after building a structure: its empty slot, or the radicand. */
 function structureCaret(root: MathMlElement, structurePath: number[], kind: StructureKind): Anchor {
-    const contentSlot = kind === 'sqrt' ? 0 : 1;
+    // `sqrt` has one slot and `cbrt`'s degree is already filled, so both put the
+    // caret in the radicand; every other structure opens its empty second slot.
+    const contentSlot = kind === 'sqrt' || kind === 'cbrt' ? 0 : 1;
     const slotPath = [...structurePath, contentSlot];
     const slot = elementAt(root, slotPath);
     if (slot && slot.children.length === 0) return { kind: 'gap', path: slotPath, index: 0 };
@@ -400,14 +405,53 @@ export function buildStructure(root: MathMlElement, anchor: Anchor, kind: Struct
     };
 }
 
+/**
+ * Insert an empty `rows` × `cols` vector or matrix literal and put the caret in
+ * its first cell.
+ *
+ * Calcpad's `[a; b|c; d]` literal is the only construct the palette's `vector`
+ * and `2×2` buttons produce, and it has no structure the other builders can
+ * express — a table is not a wrapper around one operand — so it gets its own
+ * builder rather than a `StructureKind`.
+ *
+ * An empty cell has no Calcpad spelling, so the caller relies on `hasEmptySlot`
+ * to hold the line open until every cell is filled, exactly as a bare `b/` does.
+ */
+export function insertTable(root: MathMlElement, anchor: Anchor, rows: number, cols: number): EditResult {
+    const tree = clone(root);
+    const insertion = resolveInsertion(tree, canonicalize(tree, anchor));
+    if (!insertion) return { root, anchor, removed: 0 };
+
+    const table = el('mtable', Array.from({ length: rows }, () =>
+        el('mtr', Array.from({ length: cols }, () => el('mtd', [el('mrow', [])]))),
+    ));
+    const at = spliceNodes(tree, insertion, [table]);
+    if (at < 0) return { root, anchor, removed: 0 };
+
+    // The caret opens in the first cell: mtr[0] → mtd[0] → its empty slot.
+    const cellPath = [...insertion.parentPath, at, 0, 0, 0];
+    return { root: tree, anchor: { kind: 'gap', path: cellPath, index: 0 }, removed: 0 };
+}
+
 // ---- typing -----------------------------------------------------------------
 
-/** Whether `ch` continues the run of text in `text`, so `sin` stays one token. */
+/**
+ * Whether `ch` continues the run of text in `text`, so `sin` stays one token.
+ *
+ * This has to agree with the bridge's tokenizer exactly, or typing produces a
+ * tree the parser would never build — and the line then fails its own round-trip
+ * and stops being editable. The tokenizer reads a number as a run of digits and
+ * dots, and a name as a run of word characters *that does not start with a
+ * digit*. So `x2` is one name but `2x` is a number followed by a name, which is
+ * what makes `2x` Calcpad's implicit multiplication.
+ */
 export function mergeable(text: string, ch: string): boolean {
     if (text === '') return false;
     const last = text[text.length - 1];
-    if (/[0-9.]/.test(ch) && /[0-9.]/.test(last)) return true;
-    return /[\p{L}\p{N}_]/u.test(ch) && /[\p{L}\p{N}_]/u.test(last);
+    // A number only ever continues with another digit or a decimal point.
+    if (/[0-9.]/.test(last)) return /[0-9.]/.test(ch);
+    // A name keeps consuming word characters, digits included.
+    return /[\p{L}_]/u.test(last) && /[\p{L}\p{N}_]/u.test(ch);
 }
 
 /**
@@ -464,11 +508,16 @@ export function insertPair(root: MathMlElement, anchor: Anchor, open: string, cl
     const before = anchorsOf(tree).length;
     const insertion = resolveInsertion(tree, canonicalize(tree, anchor));
     if (!insertion) return { root, anchor, removed: 0 };
-    const at = spliceNodes(tree, insertion, [el('mo', [txt(open)]), el('mo', [txt(close)])]);
+    // The pair goes in as a single `mrow`, which is the shape the bridge parses a
+    // parenthesised group back into. Without that, a freshly typed `(x)` and a
+    // reloaded one would be different trees, and the editor would be editing a
+    // model its own parser does not produce.
+    const group = el('mrow', [el('mo', [txt(open)]), el('mo', [txt(close)])]);
+    const at = spliceNodes(tree, insertion, [group]);
     if (at < 0) return { root, anchor, removed: 0 };
     return {
         root: tree,
-        anchor: { kind: 'char', path: [...insertion.parentPath, at], offset: open.length },
+        anchor: { kind: 'char', path: [...insertion.parentPath, at, 0], offset: open.length },
         removed: Math.max(0, before - anchorsOf(tree).length),
     };
 }
@@ -479,13 +528,15 @@ export function insertCall(root: MathMlElement, anchor: Anchor, name: string): E
     const before = anchorsOf(tree).length;
     const insertion = resolveInsertion(tree, canonicalize(tree, anchor));
     if (!insertion) return { root, anchor, removed: 0 };
-    const nodes = [el('mi', [txt(name)]), el('mo', [txt('(')]), el('mo', [txt(')')])];
+    // The argument list is one `mrow`, matching how the bridge reads `name(...)`,
+    // so a typed call and a reloaded one are the same tree.
+    const nodes = [el('mi', [txt(name)]), el('mrow', [el('mo', [txt('(')]), el('mo', [txt(')')])])];
     const at = spliceNodes(tree, insertion, nodes);
     if (at < 0) return { root, anchor, removed: 0 };
-    // Between the brackets: after the `(` that landed at `at + 1`.
+    // Between the brackets: inside the `mrow` that landed at `at + 1`.
     return {
         root: tree,
-        anchor: { kind: 'char', path: [...insertion.parentPath, at + 1], offset: 1 },
+        anchor: { kind: 'char', path: [...insertion.parentPath, at + 1, 0], offset: 1 },
         removed: Math.max(0, before - anchorsOf(tree).length),
     };
 }
@@ -653,7 +704,10 @@ export function deleteSelection(root: MathMlElement, selection: EditorSelection)
  */
 export function applyCharacter(root: MathMlElement, anchor: Anchor, ch: string): EditResult {
     switch (ch) {
-        case '/': return buildStructure(root, anchor, 'fraction');
+        // `/` and `÷` both spell a fraction, which is how the bridge parses them
+        // and how MathML spells division — so typing either builds the structure
+        // rather than leaving a slash-shaped token behind.
+        case '/': case '÷': return buildStructure(root, anchor, 'fraction');
         case '^': return buildStructure(root, anchor, 'power');
         case '_': return buildStructure(root, anchor, 'subscript');
         case '(': return insertPair(root, anchor, '(', ')');

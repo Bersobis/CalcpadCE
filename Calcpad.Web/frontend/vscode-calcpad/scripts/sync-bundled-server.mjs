@@ -136,6 +136,32 @@ function run(cmd, cwd) {
     execSync(cmd, { cwd, stdio: 'inherit' });
 }
 
+/**
+ * Restore the publish graph for a specific RID before publishing.
+ *
+ * Why this is not redundant with `dotnet publish`'s implicit restore: the
+ * assets file (`obj/project.assets.json`) holds ONE restore graph per project.
+ * A RID-less restore — which is what `dotnet build -c Release`, an IDE build,
+ * or the sibling projects' own builds run — *replaces* it with a single
+ * `net10.0` target. Publishing with `-r win-x64` then fails with:
+ *
+ *   NETSDK1047: Assets file '...\project.assets.json' doesn't have a target
+ *   for 'net10.0/win-x64'.
+ *
+ * `dotnet publish` only restores implicitly when it decides it needs to, and
+ * after a RID-less build the "All projects are up-to-date for restore" check
+ * can pass on the stale graph. An explicit `restore -r <rid>` rewrites the
+ * assets file with the correct target and makes publish self-sufficient no
+ * matter what ran before it. Cheap: a no-op re-restore when the graph already
+ * matches.
+ */
+function restoreForRid(rid, configuration) {
+    // `dotnet restore` forwards only `-r` to the implicit Restore target; `-c`
+    // leaks straight through to MSBuild, which wants `-p:Configuration=`
+    // (passing `-c` fails with MSB1001 "Unknown switch").
+    run(`dotnet restore -r ${rid} -p:Configuration=${configuration} "${CSPROJ}"`, BACKEND_DIR);
+}
+
 function sleepSync(ms) {
     // Atomics.wait gives us a blocking sleep without busy-spinning. Falls
     // back to a synchronous ping/sleep shell-out on platforms where
@@ -389,6 +415,10 @@ function main() {
 
     if (!args.skipBuild) {
         if (args.frameworkDependent) rmSync(publishOutputDir(rid, true, args.configuration), { recursive: true, force: true });
+        // Repoint the assets file at the RID we are about to publish (see
+        // restoreForRid) — without this a preceding RID-less build breaks
+        // publish with NETSDK1047.
+        restoreForRid(rid, args.configuration);
         const publishCmd = args.frameworkDependent
             ? `dotnet publish "${CSPROJ}" -c ${args.configuration} -r ${rid} --no-self-contained -o "${publishOutputDir(rid, true, args.configuration)}"`
             : `dotnet publish "${CSPROJ}" -c ${args.configuration} -r ${rid} --self-contained true`;

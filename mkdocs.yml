@@ -64,6 +64,7 @@ nav:
     - The CalcpadCE Editor: new-calcpadce-editor.md
     - The CalcpadCE Panel: new-calcpad-panel.md
     - The CalcpadCE Canvas (WYSIWYG Editor): new-wysiwyg-equation-editor.md
+    - MathML Equation Editor (Design): mathml-equation-editor-design.md
     - Settings: new-settings.md
     - Exports: new-exports.md
     - Includes and File Reads: new-includes.md

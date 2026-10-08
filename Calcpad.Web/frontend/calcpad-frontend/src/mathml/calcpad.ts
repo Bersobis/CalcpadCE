@@ -9,9 +9,9 @@
  *
  * The Calcpad dialect modelled is the expression subset: assignment, arithmetic,
  * comparisons, logic, function calls, `sqrt`/`root`, subscripts, powers, the unit
- * target, and postfix `!`/`°`. Matrix literals, labels and directives are
- * deliberately out of scope — the live display already edits those, and declining
- * them here is safer than guessing.
+ * target, postfix `!`/`°`, and bracketed vector/matrix literals. Labels and
+ * directives are deliberately out of scope — the live display already edits
+ * those, and declining them here is safer than guessing.
  */
 
 import type { MathMlElement, MathMlNode } from './ast';
@@ -24,6 +24,7 @@ import { parseMathMl } from './parse';
 /** Binding power, lowest first. Calcpad's own precedence, from docs/quick-reference.md. */
 const PRECEDENCE: Record<string, number> = {
     '=': 1, '←': 1,
+    '∠': 2,
     '∧': 2, '∨': 2, '⊕': 2,
     '<': 3, '>': 3, '≤': 3, '≥': 3, '≡': 3, '≠': 3,
     '+': 4, '-': 4,
@@ -35,10 +36,10 @@ const PRECEDENCE: Record<string, number> = {
 const SPACED_OPERATORS = new Set(['+', '-', '=', '←', '<', '>', '≤', '≥', '≠', '≡', '∧', '∨', '⊕']);
 
 /** Everything the tokenizer treats as an operator rather than part of a name. */
-const OPERATOR_CHARS = new Set('+-*/÷\\⦼^_!=←<>≤≥≠≡∧∨⊕();,|°%'.split(''));
+const OPERATOR_CHARS = new Set('+-*/÷\\⦼^_!=←<>≤≥≠≡∧∨⊕∠();,|°%[]'.split(''));
 
 /** Constructs the editor declines rather than risk rewriting them. */
-const UNSUPPORTED_CHARS = new Set(["'", '"', '[', ']', '{', '}', '#', '$']);
+const UNSUPPORTED_CHARS = new Set(["'", '"', '{', '}', '#', '$']);
 
 const PREC_ATOM = 9;
 const PREC_POWER = 7;
@@ -134,7 +135,7 @@ class ExpressionParser {
 
     private parseLogical(): MathMlNode[] {
         let nodes = this.parseComparison();
-        while (this.atOperator('∧', '∨', '⊕')) {
+        while (this.atOperator('∧', '∨', '⊕', '∠')) {
             const operator = this.take().text;
             nodes = [...nodes, token(operator), ...this.parseComparison()];
         }
@@ -189,7 +190,7 @@ class ExpressionParser {
     /** True when the next token can begin an operand, i.e. an implicit product follows. */
     private startsOperand(): boolean {
         const token = this.peek();
-        return token.kind === 'number' || token.kind === 'name' || this.atOperator('(');
+        return token.kind === 'number' || token.kind === 'name' || this.atOperator('(', '[');
     }
 
     private parseUnary(): MathMlNode[] {
@@ -244,12 +245,51 @@ class ExpressionParser {
                 this.expectOperator(')');
                 return [el('mrow', [token('('), ...inner, token(')')])];
             }
-            // A bare `|` inside brackets is not a construct this bridge models; the
-            // line-level split in `splitUnitTarget` handles the unit target proper.
+            if (tokenAt.text === '[') return this.parseLiteral();
+            // A bare `|` inside brackets is the row divisor and is handled by
+            // `parseLiteral`; anywhere else `splitUnitTarget` has already taken it.
             throw new Error(`Unexpected operator "${tokenAt.text}"`);
         }
         this.index++;
         return this.parseName(tokenAt.text);
+    }
+
+    /**
+     * A bracketed vector or matrix literal.
+     *
+     * `[a; b; c]` is one row of cells separated by `;`; a `|` opens the next row,
+     * so `[a; b|c; d]` is 2×2. Calcpad gives `|` the row-divisor meaning only
+     * inside brackets — outside them it is the unit target, which is why
+     * `splitUnitTarget` tracks bracket depth as well as parentheses. The literal
+     * becomes an `mtable`, so every cell is an ordinary slot the caret can enter.
+     */
+    private parseLiteral(): MathMlNode[] {
+        this.expectOperator('[');
+        const rows: MathMlNode[][][] = [[]];
+        let cell: MathMlNode[] = [];
+        for (;;) {
+            if (this.peek().kind === 'end') throw new Error('Unclosed "["');
+            if (this.atOperator(']')) break;
+            if (this.atOperator(';')) {
+                this.index++;
+                rows[rows.length - 1].push(cell);
+                cell = [];
+                continue;
+            }
+            if (this.atOperator('|')) {
+                this.index++;
+                rows[rows.length - 1].push(cell);
+                cell = [];
+                rows.push([]);
+                continue;
+            }
+            const before = this.index;
+            cell.push(...this.parseLogical());
+            if (this.index === before) throw new Error('Unexpected token in a matrix literal');
+        }
+        rows[rows.length - 1].push(cell);
+        this.expectOperator(']');
+        return [el('mtable', rows.map(row => el('mtr', row.map(nodes => el('mtd', [slot(nodes)])))))];
     }
 
     private parseName(name: string): MathMlNode[] {
@@ -307,13 +347,19 @@ function token(text: string): MathMlNode {
     return el('mi', [txt(text)]);
 }
 
-/** Split a line at the first top-level `|`, the unit target. */
+/**
+ * Split a line at the first top-level `|`, the unit target.
+ *
+ * `|` is overloaded: between `[` and `]` it separates matrix rows, and only
+ * outside any bracket pair is it the unit target. So both bracket kinds count
+ * towards the depth, or `[a; b|c; d]` would be cut in half.
+ */
 function splitUnitTarget(source: string): { expression: string; units: string | null } {
     let depth = 0;
     for (let i = 0; i < source.length; i++) {
         const ch = source[i];
-        if (ch === '(') depth++;
-        else if (ch === ')') depth--;
+        if (ch === '(' || ch === '[') depth++;
+        else if (ch === ')' || ch === ']') depth--;
         else if (ch === '|' && depth === 0) {
             return { expression: source.slice(0, i), units: source.slice(i + 1).trim() };
         }
@@ -473,9 +519,35 @@ function rawToCalcpad(node: MathMlNode): string | null {
             const close = node.attributes.close ?? ')';
             return `${open}${inner}${close}`;
         }
+        case 'mtable':
+            return tableToCalcpad(node);
         default:
             return null;
     }
+}
+
+/**
+ * A `mtable` back to a Calcpad literal: cells joined with `; `, rows with `|`.
+ *
+ * Calcpad writes the cell separator spaced and the row separator tight —
+ * `[a; b|c; d]` — so the printed line is the one the author would have typed.
+ * Anything that is not a plain `mtable > mtr > mtd` shape is refused, which
+ * leaves the line to the source editor rather than guessing at it.
+ */
+function tableToCalcpad(node: MathMlElement): string | null {
+    const rows: string[] = [];
+    for (const row of node.children) {
+        if (!isElement(row) || row.name !== 'mtr') return null;
+        const cells: string[] = [];
+        for (const cell of row.children) {
+            if (!isElement(cell) || cell.name !== 'mtd') return null;
+            const inner = sequenceToCalcpad(innerChildren(cell));
+            if (inner === null) return null;
+            cells.push(inner);
+        }
+        rows.push(cells.join('; '));
+    }
+    return `[${rows.join('|')}]`;
 }
 
 function joinBinary(left: string | null, operator: string, right: string | null): string | null {

@@ -4,15 +4,12 @@ import {
   anchorForClick,
   anchorIndex,
   applyCharacterToSelection,
-  buildStructure,
+  applyPaletteAction,
   checkGraphicallyEditable,
   deleteBackwardInSelection,
   deleteForwardInSelection,
   hasEmptySlot,
   hasSelection,
-  insertCall,
-  insertPair,
-  insertText,
   isToken,
   lastAnchor,
   mathMlToCalcpadLine,
@@ -27,7 +24,7 @@ import {
   serializeWithPaths,
   tokenText,
 } from 'calcpad-frontend'
-import type { Anchor, EditResult, EditorSelection, MathMlElement, PaletteAction, StructureKind } from 'calcpad-frontend'
+import type { Anchor, EditResult, EditorSelection, MathMlElement, PaletteAction } from 'calcpad-frontend'
 
 /**
  * The graphical equation editor: a MathML-native editing surface.
@@ -367,54 +364,17 @@ function onBlur(): void {
 
 // ---- palette ----------------------------------------------------------------
 
-/** Palette buttons that map straight onto a MathML structure. */
-const STRUCTURE_BY_ID: Record<string, StructureKind> = {
-  sqrt: 'sqrt',
-  cbrt: 'root',
-  nroot: 'root',
-  power: 'power',
-  subscript: 'subscript',
-  fraction: 'fraction',
-}
-
-/** Palette buttons that become a `name(...)` call rather than a structure. */
-const CALL_BY_ID: Record<string, string> = {
-  abs: 'abs',
-  floor: 'floor',
-  ceil: 'ceil',
-  sum: 'sum',
-  product: 'product',
-}
-
 /**
  * Apply a palette button to the expression at the caret.
  *
- * The palette is text-oriented, so the mapping to tree operations is by button
- * identity: a structure button builds a structure, a function button writes a
- * call, and a symbol button inserts its glyph. Buttons with no Calcpad spelling
- * the bridge models (the `[ ]` literals) do nothing here rather than insert
- * something the line cannot round-trip.
+ * The button-to-tree mapping is pure and lives in `calcpad-frontend`, where the
+ * palette test proves every catalog button is mapped. This only has to hand it
+ * the tree and the caret and adopt the result.
  */
 function applyPalette(action: PaletteAction): void {
   if (!root.value) return
-  const caretAnchor = selection.value.focus
-
-  const structure = STRUCTURE_BY_ID[action.id]
-  if (structure) {
-    apply(buildStructure(root.value, caretAnchor, structure))
-    return
-  }
-  if (action.id === 'brackets') {
-    apply(insertPair(root.value, caretAnchor, '(', ')'))
-    return
-  }
-  const call = CALL_BY_ID[action.id] ?? (action.group === 'Functions' ? action.label : null)
-  if (call) {
-    apply(insertCall(root.value, caretAnchor, call))
-    return
-  }
-  if (action.group === 'Structures') return
-  apply(insertText(root.value, caretAnchor, action.label))
+  const result = applyPaletteAction(root.value, selection.value.focus, action)
+  if (result) apply(result)
 }
 
 /** Focus the surface so the caret is drawn and the keyboard is live. */

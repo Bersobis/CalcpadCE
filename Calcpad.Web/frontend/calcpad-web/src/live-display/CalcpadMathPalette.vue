@@ -10,12 +10,27 @@ import type { PaletteAction, PaletteGroup } from 'calcpad-frontend'
  * them. Buttons cancel `mousedown` so the field being edited keeps focus and its
  * caret — the click then lands on an input that still knows where the user was.
  */
-const emit = defineEmits<{ pick: [action: PaletteAction] }>()
+const emit = defineEmits<{
+  pick: [action: PaletteAction]
+  /** Which groups the reader has folded away, so the pane can remember it. */
+  'update:collapsed': [names: string[]]
+}>()
+
+const props = withDefaults(defineProps<{
+  /**
+   * The folded groups. Owned by the caller because this component is mounted
+   * inside the editor, which unmounts whenever the editor closes — keeping the
+   * state here would silently unfold every group on each new edit.
+   */
+  collapsed?: string[]
+}>(), {
+  // Structures and Functions are the ones people reach for while building an
+  // expression, so they open by default; the symbol tables stay folded away.
+  collapsed: () => ['Operators', 'Relations', 'Greek'],
+})
 
 const query = ref('')
-// Structures and Functions are the ones people reach for while building an
-// expression, so they open by default; the symbol tables stay folded away.
-const collapsed = ref(new Set<PaletteGroup>(['Operators', 'Relations', 'Greek']))
+const collapsed = computed(() => new Set(props.collapsed as PaletteGroup[]))
 
 const groups = computed(() => {
   const matches = searchPalette(query.value)
@@ -34,10 +49,10 @@ const searching = computed(() => query.value.trim().length > 0)
 const isOpen = (name: string): boolean => searching.value || !collapsed.value.has(name as PaletteGroup)
 
 function toggle(name: string): void {
-  const next = new Set(collapsed.value)
+  const next = new Set(props.collapsed)
   if (next.has(name as PaletteGroup)) next.delete(name as PaletteGroup)
   else next.add(name as PaletteGroup)
-  collapsed.value = next
+  emit('update:collapsed', [...next])
 }
 
 const pick = (action: PaletteAction): void => emit('pick', action)

@@ -6,6 +6,13 @@ import {
     paletteGroup,
     searchPalette,
 } from '../src/text/math-palette';
+import { applyPaletteAction } from '../src/mathml/palette';
+import { calcpadLineToMathMl, checkGraphicallyEditable, mathMlToCalcpadLine } from '../src/mathml/calcpad';
+import { serializeMathMl } from '../src/mathml/serialize';
+import type { MathMlElement } from '../src/mathml/ast';
+import { equalNodes, nodeAt, tokenText } from '../src/mathml/ast';
+import type { Anchor } from '../src/mathml/caret';
+import { anchorsOf, applyCharacter, hasEmptySlot, lastAnchor } from '../src/mathml/caret';
 
 /** Apply a button to a line, with `|` marking the caret and `[]` a selection. */
 function run(id: string, line: string, selection: { start: number; end: number }) {
@@ -157,5 +164,174 @@ describe('math palette — catalog', () => {
         for (const action of [...paletteGroup('Operators'), ...paletteGroup('Relations')]) {
             expect(supported.has(action.label), `unsupported operator ${action.label}`).toBe(true);
         }
+    });
+});
+
+// ---- every button must actually do something -------------------------------
+
+/** A parsed line to press buttons against. */
+function tree(source: string): MathMlElement {
+    const parsed = calcpadLineToMathMl(source);
+    if (!parsed.root) throw new Error(`cannot parse ${source}: ${parsed.reason}`);
+    return parsed.root;
+}
+
+/** Press a button at the end of `x = 1`, the way the editor does. */
+function press(actionId: string) {
+    const action = paletteAction(actionId);
+    if (!action) throw new Error(`no palette action ${actionId}`);
+    const root = tree('x = 1');
+    const result = applyPaletteAction(root, lastAnchor(root), action);
+    if (!result) throw new Error(`"${actionId}" has no graphical mapping`);
+    return { root, result };
+}
+
+/**
+ * The first position a user would type into to close an open slot.
+ *
+ * Two shapes need filling: an empty `mrow` — a fraction's denominator, a table
+ * cell — has a `gap` anchor, while an empty `()` is two adjacent bracket tokens
+ * with no gap between them, so the caret has to go just after the opener.
+ */
+function openSlotAnchor(root: MathMlElement): Anchor | null {
+    const gap = anchorsOf(root).find(a => a.kind === 'gap');
+    if (gap) return gap;
+    for (const anchor of anchorsOf(root)) {
+        if (anchor.kind !== 'char' || anchor.offset !== 1) continue;
+        const text = tokenText(nodeAt(root, anchor.path)!);
+        if (text === '(' || text === '[') return anchor;
+    }
+    return null;
+}
+
+/**
+ * Finish the edit a button started, the way a user would.
+ *
+ * A button is allowed to leave the line mid-edit — a fraction has an empty
+ * denominator, and a binary operator is still waiting for its right operand
+ * (`x = 1 +`). Both are the same "held open" state as a bare `b/`, not a defect.
+ * So: fill the blanks, and if the line still does not parse, supply the operand
+ * the trailing operator is waiting for.
+ */
+function finishEdit(root: MathMlElement, caret: Anchor): MathMlElement {
+    let current = root;
+    let anchor = caret;
+    for (let guard = 0; guard < 24; guard++) {
+        const text = mathMlToCalcpadLine(current);
+        if (text !== null && checkGraphicallyEditable(text).ok) return current;
+        const at = (hasEmptySlot(current) ? openSlotAnchor(current) : null) ?? anchor;
+        const next = applyCharacter(current, at, '2');
+        current = next.root;
+        anchor = next.anchor;
+    }
+    return current;
+}
+
+describe('math palette — every button drives the graphical editor', () => {
+    it('maps every button in the catalog onto a tree operation', () => {
+        // The regression this pins: `vector` and `2×2` were filed under Structures
+        // with no mapping, so clicking them did nothing at all. A control that
+        // silently does nothing is indistinguishable from a broken one.
+        for (const action of MATH_PALETTE) {
+            const root = tree('x = 1');
+            const result = applyPaletteAction(root, lastAnchor(root), action);
+            expect(result, `no graphical mapping for "${action.id}"`).not.toBeNull();
+        }
+    });
+
+    it('changes the tree for every button', () => {
+        for (const action of MATH_PALETTE) {
+            const { root, result } = press(action.id);
+            expect(
+                serializeMathMl(result.root),
+                `"${action.id}" left the expression unchanged`,
+            ).not.toBe(serializeMathMl(root));
+        }
+    });
+
+    it('leaves the caret on a real position for every button', () => {
+        for (const action of MATH_PALETTE) {
+            const { result } = press(action.id);
+            expect(
+                nodeAt(result.root, result.anchor.path),
+                `"${action.id}" put the caret off the tree`,
+            ).not.toBeNull();
+        }
+    });
+
+    it('produces a line the editor can commit once the edit is finished', () => {
+        // The end-to-end property: whatever a button builds must print back to
+        // Calcpad the bridge accepts, or the line would silently stop being
+        // editable the moment the user pressed it.
+        for (const action of MATH_PALETTE) {
+            const { result } = press(action.id);
+            const finished = finishEdit(result.root, result.anchor);
+
+            const text = mathMlToCalcpadLine(finished);
+            expect(text, `"${action.id}" produced text that will not print`).not.toBeNull();
+            expect(
+                checkGraphicallyEditable(text!).ok,
+                `"${action.id}" produced ${text}, which is not graphically editable`,
+            ).toBe(true);
+        }
+    });
+
+    it('produces a tree a reload would reproduce, for every button', () => {
+        // The invariant the editor rests on: the tree it holds must be the tree
+        // its own parser builds from the text it prints. A button that breaks it
+        // leaves the line in a state the editor models differently from a
+        // reopened one — the edit "works" until you click away and back.
+        for (const action of MATH_PALETTE) {
+            const { result } = press(action.id);
+            const finished = finishEdit(result.root, result.anchor);
+            const text = mathMlToCalcpadLine(finished);
+            expect(text, `"${action.id}" produced text that will not print`).not.toBeNull();
+
+            const reopened = calcpadLineToMathMl(text!).root;
+            expect(reopened, `"${action.id}" produced ${text}, which does not re-parse`).not.toBeNull();
+            expect(
+                equalNodes(finished, reopened!),
+                `"${action.id}" produced a tree a reload would not reproduce (${text})`,
+            ).toBe(true);
+        }
+    });
+
+    it('builds the structures the operator buttons stand for', () => {
+        // The Operators buttons must do what typing the character does. They used
+        // to insert a bare glyph, so `/` left a flat slash where typing `/`
+        // builds a fraction.
+        expect(serializeMathMl(press('op-3').result.root)).toContain('<mfrac>');
+        expect(serializeMathMl(press('op-4').result.root)).toContain('<mfrac>');
+        expect(serializeMathMl(press('op-5').result.root)).toContain('<msup>');
+        expect(serializeMathMl(press('op-6').result.root)).toContain('<msub>');
+    });
+
+    it('agrees with typing for every character button', () => {
+        // Pressing a button and typing its glyph must produce the same tree.
+        for (const action of MATH_PALETTE) {
+            if (action.group !== 'Operators' && action.group !== 'Relations') continue;
+            const root = tree('x = 1');
+            const typed = applyCharacter(root, lastAnchor(root), action.label).root;
+            const { result } = press(action.id);
+            expect(
+                serializeMathMl(result.root),
+                `"${action.id}" (${action.label}) differs from typing it`,
+            ).toBe(serializeMathMl(typed));
+        }
+    });
+
+    it('builds a bracketed literal for the vector and matrix buttons', () => {
+        // These two were the dead ones; assert they build real tables rather than
+        // merely changing something.
+        expect(serializeMathMl(press('vector').result.root)).toContain('<mtable>');
+        expect(serializeMathMl(press('matrix2x2').result.root)).toContain('<mtable>');
+    });
+
+    it('gives the cube-root button a filled degree', () => {
+        // `cbrt` used to build `root(x; )` — an open slot for a degree the button
+        // had already promised in its own tooltip.
+        const built = press('cbrt').result.root;
+        expect(mathMlToCalcpadLine(built)).toContain('root(1; 3)');
+        expect(hasEmptySlot(built)).toBe(false);
     });
 });

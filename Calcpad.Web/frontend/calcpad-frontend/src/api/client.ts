@@ -514,7 +514,11 @@ export class CalcpadApiClient {
             sourceFilePath, undefined, undefined, true, opts,
         );
         if (!result || result instanceof ArrayBuffer) return null;
-        return { lines: splitRenderedLines(result.html, content), errors: result.errors };
+        return {
+            lines: splitRenderedLines(result.html, content),
+            blocks: splitRenderedBlocks(result.html, content),
+            errors: result.errors,
+        };
     }
 
     /**
@@ -636,6 +640,15 @@ const LINE_ANCHOR_PREFIX = 'line-';
 export interface LiveRender {
     /** Rendered inner HTML per 0-based source line; `null` where nothing was rendered. */
     lines: (string | null)[];
+    /**
+     * The rendered element itself per 0-based source line, anchors included.
+     *
+     * `lines` holds only what is *inside* the anchored element, which is what the
+     * pane shows — but for a `#markdown` block the element is the block, so a
+     * heading read from `lines` would come back as bare text and lose its level.
+     * The rich-text editor reads a block from here instead.
+     */
+    blocks: (string | null)[];
     /** The engine's errors for the document, each tagged with its source line. */
     errors: CalcpadError[];
 }
@@ -664,6 +677,29 @@ export function splitRenderedLines(html: string, source: string): (string | null
         const n = Number(el.id.slice(LINE_ANCHOR_PREFIX.length));
         if (!Number.isInteger(n) || n < 1 || n > lineCount) continue;
         if (lines[n - 1] === null) lines[n - 1] = el.innerHTML;
+    }
+    return lines;
+}
+
+/**
+ * The same split as {@link splitRenderedLines}, but keeping each anchored element
+ * whole rather than its contents.
+ *
+ * A `#markdown` block is rendered as the element the anchor lands on — `<h2>`,
+ * `<ul>`, `<table>` — so reading only its contents would lose the very thing
+ * that says which Markdown block it was.
+ */
+export function splitRenderedBlocks(html: string, source: string): (string | null)[] {
+    const lineCount = source.split('\n').length;
+    const lines: (string | null)[] = new Array(lineCount).fill(null);
+    if (typeof DOMParser === 'undefined') return lines;
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const anchors = doc.querySelectorAll<HTMLElement>(`[id^="${LINE_ANCHOR_PREFIX}"]`);
+    for (let i = 0; i < anchors.length; i++) {
+        const el = anchors[i];
+        const n = Number(el.id.slice(LINE_ANCHOR_PREFIX.length));
+        if (!Number.isInteger(n) || n < 1 || n > lineCount) continue;
+        if (lines[n - 1] === null) lines[n - 1] = el.outerHTML;
     }
     return lines;
 }

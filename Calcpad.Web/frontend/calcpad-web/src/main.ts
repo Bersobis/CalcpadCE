@@ -871,10 +871,13 @@ async function bootstrap(): Promise<void> {
 
     // Editing in the Live Display rewrites the source line through the editor model, so the
     // pane cannot drift from the document and the change lands in undo and the preview.
-    appInstance.onLiveEditRequest = (line: number, text: string) => {
+    // A #markdown block spans several lines, so the replacement is a range: the
+    // whole region is rewritten at once rather than line by line.
+    appInstance.onLiveEditRequest = (line: number, text: string, endLine?: number) => {
         const model = activeGroup.editor.getModel();
         if (!model || line < 1 || line > model.getLineCount()) return;
-        const range = new monaco.Range(line, 1, line, model.getLineMaxColumn(line));
+        const last = Math.min(Math.max(endLine ?? line, line), model.getLineCount());
+        const range = new monaco.Range(line, 1, last, model.getLineMaxColumn(last));
         activeGroup.editor.executeEdits('calcpad-live-edit', [{ range, text, forceMoveMarkers: true }]);
     };
 

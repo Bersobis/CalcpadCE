@@ -31,6 +31,7 @@ export {
 
 export { serializeMathMl, serializeWithPaths } from './serialize';
 export { parseMathMl, parseExpression, hasUnmodelledElement } from './parse';
+export { applyPaletteAction } from './palette';
 
 export type { DomPoint } from './hit-test';
 export { taggedPath, anchorFromDomPoint, anchorForClick } from './hit-test';
@@ -69,6 +70,7 @@ export {
     insertText,
     insertPair,
     insertCall,
+    insertTable,
     deleteBackward,
     deleteForward,
     deleteSelection,

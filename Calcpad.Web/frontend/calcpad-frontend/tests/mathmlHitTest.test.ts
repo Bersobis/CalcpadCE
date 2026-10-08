@@ -110,7 +110,7 @@ describe('lineEditorModel', () => {
     });
 
     it('declines a line the bridge does not model, carrying the reason', () => {
-        const model = lineEditorModel('M = [1; 2|3; 4]');
+        const model = lineEditorModel('#deg');
         expect(model.root).toBeNull();
         expect(model.reason).toBeTruthy();
         expect(model.markup).toBe('');

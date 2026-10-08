@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { calcpadLineToMathMl, mathMlToCalcpadLine } from '../src/mathml/calcpad';
 import type { MathMlElement } from '../src/mathml/ast';
-import { nodeAt, tokenText } from '../src/mathml/ast';
+import { equalNodes, nodeAt, tokenText } from '../src/mathml/ast';
+import { serializeMathMl } from '../src/mathml/serialize';
 import {
     anchorsOf,
     applyCharacter,
@@ -14,7 +15,9 @@ import {
     deleteSelection,
     firstAnchor,
     hasEmptySlot,
+    insertTable,
     lastAnchor,
+    mergeable,
     moveHorizontal,
     moveVertical,
     selectionText,
@@ -287,5 +290,95 @@ describe('buildStructure directly', () => {
         const built = buildStructure(root, before(root, 'a'), 'fraction');
         expect(anchorsOf(built.root).some(a => a.kind === 'gap')).toBe(true);
         expect(built.anchor.kind).toBe('gap');
+    });
+
+    it('fills the cube root degree in, so the button means what it says', () => {
+        // `cbrt` is `root(x; 3)`, not `root(x; )` — an empty degree would make
+        // the button's own tooltip a lie.
+        const root = tree('a = b');
+        const built = buildStructure(root, after(root, 'b'), 'cbrt');
+        expect(text(built.root)).toBe('a = root(b; 3)');
+        expect(hasEmptySlot(built.root)).toBe(false);
+    });
+});
+
+describe('typing agrees with the parser', () => {
+    /** Type `ch` at the end of `x = 1` and read the tree back through the bridge. */
+    function typeAtEnd(ch: string) {
+        const root = tree('x = 1');
+        const typed = applyCharacter(root, lastAnchor(root), ch).root;
+        const text = mathMlToCalcpadLine(typed);
+        if (text === null) throw new Error(`not printable after typing ${ch}`);
+        return { typed, text, reopened: calcpadLineToMathMl(text).root };
+    }
+
+    it('splits `2x` rather than merging it into one token', () => {
+        // A number never continues into a letter: the tokenizer reads `2x` as a
+        // number and a name, which is what makes it implicit multiplication. An
+        // editor that merged them would hold a tree its own parser rejects.
+        expect(mergeable('1', 'x')).toBe(false);
+        expect(mergeable('1', 'ξ')).toBe(false);
+        expect(mergeable('1', '2')).toBe(true);
+        expect(mergeable('x', '2')).toBe(true);
+        expect(mergeable('x', 'y')).toBe(true);
+    });
+
+    it('keeps the tree a reload would produce, for every character it accepts', () => {
+        // `_`, `^`, `/` and `(` are structure builders: they leave a line that is
+        // deliberately mid-edit, so they are not in this list.
+        for (const ch of ['x', 'ξ', '2', '.', '°', '!']) {
+            const { typed, text, reopened } = typeAtEnd(ch);
+            expect(reopened, `typing ${ch} produced ${text}, which does not re-parse`).not.toBeNull();
+            expect(equalNodes(typed, reopened!), `typing ${ch} drifted from a reload`).toBe(true);
+        }
+    });
+
+    it('builds a fraction for `÷` as well as `/`', () => {
+        // The bridge parses both as division, so typing either must build the
+        // structure rather than leaving a slash-shaped token behind.
+        expect(text(applyCharacter(tree('x = 1'), lastAnchor(tree('x = 1')), '÷').root)).toBe('x = 1/');
+        expect(text(applyCharacter(tree('x = 1'), lastAnchor(tree('x = 1')), '/').root)).toBe('x = 1/');
+    });
+});
+
+describe('insertTable', () => {
+    it('builds the requested shape with a slot in every cell', () => {
+        const root = tree('x = 1');
+        const built = insertTable(root, lastAnchor(root), 2, 2);
+        const markup = serializeMathMl(built.root);
+        expect(markup.match(/<mtr>/g)).toHaveLength(2);
+        expect(markup.match(/<mtd>/g)).toHaveLength(4);
+        expect(markup.match(/<mtd><mrow><\/mrow><\/mtd>/g)).toHaveLength(4);
+    });
+
+    it('leaves the caret in the first cell', () => {
+        const root = tree('x = 1');
+        const built = insertTable(root, lastAnchor(root), 2, 2);
+        expect(built.anchor.kind).toBe('gap');
+        // The path ends `mtr[0] → mtd[0] → its slot`.
+        expect(built.anchor.path.slice(-3)).toEqual([0, 0, 0]);
+    });
+
+    it('holds the line open until every cell is filled', () => {
+        const root = tree('x = 1');
+        let result = insertTable(root, lastAnchor(root), 1, 2);
+        expect(hasEmptySlot(result.root)).toBe(true);
+
+        // Type a digit into whichever cell is still empty, as the editor does.
+        for (let guard = 0; hasEmptySlot(result.root) && guard < 10; guard++) {
+            const gap = anchorsOf(result.root).find(a => a.kind === 'gap');
+            if (!gap) break;
+            result = applyCharacter(result.root, gap, '1');
+        }
+
+        expect(hasEmptySlot(result.root)).toBe(false);
+        expect(text(result.root)).toBe('x = 1[1; 1]');
+    });
+
+    it('builds a single-row vector for the vector button', () => {
+        const root = tree('x = 1');
+        const built = insertTable(root, lastAnchor(root), 1, 3);
+        expect(serializeMathMl(built.root).match(/<mtr>/g)).toHaveLength(1);
+        expect(serializeMathMl(built.root).match(/<mtd>/g)).toHaveLength(3);
     });
 });

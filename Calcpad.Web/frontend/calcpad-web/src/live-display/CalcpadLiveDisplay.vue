@@ -1,9 +1,26 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick, onBeforeUnmount } from 'vue'
-import type { CalcpadError, EditabilityCheck, LiveRender, PaletteAction, TextSelection } from 'calcpad-frontend'
-import { checkGraphicallyEditable, partialTypesetMarkup } from 'calcpad-frontend'
+import type {
+  CalcpadError,
+  EditabilityCheck,
+  LiveRender,
+  MarkupBlock,
+  PaletteAction,
+  TextSelection,
+} from 'calcpad-frontend'
+import {
+  checkGraphicallyEditable,
+  checkMarkupEditable,
+  commitMarkupBlock,
+  markupBlockAt,
+  markupBlocks,
+  partialTypesetMarkup,
+  singleTemplateRef,
+} from 'calcpad-frontend'
 import CalcpadMathPalette from './CalcpadMathPalette.vue'
+import CalcpadCommandMenu from './CalcpadCommandMenu.vue'
 import CalcpadMathMlEditor from './CalcpadMathMlEditor.vue'
+import CalcpadRichTextEditor from './CalcpadRichTextEditor.vue'
 import { findMatrixLiteral, findCallArguments, applySpans, spanText } from './live-edit'
 import type { MatrixLiteral, CallArguments, Span } from './live-edit'
 
@@ -47,8 +64,12 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   navigate: [line: number]
-  /** Replace source line `line` (1-based) with `text`; the row re-renders from the result. */
-  editLine: [line: number, text: string]
+  /**
+   * Replace source lines `line`..`endLine` (1-based, inclusive) with `text`; the
+   * row re-renders from the result. A `#markdown` block spans lines, so a commit
+   * replaces the whole region rather than one line.
+   */
+  editLine: [line: number, text: string, endLine?: number]
 }>()
 
 // ---- rows -------------------------------------------------------------------
@@ -58,6 +79,12 @@ type RowState = 'empty' | 'pending' | 'ready' | 'source' | 'failed'
 interface Row {
   text: string
   html: string
+  /**
+   * The rendered element itself, anchors included. The rich-text editor needs it
+   * for a `#markdown` block, whose element *is* the block — reading only its
+   * contents would turn a heading back into a paragraph.
+   */
+  block: string
   state: RowState
   /** The engine's errors for this source line, from the same render pass. */
   errors: CalcpadError[]
@@ -66,15 +93,15 @@ interface Row {
 const rows = ref<Row[]>([])
 
 function makeRow(text: string): Row {
-  if (!text.trim()) return { text, html: '', state: 'empty', errors: [] }
-  return { text, html: '', state: 'pending', errors: [] }
+  if (!text.trim()) return { text, html: '', block: '', state: 'empty', errors: [] }
+  return { text, html: '', block: '', state: 'pending', errors: [] }
 }
 
 /** A line the engine rendered nothing for: show its source rather than a silent gap. */
-function toRow(text: string, html: string | null, errors: CalcpadError[]): Row {
-  if (!text.trim()) return { text, html: '', state: 'empty', errors }
-  if (html) return { text, html, state: 'ready', errors }
-  return { text, html: '', state: 'source', errors }
+function toRow(text: string, html: string | null, block: string | null, errors: CalcpadError[]): Row {
+  if (!text.trim()) return { text, html: '', block: '', state: 'empty', errors }
+  if (html) return { text, html, block: block ?? '', state: 'ready', errors }
+  return { text, html: '', block: block ?? '', state: 'source', errors }
 }
 
 // Edits coalesce for a moment, so a burst of keystrokes costs one render.
@@ -113,6 +140,7 @@ async function render(): Promise<void> {
   rows.value = lines.map((text, i) => toRow(
     text,
     result.lines[i] ?? null,
+    result.blocks[i] ?? null,
     result.errors.filter(error => error.sourceLine === i + 1),
   ))
 }
@@ -171,6 +199,22 @@ const graphicalPreference = ref(readGraphicalPreference())
 const graphicalIncomplete = ref(false)
 const mathEditor = ref<InstanceType<typeof CalcpadMathMlEditor> | null>(null)
 
+/**
+ * Bind the math surface, normalising the shape Vue gives a ref inside `v-for`.
+ *
+ * The surface lives inside the row loop, so Vue collects its ref into an array —
+ * it cannot know that only one row is ever being edited. `mathEditor.value` was
+ * therefore `[instance]`: truthy, but with neither `applyPalette` nor `focus`,
+ * so every palette click in graphical mode threw a TypeError and did nothing,
+ * and so did the focus and click-to-caret calls that use the same ref.
+ *
+ * A function ref receives the instance itself and is the supported way out of
+ * the array; normalising keeps it correct whichever shape arrives.
+ */
+function setMathEditor(el: unknown): void {
+  mathEditor.value = singleTemplateRef<InstanceType<typeof CalcpadMathMlEditor>>(el)
+}
+
 function readGraphicalPreference(): boolean {
   try {
     return localStorage.getItem(GRAPHICAL_STORAGE_KEY) === '1'
@@ -206,6 +250,98 @@ function onToggleGraphical(event: Event): void {
 const editability = ref<EditabilityCheck>({ ok: false })
 const useGraphical = computed(() => graphicalPreference.value && editability.value.ok)
 
+// ---- insertion ---------------------------------------------------------------
+
+const RECENT_STORAGE_KEY = 'calcpad.live.recentPalette'
+
+/**
+ * The insertion control is a menu, not a grid.
+ *
+ * 84 buttons is a good reference and a poor control: you scan it, look away from
+ * the caret, and reach for the mouse. The menu opens over the surface, filters as
+ * you type and inserts on Enter, and it opens on whatever this author used last.
+ * The grid stays behind a "Browse" toggle for looking things up.
+ */
+const recentActions = ref<string[]>(readRecentActions())
+const commandOpen = ref(false)
+const browseOpen = ref(false)
+/** Folded palette groups, owned here so reopening the editor does not unfold them. */
+const collapsedGroups = ref<string[]>(['Operators', 'Relations', 'Greek'])
+
+function readRecentActions(): string[] {
+  try {
+    const raw = localStorage.getItem(RECENT_STORAGE_KEY)
+    const parsed: unknown = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function rememberAction(id: string): void {
+  recentActions.value = [id, ...recentActions.value.filter(seen => seen !== id)].slice(0, 12)
+  try {
+    localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(recentActions.value))
+  } catch {
+    // The order simply will not persist; insertion still works.
+  }
+}
+
+/** Insert from the menu: the same path the grid uses, plus recency. */
+function pickFromMenu(action: PaletteAction): void {
+  applyPalette(action)
+  rememberAction(action.id)
+  commandOpen.value = false
+}
+
+function onEditorKeydown(event: KeyboardEvent): void {
+  // Ctrl/Cmd+K opens the insertion menu wherever the caret is. The math surface
+  // ignores modifier combinations, so this reaches the pane from either mode.
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault()
+    commandOpen.value = !commandOpen.value
+  }
+}
+
+// ---- html / markdown editing ------------------------------------------------
+
+const richEditor = ref<InstanceType<typeof CalcpadRichTextEditor> | null>(null)
+
+/** The same normalisation as {@link setMathEditor}, for the same reason. */
+function setRichEditor(el: unknown): void {
+  richEditor.value = singleTemplateRef<InstanceType<typeof CalcpadRichTextEditor>>(el)
+}
+/** The markup block being edited, or null when the row is Calcpad. */
+const markupBlock = ref<MarkupBlock | null>(null)
+/** The author markup opened in the surface. */
+const markupHtml = ref('')
+/** Whether the user actually changed it. An untouched block is never rewritten. */
+const markupDirty = ref(false)
+/** Why a markup row cannot be edited graphically, when it cannot. */
+const markupReason = ref('')
+
+const useMarkup = computed(() => markupBlock.value !== null)
+
+function onMarkupChange(html: string, dirty: boolean): void {
+  markupHtml.value = html
+  markupDirty.value = dirty
+}
+
+function clearMarkup(): void {
+  markupBlock.value = null
+  markupHtml.value = ''
+  markupDirty.value = false
+  markupReason.value = ''
+}
+
+/**
+ * The rendered elements, as the markup module takes them. Deliberately `block`
+ * rather than `html`: a `#markdown` block's element carries which block it was.
+ */
+function renderedRowHtml(): (string | null)[] {
+  return rows.value.map(row => row.block || null)
+}
+
 function rowDiagnostics(index: number): { message: string; severity: string }[] {
   const errors = editing.value === index && previewState.value !== 'idle'
     ? previewErrors.value
@@ -221,9 +357,28 @@ function openEditor(index: number, point: ClickPoint | null = null): void {
   lastField.value = null
   graphicalIncomplete.value = false
   pendingPoint.value = point
-  editability.value = checkGraphicallyEditable(row.text)
+  clearMarkup()
   refreshStructure()
   resetPreview()
+
+  // A line inside `#html` or `#markdown` is content, not arithmetic: it gets the
+  // rich-text surface when the block can survive the round trip, and the source
+  // field with a reason when it cannot.
+  const sourceLines = props.source.split('\n')
+  const block = markupBlockAt(markupBlocks(sourceLines), index)
+  if (block) {
+    const check = checkMarkupEditable(block, sourceLines, renderedRowHtml())
+    if (check.ok) {
+      markupBlock.value = block
+      markupHtml.value = check.html ?? ''
+      editability.value = { ok: false }
+      void nextTick(() => richEditor.value?.focus())
+      return
+    }
+    markupReason.value = check.reason ?? ''
+  }
+
+  editability.value = checkGraphicallyEditable(row.text)
   if (useGraphical.value) {
     void nextTick(() => {
       // The surface resolves the click point itself, using the same mapping as its
@@ -257,6 +412,10 @@ function refreshStructure(): void {
 }
 
 function closeEditor(): void {
+  if (useMarkup.value) {
+    closeMarkupEditor()
+    return
+  }
   // An incomplete expression has no Calcpad spelling, so committing it would write
   // something that means less than what is on screen. Leave the editor open instead.
   if (useGraphical.value && graphicalIncomplete.value) return
@@ -267,6 +426,26 @@ function closeEditor(): void {
   resetPreview()
 }
 
+/**
+ * Write a markup block back, or leave the document alone.
+ *
+ * An untouched block is never written back. The browser normalises markup the
+ * moment it parses it, so round-tripping a block the user did not touch would
+ * reformat their source — an edit they never asked for.
+ */
+function closeMarkupEditor(): void {
+  const block = markupBlock.value
+  if (block && markupDirty.value) {
+    const result = commitMarkupBlock(block, markupHtml.value)
+    if (result.ok) {
+      emit('editLine', block.startLine + 1, result.lines.join('\n'), block.endLine + 1)
+    }
+  }
+  clearMarkup()
+  editing.value = null
+  resetPreview()
+}
+
 /** Escape: put the line back the way it was and leave without writing anything. */
 function cancelEditor(): void {
   const index = editing.value
@@ -274,6 +453,8 @@ function cancelEditor(): void {
   editing.value = null
   lastField.value = null
   graphicalIncomplete.value = false
+  clearMarkup()
+  commandOpen.value = false
   resetPreview()
 }
 
@@ -648,101 +829,154 @@ onBeforeUnmount(() => {
         v-if="editing === i"
         class="live-editor"
         @click.stop
+        @keydown="onEditorKeydown"
         @focusin="rememberField"
         @focusout="onEditorFocusOut"
       >
-        <!-- Opt-in, and offered only for a line the Calcpad bridge can round-trip. -->
-        <div class="live-editor-modes">
-          <label
-            class="live-editor-mode"
-            :class="{ unavailable: !editability.ok }"
-            :title="editability.ok
-              ? 'Edit this line as typeset maths, structure and all'
-              : 'Graphical editing is unavailable here: ' + editability.reason"
-          >
-            <input
-              type="checkbox"
-              :checked="graphicalPreference"
-              :disabled="!editability.ok"
-              @change="onToggleGraphical"
-            />
-            Graphical
-          </label>
-          <span v-if="!editability.ok" class="live-editor-mode-note">{{ editability.reason }}</span>
-          <span v-else-if="graphicalIncomplete" class="live-editor-mode-note warn">
-            Fill the empty slot to apply
-          </span>
-        </div>
-
-        <CalcpadMathMlEditor
-          v-if="useGraphical"
-          ref="mathEditor"
-          v-model="editable"
-          :diagnostics="rowDiagnostics(i)"
+        <!-- An #html line or a #markdown block is content, not arithmetic: it is
+             edited as rich text and written back as markup. -->
+        <CalcpadRichTextEditor
+          v-if="useMarkup"
+          :ref="setRichEditor"
+          :html="markupHtml"
+          :mode="markupBlock!.mode"
           :dark="dark"
-          @update:incomplete="graphicalIncomplete = $event"
+          :label="markupBlock!.mode === 'markdown' ? 'Markdown block' : 'HTML line'"
+          @change="onMarkupChange"
           @finish="closeEditor"
           @cancel="cancelEditor"
         />
 
         <template v-else>
-          <input
-            :value="editable"
-            class="live-editor-field live-editor-line"
-            data-field="line"
-            title="The line's Calcpad source"
-            aria-label="Line source"
-            @input="onLineInput"
-            @keydown.enter.prevent="leaveField"
+          <!-- Opt-in, and offered only for a line the Calcpad bridge can round-trip. -->
+          <div class="live-editor-modes">
+            <label
+              class="live-editor-mode"
+              :class="{ unavailable: !editability.ok }"
+              :title="editability.ok
+                ? 'Edit this line as typeset maths, structure and all'
+                : 'Graphical editing is unavailable here: ' + editability.reason"
+            >
+              <input
+                type="checkbox"
+                :checked="graphicalPreference"
+                :disabled="!editability.ok"
+                @change="onToggleGraphical"
+              />
+              Graphical
+            </label>
+            <span v-if="!editability.ok" class="live-editor-mode-note">{{ editability.reason }}</span>
+            <span v-else-if="graphicalIncomplete" class="live-editor-mode-note warn">
+              Fill the empty slot to apply
+            </span>
+          </div>
+
+          <p v-if="markupReason" class="live-editor-mode-note">
+            Rich text is unavailable here: {{ markupReason }}. Edit the source instead.
+          </p>
+
+          <CalcpadMathMlEditor
+            v-if="useGraphical"
+            :ref="setMathEditor"
+            v-model="editable"
+            :diagnostics="rowDiagnostics(i)"
+            :dark="dark"
+            @update:incomplete="graphicalIncomplete = $event"
+            @finish="closeEditor"
+            @cancel="cancelEditor"
           />
 
-          <!-- One field per matrix cell; clicking a rendered cell lands in its field. -->
-          <div v-if="literal" class="live-editor-grid">
-            <div v-for="(cells, r) in cellValues" :key="r" class="live-editor-grid-row">
+          <template v-else>
+            <input
+              :value="editable"
+              class="live-editor-field live-editor-line"
+              data-field="line"
+              title="The line's Calcpad source"
+              aria-label="Line source"
+              @input="onLineInput"
+              @keydown.enter.prevent="leaveField"
+            />
+
+            <!-- One field per matrix cell; clicking a rendered cell lands in its field. -->
+            <div v-if="literal" class="live-editor-grid">
+              <div v-for="(cells, r) in cellValues" :key="r" class="live-editor-grid-row">
+                <input
+                  v-for="(value, c) in cells"
+                  :key="c"
+                  :value="value"
+                  class="live-editor-field"
+                  :data-field="'cell:' + r + ':' + c"
+                  :title="'Row ' + (r + 1) + ', column ' + (c + 1)"
+                  @input="onCellInput(r, c, $event)"
+                  @keydown.enter.prevent="leaveField"
+                />
+              </div>
+            </div>
+
+            <!-- One field per function argument. -->
+            <div v-else-if="call" class="live-editor-call">
+              <span class="live-editor-name">{{ editable.slice(call.nameSpan.start, call.nameSpan.end) }}</span>
               <input
-                v-for="(value, c) in cells"
-                :key="c"
+                v-for="(value, k) in argValues"
+                :key="k"
                 :value="value"
-                class="live-editor-field"
-                :data-field="'cell:' + r + ':' + c"
-                :title="'Row ' + (r + 1) + ', column ' + (c + 1)"
-                @input="onCellInput(r, c, $event)"
+                class="live-editor-field live-editor-arg"
+                :data-field="'arg:' + k"
+                :title="'Argument ' + (k + 1)"
+                @input="onArgInput(k, $event)"
                 @keydown.enter.prevent="leaveField"
               />
             </div>
+          </template>
+
+          <div class="live-editor-insert">
+            <button
+              type="button"
+              class="live-editor-insert-btn"
+              title="Insert a function or structure (Ctrl+K)"
+              @mousedown.prevent
+              @click="commandOpen = !commandOpen"
+            >Insert… <kbd>Ctrl</kbd><kbd>K</kbd></button>
+            <button
+              type="button"
+              class="live-editor-insert-btn"
+              :class="{ active: browseOpen }"
+              :aria-expanded="browseOpen"
+              title="Browse every symbol and structure"
+              @mousedown.prevent
+              @click="browseOpen = !browseOpen"
+            >Browse symbols</button>
           </div>
 
-          <!-- One field per function argument. -->
-          <div v-else-if="call" class="live-editor-call">
-            <span class="live-editor-name">{{ editable.slice(call.nameSpan.start, call.nameSpan.end) }}</span>
-            <input
-              v-for="(value, k) in argValues"
-              :key="k"
-              :value="value"
-              class="live-editor-field live-editor-arg"
-              :data-field="'arg:' + k"
-              :title="'Argument ' + (k + 1)"
-              @input="onArgInput(k, $event)"
-              @keydown.enter.prevent="leaveField"
+          <div class="live-editor-insert-wrap">
+            <CalcpadCommandMenu
+              v-if="commandOpen"
+              :recent="recentActions"
+              @pick="pickFromMenu"
+              @close="commandOpen = false"
             />
           </div>
+
+          <CalcpadMathPalette
+            v-if="browseOpen"
+            v-model:collapsed="collapsedGroups"
+            @pick="applyPalette"
+          />
+
+          <div class="live-editor-actions">
+            <span class="live-editor-hint">
+              {{ useGraphical
+                ? 'Type maths directly; the row previews as you go.'
+                : 'Click a symbol to insert it; the row previews as you type.' }}
+            </span>
+            <button
+              class="live-editor-done"
+              :disabled="useGraphical && graphicalIncomplete"
+              :title="useGraphical && graphicalIncomplete ? 'Fill the empty slot first' : 'Apply the edit'"
+              @click="closeEditor"
+            >Done</button>
+          </div>
         </template>
-
-        <CalcpadMathPalette @pick="applyPalette" />
-
-        <div class="live-editor-actions">
-          <span class="live-editor-hint">
-            {{ useGraphical
-              ? 'Type maths directly; the row previews as you go.'
-              : 'Click a symbol to insert it; the row previews as you type.' }}
-          </span>
-          <button
-            class="live-editor-done"
-            :disabled="useGraphical && graphicalIncomplete"
-            :title="useGraphical && graphicalIncomplete ? 'Fill the empty slot first' : 'Apply the edit'"
-            @click="closeEditor"
-          >Done</button>
-        </div>
       </div>
     </div>
   </div>
@@ -954,6 +1188,80 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+/* The insertion control: a menu you open where you are typing, with the full
+   grid kept behind "Browse symbols" for looking things up. */
+.live-editor-insert {
+  display: flex;
+  gap: 4px;
+}
+.live-editor-insert-btn {
+  flex: 1;
+  padding: 3px 8px;
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--vscode-button-secondaryForeground, #ccc);
+  font-size: var(--calcpad-font-size-xs, 11px);
+  cursor: pointer;
+}
+.live-editor-insert-btn:hover {
+  background: var(--vscode-button-secondaryHoverBackground, #45494e);
+  border-color: var(--vscode-focusBorder, #007acc);
+}
+.live-editor-insert-btn.active {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #fff);
+}
+.live-editor-insert-btn kbd {
+  margin-left: 2px;
+  padding: 0 3px;
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.4));
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 9px;
+}
+/* Anchors the menu, which opens over whatever follows. */
+.live-editor-insert-wrap {
+  position: relative;
+}
+
+/* The insertion control: a menu you open where you are typing, with the full
+   grid kept behind "Browse symbols" for looking things up. */
+.live-editor-insert {
+  display: flex;
+  gap: 4px;
+}
+.live-editor-insert-btn {
+  flex: 1;
+  padding: 3px 8px;
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--vscode-button-secondaryForeground, #ccc);
+  font-size: var(--calcpad-font-size-xs, 11px);
+  cursor: pointer;
+}
+.live-editor-insert-btn:hover {
+  background: var(--vscode-button-secondaryHoverBackground, #45494e);
+  border-color: var(--vscode-focusBorder, #007acc);
+}
+.live-editor-insert-btn.active {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #fff);
+}
+.live-editor-insert-btn kbd {
+  margin-left: 2px;
+  padding: 0 3px;
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.4));
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 9px;
+}
+/* Anchors the menu, which opens over whatever follows. */
+.live-editor-insert-wrap {
+  position: relative;
 }
 .live-editor-mode {
   display: inline-flex;

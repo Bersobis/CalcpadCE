@@ -63,6 +63,33 @@ describe('calcpad → MathML', () => {
         expect(markup).toContain('<mo>|</mo><mtext>kN/m^2</mtext>');
     });
 
+    it('maps a vector literal to a one-row table', () => {
+        const markup = mathml('[1; 2; 3]');
+        expect(markup).toContain('<mtable>');
+        expect(markup.match(/<mtr>/g)).toHaveLength(1);
+        expect(markup.match(/<mtd>/g)).toHaveLength(3);
+    });
+
+    it('maps a matrix literal to a row per `|`', () => {
+        const markup = mathml('M = [1; 2|3; 4]');
+        expect(markup.match(/<mtr>/g)).toHaveLength(2);
+        expect(markup.match(/<mtd>/g)).toHaveLength(4);
+    });
+
+    it('reads `|` as the row divisor inside brackets and the unit target outside', () => {
+        // The inner `|` divides rows; the outer one is the conversion target.
+        const markup = mathml('[1; 2|3; 4]|kN');
+        expect(markup.match(/<mtr>/g)).toHaveLength(2);
+        expect(markup).toContain('<mo>|</mo><mtext>kN</mtext>');
+    });
+
+    it('gives every cell its own slot', () => {
+        // `mtd` wraps an `mrow`, so an unfilled cell is an empty slot the caret
+        // can enter rather than a hole in the table.
+        expect(mathml('[a; b]')).toContain('<mtd><mrow><mi>a</mi></mrow></mtd>');
+        expect(mathml('[; ]')).toContain('<mtd><mrow></mrow></mtd>');
+    });
+
     it('takes the numerator of `a*b/c` as the whole left product', () => {
         // `*` and `/` bind equally and associate left, so this is `(a*b)/c`.
         const markup = mathml('a*b/c');
@@ -70,7 +97,7 @@ describe('calcpad → MathML', () => {
     });
 
     it('declines constructs it does not model', () => {
-        for (const source of ["'a comment", 'M = [1; 2|3; 4]', '#deg', '<b>bold</b>', 'x = 1, y = 2']) {
+        for (const source of ["'a comment", '#deg', '<b>bold</b>', 'x = 1, y = 2']) {
             expect(calcpadLineToMathMl(source).root, source).toBeNull();
         }
     });
@@ -97,6 +124,9 @@ describe('MathML → calcpad', () => {
         'q = -a^2',
         'r = abs(x)',
         't = a/b/c',
+        '[1; 2; 3]',
+        'M = [1; 2|3; 4]',
+        '[a; b|c; d]|kN',
     ])('round-trips %s', source => {
         expect(roundTrip(source)).toBe(source);
     });
@@ -146,7 +176,7 @@ describe('checkGraphicallyEditable', () => {
     });
 
     it('declines lines the live display already edits another way', () => {
-        for (const source of ["'text", 'M = [1; 2|3; 4]', '#deg', '$Plot{x}', 'A_s = 84\'', '<b>x</b>']) {
+        for (const source of ["'text", '#deg', '$Plot{x}', 'A_s = 84\'', '<b>x</b>']) {
             const check = checkGraphicallyEditable(source);
             expect(check.ok, source).toBe(false);
             expect(check.reason).toBeTruthy();
