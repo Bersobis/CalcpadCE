@@ -118,6 +118,10 @@ export abstract class BaseMessageBridge {
     protected settings: CalcpadSettings;
     protected _onInsertText: ((text: string) => void) | null = null;
     protected _onGoToLine: ((line: number) => boolean) | null = null;
+    /** Replace one zero-based line of the active document. Set by the host, which owns the editor. */
+    protected _onReplaceLine: ((line: number, text: string) => void) | null = null;
+    /** Whether a Live math pane is on screen. Updates are only pushed while one is. */
+    private liveMathActive = false;
     protected quickPick: QuickPickFn | null = null;
     private _uiOverridesProvider: (() => Record<string, string> | undefined) | null = null;
     private _uiControlsProvider: (() => UiControl[] | null) | null = null;
@@ -166,6 +170,15 @@ export abstract class BaseMessageBridge {
      */
     set onGoToLine(handler: (line: number) => boolean) {
         this._onGoToLine = handler;
+    }
+
+    /**
+     * Host hook for the Live math tab's write-back. The tab renders the worksheet and writes
+     * one line at a time, so the edit lands in the host's own document — and its undo stack —
+     * rather than in a parallel copy.
+     */
+    set onReplaceLine(handler: (line: number, text: string) => void) {
+        this._onReplaceLine = handler;
     }
 
     /** Host injects a modal list picker used by the image-storage prompt. */
@@ -281,6 +294,17 @@ export abstract class BaseMessageBridge {
                 break;
             case 'getVariables':
                 this.handleGetVariables();
+                break;
+            case 'getLiveMathDocument':
+                this.postToVue({ type: 'liveMathDocument', text: this.getActiveEditorContent() });
+                break;
+            case 'applyLiveMathLine':
+                if (this._onReplaceLine && typeof message.line === 'number' && typeof message.text === 'string') {
+                    this._onReplaceLine(message.line, message.text);
+                }
+                break;
+            case 'setLiveMathActive':
+                this.liveMathActive = message.active === true;
                 break;
             case 'insertText':
                 if (this._onInsertText) this._onInsertText(message.text);
@@ -497,6 +521,16 @@ export abstract class BaseMessageBridge {
 
     protected postToVue(message: unknown): void {
         window.dispatchEvent(new MessageEvent('message', { data: message }));
+    }
+
+    /**
+     * Push the document to the Live math panel. A no-op unless the panel is open, so an editor
+     * that is not being mirrored costs nothing. The panel ignores the push while it holds an
+     * uncommitted edit, so this cannot overwrite work in progress.
+     */
+    pushLiveMathDocument(): void {
+        if (!this.liveMathActive) return;
+        this.postToVue({ type: 'liveMathDocument', text: this.getActiveEditorContent() });
     }
 
     protected getActiveEditorContent(): string {
