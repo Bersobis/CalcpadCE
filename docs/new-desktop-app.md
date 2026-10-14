@@ -11,13 +11,19 @@ See [Selecting a CalcpadCE Deployment](new-selecting-calcpadce-deployment.md) to
 The app ships as a per-platform download:
 
 | Platform | Format |
-|----------|--------|
-| Windows | Portable `.zip` build (no install for beta) |
+| -------- | ------ |
+| Windows | Setup `.exe` or `.msi` installer |
+| Windows | Portable `.zip` build |
 | Linux | Debian `.deb` |
 | Linux | Fedora `.rpm` |
 | Linux | Arch (compressed package with PKGBUILD) |
 
-The calculation engine and its dependencies are bundled inside the app — you do **not** need .NET installed separately.
+The Windows setup installer downloads and installs the required .NET runtimes if they are missing, so installation may require an internet connection.
+You can install for the current user or for everyone on the computer.
+The default is to install only for the current user.
+Administrator approval is requested only for a systemwide installation.
+Missing runtimes follow the selected installation scope.
+The MSI installer requires the .NET and ASP.NET Core runtimes to be installed separately.
 The Windows Portable build includes what it needs to run.
 The Linux packages expect WebKitGTK to already be present on the system and may require installing a few other common dependencies.
 
@@ -46,7 +52,7 @@ On Linux, the app will tell you which package to install if none is found — se
 The app uses tabs so you can keep several `.cpd` documents open at once.
 
 | Action | Shortcut |
-|--------|----------|
+| ------ | -------- |
 | New tab | **Ctrl+T** or **Ctrl+N**, or the **`+`** button on the tab strip |
 | Open a file | **Ctrl+O**, or **File → Open…**, or drag a file onto the window |
 | Close tab | **Ctrl+W**, the **✕** on the tab, or middle-click the tab |
@@ -168,7 +174,7 @@ If these do not work and the server shows "Disconnected" in the bottom-right cor
 ## Troubleshooting
 
 | Symptom | Fix |
-|---------|-----|
+| ------- | --- |
 | Preview blank or not updating | **Server → Refresh**, then **Server → Restart Server** if needed. Check **Server → Show Server Log** to see messages from the calculation engine. Click **Open Log Folder** in the **Settings** tab to submit logs showing an error as a Github Issue. |
 | PDF export fails | Install a Chromium browser. On Linux the app names the package to install — see [Exports → Troubleshooting](new-exports.md#troubleshooting). |
 | Unsaved work after a crash | The app writes backup copies of unsaved files; reopen them from the Files tab. |
