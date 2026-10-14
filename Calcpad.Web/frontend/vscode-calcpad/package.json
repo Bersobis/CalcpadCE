@@ -886,7 +886,7 @@
     "@vitejs/plugin-vue": "^6.0.4",
     "@vscode/vsce": "^3.7.1",
     "@vue/compiler-sfc": "^3.5.21",
-    "concurrently": "^9.2.1",
+    "concurrently": "^9.2.5",
     "rollup": "^4.53.3",
     "typescript": "^5.9.2",
     "vite": "^7.3.1",
