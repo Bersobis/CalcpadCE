@@ -2,6 +2,7 @@ import { CalcpadApiClient } from '../../api/client';
 import { CalcpadSnippetService } from '../snippets';
 import { CalcpadDefinitionsService } from '../definitions';
 import { parseHeadings } from '../headings';
+import { buildLiveDocument } from '../live-document';
 import { serializeMetadataComment, serializeSettingsDirective, computeMetadataBlock, pdfSettingsFromDocument, hasMetadataContent } from '../../text/metadata-comment';
 import type { MetadataCommentData, MetadataCommentBlock, MetadataLayout, SettingsValues } from '../../text/metadata-comment';
 import { buildSourceDefinitionResolver } from '../../text/source-definitions';
@@ -118,6 +119,8 @@ export abstract class BaseMessageBridge {
     protected settings: CalcpadSettings;
     protected _onInsertText: ((text: string) => void) | null = null;
     protected _onGoToLine: ((line: number) => boolean) | null = null;
+    /** Host hook for the live editor writing one source line back into the document. */
+    protected _onLiveEditLine: ((line: number, text: string) => boolean | void) | null = null;
     protected quickPick: QuickPickFn | null = null;
     private _uiOverridesProvider: (() => Record<string, string> | undefined) | null = null;
     private _uiControlsProvider: (() => UiControl[] | null) | null = null;
@@ -166,6 +169,21 @@ export abstract class BaseMessageBridge {
      */
     set onGoToLine(handler: (line: number) => boolean) {
         this._onGoToLine = handler;
+    }
+
+    /**
+     * Host hook for the live editor, which edits one source line at a time. Only the host
+     * can reach the editor holding the document — Monaco's model in the web app, the text
+     * editor in VS Code — so the write lands there and the host re-renders behind it.
+     * Returning false reports the write as failed without changing the document.
+     */
+    set onLiveEditLine(handler: (line: number, text: string) => boolean | void) {
+        this._onLiveEditLine = handler;
+    }
+
+    /** Reports the outcome of a live line write back to the panel. */
+    protected postLiveLineWritten(line: number, ok: boolean, error?: string): void {
+        this.postToVue({ type: 'liveLineWritten', line, ok, error });
     }
 
     /** Host injects a modal list picker used by the image-storage prompt. */
@@ -253,6 +271,34 @@ export abstract class BaseMessageBridge {
         const content = this.getActiveEditorContent();
         const headings = parseHeadings(content);
         this.postToVue({ type: 'updateHeadings', headings });
+    }
+
+    /** Pushes a fresh live document to the panel — after a live line write, say. */
+    refreshLiveDocument(): void {
+        void this.handleGetLiveDocument();
+    }
+
+    /**
+     * Answers the live editor's request for the document it is editing: the source lines,
+     * which of them can be edited in place, and the rendered form of each.
+     *
+     * The render is the preview variant with its line anchors kept, since those anchors
+     * are what ties a rendered line back to the source line it came from. Writes stay off:
+     * a render made to describe the document must not also run its `#write` directives.
+     */
+    private async handleGetLiveDocument(): Promise<void> {
+        const content = this.getActiveEditorContent();
+        if (content.trim().length === 0) {
+            this.postToVue({ type: 'liveDocument', ...buildLiveDocument(content, null) });
+            return;
+        }
+        const { sourceFilePath } = await this.buildFileContext(content);
+        const result = await this.apiClient.convert(
+            content, buildApiSettings(this.settings), 'html', false, sourceFilePath,
+            undefined, this.uiOptionsFor('preview'), true, { write: false }
+        );
+        const html = result != null && !(result instanceof ArrayBuffer) ? result.html : null;
+        this.postToVue({ type: 'liveDocument', ...buildLiveDocument(content, html) });
     }
 
     /** Return the (coerced) stored color-theme label. */
@@ -385,6 +431,16 @@ export abstract class BaseMessageBridge {
             case 'getHeadings':
                 this.refreshHeadings();
                 break;
+            case 'getLiveDocument':
+                void this.handleGetLiveDocument();
+                break;
+            case 'liveEditLine': {
+                const line = Number(message.line);
+                const text = String(message.text ?? '');
+                const ok = this._onLiveEditLine?.(line, text) !== false;
+                this.postLiveLineWritten(line, ok);
+                break;
+            }
             case 'getMetadataContext':
                 this.handleGetMetadataContext();
                 break;

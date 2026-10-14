@@ -1085,6 +1085,7 @@ async function renderForExport(
     sourceFileUri: vscode.Uri,
     variant: ExportVariant,
     forceWrite = false,
+    includeLineAnchors = forceWrite,
 ): Promise<{ html: string; errors: CalcpadError[] }> {
     const settingsManager = CalcpadSettingsManager.getInstance(extensionContext);
     const apiBaseUrl = await resolveServerUrl();
@@ -1110,7 +1111,7 @@ async function renderForExport(
             forPrint: render.forPrint,
             enableUi: render.enableUi,
             uiOverrides: render.useOverrides ? uiOverridesFor(sourceFileUri.toString(), documentContent) : undefined,
-            includeLineAnchors: forceWrite,
+            includeLineAnchors,
             write: forceWrite || settingsManager.mayWrite(render.forPrint, render.enableUi),
         }),
         signal: combineSignals(AbortSignal.timeout(30000), signal),
@@ -2185,6 +2186,22 @@ export async function activate(context: vscode.ExtensionContext) {
     vueUiProvider.onUiOverridesEdited = (documentUri, overrides) => {
         uiOverrides.replace(documentUri, overrides);
         uiOverridesDirty.delete(documentUri);
+    };
+    // The live editor reads what the renderer made of each line, which means the variant
+    // that keeps its source-line anchors — the preview one, since that is the layout the
+    // panel is read beside. Writes stay off: a render made to describe the document must
+    // not also run its #write directives.
+    vueUiProvider.renderSourceForLive = async () => {
+        const editor = vscode.window.activeTextEditor ?? previewSourceEditor;
+        if (!editor) return null;
+        try {
+            const { html } = await renderForExport(
+                editor.document.getText(), editor.document.uri, 'preview', false, true);
+            return html;
+        } catch (e) {
+            outputChannel.appendLine('[Live editor] Render failed: ' + e, 'warning');
+            return null;
+        }
     };
     const vueUiProviderDisposable = vscode.window.registerWebviewViewProvider(
         CalcpadVueUIProvider.viewType,

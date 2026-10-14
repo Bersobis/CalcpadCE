@@ -190,6 +190,19 @@ export type { ExportRequest, VariantRender } from './services/message-bridge/bas
 export type { TocHeading } from './services/headings';
 export { parseHeadings } from './services/headings';
 
+// --- Live editor --------------------------------------------------------------
+export type { LiveLine, LiveDocument } from './services/live-document';
+export {
+    buildLiveDocument,
+    splitSourceLines,
+    isLiveEditableLine,
+    extractRenderedLines,
+    parseMatrixLiteral,
+    matrixLiteralRange,
+    buildMatrixLiteral,
+} from './services/live-document';
+export { sanitizeRenderedHtml } from './services/html-sanitize';
+
 export {
     decodeExitCode,
     formatCrashReportPayload,

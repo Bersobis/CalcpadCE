@@ -30,6 +30,16 @@
     --vscode-font-size: 13px;
     --vscode-editor-font-family: 'JuliaMono', 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
 
+    /* Live-editor keypad: how much of the window's right edge it must leave free for the
+       Results pane. The shell republishes it when the pane opens, closes or resizes;
+       hosts with no Results pane (the VS Code sidebar) leave it at zero. */
+    --live-keyboard-inset: 0px;
+
+    /* Live-editor keypad: the height it covers at the bottom of the window, which the
+       sidebar's live-editor tab spends as padding so the matrix grid stays above it.
+       The keypad republishes it while it is open; zero when it is not. */
+    --live-keyboard-h: 0px;
+
     /* Core colors */
     --vscode-foreground: #d4d4d4;
     --vscode-descriptionForeground: #858585;
@@ -68,6 +78,7 @@
     --vscode-list-hoverBackground: #2a2d2e;
     --vscode-list-inactiveSelectionBackground: #37373d;
     --vscode-list-activeSelectionBackground: #094771;
+    --vscode-list-activeSelectionForeground: #ffffff;
 
     /* Sidebar */
     --vscode-sideBar-background: #252526;
@@ -196,6 +207,7 @@
     --vscode-list-hoverBackground: #e8e8e8;
     --vscode-list-inactiveSelectionBackground: #e4e6f1;
     --vscode-list-activeSelectionBackground: #0060c0;
+    --vscode-list-activeSelectionForeground: #ffffff;
 
     --vscode-sideBar-background: #f3f3f3;
     --vscode-sideBarSectionHeader-foreground: #6f6f6f;

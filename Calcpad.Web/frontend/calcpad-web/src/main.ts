@@ -124,12 +124,14 @@ function getEmptyPreviewHtml(theme: 'light' | 'dark'): string {
 }
 
 function getSampleContent(): string {
+    // The source form, not the typeset one: Calcpad reads `sqrt` and `^`, and the render
+    // is what turns them into the radical and the superscript.
     return `'CalcpadCE Web Editor
 'Enter your calculations below
 
 a = 3
 b = 4
-c = √(a² + b²)
+c = sqrt(a^2 + b^2)
 `;
 }
 
@@ -1273,6 +1275,32 @@ async function bootstrap(): Promise<void> {
             }]);
         }
         editor.focus();
+    };
+
+    /**
+     * The live editor rewrites one source line at a time. The whole line's range is
+     * replaced so each write is a single undo step, and the preview is re-rendered behind
+     * it when auto-run is on — the same debounced content-change path a keystroke in the
+     * editor takes, reached by editing the model rather than going around it. The panel's
+     * own view of the document is refreshed afterwards, so the rendered form beside each
+     * line number follows the write.
+     */
+    activeBridge.onLiveEditLine = (line: number, text: string) => {
+        const group = activeGroup;
+        const model = group?.editor.getModel();
+        if (!model) return false;
+        const lineNumber = Math.min(Math.max(1, Math.trunc(line) || 1), model.getLineCount());
+        const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
+        group.editor.executeEdits('calcpad-live-edit', [{
+            range,
+            text,
+            forceMoveMarkers: true,
+        }]);
+        if (appInstance.isPreviewVisible() && editorBridge.getExtraSetting('autoRun') !== 'false') {
+            void refreshPreviewFor(group);
+        }
+        activeBridge.refreshLiveDocument();
+        return true;
     };
 
     // Wire Output panel: intercept console methods to pipe into the panel.

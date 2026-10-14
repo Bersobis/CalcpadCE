@@ -91,6 +91,9 @@
         @insert-text="handleInsertText"
         @insert-image="handleInsertImage"
       />
+      <CalcpadLiveEditorTab
+        v-else-if="pane.activeTab === 'live'"
+      />
       <CalcpadTocTab
         v-else-if="pane.activeTab === 'toc'"
         :headings="tocHeadings"
@@ -208,6 +211,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CalcpadInsertTab from './CalcpadInsertTab.vue'
+import CalcpadLiveEditorTab from './CalcpadLiveEditorTab.vue'
 import CalcpadTocTab from './CalcpadTocTab.vue'
 import CalcpadSettingsTab from './CalcpadSettingsTab.vue'
 import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
@@ -316,6 +320,7 @@ const uiControls = ref<UiControl[] | null>(null)
 const tabs = computed<Tab[]>(() => {
   const base: Tab[] = [
     { id: 'insert', label: 'Insert' },
+    { id: 'live', label: 'Live editor' },
     { id: 'toc', label: 'TOC' },
     { id: 'settings', label: 'Settings' },
     { id: 'variables', label: 'Variables' },
@@ -337,7 +342,7 @@ const tabs = computed<Tab[]>(() => {
  * on source have nothing to act on there, so their content is shown inert: TOC, Export
  * and Settings still work, since a filled-in worksheet is still navigated and exported.
  */
-const SOURCE_TABS = ['insert', 'variables', 'formatting', 'errors', 'metadata']
+const SOURCE_TABS = ['insert', 'live', 'variables', 'formatting', 'errors', 'metadata']
 const INPUT_MODE_NOTE = 'Unavailable in input mode — this acts on the document source, which the input form does not edit.'
 const inputMode = ref(false)
 const tabUnavailable = (tabId: string) => inputMode.value && SOURCE_TABS.includes(tabId)

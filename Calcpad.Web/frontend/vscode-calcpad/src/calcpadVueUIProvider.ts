@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { parseHeadings, DEFAULT_PDF_SETTINGS, extractPlotsFromHtml, buildZip, serializeMetadataComment, serializeSettingsDirective, hasMetadataContent, computeMetadataBlock, buildSourceDefinitionResolver, findUiDirectiveBlock, serializeUiDirective, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, coerceWriteMode, coerceLogLevel, stripCpdSnippetWrapper } from 'calcpad-frontend';
+import { parseHeadings, DEFAULT_PDF_SETTINGS, extractPlotsFromHtml, buildZip, serializeMetadataComment, serializeSettingsDirective, hasMetadataContent, computeMetadataBlock, buildSourceDefinitionResolver, findUiDirectiveBlock, serializeUiDirective, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, coerceWriteMode, coerceLogLevel, stripCpdSnippetWrapper, buildLiveDocument } from 'calcpad-frontend';
 import type { ParseMode, CalcpadError, ExtractedPlot, MetadataCommentBlock, MetadataCommentData, MetadataLayout, SettingsValues, UiDirectiveData, UiControl } from 'calcpad-frontend';
 import { CalcpadSettingsManager } from './calcpadSettings';
 import { CalcpadInsertManager } from './calcpadInsertManager';
@@ -37,6 +37,13 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
 
     /** Parse mode at a document line. Set by the extension, so the server cache is used first. */
     public getParseMode?: (document: vscode.TextDocument, line: number) => ParseMode;
+
+    /**
+     * Renders the active document's source to HTML for the live editor, or null when it
+     * cannot be rendered. The extension owns the api client and the settings, so the panel
+     * asks rather than renders — the same arrangement as `resolveUiControls`.
+     */
+    public renderSourceForLive?: () => Promise<string | null>;
 
     constructor(
         private readonly _extensionUri: vscode.Uri,
@@ -402,6 +409,14 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
                     }
                     break;
 
+                case 'getLiveDocument':
+                    await this._handleGetLiveDocument();
+                    break;
+
+                case 'liveEditLine':
+                    await this._handleLiveEditLine(data);
+                    break;
+
                 case 'debug':
                     this._outputChannel.appendLine(`[Vue Debug] ${data.message}`, 'verbose');
                     break;
@@ -654,6 +669,57 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
 
     private _postInputMode() {
         this._view?.webview.postMessage({ type: 'inputModeChanged', active: this._sourceless });
+    }
+
+    /**
+     * Answers the live editor's request for the document it is editing: the source lines,
+     * which of them can be edited in place, and the rendered form of each. The render comes
+     * from the extension so the document's own settings and source path apply.
+     */
+    private async _handleGetLiveDocument(): Promise<void> {
+        if (!this._view) return;
+        const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
+        const content = editor?.document.getText() ?? '';
+        let html: string | null = null;
+        if (content.trim().length > 0) {
+            html = await this.renderSourceForLive?.() ?? null;
+        }
+        this._view.webview.postMessage({
+            type: 'liveDocument',
+            ...buildLiveDocument(content, html),
+        });
+    }
+
+    /**
+     * Writes one source line back into the document, the whole line's range at once so the
+     * edit is a single undo step. The document's own change listener re-renders the preview
+     * behind it, and the panel is told how the write went.
+     */
+    private async _handleLiveEditLine(data: { line: number; text: string }): Promise<void> {
+        if (!this._view) return;
+        const line = Number(data?.line);
+        const text = String(data?.text ?? '');
+        if (!Number.isFinite(line)) return;
+        const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
+        if (!editor) {
+            this._view.webview.postMessage({ type: 'liveLineWritten', line, ok: false, error: 'There is no document open to write to.' });
+            return;
+        }
+        const document = editor.document;
+        const lineIndex = Math.min(Math.max(0, Math.trunc(line) - 1), document.lineCount - 1);
+        const range = new vscode.Range(lineIndex, 0, lineIndex, document.lineAt(lineIndex).text.length);
+        try {
+            await editor.edit(editBuilder => {
+                editBuilder.replace(range, text);
+            });
+        } catch (error) {
+            this._view.webview.postMessage({ type: 'liveLineWritten', line, ok: false, error: String(error) });
+            return;
+        }
+        this._view.webview.postMessage({ type: 'liveLineWritten', line, ok: true });
+        // A render that keeps its anchors costs a server round-trip, so it waits for the
+        // document's own preview re-render rather than racing it.
+        setTimeout(() => void this._handleGetLiveDocument(), 900);
     }
 
     /**
