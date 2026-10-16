@@ -471,6 +471,34 @@
   </span>
  </p>
  <p>
+  <span class="eq">
+   <var>t</var>
+   <sub>3</sub>
+   =
+   <b>sum</b>
+   (
+   <span class="b0">[</span>
+   1; 2; 3
+   <span class="b0">|</span>
+   4; 5; 6
+   <span class="b0">]</span>
+   )  = 21
+  </span>
+ </p>
+ <p>
+  <span class="eq">
+   <var>t</var>
+   <sub>4</sub>
+   =
+   <b>sum</b>
+   (
+   <b>mfill</b>
+   (
+   <b>matrix</b>
+   ( 4; 5 ) ; 4 )  )  = 80
+  </span>
+ </p>
+ <p>
  </p>
  <h3>2.5 A macro default feeding a function default</h3>
  <p>
