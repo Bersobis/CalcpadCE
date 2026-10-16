@@ -1,4 +1,4 @@
-﻿using Calcpad.Server.Services;
+using Calcpad.Server.Services;
 using Calcpad.Server.Models.Pdf;
 using Microsoft.AspNetCore.Mvc;
 using Calcpad.Core;

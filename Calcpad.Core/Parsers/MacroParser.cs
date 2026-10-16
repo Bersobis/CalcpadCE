@@ -13,7 +13,7 @@ namespace Calcpad.Core
         {
             private readonly string _contents;
             private readonly string[] _parameters;
-            // Parallel to _parameters: null = required, otherwise the default text
+            // Null entry = required
             private readonly string[] _defaults;
             private readonly int[] _order;
 
@@ -29,8 +29,9 @@ namespace Calcpad.Core
                 else
                 {
                     _parameters = [.. parameters];
-                    _defaults = defaults is null ? new string[parameters.Count] : [.. defaults];
+                    _defaults = [.. defaults];
                     _order = Sort(_parameters);
+                    HasDefaults = Array.Exists(_defaults, d => d is not null);
                 }
             }
 
@@ -72,8 +73,7 @@ namespace Calcpad.Core
                     throw Exceptions.InvalidNumberOfArguments();
 
                 var result = new string[ParameterCount];
-                for (int i = 0, count = positional.Count; i < count; ++i)
-                    result[i] = positional[i];
+                positional.CopyTo(result);
 
                 foreach (var kv in keywords)
                 {
@@ -85,16 +85,7 @@ namespace Calcpad.Core
 
                     result[j] = kv.Value;
                 }
-                for (int i = 0; i < result.Length; ++i)
-                {
-                    if (result[i] is null)
-                    {
-                        if (_defaults[i] is null)
-                            throw Exceptions.InvalidNumberOfArguments();
-
-                        result[i] = _defaults[i];
-                    }
-                }
+                MathParser.FillDefaults(result, _defaults);
                 return result;
             }
 
@@ -117,18 +108,7 @@ namespace Calcpad.Core
             }
             internal bool IsEmpty => _contents is null;
             internal int ParameterCount => _parameters?.Length ?? 0;
-            internal bool HasDefaults
-            {
-                get
-                {
-                    if (_defaults is not null)
-                        foreach (var d in _defaults)
-                            if (d is not null)
-                                return true;
-
-                    return false;
-                }
-            }
+            internal bool HasDefaults { get; }
         }
 
         private enum Keywords
@@ -431,76 +411,46 @@ namespace Calcpad.Core
                                 c = EatSpace(lineContent, ref i);
                                 continue;
                             }
+                            string defaultValue = null;
                             if (c == '$')
                             {
                                 textSpan.Expand();
-                                var parameterName = textSpan.ToString();
-                                string defaultValue = null;
                                 c = EatSpace(lineContent, ref i);
                                 if (c == '=')
                                 {
-                                    seenOptional = true;
-                                    c = EatSpace(lineContent, ref i);
-                                    textSpan.Reset(i);
-                                    var depth = 0;
-                                    while (i < len)
-                                    {
-                                        c = lineContent[i];
-                                        if (c == '(' || c == '[' || c == '{')
-                                            ++depth;
-                                        else if (c == ']' || c == '}')
-                                            --depth;
-                                        else if (c == ')')
-                                        {
-                                            if (depth == 0)
-                                                break;
+                                    EatSpace(lineContent, ref i);
+                                    var end = MathParser.IndexOfTopLevel(lineContent[i..], ';');
+                                    if (end < 0)
+                                        end = len - i;
 
-                                            --depth;
-                                        }
-                                        else if (c == ';' && depth == 0)
-                                            break;
-
-                                        textSpan.Expand();
-                                        if (++i >= len)
-                                            break;
-
-                                        c = lineContent[i];
-                                    }
-                                    defaultValue = textSpan.Cut().Trim().ToString();
+                                    defaultValue = lineContent.Slice(i, end).Trim().ToString();
+                                    i += end;
+                                    c = i < len ? lineContent[i] : '\0';
                                 }
-                                else if (seenOptional)
-                                    throw Exceptions.RequiredParameterAfterOptional(parameterName);
-
-                                macroParameters.Add(parameterName);
-                                macroDefaults.Add(defaultValue);
-                                if (c == ')')
-                                    break;
-
-                                c = EatSpace(lineContent, ref i);
-                                textSpan.Reset(i);
-                                continue;
                             }
-                            if (c == ';' || c == ')')
+                            else if (c != ';' && c != ')')
                             {
-                                var parameterName = textSpan.ToString();
-                                if (seenOptional)
-                                    throw Exceptions.RequiredParameterAfterOptional(parameterName);
+                                if (Validator.IsMacroLetter(c, textSpan.Length))
+                                    textSpan.Expand();
+                                else if (c != '\n')
+                                    SymbolError(lineContent, c);
 
-                                macroParameters.Add(parameterName);
-                                macroDefaults.Add(null);
-                                if (c == ')')
-                                    break;
-
-                                c = EatSpace(lineContent, ref i);
-                                textSpan.Reset(i);
+                                c = lineContent[++i];
                                 continue;
                             }
-                            if (Validator.IsMacroLetter(c, textSpan.Length))
-                                textSpan.Expand();
-                            else if (c != '\n')
-                                SymbolError(lineContent, c);
+                            var parameterName = textSpan.ToString();
+                            if (defaultValue is not null)
+                                seenOptional = true;
+                            else if (seenOptional)
+                                throw Exceptions.RequiredParameterAfterOptional(parameterName);
 
-                            c = lineContent[++i];
+                            macroParameters.Add(parameterName);
+                            macroDefaults.Add(defaultValue);
+                            if (c == ')')
+                                break;
+
+                            c = EatSpace(lineContent, ref i);
+                            textSpan.Reset(i);
                         }
                         c = EatSpace(lineContent, ref i);
                     }
@@ -755,8 +705,7 @@ namespace Calcpad.Core
             finally { currentlyExpanding.Remove(macroKey); }
         }
 
-        // Matches "name$ = value" where name is not an existing macro, so that arguments
-        // that expand to an assignment keep working.
+        // Existing macro names stay positional so "a$ = 1" can still expand to an assignment
         private bool TryParseKeywordArgument(ReadOnlySpan<char> arg, in Macro macro, out ReadOnlySpan<char> parameterName, out ReadOnlySpan<char> value)
         {
             var i = 0;

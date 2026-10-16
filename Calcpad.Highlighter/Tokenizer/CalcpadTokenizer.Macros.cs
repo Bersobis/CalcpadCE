@@ -835,7 +835,7 @@ namespace Calcpad.Highlighter.Tokenizer
                     _macroBodies[_pendingMacroDefName] = afterEquals;
                     if (!_macroParameterOrder.ContainsKey(_pendingMacroDefName))
                     {
-                        // Read from the line so the order is the declared one.
+                        // Declared order
                         _macroParameterOrder[_pendingMacroDefName] = ExtractMacroParams(_state.Text.Span);
                     }
                     _pendingMacroDefName = null;
@@ -865,58 +865,25 @@ namespace Calcpad.Highlighter.Tokenizer
             ExtractMacroParamsWithDefaults(lineSpan).Names;
 
         /// <summary>
-        /// Extracts macro parameter names and default values from a #def line.
-        /// Defaults[i] is null for a required parameter.
-        /// Handles both inline (#def macro$(x$; y$ = 1) = ...) and multiline forms.
+        /// Extracts macro parameter names and defaults from a #def line (inline or multiline form).
         /// </summary>
         private static (List<string> Names, List<string> Defaults) ExtractMacroParamsWithDefaults(ReadOnlySpan<char> lineSpan)
         {
-            var names = new List<string>();
-            var defaults = new List<string>();
-
             var dollarIndex = lineSpan.IndexOf('$');
-            if (dollarIndex < 0) return (names, defaults);
+            if (dollarIndex < 0) return ([], null);
 
             // Check that '(' immediately follows '$' (with optional whitespace).
             // If '=' appears before '(', the '(' is part of the body, not params.
             // e.g., #def emptyV$ = find(vector(1); 1; 1) — no params
             var afterDollar = lineSpan[(dollarIndex + 1)..].TrimStart();
             if (afterDollar.IsEmpty || afterDollar[0] != '(')
-                return (names, defaults);
+                return ([], null);
 
             var openParen = lineSpan.Length - afterDollar.Length;  // absolute index of '('
             var closeParen = ParsingHelpers.FindMatchingClose(lineSpan, openParen, '(', ')');
-            if (closeParen < 0) return (names, defaults);
+            if (closeParen < 0) return ([], null);
 
-            var paramsSpan = lineSpan.Slice(openParen + 1, closeParen - openParen - 1);
-
-            // Split by ';' at paren depth 0
-            int segStart = 0;
-            int parenDepth = 0;
-
-            void ProcessSegment(ReadOnlySpan<char> seg)
-            {
-                seg = seg.Trim();
-                if (seg.IsEmpty) return;
-                var hasDefault = ParsingHelpers.SplitParameterDefault(seg, out var name, out var defaultValue);
-                names.Add(name.ToString());
-                defaults.Add(hasDefault ? defaultValue.ToString() : null);
-            }
-
-            for (int i = 0; i < paramsSpan.Length; i++)
-            {
-                var c = paramsSpan[i];
-                if (c == '(' || c == '[' || c == '{') parenDepth++;
-                else if (c == ')' || c == ']' || c == '}') parenDepth--;
-                else if (c == ';' && parenDepth == 0)
-                {
-                    ProcessSegment(paramsSpan[segStart..i]);
-                    segStart = i + 1;
-                }
-            }
-            ProcessSegment(paramsSpan[segStart..]);
-
-            return (names, defaults);
+            return ParsingHelpers.ParseParamList(lineSpan[(openParen + 1)..closeParen].ToString());
         }
 
         /// <summary>

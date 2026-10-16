@@ -163,8 +163,7 @@ namespace Calcpad.Highlighter.Tokenizer
                     }
                 }
 
-                // Only functions with optional parameters take keyword arguments - anywhere
-                // else '=' inside call parentheses is a comparison.
+                // Only functions with defaults take keyword arguments
                 if (!_state.IsFunctionDefinition &&
                     (t == TokenType.Variable || t == TokenType.Function) &&
                     _builder.Length > 0 &&
@@ -311,8 +310,7 @@ namespace Calcpad.Highlighter.Tokenizer
             if (_state.CommandCount > 0 || c == ';')
             {
                 Append(TokenType.Operator);
-                // Restore IsInFunctionParams after ';' inside definition parens so the next
-                // parameter name is still typed as a parameter after a default value.
+                // Next parameter after a default value
                 if (c == ';' && _state.BracketCount > 0 &&
                     (_state.IsFunctionDefinition || (_state.HasMacro && !_inMacroDefinition)))
                     _state.IsInFunctionParams = true;

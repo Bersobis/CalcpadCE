@@ -25,6 +25,13 @@ public class MacroKeywordArgumentTests
     }
 
     [Fact]
+    public void BracketedDefault_WithSemicolons()
+    {
+        var expanded = Expand("#def m$(a$; b$ = [1; 2]; c$ = {3; 4}) = a$|b$|c$\nm$(1)\n");
+        Assert.Contains("1|[1; 2]|{3; 4}", expanded);
+    }
+
+    [Fact]
     public void PositionalArgumentsOverrideDefaults()
     {
         var expanded = Expand("#def m$(a$; b$ = 10; c$ = 5) = a$|b$|c$\nm$(1; 2; 3)\n");

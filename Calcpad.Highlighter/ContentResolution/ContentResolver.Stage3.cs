@@ -26,23 +26,16 @@ namespace Calcpad.Highlighter.ContentResolution
             var macroExpansions = new Dictionary<int, MacroExpansionInfo>();
 
             // Build macro map from stage2 definitions (skip duplicates, use first definition)
-            var macros = new Dictionary<string, (List<string> Params, List<string> Defaults, List<string> Content)>(StringComparer.OrdinalIgnoreCase);
+            var macros = new Dictionary<string, MacroDefinition>(StringComparer.OrdinalIgnoreCase);
             foreach (var macroDef in stage2.MacroDefinitions)
-            {
-                if (!macros.ContainsKey(macroDef.Name))
-                {
-                    macros[macroDef.Name] = (macroDef.Params, macroDef.Defaults, macroDef.Content);
-                }
-            }
+                macros.TryAdd(macroDef.Name, macroDef);
 
             // Pre-sort macros by name length descending so longer names match first
             // (e.g. "string$" before "ng$" in "gstring$"). Done once here instead of
             // per ExpandMacros call.
-            var sortedMacros = macros
-                .OrderByDescending(m => m.Key.Length)
-                .Select(m => (Name: m.Key, m.Value.Params, m.Value.Defaults, m.Value.Content))
+            var sortedMacros = macros.Values
+                .OrderByDescending(m => m.Name.Length)
                 .ToList();
-            var macroNames = new HashSet<string>(macros.Keys, StringComparer.OrdinalIgnoreCase);
 
             // Process lines: skip macro definitions, expand macro calls
             bool inMultilineMacro = false;
@@ -80,7 +73,7 @@ namespace Calcpad.Highlighter.ContentResolution
                 // Regular line - expand macro calls, tracking which macros were expanded
                 var originalLine = line;
                 var expandedMacroNames = new List<string>();
-                var expandedLine = ExpandMacros(line, sortedMacros, macroNames, expandedMacroNames);
+                var expandedLine = ExpandMacros(line, sortedMacros, macros, expandedMacroNames);
                 var isFromMacroExpansion = expandedLine != originalLine;
 
                 // Handle multiline expansions (macro content can have multiple lines).
@@ -149,7 +142,7 @@ namespace Calcpad.Highlighter.ContentResolution
                 {
                     LineNumber = f.LineNumber,
                     ParamCount = funcParams.Count,
-                    RequiredParamCount = CountRequiredParams(funcParams, f.Defaults),
+                    RequiredParamCount = ParsingHelpers.CountRequiredParams(funcParams.Count, f.Defaults),
                     ParamNames = funcParams
                 };
             }
@@ -264,7 +257,7 @@ namespace Calcpad.Highlighter.ContentResolution
                 else
                 {
                     // Normal function - use the expression for return type inference
-                    info = typeTracker.RegisterFunction(func.Name, func.Params, func.Expression ?? "", func.LineNumber, 0, func.Source, func.IsConst, func.Defaults);
+                    info = typeTracker.RegisterFunction(func.Name, func.Params, func.Expression ?? "", func.LineNumber, 0, func.Source, func.IsConst);
                 }
                 // Copy metadata from definition comment
                 info.Description = func.Description;
@@ -284,11 +277,11 @@ namespace Calcpad.Highlighter.ContentResolution
                 VariableInfo info;
                 if (isInline)
                 {
-                    info = typeTracker.RegisterInlineMacro(macro.Name, macro.Params ?? new List<string>(), macro.Content[0], macro.LineNumber, 0, macro.Source, macro.Defaults);
+                    info = typeTracker.RegisterInlineMacro(macro.Name, macro.Params ?? new List<string>(), macro.Content[0], macro.LineNumber, 0, macro.Source);
                 }
                 else
                 {
-                    info = typeTracker.RegisterMultilineMacro(macro.Name, macro.Params ?? new List<string>(), macro.LineNumber, 0, macro.Source, macro.Defaults);
+                    info = typeTracker.RegisterMultilineMacro(macro.Name, macro.Params ?? new List<string>(), macro.LineNumber, 0, macro.Source);
                 }
                 // Copy metadata from definition comment
                 info.Description = macro.Description;
@@ -1002,7 +995,7 @@ namespace Calcpad.Highlighter.ContentResolution
         /// does — with macros "string$" and "ng$", "gstring$" expands "string$". Optionally tracks
         /// which macros were expanded for source mapping.
         /// </summary>
-        private string ExpandMacros(string line, List<(string Name, List<string> Params, List<string> Defaults, List<string> Content)> sortedMacros, HashSet<string> macroNames, List<string> expandedMacroNames = null, HashSet<string> currentlyExpanding = null)
+        private string ExpandMacros(string line, List<MacroDefinition> sortedMacros, Dictionary<string, MacroDefinition> macros, List<string> expandedMacroNames = null, HashSet<string> currentlyExpanding = null)
         {
             if (sortedMacros.Count == 0 || !line.AsSpan().Contains('$'))
                 return line;
@@ -1022,7 +1015,7 @@ namespace Calcpad.Highlighter.ContentResolution
 
                     // Try to find the longest matching macro name that ends at this position
                     // Compare StringBuilder chars directly to avoid textBuffer.ToString() allocation
-                    (string Name, List<string> Params, List<string> Defaults, List<string> Content)? matchedMacro = null;
+                    MacroDefinition matchedMacro = null;
                     int macroStartInBuffer = -1;
 
                     foreach (var entry in sortedMacros)
@@ -1041,9 +1034,9 @@ namespace Calcpad.Highlighter.ContentResolution
                         }
                     }
 
-                    if (matchedMacro.HasValue)
+                    if (matchedMacro != null)
                     {
-                        var macro = matchedMacro.Value;
+                        var macro = matchedMacro;
                         var macroName = macro.Name;
 
                         // Output text before the macro name
@@ -1090,8 +1083,7 @@ namespace Calcpad.Highlighter.ContentResolution
                             replacementEnd = i + 1;
                         }
 
-                        // Resolve positional and keyword arguments against macro params
-                        var resolvedArgs = ResolveMacroArgs(macro.Params, macro.Defaults, argList, macroNames);
+                        var resolvedArgs = ResolveMacroArgs(macro.Params, macro.Defaults, argList, macros);
                         if (resolvedArgs != null)
                         {
                             expandedMacroNames?.Add(macroName);
@@ -1127,7 +1119,7 @@ namespace Calcpad.Highlighter.ContentResolution
                             currentlyExpanding.Add(macroName);
                             try
                             {
-                                macroContent = ExpandMacros(macroContent, sortedMacros, macroNames, expandedMacroNames, currentlyExpanding);
+                                macroContent = ExpandMacros(macroContent, sortedMacros, macros, expandedMacroNames, currentlyExpanding);
                             }
                             finally
                             {
@@ -1180,18 +1172,16 @@ namespace Calcpad.Highlighter.ContentResolution
         }
 
         /// <summary>
-        /// Resolves positional arguments against macro parameters.
+        /// Resolves positional and keyword arguments against macro parameters.
         /// Returns a resolved argument array parallel to params, or null if the call is invalid.
         /// </summary>
-        private static List<string> ResolveMacroArgs(List<string> paramNames, List<string> defaults, List<string> argList, HashSet<string> macroNames)
+        private static List<string> ResolveMacroArgs(List<string> paramNames, List<string> defaults, List<string> argList, Dictionary<string, MacroDefinition> macros)
         {
             if (paramNames == null || paramNames.Count == 0)
                 return argList.Count == 0 ? new List<string>() : null;
 
-            var requiredCount = CountRequiredParams(paramNames, defaults);
-
             // Treat a single empty-string arg as "no args" — corresponds to macro$()
-            var effectiveArgs = (argList.Count == 1 && argList[0].Trim().Length == 0 && requiredCount < paramNames.Count)
+            var effectiveArgs = (argList.Count == 1 && argList[0].Trim().Length == 0 && defaults != null)
                 ? new List<string>()
                 : argList;
 
@@ -1200,18 +1190,22 @@ namespace Calcpad.Highlighter.ContentResolution
             var seenKeyword = false;
             foreach (var arg in effectiveArgs)
             {
-                var index = IndexOfKeywordParam(arg, paramNames);
+                var index = -1;
+                if (ParsingHelpers.TryParseKeywordArg(arg, out var name, out var value))
+                {
+                    index = paramNames.IndexOf(name);
+                    // Unknown names are left for the linter
+                    if (index < 0 && name.EndsWith('$') && !macros.ContainsKey(name))
+                        return null;
+                }
                 if (index >= 0)
                 {
-                    seenKeyword = true;
                     if (resolved[index] != null)
                         return null;
 
-                    ParsingHelpers.SplitParameterDefault(arg.AsSpan().Trim(), out _, out var value);
-                    resolved[index] = value.ToString();
+                    seenKeyword = true;
+                    resolved[index] = value;
                 }
-                else if (IsUnknownKeywordArg(arg, macroNames))
-                    return null; // unknown keyword name — leave the call for the linter to report
                 else
                 {
                     if (seenKeyword || positionalCount >= paramNames.Count)
@@ -1221,54 +1215,10 @@ namespace Calcpad.Highlighter.ContentResolution
                 }
             }
             for (var i = 0; i < resolved.Length; i++)
-            {
-                if (resolved[i] == null)
-                {
-                    if (defaults == null || i >= defaults.Count || defaults[i] == null)
-                        return null;
+                if ((resolved[i] ??= defaults?[i]) == null)
+                    return null;
 
-                    resolved[i] = defaults[i];
-                }
-            }
             return new List<string>(resolved);
-        }
-
-        internal static int CountRequiredParams(List<string> paramNames, List<string> defaults)
-        {
-            if (defaults == null)
-                return paramNames?.Count ?? 0;
-
-            var count = 0;
-            for (var i = 0; i < paramNames.Count; i++)
-                if (i >= defaults.Count || defaults[i] == null)
-                    count++;
-
-            return count;
-        }
-
-        // "name$ = value" where name$ is neither a parameter nor an existing macro. A name that is
-        // an existing macro stays positional, matching MacroParser.
-        internal static bool IsUnknownKeywordArg(string arg, HashSet<string> macroNames)
-        {
-            if (!ParsingHelpers.SplitParameterDefault(arg.AsSpan().Trim(), out var name, out _))
-                return false;
-
-            return name.Length > 1 && name[^1] == '$' &&
-                CalcpadCharacterHelpers.IsMacroLetter(name[0], 0) &&
-                !macroNames.Contains(name.ToString());
-        }
-
-        // Returns the index of the parameter named by an "name$ = value" argument, or -1.
-        internal static int IndexOfKeywordParam(string arg, List<string> paramNames)
-        {
-            if (!ParsingHelpers.SplitParameterDefault(arg.AsSpan().Trim(), out var name, out _))
-                return -1;
-
-            for (var i = 0; i < paramNames.Count; i++)
-                if (name.SequenceEqual(paramNames[i].AsSpan()))
-                    return i;
-
-            return -1;
         }
 
         /// <summary>

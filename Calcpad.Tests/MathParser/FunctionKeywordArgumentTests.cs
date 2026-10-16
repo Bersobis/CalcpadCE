@@ -37,6 +37,15 @@ public class FunctionKeywordArgumentTests
     }
 
     [Fact]
+    public void VectorDefault_WithSemicolons()
+    {
+        var calc = NewCalc();
+        calc.Run("f(x; v = [1; 2; 3]) = x + sum(v)");
+        Assert.Equal(7d, calc.Run("f(1)"));
+        Assert.Equal(31d, calc.Run("f(1; v = [10; 20])"));
+    }
+
+    [Fact]
     public void KeywordArgumentsWithoutSpaces_AreRecognized()
     {
         var calc = NewCalc();

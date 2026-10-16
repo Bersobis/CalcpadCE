@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Calcpad.Highlighter.ContentResolution;
+using Calcpad.Highlighter.Linter.Helpers;
 using Calcpad.Highlighter.Linter.Models;
 using Calcpad.Highlighter.Tokenizer.Models;
 
@@ -85,7 +86,6 @@ namespace Calcpad.Highlighter.Tokenizer
                     _macroCurrName = null;
                     _macroCurrParams = null;
                     _macroCurrDefaults = null;
-            _macroCurrDefaults = null;
                     _macroCurrContentLines = new List<string>();
                 }
                 else
@@ -105,7 +105,7 @@ namespace Calcpad.Highlighter.Tokenizer
                 _macroCurrIsInline = false;
                 _macroCurrName = null;
                 _macroCurrParams = null;
-            _macroCurrDefaults = null;
+                _macroCurrDefaults = null;
                 _macroCurrInlineContent = null;
                 emittedMacro = true;
             }
@@ -132,19 +132,6 @@ namespace Calcpad.Highlighter.Tokenizer
                 else if (!textSpan.IsWhiteSpace())
                     _macroPendingMetadata = null; // Non-blank, non-metadata line clears pending
             }
-        }
-
-        internal static int CountRequired(List<string> parameters, List<string> defaults)
-        {
-            if (defaults is null)
-                return parameters.Count;
-
-            var count = 0;
-            for (var i = 0; i < parameters.Count; i++)
-                if (i >= defaults.Count || defaults[i] is null)
-                    count++;
-
-            return count;
         }
 
         /// <summary>
@@ -196,7 +183,7 @@ namespace Calcpad.Highlighter.Tokenizer
                 {
                     LineNumber = _macroCurrStartLine,
                     ParamCount = paramList.Count,
-                    RequiredParamCount = CountRequired(paramList, _macroCurrDefaults),
+                    RequiredParamCount = ParsingHelpers.CountRequiredParams(paramList.Count, _macroCurrDefaults),
                     ParamNames = paramList
                 };
             }

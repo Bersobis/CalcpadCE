@@ -90,11 +90,17 @@ namespace Calcpad.Tests.Highlighter
         public void FunctionDefaults_AreTrackedForHover()
         {
             var (_, staged) = Lint("f(x; y = 2kg) = x + y\nr = f(1kg)\n");
-            var info = staged.Stage3.TypeTracker.Functions["f"];
-            Assert.NotNull(info);
-            Assert.Equal(new List<string> { "x", "y" }, info.Parameters);
-            Assert.Equal(new List<string> { null, "2kg" }, info.ParameterDefaults);
-            Assert.Equal(1, info.RequiredParameterCount);
+            var def = staged.Stage3.FunctionsWithParams.Single(f => f.Name == "f");
+            Assert.Equal(new List<string> { "x", "y" }, def.Params);
+            Assert.Equal(new List<string> { null, "2kg" }, def.Defaults);
+            Assert.Equal(1, staged.Stage3.UserDefinedFunctions["f"].RequiredParamCount);
+        }
+
+        [Fact]
+        public void FunctionCall_EqualityComparison_IsNotKeywordArgument()
+        {
+            var (result, _) = Lint("f(x; y = 2) = x + y\na = 1\nb = 1\nr = f(a == b)\n");
+            Assert.DoesNotContain("CPD-3315", Codes(result));
         }
     }
 }

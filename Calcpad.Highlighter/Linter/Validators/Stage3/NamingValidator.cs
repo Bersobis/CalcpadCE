@@ -89,20 +89,12 @@ namespace Calcpad.Highlighter.Linter.Validators.Stage3
 
                     else
                     {
-                        var seenOptional = false;
-                        foreach (var param in ParameterParser.ParseParameters(paramsStr))
+                        var (paramNames, defaults) = ParsingHelpers.ParseParamList(paramsStr);
+                        foreach (var name in ParsingHelpers.RequiredAfterOptional(paramNames, defaults))
                         {
-                            if (string.IsNullOrWhiteSpace(param))
-                                continue;
-
-                            if (ParsingHelpers.SplitParameterDefault(param.AsSpan().Trim(), out var nameSpan, out _))
-                                seenOptional = true;
-                            else if (seenOptional)
-                            {
-                                var startPos = line.IndexOf(funcName, StringComparison.Ordinal);
-                                result.AddError(i, startPos >= 0 ? startPos : 0, line.Length, "CPD-3215",
-                                    "Required parameter '" + nameSpan.ToString() + "' cannot follow an optional parameter");
-                            }
+                            var startPos = line.IndexOf(funcName, StringComparison.Ordinal);
+                            result.AddError(i, startPos >= 0 ? startPos : 0, line.Length, "CPD-3215",
+                                "Required parameter '" + name + "' cannot follow an optional parameter");
                         }
                     }
 

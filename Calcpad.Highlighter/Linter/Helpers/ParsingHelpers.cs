@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Calcpad.Highlighter.Parsing;
 
 namespace Calcpad.Highlighter.Linter.Helpers
@@ -41,12 +42,7 @@ namespace Calcpad.Highlighter.Linter.Helpers
         }
 
         /// <summary>
-        /// Extracts function parameter names from a function definition line.
-        /// For example: "square(x) = x^2" returns {"x"}
-        /// </summary>
-        /// <summary>
-        /// Splits "name = default" on the first '=' outside brackets. Returns false when the
-        /// parameter has no default, in which case <paramref name="defaultValue"/> is empty.
+        /// Splits "name = default" on the first '=' outside brackets. Returns false when there is no default.
         /// </summary>
         public static bool SplitParameterDefault(ReadOnlySpan<char> parameter,
             out ReadOnlySpan<char> name, out ReadOnlySpan<char> defaultValue)
@@ -69,6 +65,73 @@ namespace Calcpad.Highlighter.Linter.Helpers
             return false;
         }
 
+        /// <summary>
+        /// Splits a definition's parameter list into names and defaults. Defaults is null when
+        /// no parameter has one; otherwise a null entry marks a required parameter.
+        /// </summary>
+        public static (List<string> Names, List<string> Defaults) ParseParamList(string paramsStr)
+        {
+            var names = new List<string>();
+            var defaults = new List<string>();
+            foreach (var param in ParameterParser.SplitByDelimiter(paramsStr, ';'))
+            {
+                if (param.Length == 0)
+                    continue;
+
+                var hasDefault = SplitParameterDefault(param, out var name, out var value);
+                names.Add(name.ToString());
+                defaults.Add(hasDefault ? value.ToString() : null);
+            }
+            return (names, defaults.Exists(d => d != null) ? defaults : null);
+        }
+
+        public static int CountRequiredParams(int paramCount, List<string> defaults) =>
+            defaults?.Count(d => d == null) ?? paramCount;
+
+        /// <summary>
+        /// Names of required parameters that follow an optional one.
+        /// </summary>
+        public static IEnumerable<string> RequiredAfterOptional(List<string> names, List<string> defaults)
+        {
+            var first = defaults?.FindIndex(d => d != null) ?? -1;
+            for (var i = first + 1; first >= 0 && i < names.Count; i++)
+                if (defaults[i] == null)
+                    yield return names[i];
+        }
+
+        /// <summary>
+        /// Parses a "name = value" call argument. "==" is a comparison, not a keyword argument.
+        /// </summary>
+        public static bool TryParseKeywordArg(string arg, out string name, out string value)
+        {
+            name = value = null;
+            if (string.IsNullOrWhiteSpace(arg) ||
+                !SplitParameterDefault(arg.AsSpan().Trim(), out var nameSpan, out var valueSpan) ||
+                valueSpan.StartsWith('=') || !IsIdentifier(nameSpan))
+                return false;
+
+            name = nameSpan.ToString();
+            value = valueSpan.ToString();
+            return true;
+        }
+
+        private static bool IsIdentifier(ReadOnlySpan<char> s)
+        {
+            if (s.IsEmpty || !CalcpadCharacterHelpers.IsIdentifierStartCharWithUnderscore(s[0]))
+                return false;
+
+            var last = s[^1] == '$' ? s.Length - 1 : s.Length;
+            for (var i = 1; i < last; i++)
+                if (!CalcpadCharacterHelpers.IsIdentifierChar(s[i]))
+                    return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Extracts function parameter names from a function definition line.
+        /// For example: "square(x) = x^2" returns {"x"}
+        /// </summary>
         public static HashSet<string> GetFunctionParamsFromLine(string line)
         {
             var result = new HashSet<string>(StringComparer.Ordinal);

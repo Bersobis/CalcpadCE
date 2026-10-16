@@ -17,23 +17,16 @@ namespace Calcpad.Core
             internal Func<IValue> Function;
             internal bool IsReadOnly;
 
-            // Parallel to parameters: null entry = required. Null array = no optional parameters.
+            // Null entry = required; null array = no defaults
             internal string[] DefaultExpressions { get; set; }
 
-            internal int RequiredParameterCount
+            internal int IndexOfParameter(ReadOnlySpan<char> name)
             {
-                get
-                {
-                    if (DefaultExpressions is null)
-                        return ParameterCount;
+                for (var i = 0; i < ParameterCount; ++i)
+                    if (name.SequenceEqual(ParameterName(i)))
+                        return i;
 
-                    var count = 0;
-                    foreach (var d in DefaultExpressions)
-                        if (d is null)
-                            ++count;
-
-                    return count;
-                }
+                return -1;
             }
 
             internal abstract void AddParameters(List<string> parameters);

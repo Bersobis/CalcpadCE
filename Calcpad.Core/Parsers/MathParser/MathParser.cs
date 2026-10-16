@@ -23,7 +23,6 @@ namespace Calcpad.Core
         private Token[] _rpn;
         private readonly List<SolverBlock> _solveBlocks = [];
         private readonly Container<CustomFunction> _functions = new();
-        private bool _hasOptionalParams;
         private readonly Dictionary<string, Variable> _variables = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Unit> _units = new(StringComparer.Ordinal);
         private readonly Input _input;
@@ -643,9 +642,7 @@ namespace Calcpad.Core
         {
             var t = input.Dequeue();
             var parameters = new List<string>(2);
-            var defaults = new List<string>(2);
             var hasDefaults = false;
-            Dictionary<string, string> sourceDefaults = null;
             if (t.Type == TokenTypes.CustomFunction)
             {
                 var name = t.Content;
@@ -672,18 +669,8 @@ namespace Calcpad.Core
                             {
                                 input.Dequeue();
                                 SkipDefault(input);
-                                sourceDefaults ??= GetSourceDefaults(source);
-                                sourceDefaults.TryGetValue(t.Content, out var d);
-                                if (d is null)
-                                    throw Exceptions.InvalidFunctionDefinition();
-
-                                defaults.Add(d);
                                 hasDefaults = true;
                             }
-                            else if (hasDefaults)
-                                throw Exceptions.RequiredParameterAfterOptional(t.Content);
-                            else
-                                defaults.Add(null);
                         }
                         else if (t.Type != TokenTypes.Divisor)
                             throw Exceptions.InvalidFunctionToken(t.Content);
@@ -697,6 +684,7 @@ namespace Calcpad.Core
                     if (input.Count != 0 && input.Dequeue().Content == "=")
                     {
                         var n = parameters.Count;
+                        var defaults = hasDefaults ? GetSourceDefaults(source, parameters) : null;
                         var rpn = Input.GetRpn(input);
                         var index = _functions.IndexOf(name);
                         CustomFunction cf;
@@ -714,9 +702,8 @@ namespace Calcpad.Core
 
 
                         cf.AddParameters(parameters);
-                        cf.DefaultExpressions = hasDefaults ? [.. defaults] : null;
-                        if (hasDefaults)
-                            _hasOptionalParams = true;
+                        cf.DefaultExpressions = defaults;
+                        _hasOptionalParams |= hasDefaults;
 
                         cf.Rpn = rpn;
                         try
@@ -756,230 +743,6 @@ namespace Calcpad.Core
                 3 => new CustomFunction3() { IsReadOnly = isConst },
                 _ => new CustomFunctionN() { IsReadOnly = isConst },
             };
-        }
-
-        private static void SkipDefault(Queue<Token> input)
-        {
-            var depth = 0;
-            while (input.Count != 0)
-            {
-                var t = input.Peek();
-                if (depth == 0 && (t.Type == TokenTypes.Divisor || t.Type == TokenTypes.BracketRight))
-                    break;
-
-                if (t.Type == TokenTypes.BracketLeft || t.Type == TokenTypes.SquareBracketLeft)
-                    ++depth;
-                else if (t.Type == TokenTypes.BracketRight || t.Type == TokenTypes.SquareBracketRight)
-                    --depth;
-
-                input.Dequeue();
-            }
-        }
-
-        // Default expressions are taken from the source text so that formatting such as "1kg" survives.
-        private static Dictionary<string, string> GetSourceDefaults(ReadOnlySpan<char> source)
-        {
-            var defaults = new Dictionary<string, string>(StringComparer.Ordinal);
-            var i1 = source.IndexOf('(');
-            if (i1 < 0)
-                return defaults;
-
-            var i2 = IndexOfClosingBracket(source, i1);
-            if (i2 < 0)
-                return defaults;
-
-            var parameters = source[(i1 + 1)..i2];
-            foreach (var range in SplitArguments(parameters))
-            {
-                var parameter = parameters[range];
-                var eq = IndexOfTopLevel(parameter, '=');
-                if (eq > 0)
-                    defaults[parameter[..eq].Trim().ToString()] = parameter[(eq + 1)..].Trim().ToString();
-            }
-            return defaults;
-        }
-
-        // Rewrites keyword arguments and fills in defaults before tokenization: "f(3; y = 4)" → "f(3; 4)".
-        // Returns null when nothing needed rewriting.
-        private string RewriteKeywordArgs(ReadOnlySpan<char> span)
-        {
-            StringBuilder sb = null;
-            var start = 0;
-            for (int i = 0, len = span.Length; i < len; ++i)
-            {
-                if (!Validator.IsVarStartingChar(span[i]))
-                    continue;
-
-                var j = i;
-                while (j < len && Validator.IsVarChar(span[j]))
-                    ++j;
-
-                if (j >= len || span[j] != '(')
-                {
-                    i = j - 1;
-                    continue;
-                }
-                var name = span[i..j].ToString();
-                var index = _functions.IndexOf(name);
-                var cf = index < 0 ? null : _functions[index];
-                if (cf?.DefaultExpressions is null)
-                {
-                    i = j - 1;
-                    continue;
-                }
-                var close = IndexOfClosingBracket(span, j);
-                if (close < 0)
-                    break;
-
-                if (span[..i].IsWhiteSpace() && IsDefinition(span, close))
-                {
-                    i = close;
-                    continue;
-                }
-                if (!TryResolveKeywordArgs(cf, span[(j + 1)..close], out var arguments))
-                {
-                    i = j - 1;
-                    continue;
-                }
-                sb ??= new StringBuilder(span.Length + 16);
-                sb.Append(span[start..(j + 1)]).Append(arguments).Append(')');
-                start = close + 1;
-                i = close;
-            }
-            return sb?.Append(span[start..]).ToString();
-
-            static bool IsDefinition(ReadOnlySpan<char> span, int close)
-            {
-                var k = close + 1;
-                while (k < span.Length && span[k] == ' ')
-                    ++k;
-
-                return k < span.Length && span[k] == '=';
-            }
-        }
-
-        private bool TryResolveKeywordArgs(CustomFunction cf, ReadOnlySpan<char> argsText, out string resolved)
-        {
-            resolved = null;
-            var n = cf.ParameterCount;
-            var arguments = new string[n];
-            var positionalCount = 0;
-            var keywordCount = 0;
-            foreach (var range in SplitArguments(argsText))
-            {
-                var trimmed = argsText[range].Trim();
-                if (TryParseKeywordArg(trimmed, cf, out var index, out var value))
-                {
-                    if (arguments[index] is not null)
-                        throw Exceptions.DuplicateArgument(cf.ParameterName(index));
-
-                    arguments[index] = Rewritten(value);
-                    ++keywordCount;
-                }
-                else
-                {
-                    if (keywordCount != 0)
-                        throw Exceptions.InvalidNumberOfArguments();
-
-                    if (positionalCount >= n)
-                        return false;
-
-                    if (arguments[positionalCount] is not null)
-                        throw Exceptions.DuplicateArgument(cf.ParameterName(positionalCount));
-
-                    arguments[positionalCount++] = Rewritten(trimmed);
-                }
-            }
-            if (keywordCount == 0 && positionalCount == n)
-                return false;
-
-            for (var i = 0; i < n; ++i)
-            {
-                if (arguments[i] is null)
-                {
-                    if (cf.DefaultExpressions[i] is null)
-                        throw Exceptions.InvalidNumberOfArguments();
-
-                    arguments[i] = Rewritten(cf.DefaultExpressions[i]);
-                }
-            }
-            resolved = string.Join("; ", arguments);
-            return true;
-
-            // Calls nested in an argument or a default need the same treatment.
-            string Rewritten(ReadOnlySpan<char> s) => RewriteKeywordArgs(s) ?? s.ToString();
-        }
-
-        private static bool TryParseKeywordArg(ReadOnlySpan<char> arg, CustomFunction cf, out int index, out ReadOnlySpan<char> value)
-        {
-            var eq = IndexOfTopLevel(arg, '=');
-            if (eq > 0 && (eq + 1 >= arg.Length || arg[eq + 1] != '='))
-            {
-                var name = arg[..eq].TrimEnd();
-                for (var i = 0; i < cf.ParameterCount; ++i)
-                {
-                    if (name.SequenceEqual(cf.ParameterName(i)))
-                    {
-                        index = i;
-                        value = arg[(eq + 1)..].TrimStart();
-                        return true;
-                    }
-                }
-            }
-            index = -1;
-            value = default;
-            return false;
-        }
-
-        private static int IndexOfClosingBracket(ReadOnlySpan<char> s, int open)
-        {
-            var depth = 0;
-            for (int i = open, len = s.Length; i < len; ++i)
-            {
-                if (s[i] == '(')
-                    ++depth;
-                else if (s[i] == ')' && --depth == 0)
-                    return i;
-            }
-            return -1;
-        }
-
-        private static int IndexOfTopLevel(ReadOnlySpan<char> s, char target)
-        {
-            var depth = 0;
-            for (int i = 0, len = s.Length; i < len; ++i)
-            {
-                var c = s[i];
-                if (c == '(' || c == '[' || c == '{')
-                    ++depth;
-                else if (c == ')' || c == ']' || c == '}')
-                    --depth;
-                else if (c == target && depth == 0)
-                    return i;
-            }
-            return -1;
-        }
-
-        private static List<Range> SplitArguments(ReadOnlySpan<char> s)
-        {
-            var ranges = new List<Range>();
-            var depth = 0;
-            var start = 0;
-            for (int i = 0, len = s.Length; i < len; ++i)
-            {
-                var c = s[i];
-                if (c == '(' || c == '[' || c == '{')
-                    ++depth;
-                else if (c == ')' || c == ']' || c == '}')
-                    --depth;
-                else if (c == ';' && depth == 0)
-                {
-                    ranges.Add(start..i);
-                    start = i + 1;
-                }
-            }
-            ranges.Add(start..s.Length);
-            return ranges;
         }
 
         private void BindParameters(ReadOnlySpan<Parameter> parameters, Token[] rpn)

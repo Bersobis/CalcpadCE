@@ -104,7 +104,7 @@ namespace Calcpad.Highlighter.Linter.Helpers
         /// <summary>
         /// Registers a function definition and infers its return type from the expression.
         /// </summary>
-        public VariableInfo RegisterFunction(string name, List<string> parameters, string expression, int lineNumber, int column = 0, string source = "local", bool isConst = false, List<string> defaults = null)
+        public VariableInfo RegisterFunction(string name, List<string> parameters, string expression, int lineNumber, int column = 0, string source = "local", bool isConst = false)
         {
             var returnType = InferTypeFromExpression(expression);
 
@@ -112,7 +112,6 @@ namespace Calcpad.Highlighter.Linter.Helpers
             {
                 Name = name,
                 Parameters = parameters,
-                ParameterDefaults = defaults,
                 Expression = expression,
                 LineNumber = lineNumber,
                 Column = column,
@@ -196,13 +195,12 @@ namespace Calcpad.Highlighter.Linter.Helpers
         /// <summary>
         /// Registers an inline macro definition.
         /// </summary>
-        public VariableInfo RegisterInlineMacro(string name, List<string> parameters, string expression, int lineNumber, int column = 0, string source = "local", List<string> defaults = null)
+        public VariableInfo RegisterInlineMacro(string name, List<string> parameters, string expression, int lineNumber, int column = 0, string source = "local")
         {
             var info = new VariableInfo
             {
                 Name = name,
                 Parameters = parameters,
-                ParameterDefaults = defaults,
                 Expression = expression,
                 LineNumber = lineNumber,
                 Column = column,
@@ -217,13 +215,12 @@ namespace Calcpad.Highlighter.Linter.Helpers
         /// <summary>
         /// Registers a multiline macro definition.
         /// </summary>
-        public VariableInfo RegisterMultilineMacro(string name, List<string> parameters, int lineNumber, int column = 0, string source = "local", List<string> defaults = null)
+        public VariableInfo RegisterMultilineMacro(string name, List<string> parameters, int lineNumber, int column = 0, string source = "local")
         {
             var info = new VariableInfo
             {
                 Name = name,
                 Parameters = parameters,
-                ParameterDefaults = defaults,
                 LineNumber = lineNumber,
                 Column = column,
                 Source = source,

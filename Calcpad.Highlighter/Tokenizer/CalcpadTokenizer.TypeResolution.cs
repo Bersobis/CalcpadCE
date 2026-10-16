@@ -15,7 +15,7 @@ namespace Calcpad.Highlighter.Tokenizer
         private readonly HashSet<string> _definedMacros = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _definedUnits = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _localVariables = new(StringComparer.Ordinal);
-        // Functions with optional parameters - the only ones whose calls accept keyword arguments.
+        // Only these accept keyword arguments
         private readonly HashSet<string> _functionsWithDefaults = new(StringComparer.Ordinal);
 
         // Tracks #read keyword in all modes (not just Lint) so the next variable can be
@@ -293,8 +293,7 @@ namespace Calcpad.Highlighter.Tokenizer
                     }
                     else
                     {
-                        // Square brackets and braces inside a definition's parameter list belong
-                        // to a default value, so they must not cancel the pending definition.
+                        // Brackets in a default value keep the pending definition
                         if (_pendingFunctionName == null || _pendingFunctionParenDepth == 0)
                             ClearPendingDefinitions();
                     }
