@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Calcpad.Core
 {
     public partial class MathParser
     {
-        private bool _hasOptionalParams;
-
-        private static void SkipDefault(Queue<Token> input)
+        private static Token[] ReadDefault(Queue<Token> input)
         {
+            var tokens = new Queue<Token>();
             var depth = 0;
             while (input.Count != 0)
             {
@@ -22,144 +20,145 @@ namespace Calcpad.Core
                 else if (t.Type == TokenTypes.BracketRight || t.Type == TokenTypes.SquareBracketRight)
                     --depth;
 
-                input.Dequeue();
+                tokens.Enqueue(input.Dequeue());
             }
+            return Input.GetRpn(tokens);
         }
 
-        // Taken from source text since tokens can't be turned back into it (e.g. "1kg").
-        private static string[] GetSourceDefaults(ReadOnlySpan<char> source, List<string> parameters)
+        // "f(3; z = 4)" → supplied arguments "3; 4" with map [0, 2]; omitted ones are filled from defaults.
+        private Queue<Token> ResolveCallArguments(Queue<Token> input)
         {
-            var open = source.IndexOf('(');
-            var list = source[(open + 1)..IndexOfClosingBracket(source, open)];
-            var ranges = SplitArguments(list);
-            if (ranges.Count != parameters.Count)
-                throw Exceptions.InvalidFunctionDefinition();
+            var hasCall = false;
+            foreach (var t in input)
+                hasCall |= t.Type == TokenTypes.CustomFunction && t.Index >= 0;
 
-            var defaults = new string[ranges.Count];
-            for (var i = 0; i < defaults.Length; ++i)
+            if (!hasCall)
+                return input;
+
+            var tokens = input.ToArray();
+            var isResolved = false;
+            bool[] removed = null;
+            for (int i = 0, len = tokens.Length; i < len - 2; ++i)
             {
-                var parameter = list[ranges[i]];
-                var eq = IndexOfTopLevel(parameter, '=');
-                if (eq > 0)
-                    defaults[i] = parameter[(eq + 1)..].Trim().ToString();
-                else if (i > 0 && defaults[i - 1] is not null)
-                    throw Exceptions.RequiredParameterAfterOptional(parameters[i]);
-            }
-            return defaults;
-        }
-
-        // "f(3; y = 4)" → "f(3; 4)". Returns null when nothing needed rewriting.
-        private string RewriteKeywordArgs(ReadOnlySpan<char> span)
-        {
-            StringBuilder sb = null;
-            var start = 0;
-            for (int i = 0, len = span.Length; i < len; ++i)
-            {
-                if (!Validator.IsVarStartingChar(span[i]))
+                var t = tokens[i];
+                if (t.Type != TokenTypes.CustomFunction || t.Index < 0 || tokens[i + 1].Type != TokenTypes.BracketLeft)
                     continue;
 
-                var j = i;
-                while (j < len && Validator.IsVarChar(span[j]))
-                    ++j;
-
-                if (j >= len || span[j] != '(')
-                {
-                    i = j - 1;
-                    continue;
-                }
-                var index = _functions.IndexOf(span[i..j].ToString());
-                var cf = index < 0 ? null : _functions[index];
-                if (cf?.DefaultExpressions is null)
-                {
-                    i = j - 1;
-                    continue;
-                }
-                var close = IndexOfClosingBracket(span, j);
+                var close = IndexOfClosingBracket(tokens, i + 1);
                 if (close < 0)
                     break;
 
-                if (span[..i].IsWhiteSpace() && span[(close + 1)..].TrimStart(' ').StartsWith('='))
-                {
-                    i = close;
+                // Definition head: "f(x; y = 2) = ..."
+                if (i == 0 && close + 1 < len && IsAssignment(tokens[close + 1].Content) || close == i + 2)
                     continue;
-                }
-                if (!TryResolveKeywordArgs(cf, span[(j + 1)..close], out var arguments))
-                {
-                    i = j - 1;
-                    continue;
-                }
-                sb ??= new StringBuilder(span.Length + 16);
-                sb.Append(span[start..(j + 1)]).Append(arguments).Append(')');
-                start = close + 1;
-                i = close;
-            }
-            return sb?.Append(span[start..]).ToString();
-        }
 
-        private bool TryResolveKeywordArgs(CustomFunction cf, ReadOnlySpan<char> argsText, out string resolved)
-        {
-            resolved = null;
-            var n = cf.ParameterCount;
-            var arguments = new string[n];
-            var positionalCount = 0;
-            var keywordCount = 0;
-            foreach (var range in SplitArguments(argsText))
-            {
-                var arg = argsText[range].Trim();
-                var index = KeywordArgIndex(arg, cf, out var value);
-                if (index < 0)
+                var starts = ArgumentStarts(tokens, i + 2, close);
+                var cf = _functions[t.Index];
+                var n = cf.ParameterCount;
+                var isKeyword = new bool[starts.Count];
+                var hasKeyword = false;
+                for (var k = 0; k < starts.Count; ++k)
+                    hasKeyword |= isKeyword[k] = IsKeywordArgument(tokens, starts[k]);
+
+                if (!hasKeyword && starts.Count >= n)
+                    continue;
+
+                var map = new int[starts.Count];
+                var isSupplied = new bool[n];
+                var positionalCount = 0;
+                for (var k = 0; k < starts.Count; ++k)
                 {
-                    if (keywordCount != 0)
+                    int index;
+                    if (isKeyword[k])
+                    {
+                        var name = tokens[starts[k]].Content;
+                        index = cf.IndexOfParameter(name);
+                        if (index < 0)
+                            throw Exceptions.UnknownKeywordArgument(name);
+
+                        if (isSupplied[index])
+                            throw Exceptions.DuplicateArgument(name);
+
+                        removed ??= new bool[len];
+                        removed[starts[k]] = removed[starts[k] + 1] = true;
+                    }
+                    else if (k > positionalCount || positionalCount >= n)
+                        throw Exceptions.InvalidNumberOfArguments();
+                    else
+                        index = positionalCount++;
+
+                    map[k] = index;
+                    isSupplied[index] = true;
+                }
+                for (var p = 0; p < n; ++p)
+                    if (!isSupplied[p] && cf.Defaults?[p] is null)
                         throw Exceptions.InvalidNumberOfArguments();
 
-                    if (positionalCount >= n)
-                        return false;
-
-                    index = positionalCount++;
-                    value = arg;
-                }
-                else if (arguments[index] is not null)
-                    throw Exceptions.DuplicateArgument(cf.ParameterName(index));
-                else
-                    ++keywordCount;
-
-                arguments[index] = value.ToString();
+                isResolved = true;
+                tokens[i] = new FunctionToken(t.Content)
+                {
+                    Type = TokenTypes.CustomFunction,
+                    Index = t.Index,
+                    ParameterCount = starts.Count,
+                    ArgumentMap = map,
+                    PositionalCount = positionalCount
+                };
             }
-            if (keywordCount == 0 && positionalCount == n)
-                return false;
+            if (!isResolved)
+                return input;
 
-            FillDefaults(arguments, cf.DefaultExpressions);
-            // Nested calls need the same treatment
-            resolved = string.Join("; ", Array.ConvertAll(arguments, s => RewriteKeywordArgs(s) ?? s));
-            return true;
+            var output = new Queue<Token>(tokens.Length);
+            var assignmentIndex = _assignmentIndex;
+            for (var i = 0; i < tokens.Length; ++i)
+                if (removed?[i] != true)
+                    output.Enqueue(tokens[i]);
+                else if (i < assignmentIndex)
+                    --_assignmentIndex;
+
+            return output;
+        }
+
+        private static bool IsKeywordArgument(Token[] tokens, int start) =>
+            start + 1 < tokens.Length &&
+            (tokens[start] is VariableToken || tokens[start].Type == TokenTypes.Unit) &&
+            tokens[start + 1].Type == TokenTypes.Operator &&
+            tokens[start + 1].Content == "=";
+
+        private static int IndexOfClosingBracket(Token[] tokens, int open)
+        {
+            var depth = 0;
+            for (int i = open, len = tokens.Length; i < len; ++i)
+            {
+                var tt = tokens[i].Type;
+                if (tt == TokenTypes.BracketLeft || tt == TokenTypes.SquareBracketLeft)
+                    ++depth;
+                else if ((tt == TokenTypes.BracketRight || tt == TokenTypes.SquareBracketRight) && --depth == 0)
+                    return i;
+            }
+            return -1;
+        }
+
+        private static List<int> ArgumentStarts(Token[] tokens, int start, int end)
+        {
+            var starts = new List<int>(4) { start };
+            var depth = 0;
+            for (var i = start; i < end; ++i)
+            {
+                var tt = tokens[i].Type;
+                if (tt == TokenTypes.BracketLeft || tt == TokenTypes.SquareBracketLeft)
+                    ++depth;
+                else if (tt == TokenTypes.BracketRight || tt == TokenTypes.SquareBracketRight)
+                    --depth;
+                else if (depth == 0 && tt == TokenTypes.Divisor)
+                    starts.Add(i + 1);
+            }
+            return starts;
         }
 
         internal static void FillDefaults(string[] arguments, string[] defaults)
         {
             for (var i = 0; i < arguments.Length; ++i)
                 arguments[i] ??= defaults[i] ?? throw Exceptions.InvalidNumberOfArguments();
-        }
-
-        private static int KeywordArgIndex(ReadOnlySpan<char> arg, CustomFunction cf, out ReadOnlySpan<char> value)
-        {
-            var eq = IndexOfTopLevel(arg, '=');
-            if (eq > 0 && (eq + 1 >= arg.Length || arg[eq + 1] != '='))
-            {
-                var index = cf.IndexOfParameter(arg[..eq].TrimEnd());
-                if (index >= 0)
-                {
-                    value = arg[(eq + 1)..].TrimStart();
-                    return index;
-                }
-            }
-            value = default;
-            return -1;
-        }
-
-        private static int IndexOfClosingBracket(ReadOnlySpan<char> s, int open)
-        {
-            var i = IndexOfTopLevel(s[(open + 1)..], ')');
-            return i < 0 ? -1 : open + 1 + i;
         }
 
         // Index of the first target outside brackets, or of an unmatched closing bracket.
@@ -178,20 +177,6 @@ namespace Calcpad.Core
                     return i;
             }
             return -1;
-        }
-
-        private static List<Range> SplitArguments(ReadOnlySpan<char> s)
-        {
-            var ranges = new List<Range>();
-            var start = 0;
-            int i;
-            while ((i = IndexOfTopLevel(s[start..], ';')) >= 0)
-            {
-                ranges.Add(start..(start + i));
-                start += i + 1;
-            }
-            ranges.Add(start..s.Length);
-            return ranges;
         }
     }
 }

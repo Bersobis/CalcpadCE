@@ -21,9 +21,9 @@
    <var>x</var>
    ;
    <var>y</var>
-   ;
+   = 2;
    <var>z</var>
-   )  =
+   = 3 )  =
    <var>x</var>
    +
    <var>y</var>
@@ -38,7 +38,7 @@
    <sub>1</sub>
    =
    <var>f</var>
-   ( 1; 2; 3 )  = 6
+   ( 1 )  = 6
   </span>
  </p>
  <p>Every argument positional</p>
@@ -58,7 +58,9 @@
    <sub>3</sub>
    =
    <var>f</var>
-   ( 1; 2; 100 )  = 103
+   ( 1;
+   <var>z</var>
+   = 100 )  = 103
   </span>
  </p>
  <p>All keyword, in any order</p>
@@ -68,7 +70,13 @@
    <sub>4</sub>
    =
    <var>f</var>
-   ( 1; 10; 100 )  = 111
+   (
+   <var>z</var>
+   = 100;
+   <var>x</var>
+   = 1;
+   <var>y</var>
+   = 10 )  = 111
   </span>
  </p>
  <p>
@@ -81,6 +89,14 @@
    <var>L</var>
    ;
    <var>q</var>
+   =
+   <span class="dvc">
+    5
+    <i>kN</i>
+    <span class="dvl">
+    </span>
+    <var>m</var>
+   </span>
    )  =
    <span class="dvc">
     <var>q</var>
@@ -108,31 +124,14 @@
    <sub>1</sub>
    =
    <var>w</var>
-   <span class="b1">(</span>
+   (
    <var>L</var>
    <sub>s</sub>
-   ; 5
-   <span class="dvc">
-    <i>kN</i>
-    <span class="dvl">
-    </span>
-    <i>m</i>
-   </span>
-   <span class="b1">)</span>
-   =
+   )  =
    <var>w</var>
-   <span class="b1">(</span>
-   6
+   ( 6
    <i>m</i>
-   ; 5
-   <span class="dvc">
-    <i>kN</i>
-    <span class="dvl">
-    </span>
-    <i>m</i>
-   </span>
-   <span class="b1">)</span>
-   = 22.5
+   )  = 22.5
    <i>kN</i>
    <i>·</i>
    <i>m</i>
@@ -148,7 +147,9 @@
    <span class="b1">(</span>
    <var>L</var>
    <sub>s</sub>
-   ; 12
+   ;
+   <var>q</var>
+   = 12
    <span class="dvc">
     <i>kN</i>
     <span class="dvl">
@@ -161,7 +162,9 @@
    <span class="b1">(</span>
    6
    <i>m</i>
-   ; 12
+   ;
+   <var>q</var>
+   = 12
    <span class="dvc">
     <i>kN</i>
     <span class="dvl">
@@ -177,10 +180,10 @@
  </p>
  <p>
  </p>
- <h3>1.3 Defaults are resolved at call time</h3>
+ <h3>1.3 Names in a default</h3>
  <p>
-  A default is stored as source text and evaluated in the global scope on every call,
-  <p>so it follows the current value of whatever it references.</p>
+  A name in a default is looked up like a name in the function body: first the
+  <p>parameters before it, then global variables at the time of the call.</p>
  </p>
  <p>
   <span class="eq">
@@ -195,6 +198,8 @@
    <var>x</var>
    ;
    <var>m</var>
+   =
+   <var>k</var>
    )  =
    <var>x</var>
    ·
@@ -208,11 +213,7 @@
    <sub>1</sub>
    =
    <var>g</var>
-   ( 2;
-   <var>k</var>
-   )  =
-   <var>g</var>
-   ( 2; 5 )  = 10
+   ( 2 )  = 10
   </span>
  </p>
  <p>
@@ -228,11 +229,63 @@
    <sub>2</sub>
    =
    <var>g</var>
-   ( 2;
+   ( 2 )  = 100
+  </span>
+ </p>
+ <p>A default may use an earlier parameter</p>
+ <p>
+  <span class="eq">
+   <var>area</var>
+   (
+   <var>b</var>
+   ;
+   <var>h</var>
+   =
+   <var>b</var>
+   )  =
+   <var>b</var>
+   ·
+   <var>h</var>
+  </span>
+ </p>
+ <p>
+  <span class="eq">
+   <var>a</var>
+   <sub>sq</sub>
+   =
+   <var>area</var>
+   ( 3 )  = 9
+  </span>
+ </p>
+ <p>
+  <span class="eq">
+   <var>a</var>
+   <sub>rect</sub>
+   =
+   <var>area</var>
+   ( 3;
+   <var>h</var>
+   = 2 )  = 6
+  </span>
+ </p>
+ <p>A parameter of the caller never reaches a default, so this uses the global k</p>
+ <p>
+  <span class="eq">
+   <var>G</var>
+   (
    <var>k</var>
    )  =
    <var>g</var>
-   ( 2; 50 )  = 100
+   ( 1 )
+  </span>
+ </p>
+ <p>
+  <span class="eq">
+   <var>G</var>
+   <sub>1</sub>
+   =
+   <var>G</var>
+   ( 7 )  = 50
   </span>
  </p>
  <p>
@@ -245,6 +298,11 @@
    <var>x</var>
    ;
    <var>y</var>
+   =
+   <span class="o0">
+    <span class="r">√</span>
+    16
+   </span>
    )  =
    <var>x</var>
    +
@@ -257,12 +315,7 @@
    <sub>1</sub>
    =
    <var>h</var>
-   ( 1;
-   <span class="o0">
-    <span class="r">√</span>
-    16
-   </span>
-   )  = 5
+   ( 1 )  = 5
   </span>
  </p>
  <p>
@@ -271,7 +324,9 @@
    <sub>2</sub>
    =
    <var>h</var>
-   ( 1; 100 )  = 101
+   ( 1;
+   <var>y</var>
+   = 100 )  = 101
   </span>
  </p>
  <p>
@@ -281,6 +336,10 @@
    <var>x</var>
    ;
    <var>v</var>
+   =
+   <span class="b0">[</span>
+   2; 4; 6
+   <span class="b0">]</span>
    )  =
    <var>x</var>
    ·
@@ -296,11 +355,7 @@
    <sub>1</sub>
    =
    <var>p</var>
-   ( 2;
-   <span class="b0">[</span>
-   2; 4; 6
-   <span class="b0">]</span>
-   )  = 24
+   ( 2 )  = 24
   </span>
  </p>
  <p>
@@ -310,6 +365,8 @@
    =
    <var>p</var>
    ( 2;
+   <var>v</var>
+   =
    <span class="b0">[</span>
    1; 1
    <span class="b0">]</span>
@@ -327,7 +384,7 @@
    <var>f</var>
    (
    <var>f</var>
-   ( 1; 2; 3 ) ; 4; 3 )  = 13
+   ( 1 ) ; 4 )  = 13
   </span>
  </p>
  <p>
@@ -337,8 +394,14 @@
    =
    <var>f</var>
    (
+   <var>x</var>
+   =
    <var>f</var>
-   ( 1; 2; 0 ) ; 0; 3 )  = 6
+   ( 1;
+   <var>z</var>
+   = 0 ) ;
+   <var>y</var>
+   = 0 )  = 6
   </span>
  </p>
  <p>
@@ -510,7 +573,9 @@
    <span class="b1">(</span>
    <var>L</var>
    <sub>s</sub>
-   ; 3 · 1
+   ;
+   <var>q</var>
+   = 3 · 1
    <span class="dvc">
     <i>kN</i>
     <span class="dvl">
@@ -523,7 +588,9 @@
    <span class="b1">(</span>
    6
    <i>m</i>
-   ; 3 · 1
+   ;
+   <var>q</var>
+   = 3 · 1
    <span class="dvc">
     <i>kN</i>
     <span class="dvl">
@@ -546,7 +613,9 @@
    <span class="b1">(</span>
    <var>L</var>
    <sub>s</sub>
-   ; 8 · 1
+   ;
+   <var>q</var>
+   = 8 · 1
    <span class="dvc">
     <i>kN</i>
     <span class="dvl">
@@ -559,7 +628,9 @@
    <span class="b1">(</span>
    6
    <i>m</i>
-   ; 8 · 1
+   ;
+   <var>q</var>
+   = 8 · 1
    <span class="dvc">
     <i>kN</i>
     <span class="dvl">

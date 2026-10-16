@@ -25,9 +25,9 @@ M_1 = w(L_s)|kN*m
 'Load supplied by name
 M_2 = w(L_s; q = 12kN/m)|kN*m
 '
-'<h3>1.3 Defaults are resolved at call time</h3>
-'<p>A default is stored as source text and evaluated in the global scope on every call,
-'so it follows the current value of whatever it references.</p>
+'<h3>1.3 Names in a default</h3>
+'<p>A name in a default is looked up like a name in the function body: first the
+'parameters before it, then global variables at the time of the call.</p>
 k = 5
 g(x; m = k) = x*m
 'k is 5 here
@@ -35,6 +35,13 @@ g_1 = g(2)
 k = 50
 'the same call, with k now 50
 g_2 = g(2)
+'A default may use an earlier parameter
+area(b; h = b) = b*h
+a_sq = area(3)
+a_rect = area(3; h = 2)
+'A parameter of the caller never reaches a default, so this uses the global k
+G(k) = g(1)
+G_1 = G(7)
 '
 '<h3>1.4 A default may be an expression or a vector</h3>
 h(x; y = sqr(16)) = x + y

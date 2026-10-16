@@ -32,6 +32,7 @@ namespace Calcpad.Highlighter.Tokenizer
         private string _pendingVariableName = null;
         private int _pendingVariableLine = -1;
         private string _pendingFunctionName = null;
+        private bool _pendingHasDefault;
         private int _pendingFunctionLine = -1;
         private int _pendingFunctionParenDepth = 0;  // Track paren depth within function definition
 
@@ -225,6 +226,10 @@ namespace Calcpad.Highlighter.Tokenizer
 
             switch (type)
             {
+                case TokenType.Variable when IsInDefaultValue():
+                case TokenType.Function when IsInDefaultValue():
+                    break;
+
                 case TokenType.Variable:
                     // This could be a variable definition - remember it
                     // If we later see "(" it becomes a function, if we see "=" it's confirmed
@@ -232,6 +237,7 @@ namespace Calcpad.Highlighter.Tokenizer
                     _pendingVariableLine = _state.Line;
                     _pendingFunctionName = null;
                     _pendingFunctionParenDepth = 0;
+                    _pendingHasDefault = false;
 
                     // Track #read variables as defined so subsequent uses resolve correctly.
                     if (_expectingReadVariable)
@@ -252,6 +258,7 @@ namespace Calcpad.Highlighter.Tokenizer
                     {
                         _pendingFunctionName = text;
                         _pendingFunctionLine = _state.Line;
+                        _pendingHasDefault = false;
                         _pendingVariableName = null;
                         _pendingVariableLine = -1;
                     }
@@ -260,6 +267,7 @@ namespace Calcpad.Highlighter.Tokenizer
                     {
                         _pendingFunctionName = _pendingVariableName;
                         _pendingFunctionLine = _pendingVariableLine;
+                        _pendingHasDefault = false;
                         _pendingVariableName = null;
                         _pendingVariableLine = -1;
                     }
@@ -274,6 +282,7 @@ namespace Calcpad.Highlighter.Tokenizer
                             _pendingFunctionName = _pendingVariableName;
                             _pendingFunctionLine = _pendingVariableLine;
                             _pendingFunctionParenDepth = 1;
+                            _pendingHasDefault = false;
                             _pendingVariableName = null;
                             _pendingVariableLine = -1;
                         }
@@ -314,7 +323,10 @@ namespace Calcpad.Highlighter.Tokenizer
                         if (_pendingFunctionName != null && _pendingFunctionParenDepth > 0)
                         {
                             if (_state.IsFunctionDefinition)
+                            {
                                 _functionsWithDefaults.Add(_pendingFunctionName);
+                                _pendingHasDefault = true;
+                            }
 
                             break;
                         }
@@ -414,6 +426,9 @@ namespace Calcpad.Highlighter.Tokenizer
             }
         }
 
+        private bool IsInDefaultValue() =>
+            _pendingHasDefault && _pendingFunctionName != null && _pendingFunctionParenDepth > 0;
+
         private void ClearPendingDefinitions()
         {
             _pendingVariableName = null;
@@ -421,6 +436,7 @@ namespace Calcpad.Highlighter.Tokenizer
             _pendingFunctionName = null;
             _pendingFunctionLine = -1;
             _pendingFunctionParenDepth = 0;
+            _pendingHasDefault = false;
         }
 
         /// <summary>

@@ -97,11 +97,10 @@ public class FunctionKeywordArgumentTests
     }
 
     [Fact]
-    public void NestedCallInsideARewrittenArgumentList_IsAlsoResolved()
+    public void NestedCallInsideAResolvedArgumentList_IsAlsoResolved()
     {
         var calc = NewCalc();
         calc.Run("f(x; y = 2; z = 3) = x + y + z");
-        // The outer call is rewritten, so the inner one must be rewritten too
         Assert.Equal(13d, calc.Run("f(f(1); 4)"));
         Assert.Equal(6d, calc.Run("f(x = f(1; z = 0); y = 0)"));
     }
@@ -147,7 +146,7 @@ public class FunctionKeywordArgumentTests
     }
 
     [Fact]
-    public void IndentedDefinition_IsNotRewritten()
+    public void IndentedDefinition_IsNotTreatedAsACall()
     {
         var calc = NewCalc();
         calc.Run("f(x; y = 2) = x + y");
@@ -172,5 +171,86 @@ public class FunctionKeywordArgumentTests
         Assert.Equal(3d, calc.Run("f(1)"));
         calc.Run("f(x; y = 20) = x + y");
         Assert.Equal(21d, calc.Run("f(1)"));
+    }
+
+    [Fact]
+    public void Default_IsNotCapturedByCallerParameter()
+    {
+        var calc = NewCalc();
+        calc.Run("a = 1");
+        calc.Run("f(x; y = a) = x + y");
+        calc.Run("g(a) = f(0)");
+        Assert.Equal(1d, calc.Run("g(50)"));
+    }
+
+    [Fact]
+    public void Default_CanReferenceEarlierParameter()
+    {
+        var calc = NewCalc();
+        calc.Run("f(b; h = b) = b*h");
+        Assert.Equal(9d, calc.Run("f(3)"));
+        Assert.Equal(6d, calc.Run("f(3; h = 2)"));
+    }
+
+    [Fact]
+    public void Default_CanReferenceVariableDefinedLater()
+    {
+        var calc = NewCalc();
+        calc.Run("f(x; y = b) = x + y");
+        calc.Run("b = 7");
+        Assert.Equal(8d, calc.Run("f(1)"));
+    }
+
+    [Fact]
+    public void GlobalChangeInDefault_ClearsCallerCache()
+    {
+        var calc = NewCalc();
+        calc.Run("a = 1");
+        calc.Run("f(x; y = a) = x + y");
+        calc.Run("g(x) = f(x)");
+        Assert.Equal(2d, calc.Run("g(1)"));
+        calc.Run("a = 100");
+        Assert.Equal(101d, calc.Run("g(1)"));
+    }
+
+    [Fact]
+    public void KeywordArguments_WorkWithoutDefaults()
+    {
+        var calc = NewCalc();
+        calc.Run("f(x; y) = x - y");
+        Assert.Equal(4d, calc.Run("f(y = 1; x = 5)"));
+    }
+
+    [Fact]
+    public void UnknownKeywordArgument_Throws()
+    {
+        var calc = NewCalc();
+        calc.Run("f(x; y = 2) = x + y");
+        Assert.Throws<MathParserException>(() => calc.Run("f(1; z = 3)"));
+    }
+
+    [Fact]
+    public void RecursiveDefault_Throws()
+    {
+        var calc = NewCalc();
+        calc.Run("g(x) = x");
+        calc.Run("f(x; y = g(x)) = x + y");
+        Assert.Throws<MathParserException>(() => calc.Run("g(x) = f(x)"));
+    }
+
+    [Fact]
+    public void DefaultsInsideSolver()
+    {
+        var calc = NewCalc();
+        calc.Run("f(x; y = 2) = x - y");
+        Assert.Equal(2d, calc.Run("$Root{f(x) = 0 @ x = 0 : 10}"), 6);
+    }
+
+    [Fact]
+    public void EmptyTrailingArgument_Throws()
+    {
+        var calc = NewCalc();
+        calc.Run("f(x; y = 2) = x + y");
+        Assert.Throws<MathParserException>(() => calc.Run("f(1;)"));
     }
 }

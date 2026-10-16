@@ -107,3 +107,10 @@ kwAllDefaults = kwFunc(1)
 kwPositional = kwFunc(1; 5; 2kg)
 kwMixed = kwFunc(1; z = 4kg)
 kwNamed = kwFunc(z = 4kg; x = 1; y = 5)
+kwArea(b; h = b) = b*h
+kwSquare = kwArea(3)
+kwLater(x; y = kwB) = x + y
+kwB = 7
+kwLaterUse = kwLater(1)
+kwNoDefaults(x; y) = x - y
+kwNoDefaultsUse = kwNoDefaults(y = 1; x = 5)

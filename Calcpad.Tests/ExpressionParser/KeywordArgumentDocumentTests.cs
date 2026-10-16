@@ -50,5 +50,20 @@ namespace Calcpad.Tests
             Assert.Contains("127", html);
             Assert.Contains("465", html);
         }
+
+        [Fact]
+        public void DefinitionRendersDefaults()
+        {
+            var html = Render("f(x; y = 2) = x + y");
+            Assert.Contains("<var>y</var> = 2", html);
+        }
+
+        [Fact]
+        public void CallRendersAsWritten()
+        {
+            var html = Render("f(x; y = 2; z = 3) = x + y + z\nr = f(1; z = 10)");
+            Assert.Contains("1; <var>z</var> = 10", html);
+            Assert.DoesNotContain("1; 2; 10", html);
+        }
     }
 }

@@ -549,6 +549,7 @@ namespace Calcpad.Highlighter.Tokenizer
             _pendingFunctionName = null;
             _pendingFunctionLine = -1;
             _pendingFunctionParenDepth = 0;
+            _pendingHasDefault = false;
             _beforeFirstCodeToken = true;
             _state = new TokenizerState
             {

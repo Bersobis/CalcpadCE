@@ -500,9 +500,7 @@ namespace Calcpad.Core
             _result = RealValue.Zero;
             _isCalculated = false;
             _functionDefinitionIndex = -1;
-            var rewritten = _hasOptionalParams ? RewriteKeywordArgs(expression) : null;
-            var source = rewritten is null ? expression : rewritten.AsSpan();
-            var input = _input.GetInput(source, allowAssignment);
+            var input = ResolveCallArguments(_input.GetInput(expression, allowAssignment));
             new SyntaxAnalyser(_functions).Check(input, IsCalculation && IsEnabled, out var isFunctionDefinition);
             _input.OrderOperators(input, isFunctionDefinition || _isSolver > 0 || IsPlotting, _assignmentIndex);
             if (isFunctionDefinition)
@@ -511,7 +509,7 @@ namespace Calcpad.Core
                     throw Exceptions.FunctionDefinitionInSolver();
 
                 _rpn = null;
-                AddFunction(input, source);
+                AddFunction(input);
             }
             else
                 _rpn = Input.GetRpn(input);
@@ -638,11 +636,11 @@ namespace Calcpad.Core
                 throw Exceptions.ResultNotReal(Core.Complex.Format(value.Complex, _settings.Decimals, Phasor, OutputWriter.OutputFormat.Text));
         }
 
-        private void AddFunction(Queue<Token> input, ReadOnlySpan<char> source)
+        private void AddFunction(Queue<Token> input)
         {
             var t = input.Dequeue();
             var parameters = new List<string>(2);
-            var hasDefaults = false;
+            List<Token[]> defaults = null;
             if (t.Type == TokenTypes.CustomFunction)
             {
                 var name = t.Content;
@@ -668,9 +666,14 @@ namespace Calcpad.Core
                                 input.Peek().Content == "=")
                             {
                                 input.Dequeue();
-                                SkipDefault(input);
-                                hasDefaults = true;
+                                defaults ??= new(parameters.Count);
+                                while (defaults.Count < parameters.Count - 1)
+                                    defaults.Add(null);
+
+                                defaults.Add(ReadDefault(input));
                             }
+                            else if (defaults is not null)
+                                throw Exceptions.RequiredParameterAfterOptional(t.Content);
                         }
                         else if (t.Type != TokenTypes.Divisor)
                             throw Exceptions.InvalidFunctionToken(t.Content);
@@ -684,7 +687,6 @@ namespace Calcpad.Core
                     if (input.Count != 0 && input.Dequeue().Content == "=")
                     {
                         var n = parameters.Count;
-                        var defaults = hasDefaults ? GetSourceDefaults(source, parameters) : null;
                         var rpn = Input.GetRpn(input);
                         var index = _functions.IndexOf(name);
                         CustomFunction cf;
@@ -702,8 +704,8 @@ namespace Calcpad.Core
 
 
                         cf.AddParameters(parameters);
-                        cf.DefaultExpressions = defaults;
-                        _hasOptionalParams |= hasDefaults;
+                        cf.Defaults = defaults?.ToArray();
+                        cf.DefaultFunctions = defaults is null ? null : new Func<IValue>[n];
 
                         cf.Rpn = rpn;
                         try
@@ -721,6 +723,12 @@ namespace Calcpad.Core
                         {
                             BindParameters(cf.Parameters, cf.Rpn);
                             SubscribeOnChange(cf.Rpn, cf.Clear);
+                            for (var i = 0; i < defaults?.Count; ++i)
+                                if (defaults[i] is not null)
+                                {
+                                    BindParameters(cf.Parameters[..i], defaults[i]);
+                                    SubscribeOnChange(defaults[i], cf.Clear);
+                                }
                         }
                         cf.Units = _targetUnits;
                         if (index >= 0)
@@ -770,7 +778,7 @@ namespace Calcpad.Core
             if (!IsEnabled)
                 return null;
 
-            var input = _input.GetInput(expression, false);
+            var input = ResolveCallArguments(_input.GetInput(expression, false));
             new SyntaxAnalyser(_functions).Check(input, IsEnabled, out _);
             _input.OrderOperators(input, true, 0);
             var rpn = Input.GetRpn(input);

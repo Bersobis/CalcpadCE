@@ -121,5 +121,18 @@ namespace Calcpad.Tests.Highlighter
             Assert.Contains("CPD-3302", Codes(result));
             Assert.DoesNotContain("CPD-3301", Codes(result));
         }
+
+        [Theory]
+        [InlineData("b = 1\nf(x; y = b) = x + y\nr = f(1)\n")]
+        [InlineData("f(x; y = b) = x + y\nb = 7\nr = f(1)\n")]
+        [InlineData("b = 1\nf(x; y = sqr(b)) = x + y\nr = f(1)\n")]
+        [InlineData("g(t) = t\nb = 1\nf(x; y = g(b)) = x + y\nr = f(1)\n")]
+        [InlineData("f(b; h = b) = b*h\nr = f(3)\n")]
+        public void DefaultReferencingVariable_KeepsFunctionDefined(string content)
+        {
+            var (result, _) = Lint(content);
+            Assert.DoesNotContain("CPD-3301", Codes(result));
+            Assert.DoesNotContain("CPD-3305", Codes(result));
+        }
     }
 }
