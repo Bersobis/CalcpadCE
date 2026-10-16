@@ -42,7 +42,7 @@ namespace Calcpad.Highlighter.Linter.Constants
             ["CPD-3204"] = "Variable name conflicts with a keyword",
             ["CPD-3205"] = "Variable name conflicts with a built-in constant",
             ["CPD-3206"] = "Function must have at least one parameter",
-            ["CPD-3215"] = "Required parameter after optional parameter in function definition",
+            ["CPD-3207"] = "Required parameter after optional parameter in function definition",
 
             // Stage 3: Usage (CPD-33xx)
             ["CPD-3301"] = "Undefined variable",

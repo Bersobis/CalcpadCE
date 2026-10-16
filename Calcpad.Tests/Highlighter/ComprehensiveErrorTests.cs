@@ -67,7 +67,7 @@ namespace Calcpad.Tests.Highlighter
                 { "naming_errors.cpd", "CPD-3204" },
                 { "naming_errors.cpd", "CPD-3205" }, // Warning: conflict with built-in constant is allowed
                 { "naming_errors.cpd", "CPD-3206" },
-                { "naming_errors.cpd", "CPD-3215" },
+                { "naming_errors.cpd", "CPD-3207" },
 
                 // Usage errors (CPD-33xx)
                 { "usage_errors.cpd", "CPD-3301" },

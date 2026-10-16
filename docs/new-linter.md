@@ -57,7 +57,7 @@ The tables below group them by the kind of problem.
 | CPD-3204 | Error | Variable name conflicts with a keyword |
 | CPD-3205 | Error | Variable name conflicts with a built-in constant |
 | CPD-3206 | Error | Function must have at least one parameter |
-| CPD-3215 | Error | Required parameter after optional parameter in function definition |
+| CPD-3207 | Error | Required parameter after optional parameter in function definition |
 
 ### Usage
 

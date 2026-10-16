@@ -93,7 +93,7 @@ namespace Calcpad.Highlighter.Linter.Validators.Stage3
                         foreach (var name in ParsingHelpers.RequiredAfterOptional(paramNames, defaults))
                         {
                             var startPos = line.IndexOf(funcName, StringComparison.Ordinal);
-                            result.AddError(i, startPos >= 0 ? startPos : 0, line.Length, "CPD-3215",
+                            result.AddError(i, startPos >= 0 ? startPos : 0, line.Length, "CPD-3207",
                                 "Required parameter '" + name + "' cannot follow an optional parameter");
                         }
                     }

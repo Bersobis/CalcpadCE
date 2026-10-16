@@ -43,7 +43,7 @@ namespace Calcpad.Tests.Highlighter
         public void FunctionDefinition_RequiredAfterOptional_IsReported()
         {
             var (result, _) = Lint("f(x = 1; y) = x + y\n");
-            Assert.Contains("CPD-3215", Codes(result));
+            Assert.Contains("CPD-3207", Codes(result));
         }
 
         [Fact]
@@ -101,6 +101,25 @@ namespace Calcpad.Tests.Highlighter
         {
             var (result, _) = Lint("f(x; y = 2) = x + y\na = 1\nb = 1\nr = f(a == b)\n");
             Assert.DoesNotContain("CPD-3315", Codes(result));
+        }
+
+        [Theory]
+        [InlineData("r = f(1)")]
+        [InlineData("r = f(1; z = 9)")]
+        [InlineData("r = f(z = 9; x = 1)")]
+        [InlineData("r = f(1; 2; 3)")]
+        public void CommandBlockFunction_CallUsingDefaults_ValidatesBody(string call)
+        {
+            var (result, _) = Lint("f(x; y = 2; z = 3) = $Inline{a = x + y + z + q}\n" + call + "\n");
+            Assert.Single(result.Diagnostics, d => d.Code == "CPD-3301" && d.Line == 1);
+        }
+
+        [Fact]
+        public void CommandBlockFunction_TooFewArguments_SkipsBodyValidation()
+        {
+            var (result, _) = Lint("f(x; y; z = 3) = $Block{a = x + y + z + q}\nr = f(1)\n");
+            Assert.Contains("CPD-3302", Codes(result));
+            Assert.DoesNotContain("CPD-3301", Codes(result));
         }
     }
 }

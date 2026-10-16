@@ -38,5 +38,17 @@ namespace Calcpad.Tests
             Assert.Contains("12", html);
             Assert.Contains("20", html);
         }
+
+        [Theory]
+        [InlineData("$Inline")]
+        [InlineData("$Block")]
+        public void CommandBlockFunctionDefaults_RenderThroughTheFullPipeline(string block)
+        {
+            var html = Render($"f(x; y = 2; z = 3) = {block}{{a = x*100 + y*10 + z}}\nr = f(1)\ns = f(1; z = 7)\nt = f(z = 5; x = 4; y = 6)");
+            Assert.DoesNotContain("Error", html);
+            Assert.Contains("123", html);
+            Assert.Contains("127", html);
+            Assert.Contains("465", html);
+        }
     }
 }
