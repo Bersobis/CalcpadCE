@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { parseHeadings, DEFAULT_PDF_SETTINGS, extractPlotsFromHtml, buildZip, serializeMetadataComment, serializeSettingsDirective, hasMetadataContent, computeMetadataBlock, buildSourceDefinitionResolver, findUiDirectiveBlock, serializeUiDirective, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, coerceWriteMode, coerceLogLevel, stripCpdSnippetWrapper, buildLiveDocument } from 'calcpad-frontend';
+import { parseHeadings, DEFAULT_PDF_SETTINGS, extractPlotsFromHtml, buildZip, serializeMetadataComment, serializeSettingsDirective, hasMetadataContent, computeMetadataBlock, buildSourceDefinitionResolver, findUiDirectiveBlock, serializeUiDirective, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, coerceWriteMode, coerceLogLevel, stripCpdSnippetWrapper } from 'calcpad-frontend';
 import type { ParseMode, CalcpadError, ExtractedPlot, MetadataCommentBlock, MetadataCommentData, MetadataLayout, SettingsValues, UiDirectiveData, UiControl } from 'calcpad-frontend';
 import { CalcpadSettingsManager } from './calcpadSettings';
 import { CalcpadInsertManager } from './calcpadInsertManager';
@@ -17,6 +17,8 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
     private _cachedHtml: string = '';
     private _inputMode = false;
     private _sourceless = false;
+    /** Whether a Live math pane is on screen. Document pushes are only sent while one is. */
+    private _liveMathActive = false;
     /**
      * Extension supplies a getter that combines `activeTextEditor` with the
      * remembered preview-source editor so plot fetching still works when the
@@ -37,13 +39,6 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
 
     /** Parse mode at a document line. Set by the extension, so the server cache is used first. */
     public getParseMode?: (document: vscode.TextDocument, line: number) => ParseMode;
-
-    /**
-     * Renders the active document's source to HTML for the live editor, or null when it
-     * cannot be rendered. The extension owns the api client and the settings, so the panel
-     * asks rather than renders — the same arrangement as `resolveUiControls`.
-     */
-    public renderSourceForLive?: () => Promise<string | null>;
 
     constructor(
         private readonly _extensionUri: vscode.Uri,
@@ -409,12 +404,20 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
                     }
                     break;
 
-                case 'getLiveDocument':
-                    await this._handleGetLiveDocument();
+                // ---- Live math --------------------------------------------------
+                // The panel asks for the worksheet it is editing and tells the host whether
+                // any pane is showing it, since updates are only pushed while one is.
+                case 'getLiveMathDocument':
+                    this._sendLiveMathDocument();
                     break;
 
-                case 'liveEditLine':
-                    await this._handleLiveEditLine(data);
+                // A committed edit from the worksheet, written back one line at a time.
+                case 'applyLiveMathLine':
+                    await this._applyLiveMathLine(data);
+                    break;
+
+                case 'setLiveMathActive':
+                    this._liveMathActive = data.active === true;
                     break;
 
                 case 'debug':
@@ -434,11 +437,19 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
 
         // Debounced refresh of headings when the document content changes
         let tocTimer: ReturnType<typeof setTimeout> | undefined;
+        let liveMathTimer: ReturnType<typeof setTimeout> | undefined;
         vscode.workspace.onDidChangeTextDocument((e) => {
             const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
             if (editor && e.document === editor.document) {
                 if (tocTimer) clearTimeout(tocTimer);
                 tocTimer = setTimeout(() => this._sendHeadings(), 800);
+                // Keep the Live math worksheet in step with edits made in the editor, so a
+                // commit from the panel cannot silently overwrite a line that has since
+                // changed. Only while a Live math pane is actually showing it.
+                if (this._liveMathActive) {
+                    if (liveMathTimer) clearTimeout(liveMathTimer);
+                    liveMathTimer = setTimeout(() => this._sendLiveMathDocument(), 800);
+                }
             }
         });
     }
@@ -597,6 +608,37 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
         }
     }
 
+    /**
+     * Push the worksheet text to the Live math panel. The document is authoritative and the
+     * panel is a view over it, so this is sent on request and after source edits — never a
+     * second copy the two could drift on. The panel ignores a push that lands while it holds
+     * an uncommitted edit of its own.
+     */
+    private _sendLiveMathDocument() {
+        if (!this._view) return;
+        const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
+        const text = editor ? editor.document.getText() : '';
+        this._view.webview.postMessage({ type: 'liveMathDocument', text });
+    }
+
+    /**
+     * Write one line of the worksheet back into the document. The whole line's range is
+     * replaced in a single edit, so the write is one undo step on the editor's own stack —
+     * the same contract the web host gives through `onReplaceLine`. The panel sends
+     * zero-based line numbers.
+     */
+    private async _applyLiveMathLine(data: { line: number; text: string }): Promise<void> {
+        if (typeof data.line !== 'number' || typeof data.text !== 'string') return;
+        const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
+        if (!editor) return;
+        const lineIndex = data.line; // zero-based, as the panel counts
+        if (lineIndex < 0 || lineIndex >= editor.document.lineCount) return;
+        const line = editor.document.lineAt(lineIndex);
+        await editor.edit((editBuilder) => {
+            editBuilder.replace(line.range, data.text);
+        });
+    }
+
     public updateVariables(data: { macros: any[], variables: any[], functions: any[], customUnits: any[] }) {
         if (this._view) {
             this._outputChannel.appendLine(`Updating variables: ${data.macros.length} macros, ${data.variables.length} variables, ${data.functions.length} functions, ${data.customUnits.length} custom units`, 'verbose');
@@ -669,57 +711,6 @@ export class CalcpadVueUIProvider implements vscode.WebviewViewProvider {
 
     private _postInputMode() {
         this._view?.webview.postMessage({ type: 'inputModeChanged', active: this._sourceless });
-    }
-
-    /**
-     * Answers the live editor's request for the document it is editing: the source lines,
-     * which of them can be edited in place, and the rendered form of each. The render comes
-     * from the extension so the document's own settings and source path apply.
-     */
-    private async _handleGetLiveDocument(): Promise<void> {
-        if (!this._view) return;
-        const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
-        const content = editor?.document.getText() ?? '';
-        let html: string | null = null;
-        if (content.trim().length > 0) {
-            html = await this.renderSourceForLive?.() ?? null;
-        }
-        this._view.webview.postMessage({
-            type: 'liveDocument',
-            ...buildLiveDocument(content, html),
-        });
-    }
-
-    /**
-     * Writes one source line back into the document, the whole line's range at once so the
-     * edit is a single undo step. The document's own change listener re-renders the preview
-     * behind it, and the panel is told how the write went.
-     */
-    private async _handleLiveEditLine(data: { line: number; text: string }): Promise<void> {
-        if (!this._view) return;
-        const line = Number(data?.line);
-        const text = String(data?.text ?? '');
-        if (!Number.isFinite(line)) return;
-        const editor = this.getSourceEditor?.() ?? vscode.window.activeTextEditor;
-        if (!editor) {
-            this._view.webview.postMessage({ type: 'liveLineWritten', line, ok: false, error: 'There is no document open to write to.' });
-            return;
-        }
-        const document = editor.document;
-        const lineIndex = Math.min(Math.max(0, Math.trunc(line) - 1), document.lineCount - 1);
-        const range = new vscode.Range(lineIndex, 0, lineIndex, document.lineAt(lineIndex).text.length);
-        try {
-            await editor.edit(editBuilder => {
-                editBuilder.replace(range, text);
-            });
-        } catch (error) {
-            this._view.webview.postMessage({ type: 'liveLineWritten', line, ok: false, error: String(error) });
-            return;
-        }
-        this._view.webview.postMessage({ type: 'liveLineWritten', line, ok: true });
-        // A render that keeps its anchors costs a server round-trip, so it waits for the
-        // document's own preview re-render rather than racing it.
-        setTimeout(() => void this._handleGetLiveDocument(), 900);
     }
 
     /**

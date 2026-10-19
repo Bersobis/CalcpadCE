@@ -91,6 +91,9 @@ export {
     BROWSER_NOT_FOUND,
     BrowserNotFoundError,
     isBrowserNotFound,
+    BROWSER_LAUNCH_FAILED,
+    BrowserLaunchFailedError,
+    isBrowserLaunchFailed,
     pdfResponseError,
     fetchPdfBrowserStatus,
     installPdfBrowser,
@@ -190,21 +193,10 @@ export type { ExportRequest, VariantRender } from './services/message-bridge/bas
 export type { TocHeading } from './services/headings';
 export { parseHeadings } from './services/headings';
 
-// --- Live editor --------------------------------------------------------------
-export type { LiveLine, LiveDocument } from './services/live-document';
-export {
-    buildLiveDocument,
-    splitSourceLines,
-    isLiveEditableLine,
-    extractRenderedLines,
-    parseMatrixLiteral,
-    matrixLiteralRange,
-    buildMatrixLiteral,
-} from './services/live-document';
-export { sanitizeRenderedHtml } from './services/html-sanitize';
-
 export {
     decodeExitCode,
+    SERVER_CONFIG_ERROR_EXIT_CODE,
+    extractConfigError,
     formatCrashReportPayload,
     buildCrashRecord,
 } from './services/crash-report';
@@ -341,3 +333,7 @@ export {
     pathRootTokenOptions,
     hasDanglingCloseBrace,
 } from './text/directives';
+
+// --- Math rendering / editing engine -----------------------------------------
+// Calcpad text ⇄ MathML AST ⇄ native MathML / OMML. No LaTeX, no third-party renderer.
+export * as math from './math';

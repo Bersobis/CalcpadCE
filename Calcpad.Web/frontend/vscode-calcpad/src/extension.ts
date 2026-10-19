@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
-import { pdfResponseError, isBrowserNotFound, installPdfBrowser, CalcpadApiClient, combineSignals, resolveEffectivePdfSettings, pdfSettingsFromDocument, parseConvertErrorHeader, findMetadataCommentBlock, serializeMetadataComment, computeMetadataBlock, buildSourceDefinitionResolver, extractBodyHtml, UiOverrideStore, writeUiOverrides, extractUiControls, variantRender, inlineImageSources, createReferenceResolver, isCompiledPath, documentHasUiDirectives, COMPILED_EXTENSION, MAX_COMPILED_IMAGE_TOTAL_BYTES, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MAX_HTML_MIRROR_CHARS, MAX_INLINE_IMAGE_TOTAL_BYTES, previewSizeLimitChars, previewLimitNoticeHtml, formatSize, truncateForOutput, consoleRelayGuardScript, coerceLogLevel, setLogLevel, getLogLevel, ConnectionMonitor , getParseModeAt} from 'calcpad-frontend';
+import { pdfResponseError, isBrowserNotFound, isBrowserLaunchFailed, installPdfBrowser, CalcpadApiClient, combineSignals, resolveEffectivePdfSettings, pdfSettingsFromDocument, parseConvertErrorHeader, findMetadataCommentBlock, serializeMetadataComment, computeMetadataBlock, buildSourceDefinitionResolver, extractBodyHtml, UiOverrideStore, writeUiOverrides, extractUiControls, variantRender, inlineImageSources, createReferenceResolver, isCompiledPath, documentHasUiDirectives, COMPILED_EXTENSION, MAX_COMPILED_IMAGE_TOTAL_BYTES, DEFAULT_PREVIEW_SIZE_MB, DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MAX_HTML_MIRROR_CHARS, MAX_INLINE_IMAGE_TOTAL_BYTES, previewSizeLimitChars, previewLimitNoticeHtml, formatSize, truncateForOutput, consoleRelayGuardScript, coerceLogLevel, setLogLevel, getLogLevel, ConnectionMonitor , getParseModeAt} from 'calcpad-frontend';
 import type { PdfSettings as FrontendPdfSettings, ExportVariant, UiControl, UiOverrides, CalcpadError } from 'calcpad-frontend';
 import { CalcpadServerLinter } from './calcpadServerLinter';
 import { CalcpadSemanticTokensProvider, semanticTokensLegend } from './calcpadSemanticTokensProvider';
@@ -1085,7 +1085,6 @@ async function renderForExport(
     sourceFileUri: vscode.Uri,
     variant: ExportVariant,
     forceWrite = false,
-    includeLineAnchors = forceWrite,
 ): Promise<{ html: string; errors: CalcpadError[] }> {
     const settingsManager = CalcpadSettingsManager.getInstance(extensionContext);
     const apiBaseUrl = await resolveServerUrl();
@@ -1111,7 +1110,7 @@ async function renderForExport(
             forPrint: render.forPrint,
             enableUi: render.enableUi,
             uiOverrides: render.useOverrides ? uiOverridesFor(sourceFileUri.toString(), documentContent) : undefined,
-            includeLineAnchors,
+            includeLineAnchors: forceWrite,
             write: forceWrite || settingsManager.mayWrite(render.forPrint, render.enableUi),
         }),
         signal: combineSignals(AbortSignal.timeout(30000), signal),
@@ -1218,9 +1217,10 @@ async function runPdfExportCommand(variant: ExportVariant = 'report'): Promise<v
         );
     });
 
-    // Two attempts at most: the second only runs after the user accepted the
-    // Chromium download, so it starts from a state where a browser exists.
-    for (let attempt = 0; attempt < 2; attempt++) {
+    // Retries only on a user action: Retry after a failed browser launch, or accepting
+    // the one-time Chromium download offer.
+    let offeredDownload = false;
+    for (;;) {
         try {
             await runExport();
 
@@ -1236,12 +1236,19 @@ async function runPdfExportCommand(variant: ExportVariant = 'report'): Promise<v
             const msg = error instanceof Error ? error.message : String(error);
             outputChannel.appendLine(`[PDF] ${msg}`, 'warning');
 
-            if (attempt === 0 && isBrowserNotFound(error) && await offerChromiumDownload(error.downloadSizeMb)) {
-                continue;
+            if (isBrowserLaunchFailed(error)) {
+                const choice = await vscode.window.showWarningMessage(`Failed to generate PDF: ${msg}`, 'Retry');
+                if (choice === 'Retry') continue;
+                return;
             }
-            if (!isBrowserNotFound(error)) {
-                vscode.window.showErrorMessage(`Failed to generate PDF: ${msg}`);
+            if (isBrowserNotFound(error)) {
+                if (!offeredDownload) {
+                    offeredDownload = true;
+                    if (await offerChromiumDownload(error.downloadSizeMb)) continue;
+                }
+                return;
             }
+            vscode.window.showErrorMessage(`Failed to generate PDF: ${msg}`);
             return;
         }
     }
@@ -1893,7 +1900,12 @@ export async function activate(context: vscode.ExtensionContext) {
                             serverManager = undefined;
                         }
 
-                        if (blocked) {
+                        if (message.startsWith('Invalid server settings:')) {
+                            vscode.window.showErrorMessage(`CalcpadCE: ${message}`);
+                            if (serverMode !== 'local' && settingsManager.getRemoteServerUrl()) {
+                                monitorRemoteOnly('bundled server failed');
+                            }
+                        } else if (blocked) {
                             vscode.window.showErrorMessage(
                                 'CalcpadCE: Windows blocked Calcpad.Server.exe. ' +
                                 'Unblock the file (right-click → Properties → Unblock) ' +
@@ -2186,22 +2198,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vueUiProvider.onUiOverridesEdited = (documentUri, overrides) => {
         uiOverrides.replace(documentUri, overrides);
         uiOverridesDirty.delete(documentUri);
-    };
-    // The live editor reads what the renderer made of each line, which means the variant
-    // that keeps its source-line anchors — the preview one, since that is the layout the
-    // panel is read beside. Writes stay off: a render made to describe the document must
-    // not also run its #write directives.
-    vueUiProvider.renderSourceForLive = async () => {
-        const editor = vscode.window.activeTextEditor ?? previewSourceEditor;
-        if (!editor) return null;
-        try {
-            const { html } = await renderForExport(
-                editor.document.getText(), editor.document.uri, 'preview', false, true);
-            return html;
-        } catch (e) {
-            outputChannel.appendLine('[Live editor] Render failed: ' + e, 'warning');
-            return null;
-        }
     };
     const vueUiProviderDisposable = vscode.window.registerWebviewViewProvider(
         CalcpadVueUIProvider.viewType,

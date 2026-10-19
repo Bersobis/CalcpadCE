@@ -2,7 +2,6 @@ import { CalcpadApiClient } from '../../api/client';
 import { CalcpadSnippetService } from '../snippets';
 import { CalcpadDefinitionsService } from '../definitions';
 import { parseHeadings } from '../headings';
-import { buildLiveDocument } from '../live-document';
 import { serializeMetadataComment, serializeSettingsDirective, computeMetadataBlock, pdfSettingsFromDocument, hasMetadataContent } from '../../text/metadata-comment';
 import type { MetadataCommentData, MetadataCommentBlock, MetadataLayout, SettingsValues } from '../../text/metadata-comment';
 import { buildSourceDefinitionResolver } from '../../text/source-definitions';
@@ -119,8 +118,10 @@ export abstract class BaseMessageBridge {
     protected settings: CalcpadSettings;
     protected _onInsertText: ((text: string) => void) | null = null;
     protected _onGoToLine: ((line: number) => boolean) | null = null;
-    /** Host hook for the live editor writing one source line back into the document. */
-    protected _onLiveEditLine: ((line: number, text: string) => boolean | void) | null = null;
+    /** Replace one zero-based line of the active document. Set by the host, which owns the editor. */
+    protected _onReplaceLine: ((line: number, text: string) => void) | null = null;
+    /** Whether a Live math pane is on screen. Updates are only pushed while one is. */
+    private liveMathActive = false;
     protected quickPick: QuickPickFn | null = null;
     private _uiOverridesProvider: (() => Record<string, string> | undefined) | null = null;
     private _uiControlsProvider: (() => UiControl[] | null) | null = null;
@@ -172,18 +173,12 @@ export abstract class BaseMessageBridge {
     }
 
     /**
-     * Host hook for the live editor, which edits one source line at a time. Only the host
-     * can reach the editor holding the document — Monaco's model in the web app, the text
-     * editor in VS Code — so the write lands there and the host re-renders behind it.
-     * Returning false reports the write as failed without changing the document.
+     * Host hook for the Live math tab's write-back. The tab renders the worksheet and writes
+     * one line at a time, so the edit lands in the host's own document — and its undo stack —
+     * rather than in a parallel copy.
      */
-    set onLiveEditLine(handler: (line: number, text: string) => boolean | void) {
-        this._onLiveEditLine = handler;
-    }
-
-    /** Reports the outcome of a live line write back to the panel. */
-    protected postLiveLineWritten(line: number, ok: boolean, error?: string): void {
-        this.postToVue({ type: 'liveLineWritten', line, ok, error });
+    set onReplaceLine(handler: (line: number, text: string) => void) {
+        this._onReplaceLine = handler;
     }
 
     /** Host injects a modal list picker used by the image-storage prompt. */
@@ -273,34 +268,6 @@ export abstract class BaseMessageBridge {
         this.postToVue({ type: 'updateHeadings', headings });
     }
 
-    /** Pushes a fresh live document to the panel — after a live line write, say. */
-    refreshLiveDocument(): void {
-        void this.handleGetLiveDocument();
-    }
-
-    /**
-     * Answers the live editor's request for the document it is editing: the source lines,
-     * which of them can be edited in place, and the rendered form of each.
-     *
-     * The render is the preview variant with its line anchors kept, since those anchors
-     * are what ties a rendered line back to the source line it came from. Writes stay off:
-     * a render made to describe the document must not also run its `#write` directives.
-     */
-    private async handleGetLiveDocument(): Promise<void> {
-        const content = this.getActiveEditorContent();
-        if (content.trim().length === 0) {
-            this.postToVue({ type: 'liveDocument', ...buildLiveDocument(content, null) });
-            return;
-        }
-        const { sourceFilePath } = await this.buildFileContext(content);
-        const result = await this.apiClient.convert(
-            content, buildApiSettings(this.settings), 'html', false, sourceFilePath,
-            undefined, this.uiOptionsFor('preview'), true, { write: false }
-        );
-        const html = result != null && !(result instanceof ArrayBuffer) ? result.html : null;
-        this.postToVue({ type: 'liveDocument', ...buildLiveDocument(content, html) });
-    }
-
     /** Return the (coerced) stored color-theme label. */
     getStoredColorTheme(): string {
         return this.coerceColorTheme(this.getExtraSetting('colorTheme'));
@@ -327,6 +294,17 @@ export abstract class BaseMessageBridge {
                 break;
             case 'getVariables':
                 this.handleGetVariables();
+                break;
+            case 'getLiveMathDocument':
+                this.postToVue({ type: 'liveMathDocument', text: this.getActiveEditorContent() });
+                break;
+            case 'applyLiveMathLine':
+                if (this._onReplaceLine && typeof message.line === 'number' && typeof message.text === 'string') {
+                    this._onReplaceLine(message.line, message.text);
+                }
+                break;
+            case 'setLiveMathActive':
+                this.liveMathActive = message.active === true;
                 break;
             case 'insertText':
                 if (this._onInsertText) this._onInsertText(message.text);
@@ -431,16 +409,6 @@ export abstract class BaseMessageBridge {
             case 'getHeadings':
                 this.refreshHeadings();
                 break;
-            case 'getLiveDocument':
-                void this.handleGetLiveDocument();
-                break;
-            case 'liveEditLine': {
-                const line = Number(message.line);
-                const text = String(message.text ?? '');
-                const ok = this._onLiveEditLine?.(line, text) !== false;
-                this.postLiveLineWritten(line, ok);
-                break;
-            }
             case 'getMetadataContext':
                 this.handleGetMetadataContext();
                 break;
@@ -524,7 +492,7 @@ export abstract class BaseMessageBridge {
 
     protected buildSettingsResponseExtras(): Record<string, unknown> | Promise<Record<string, unknown>> { return {}; }
     protected async runPdfPreflight(): Promise<boolean> { return true; }
-    /** Return `true` to have the export retried once — hosts use this after installing a browser. */
+    /** Return `true` to retry the export. Only do so on a user action (Retry, installing a browser). */
     protected async onPdfError(_err: unknown): Promise<boolean> { return false; }
     /** Called after a PDF is successfully written, with the saved path (platforms that have one). */
     protected async onPdfSaved(_filePath: string): Promise<void> { /* default no-op */ }
@@ -553,6 +521,16 @@ export abstract class BaseMessageBridge {
 
     protected postToVue(message: unknown): void {
         window.dispatchEvent(new MessageEvent('message', { data: message }));
+    }
+
+    /**
+     * Push the document to the Live math panel. A no-op unless the panel is open, so an editor
+     * that is not being mirrored costs nothing. The panel ignores the push while it holds an
+     * uncommitted edit, so this cannot overwrite work in progress.
+     */
+    pushLiveMathDocument(): void {
+        if (!this.liveMathActive) return;
+        this.postToVue({ type: 'liveMathDocument', text: this.getActiveEditorContent() });
     }
 
     protected getActiveEditorContent(): string {
@@ -1017,9 +995,9 @@ export abstract class BaseMessageBridge {
         const apiSettings = buildApiSettings(this.settings);
         const { sourceFilePath } = await this.buildFileContext(content);
 
-        // Two attempts at most: onPdfError asks for a retry only when it resolved the
-        // cause (installing a browser), so the second attempt either works or reports.
-        for (let attempt = 0; attempt < 2; attempt++) {
+        // onPdfError returns true only after the user chose to retry or install a browser,
+        // so this never loops on its own.
+        for (;;) {
             try {
                 const pdfBytes = await this.generatePdfBytes(content, apiSettings, sourceFilePath, variant);
                 if (!pdfBytes) return;
@@ -1033,8 +1011,7 @@ export abstract class BaseMessageBridge {
                 if (savedPath) await this.onPdfSaved(savedPath);
                 return;
             } catch (err) {
-                const retry = await this.onPdfError(err);
-                if (!retry || attempt === 1) return;
+                if (!(await this.onPdfError(err))) return;
             }
         }
     }

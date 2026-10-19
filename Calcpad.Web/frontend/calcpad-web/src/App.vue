@@ -1420,17 +1420,6 @@ function setServerStatus(status: ServerStatus): void {
 
 const sidebarVisible = ref(true)
 const previewVisible = ref(true)
-
-/**
- * The share of the window the Results pane takes, published as a custom property on the
- * document root. The sidebar's live-editor keypad is fixed to the bottom of the window
- * and stops at the Results pane rather than covering it — the preview is what the edit is
- * being watched in. Zero when there is no preview, so the keypad spans everything.
- */
-watch([previewVisible, previewWidthRatio, uiModeFullscreen], () => {
-  const share = previewVisible.value && !uiModeFullscreen.value ? previewWidthRatio.value : 0
-  document.documentElement.style.setProperty('--live-keyboard-inset', `${share * 100}%`)
-}, { immediate: true })
 // Groups with an in-flight preview render; drives the "Calculating…" overlay.
 const previewLoadingGroups = ref(new Set<string>())
 const previewLoading = computed(() => previewLoadingGroups.value.size > 0)

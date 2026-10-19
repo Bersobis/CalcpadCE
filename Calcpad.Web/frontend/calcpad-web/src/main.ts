@@ -5,6 +5,7 @@ import CalcpadAppVue from 'calcpad-frontend/vue/components/CalcpadApp.vue';
 import { initMessaging } from 'calcpad-frontend/vue/services/messaging';
 import { discardMetadataDraft } from 'calcpad-frontend/vue/metadata-drafts';
 import { MessageBridge } from './services/message-bridge';
+import type { TauriServerManager } from './services/server-manager';
 import { WorkspaceStateStore, isResultMode, type ResultMode, type WorkspaceLayout } from './services/workspace-state';
 import { buildApiSettings } from 'calcpad-frontend/types/settings';
 import { ConnectionMonitor, setLogLevel, coerceLogLevel, stripCpdSnippetWrapper } from 'calcpad-frontend';
@@ -124,14 +125,12 @@ function getEmptyPreviewHtml(theme: 'light' | 'dark'): string {
 }
 
 function getSampleContent(): string {
-    // The source form, not the typeset one: Calcpad reads `sqrt` and `^`, and the render
-    // is what turns them into the radical and the superscript.
     return `'CalcpadCE Web Editor
 'Enter your calculations below
 
 a = 3
 b = 4
-c = sqrt(a^2 + b^2)
+c = √(a² + b²)
 `;
 }
 
@@ -153,14 +152,14 @@ async function rgbaToPng(rgba: Uint8Array, width: number, height: number): Promi
 }
 
 /**
- * Native message box shown when the calculation server never becomes ready.
+ * Native message box shown when the calculation server could not start.
  * The editor itself keeps working; only server-backed features (preview,
  * linting, export) need it.
  */
 async function showServerBlockedDialog(details: string): Promise<void> {
     const { message: dialogMessage } = await import('@tauri-apps/plugin-dialog');
     const body =
-        "CalcpadCE's calculation server started but never became ready.\n\n"
+        "CalcpadCE's calculation server could not start.\n\n"
         + 'The editor still works, but preview, linting, and PDF/Word export '
         + 'need the server. Choose Server → Restart Server to try again.\n\n'
         + `Details: ${details}`;
@@ -173,6 +172,38 @@ async function showServerBlockedDialog(details: string): Promise<void> {
     } catch {
         // dialog can throw if the runtime is tearing down — the buffered log
         // line in the Output panel is the fallback.
+    }
+}
+
+async function showConfigInvalidDialog(details: string): Promise<'retry' | 'ignore' | null> {
+    const { message: dialogMessage } = await import('@tauri-apps/plugin-dialog');
+    const body =
+        "CalcpadCE's calculation server could not read its settings file.\n\n"
+        + `${details}\n\n`
+        + 'Fix the file, then choose Retry to load it again. Choose Ignore to start '
+        + 'the server with default settings.';
+    try {
+        const choice = await dialogMessage(body, {
+            title: 'Invalid appsettings.json',
+            kind: 'error',
+            buttons: { ok: 'Retry', cancel: 'Ignore' },
+        });
+        // Some platforms report the custom label, others the default button name.
+        return choice === 'Retry' || choice === 'Ok' ? 'retry' : 'ignore';
+    } catch {
+        // The Output panel carries the same message.
+        return null;
+    }
+}
+
+/** A Retry that fails the same way raises onConfigInvalid again, so this loops until resolved. */
+async function resolveConfigInvalid(manager: TauriServerManager, details: string): Promise<void> {
+    const choice = await showConfigInvalidDialog(details);
+    if (!choice) return;
+    try {
+        await manager.restart({ ignoreSettings: choice === 'ignore' });
+    } catch {
+        // restart() already logged it.
     }
 }
 
@@ -209,16 +240,20 @@ async function bootstrap(): Promise<void> {
             pendingServerRawLogs.push({ line, stream });
         };
 
-        serverManager.onStartupBlocked = (details: string) => {
-            pendingServerLogs.push({ msg: `Server did not start — ${details}`, level: 'error' });
-            void showServerBlockedDialog(details);
-        };
+        // The server is shared, so one dialog is enough; the manager already logged the reason.
+        if (isPrimaryWindow) {
+            serverManager.onStartupBlocked = (details: string) => { void showServerBlockedDialog(details); };
+            const manager = serverManager;
+            serverManager.onConfigInvalid = (details: string) => { void resolveConfigInvalid(manager, details); };
+        }
 
         try {
             await serverManager.start();
         } catch (err) {
-            const msg = err instanceof Error ? (err.stack ?? err.message) : String(err);
-            pendingServerLogs.push({ msg: `[bootstrap] Server failed to start: ${msg}`, level: 'error' });
+            if (!serverManager.startFailureReported) {
+                const msg = err instanceof Error ? (err.stack ?? err.message) : String(err);
+                pendingServerLogs.push({ msg: `[bootstrap] Server failed to start: ${msg}`, level: 'error' });
+            }
             console.error('[bootstrap] Server failed to start:', err);
         }
         serverUrl = serverManager.getBaseUrl() || '';
@@ -927,6 +962,7 @@ async function bootstrap(): Promise<void> {
         let definitionsTimer: ReturnType<typeof setTimeout> | null = null;
         let previewTimer: ReturnType<typeof setTimeout> | null = null;
         let tocTimer: ReturnType<typeof setTimeout> | null = null;
+        let liveMathTimer: ReturnType<typeof setTimeout> | null = null;
         group.disposables.push(
             ed.onDidChangeModelContent(() => {
                 if (definitionsTimer) clearTimeout(definitionsTimer);
@@ -941,6 +977,10 @@ async function bootstrap(): Promise<void> {
                 if (group === activeGroup) {
                     if (tocTimer) clearTimeout(tocTimer);
                     tocTimer = setTimeout(() => activeBridge.refreshHeadings(), 800);
+                    // Keep the Live math panel in step with edits made here, so a commit from
+                    // the panel cannot silently overwrite a line that has since changed.
+                    if (liveMathTimer) clearTimeout(liveMathTimer);
+                    liveMathTimer = setTimeout(() => activeBridge.pushLiveMathDocument(), 800);
                 }
             }),
         );
@@ -1277,30 +1317,24 @@ async function bootstrap(): Promise<void> {
         editor.focus();
     };
 
-    /**
-     * The live editor rewrites one source line at a time. The whole line's range is
-     * replaced so each write is a single undo step, and the preview is re-rendered behind
-     * it when auto-run is on — the same debounced content-change path a keystroke in the
-     * editor takes, reached by editing the model rather than going around it. The panel's
-     * own view of the document is refreshed afterwards, so the rendered form beside each
-     * line number follows the write.
-     */
-    activeBridge.onLiveEditLine = (line: number, text: string) => {
-        const group = activeGroup;
-        const model = group?.editor.getModel();
-        if (!model) return false;
-        const lineNumber = Math.min(Math.max(1, Math.trunc(line) || 1), model.getLineCount());
-        const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
-        group.editor.executeEdits('calcpad-live-edit', [{
-            range,
+    // Live math writes one line back at a time. Routing it through the document model keeps
+    // the worksheet authoritative and leaves the edit on Monaco's own undo stack.
+    activeBridge.onReplaceLine = (line: number, text: string) => {
+        const target = activeGroup.editor;
+        const model = target.getModel();
+        if (!model) return;
+        const lineNumber = line + 1;
+        if (lineNumber < 1 || lineNumber > model.getLineCount()) return;
+        target.executeEdits('calcpad-live-math', [{
+            range: {
+                startLineNumber: lineNumber,
+                startColumn: 1,
+                endLineNumber: lineNumber,
+                endColumn: model.getLineMaxColumn(lineNumber),
+            },
             text,
             forceMoveMarkers: true,
         }]);
-        if (appInstance.isPreviewVisible() && editorBridge.getExtraSetting('autoRun') !== 'false') {
-            void refreshPreviewFor(group);
-        }
-        activeBridge.refreshLiveDocument();
-        return true;
     };
 
     // Wire Output panel: intercept console methods to pipe into the panel.
@@ -1522,8 +1556,10 @@ async function bootstrap(): Promise<void> {
     // serverManager.start() ran before the callbacks above existed, so seed from what it knows.
     // markStopped leaves polling suspended, which is right: only a user restart can help.
     if (serverManager && !serverManager.isRunning) {
-        connectionMonitor.markStopped('server did not start');
+        connectionMonitor.markStopped(serverManager.isConfigInvalid ? 'invalid appsettings.json' : 'server did not start');
     } else {
+        // A Retry/Ignore answered during boot can restart it before onUrlChanged was wired.
+        if (serverManager) activeBridge.api.setBaseUrl(serverManager.getBaseUrl());
         connectionMonitor.start();
     }
 
