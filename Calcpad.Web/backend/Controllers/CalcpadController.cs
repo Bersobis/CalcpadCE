@@ -589,7 +589,8 @@ namespace Calcpad.Server.Controllers
                         SourceFile = m.SourceFile,
                         Description = m.Description,
                         ParamTypes = m.ParamTypes,
-                        ParamDescriptions = m.ParamDescriptions
+                        ParamDescriptions = m.ParamDescriptions,
+                        Defaults = m.Defaults
                     }).ToList(),
 
                     Functions = staged.Stage3.FunctionsWithParams.Select(f =>
@@ -610,7 +611,8 @@ namespace Calcpad.Server.Controllers
                             SourceFile = f.SourceFile,
                             Description = f.Description,
                             ParamTypes = f.ParamTypes,
-                            ParamDescriptions = f.ParamDescriptions
+                            ParamDescriptions = f.ParamDescriptions,
+                            Defaults = f.Defaults
                         };
                     }).ToList(),
 
@@ -1207,6 +1209,9 @@ namespace Calcpad.Server.Controllers
 
         /// <summary>User-provided descriptions per parameter</summary>
         public List<string>? ParamDescriptions { get; set; }
+
+        /// <summary>Default value per parameter; a null entry marks a required parameter</summary>
+        public List<string?>? Defaults { get; set; }
     }
 
     public class FunctionDefinitionDto
@@ -1258,6 +1263,9 @@ namespace Calcpad.Server.Controllers
 
         /// <summary>User-provided descriptions per parameter</summary>
         public List<string>? ParamDescriptions { get; set; }
+
+        /// <summary>Default value per parameter; a null entry marks a required parameter</summary>
+        public List<string?>? Defaults { get; set; }
     }
 
     public class VariableDefinitionDto
