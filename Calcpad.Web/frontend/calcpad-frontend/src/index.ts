@@ -220,6 +220,7 @@ export {
 } from './text/snippet-insert';
 export type { CompletionKind, CompletionData } from './text/completion-format';
 export {
+    completionRangeStart,
     buildParameterSnippet,
     buildParameterizedDoc,
     formatMacroCompletion,
