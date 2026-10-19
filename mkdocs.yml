@@ -63,6 +63,7 @@ nav:
     - Desktop App: new-desktop-app.md
     - The CalcpadCE Editor: new-calcpadce-editor.md
     - The Math Engine: new-mathml-math-engine.md
+    - Live Editor Interaction: new-live-editor-interaction.md
     - The CalcpadCE Panel: new-calcpad-panel.md
     - Settings: new-settings.md
     - Exports: new-exports.md

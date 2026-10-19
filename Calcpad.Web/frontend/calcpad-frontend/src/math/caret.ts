@@ -34,6 +34,18 @@ export function isLeafNode(node: MathNode): boolean {
     return isText(node) || (isElement(node) && LEAF_ELEMENTS.has(node.name));
 }
 
+/**
+ * The position after a row's last child, when that child is a structure rather than a leaf.
+ *
+ * A leaf-terminated row needs no such position — the end of its last leaf's text is already the
+ * end of the row — which is why this returns `null` there and leaves that path untouched.
+ */
+export function trailingAnchor(root: MathNode): Anchor | null {
+    if (!isElement(root) || root.name !== 'mrow' || root.children.length === 0) return null;
+    if (isLeafNode(root.children[root.children.length - 1])) return null;
+    return { kind: 'gap', path: [], index: root.children.length };
+}
+
 /** The canonical, ordered anchor list for a tree. */
 export function anchorsOf(root: MathNode): Anchor[] {
     const out: Anchor[] = [];
@@ -56,6 +68,12 @@ function walk(node: MathNode, path: Path, out: Anchor[]): void {
         return;
     }
     node.children.forEach((child, index) => walk(child, [...path, index], out));
+    // A row that ends in a structure has a position *after* it, and nothing inside the
+    // structure stands for it: the deepest anchor is the exponent's end, so a caret sent there
+    // edits the exponent. Offer the row's end as its own position instead.
+    if (path.length === 0 && !isLeafNode(node.children[node.children.length - 1])) {
+        out.push({ kind: 'gap', path: [], index: node.children.length });
+    }
 }
 
 export function sameAnchor(a: Anchor, b: Anchor): boolean {
@@ -136,6 +154,81 @@ function moveTableRow(root: MathNode, rowPath: Path, column: number, direction: 
     const cell = row.children[column];
     if (cell === undefined) return null;
     return shiftAnchor(firstAnchor(cell), [...tablePath, rowIndex, column]);
+}
+
+/** Ordinal of an anchor in the canonical order, or `-1` when it is not a position in this tree. */
+export function anchorIndex(root: MathNode, anchor: Anchor): number {
+    return anchorsOf(root).findIndex((candidate) => sameAnchor(candidate, anchor));
+}
+
+/** Containers whose children are the slots Tab steps between. */
+const SLOT_CONTAINERS = new Set([
+    'mfrac', 'msup', 'msub', 'msubsup', 'mroot', 'mover', 'munder', 'munderover', 'mtr', 'mtd',
+]);
+
+/**
+ * The position that opens each structural slot, in reading order — what Tab walks.
+ *
+ * Only structures contribute: between two leaves of one row there is no slot boundary, so Tab
+ * from a plain expression has nowhere to go and the field lets the key through.
+ */
+export function slotAnchors(root: MathNode): Anchor[] {
+    const found: Anchor[] = [];
+    collectSlots(root, [], found);
+    const list = anchorsOf(root);
+    const ordinals = found
+        .map((anchor) => ({ anchor, ordinal: list.findIndex((candidate) => sameAnchor(candidate, anchor)) }))
+        .filter((entry) => entry.ordinal >= 0)
+        .sort((a, b) => a.ordinal - b.ordinal);
+    const out: Anchor[] = [];
+    for (const entry of ordinals) {
+        if (out.length > 0 && sameAnchor(out[out.length - 1], entry.anchor)) continue;
+        out.push(entry.anchor);
+    }
+    return out;
+}
+
+const OPEN_DELIMITERS = new Set(['(', '[']);
+
+function collectSlots(node: MathNode, path: Path, out: Anchor[]): void {
+    if (!isElement(node)) return;
+    node.children.forEach((child, index) => {
+        const childPath = [...path, index];
+        if (SLOT_CONTAINERS.has(node.name)) out.push(shiftAnchor(slotEntry(child), childPath));
+        collectSlots(child, childPath, out);
+    });
+}
+
+/** Where Tab enters a slot: inside a delimited group, not on its bracket. */
+function slotEntry(child: MathNode): Anchor {
+    if (isElement(child) && child.name === 'mrow' && child.children.length >= 3) {
+        const opening = child.children[0];
+        if (isElement(opening) && opening.name === 'mo' && OPEN_DELIMITERS.has(leafText(opening) ?? '')) {
+            return shiftAnchor(firstAnchor(child.children[1]), [1]);
+        }
+    }
+    return firstAnchor(child);
+}
+
+/**
+ * The next slot in reading order, or `null` when there is none — the field then lets Tab leave.
+ *
+ * Going back means "out of the slot the caret is in", not "the nearest slot start behind it":
+ * the caret sits at or after the start of its own slot, so comparing with the caret itself would
+ * step to the start of the slot it already occupies and Shift+Tab would never reach the one before.
+ */
+export function nextSlot(root: MathNode, anchor: Anchor, direction: -1 | 1): Anchor | null {
+    const list = anchorsOf(root);
+    const at = list.findIndex((candidate) => sameAnchor(candidate, anchor));
+    if (at < 0) return null;
+    const slots = slotAnchors(root).map((slot) => list.findIndex((candidate) => sameAnchor(candidate, slot)));
+    if (direction > 0) {
+        const next = slots.find((ordinal) => ordinal > at);
+        return next === undefined ? null : list[next];
+    }
+    let current = -1;
+    for (let i = 0; i < slots.length; i++) if (slots[i] >= 0 && slots[i] <= at) current = i;
+    return current > 0 ? list[slots[current - 1]] : null;
 }
 
 export function hasEmptySlot(root: MathNode): boolean {

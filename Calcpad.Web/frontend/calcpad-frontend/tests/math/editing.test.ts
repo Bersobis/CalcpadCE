@@ -20,6 +20,18 @@ import { isCommittableText } from '../../src/math/gate';
 const tree = (source: string): MathNode => parseCalcpad(source).node!;
 const at = (path: number[], offset: number): Anchor => ({ kind: 'char', path, offset });
 
+/** How many nodes of a given element name a tree holds — matrix shape assertions use it. */
+function countNamed(node: MathNode, name: string): number {
+    let total = 0;
+    const walk = (current: MathNode): void => {
+        if (!isElement(current)) return;
+        if (current.name === name) total++;
+        current.children.forEach(walk);
+    };
+    walk(node);
+    return total;
+}
+
 /** Fill every empty slot so the text becomes parseable — the "held open" rule in reverse. */
 function fillEmptySlots(root: MathNode, ch: string): MathNode {
     let node = root;
@@ -106,9 +118,31 @@ test('a bare square root leaves its radicand empty', () => {
 
 test('a 2x2 matrix structure has empty cells', () => {
     const base = tree('M');
-    const result = insertStructure(base, lastAnchor(base), 'matrix2x2');
+    const result = insertStructure(base, lastAnchor(base), 'matrix', { rows: 2, cols: 2 });
     assert.ok(printCalcpad(result.node).startsWith('M['), printCalcpad(result.node));
     assert.equal(hasEmptySlot(result.node), true);
+    assert.equal(countNamed(result.node, 'mtr'), 2, 'two rows');
+    assert.equal(countNamed(result.node, 'mtd'), 4, 'two cells per row');
+});
+
+test('the matrix dialog can ask for any shape', () => {
+    const root = tree('a = 1');
+    const result = insertStructure(root, lastAnchor(root), 'matrix', { rows: 5, cols: 2 });
+    assert.equal(countNamed(result.node, 'mtr'), 5, 'five rows');
+    assert.equal(countNamed(result.node, 'mtd'), 10, 'two cells per row');
+    const filled = fillEmptySlots(result.node, '7');
+    const printed = printCalcpad(filled);
+    const reparsed = parseCalcpad(printed);
+    assert.ok(reparsed.ok, `a filled matrix must parse back: ${printed}`);
+    assert.ok(sameTree(filled, reparsed.node!), `a filled matrix drifted: ${printed}`);
+    assert.ok(isCommittableText(printed), printed);
+});
+
+test('an impossible matrix size is clamped, not refused', () => {
+    const root = tree('a = 1');
+    const result = insertStructure(root, lastAnchor(root), 'matrix', { rows: 0, cols: 99 });
+    assert.equal(countNamed(result.node, 'mtr'), 1, 'at least one row');
+    assert.equal(countNamed(result.node, 'mtd'), 16, 'columns clamped to 16');
 });
 
 test('deletion removes the character to the left', () => {
@@ -199,7 +233,7 @@ test('the editor tree always equals the tree its own parser builds', () => {
 });
 
 test('every palette structure keeps the editor/parser invariant once filled', () => {
-    const ids = ['frac', 'power', 'subscript', 'sqrt', 'cbrt', 'nroot', 'abs', 'paren', 'bracket', 'vector', 'matrix2x2', 'matrix3x3', 'call'] as const;
+    const ids = ['frac', 'power', 'subscript', 'sqrt', 'cbrt', 'nroot', 'abs', 'paren', 'bracket', 'vector', 'matrix', 'call'] as const;
     for (const id of ids) {
         const base = tree('q');
         const built = insertStructure(base, lastAnchor(base), id);

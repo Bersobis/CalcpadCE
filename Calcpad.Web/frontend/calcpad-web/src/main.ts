@@ -125,12 +125,13 @@ function getEmptyPreviewHtml(theme: 'light' | 'dark'): string {
 }
 
 function getSampleContent(): string {
+    // Source form: Calcpad reads `sqrt` and `^`; the radical and superscript are the render.
     return `'CalcpadCE Web Editor
 'Enter your calculations below
 
 a = 3
 b = 4
-c = √(a² + b²)
+c = sqrt(a^2 + b^2)
 `;
 }
 

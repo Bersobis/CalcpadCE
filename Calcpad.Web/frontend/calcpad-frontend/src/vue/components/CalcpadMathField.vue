@@ -16,13 +16,20 @@
       role="math"
       :aria-label="modelValue"
       :aria-readonly="!isActive"
-      @click="onClick"
+      @mousedown="onPointerDown"
+      @mousemove="onPointerMove"
       @keydown="onKeydown"
       @focus="onFocus"
       @blur="onBlur"
     ></div>
 
     <div v-if="hint" class="cp-math-hint">{{ hint }}</div>
+
+    <CalcpadMatrixDialog
+      v-if="matrixDialogOpen"
+      @insert="insertMatrix"
+      @cancel="matrixDialogOpen = false"
+    />
 
     <!-- Always visible while the field is editable. Hidden when the host supplies its own
          toolbar (the Live math panel docks one above the worksheet instead of per equation). -->
@@ -48,11 +55,14 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import CalcpadMatrixDialog from './CalcpadMatrixDialog.vue';
 import {
-    Anchor, History, MathNode, PALETTE_SYMBOLS, STRUCTURES, StructureId, anchorRect,
-    applyCharacter, deleteBackward, deleteForward, el, firstAnchor, hasEmptySlot, hitTest,
-    insertStructure, isCommittableText, lastAnchor, moveHorizontal, moveVertical, parseCalcpad,
-    printCalcpad, renderMathMl,
+    Anchor, AnchorRange, History, MathNode, PALETTE_SYMBOLS, PATH_ATTR, STRUCTURES, StructureId,
+    PaletteEntry, anchorRect, applyCharacter, applyPaletteEntry, charEntryFor, deleteBackward,
+    deleteForward, deleteRange, domPointAt, el, emptySlotPaths, firstAnchor, hasEmptySlot, hitTest,
+    isCommittableText, isEmptyRange, lastAnchor, matrixEntry, moveHorizontal, moveVertical,
+    nextSlot, orderedRange, parseCalcpad, printCalcpad, renderMathMl, replaceRange, sameAnchor,
+    stretchMatrixFences, structureEntry, tokenRange, wholeRange,
 } from '../../math';
 
 /** Undo steps are tagged by what the user did, so a run of typing is one step and a structure is another. */
@@ -94,6 +104,13 @@ const anchor = ref<Anchor | null>(null);
 const focused = ref(false);
 const hint = ref('');
 const empty = ref(true);
+/** The matrix size dialog, opened by its palette entry and closed by inserting or cancelling. */
+const matrixDialogOpen = ref(false);
+/** The dragged or Shift-extended range. `null` is the ordinary caret. */
+const selection = ref<AnchorRange | null>(null);
+
+let dragOrigin: { x: number; y: number; anchor: Anchor } | null = null;
+let dragMoved = false;
 
 const structures = STRUCTURES;
 const symbols = PALETTE_SYMBOLS;
@@ -121,17 +138,20 @@ onMounted(() => {
     caretElement = document.createElement('span');
     caretElement.className = 'cp-math-caret';
     surface.value?.appendChild(caretElement);
+    window.addEventListener('mouseup', onPointerUp);
     syncFromValue(props.modelValue);
 });
 
 onBeforeUnmount(() => {
     caretElement = null;
+    window.removeEventListener('mouseup', onPointerUp);
 });
 
 // Leaving the active field takes the caret with it, so an idle worksheet shows no cursor at all.
 watch(isActive, (value) => {
     if (value) return;
     focused.value = false;
+    clearSelection();
     if (caretElement) caretElement.style.display = 'none';
 });
 
@@ -142,6 +162,7 @@ watch(() => props.modelValue, (value) => {
 });
 
 function syncFromValue(source: string): void {
+    clearSelection();
     const parsed = parse(source);
     tree.value = parsed;
     empty.value = parsed === null;
@@ -165,14 +186,37 @@ function paint(): void {
         host.insertBefore(placeholder, caretElement);
         return;
     }
-    host.insertBefore(renderMathMl(tree.value, document), caretElement);
-    void nextTick(placeCaret);
+    const math = renderMathMl(tree.value, document);
+    host.insertBefore(math, caretElement);
+    markEmptySlots(math);
+    void nextTick(redraw);
+}
+
+/** Both overlays follow a render: the caret, and the browser selection that paints the range. */
+function redraw(): void {
+    // Matrix brackets first: the caret measures rects, and a fence that has not been scaled to
+    // its table yet would leave the caret measuring a glyph-height box.
+    stretchMatrixFences(surface.value);
+    placeCaret();
+    paintSelection();
+}
+
+/**
+ * Draw a box where a slot is waiting for a value, the way a graphical editor shows an insertion
+ * point: an unfilled slot renders as nothing, so without this it is invisible and unclickable.
+ */
+function markEmptySlots(math: Element): void {
+    if (!tree.value) return;
+    for (const path of emptySlotPaths(tree.value)) {
+        math.querySelector(`[${PATH_ATTR}="${path.join('.')}"]`)?.classList.add('cp-math-slot');
+    }
 }
 
 function placeCaret(): void {
     const host = surface.value;
     if (!host || !anchor.value || !caretElement) return;
-    if (!focused.value || !isActive.value) {
+    // A visible range hides the caret: a cursor inside a highlight reads as two positions.
+    if (!focused.value || !isActive.value || selection.value) {
         caretElement.style.display = 'none';
         return;
     }
@@ -188,20 +232,89 @@ function placeCaret(): void {
     caretElement.style.height = `${Math.max(rect.height, 14)}px`;
 }
 
-function onClick(event: MouseEvent): void {
-    if (!props.editable) return;
+function onPointerDown(event: MouseEvent): void {
+    if (!props.editable || event.button !== 0) return;
     const host = surface.value;
     if (!host || !tree.value) return;
-    // The click is what promotes an idle field, so the caret is drawn on the next tick — after
-    // the host has made it active. Focusing first would draw nothing, since `isActive` is still
-    // false at that instant.
+    // The browser's own text selection would fight the one the tree decides, and the press is
+    // what promotes an idle field — so it is handled here rather than on `click`.
+    event.preventDefault();
     emit('activate');
+    void nextTick(() => { focused.value = true; host.focus(); });
+
+    if (event.detail >= 2) {
+        // Double click takes the token under the pointer, triple click the whole expression.
+        selection.value = event.detail === 2
+            ? tokenRange(tree.value, hitTest(tree.value, host, event.clientX, event.clientY))
+            : wholeRange(tree.value);
+        if (isEmptyRange(selection.value)) selection.value = null;
+        anchor.value = (selection.value ?? { from: anchor.value, to: anchor.value }).to;
+        dragOrigin = null;
+        void nextTick(redraw);
+        return;
+    }
+
+    // The drag origin is remembered *after* the selection is cleared: `clearSelection` is what
+    // makes the press a fresh start, and it also forgets any drag in progress.
+    clearSelection();
     anchor.value = hitTest(tree.value, host, event.clientX, event.clientY);
-    void nextTick(() => {
-        focused.value = true;
-        host.focus();
-        placeCaret();
-    });
+    dragOrigin = { x: event.clientX, y: event.clientY, anchor: anchor.value };
+    dragMoved = false;
+    void nextTick(redraw);
+}
+
+function onPointerMove(event: MouseEvent): void {
+    if (!dragOrigin || !props.editable) return;
+    const host = surface.value;
+    if (!host || !tree.value) return;
+    // A few pixels of travel is a click that shook, not a drag.
+    if (!dragMoved) {
+        if (Math.abs(event.clientX - dragOrigin.x) < 3 && Math.abs(event.clientY - dragOrigin.y) < 3) return;
+        dragMoved = true;
+    }
+    const focus = hitTest(tree.value, host, event.clientX, event.clientY);
+    anchor.value = focus;
+    selection.value = sameAnchor(focus, dragOrigin.anchor)
+        ? null
+        : orderedRange(tree.value, dragOrigin.anchor, focus);
+    void nextTick(redraw);
+}
+
+function onPointerUp(): void {
+    if (!dragOrigin) return;
+    dragOrigin = null;
+    if (selection.value && isEmptyRange(selection.value)) selection.value = null;
+    if (selection.value) anchor.value = selection.value.to;
+    void nextTick(redraw);
+}
+
+/** Hand the range to the browser, which paints it; the caret is ours only because nothing else was. */
+function paintSelection(): void {
+    const host = surface.value;
+    const range = selection.value;
+    if (!host || !range || !focused.value || !isActive.value) return;
+    const view = host.ownerDocument?.defaultView;
+    const start = domPointAt(host, range.from);
+    const end = domPointAt(host, range.to);
+    if (!view || !start || !end) return;
+    const native = host.ownerDocument.createRange();
+    native.setStart(start.node, start.offset);
+    native.setEnd(end.node, end.offset);
+    const chosen = view.getSelection();
+    if (!chosen) return;
+    chosen.removeAllRanges();
+    chosen.addRange(native);
+}
+
+function clearNativeSelection(): void {
+    surface.value?.ownerDocument.defaultView?.getSelection()?.removeAllRanges();
+}
+
+function clearSelection(): void {
+    selection.value = null;
+    dragOrigin = null;
+    dragMoved = false;
+    clearNativeSelection();
 }
 
 /** Focus can arrive without a click (Tab, or a host calling `focus()`), so the caret is drawn here too. */
@@ -213,6 +326,7 @@ function onFocus(): void {
 
 function onBlur(): void {
     focused.value = false;
+    clearSelection();
     void nextTick(placeCaret);
     commit();
 }
@@ -238,6 +352,9 @@ function commit(): void {
 
 function onKeydown(event: KeyboardEvent): void {
     if (!props.editable || !isActive.value || !tree.value || !anchor.value) return;
+    // The dialog owns the keyboard while it is open — a stray keystroke here would land in the
+    // equation behind it.
+    if (matrixDialogOpen.value) return;
     // A composition session (dead keys, Greek, CJK) fires keystrokes as well; acting on them
     // here would insert the intermediate characters *and* the committed one.
     if (event.isComposing || event.keyCode === 229) return;
@@ -257,20 +374,42 @@ function onKeydown(event: KeyboardEvent): void {
         if (snapshot) restore(snapshot);
         return;
     }
+    if (modifier && key === 'a') {
+        event.preventDefault();
+        const all = wholeRange(tree.value);
+        selection.value = isEmptyRange(all) ? null : all;
+        anchor.value = all.to;
+        void nextTick(redraw);
+        return;
+    }
     if (modifier && key === 'c') { event.preventDefault(); void copyExpression(); return; }
     if (modifier && key === 'x') { event.preventDefault(); void cutExpression(); return; }
     if (modifier && key === 'v') { event.preventDefault(); void pasteExpression(); return; }
     if (modifier) return;
 
+    // Tab walks the structural slots and lets the key through once there is none left, so an
+    // equation is not a keyboard trap.
+    if (event.key === 'Tab') {
+        if (moveToSlot(event.shiftKey ? -1 : 1)) event.preventDefault();
+        return;
+    }
+    if (event.key.length === 1 || event.key === 'Backspace' || event.key === 'Delete') {
+        if (selection.value && !isEmptyRange(selection.value)) {
+            event.preventDefault();
+            replaceSelection(event.key.length === 1 ? event.key : null);
+            return;
+        }
+    }
+
     switch (event.key) {
-        case 'ArrowLeft': event.preventDefault(); move(-1, 0); return;
-        case 'ArrowRight': event.preventDefault(); move(1, 0); return;
-        case 'ArrowUp': event.preventDefault(); move(0, -1); return;
-        case 'ArrowDown': event.preventDefault(); move(0, 1); return;
+        case 'ArrowLeft': event.preventDefault(); event.shiftKey ? extend(-1, 0) : move(-1, 0); return;
+        case 'ArrowRight': event.preventDefault(); event.shiftKey ? extend(1, 0) : move(1, 0); return;
+        case 'ArrowUp': event.preventDefault(); event.shiftKey ? extend(0, -1) : move(0, -1); return;
+        case 'ArrowDown': event.preventDefault(); event.shiftKey ? extend(0, 1) : move(0, 1); return;
         case 'Backspace': event.preventDefault(); edit(deleteBackward(tree.value, anchor.value), 'delete'); return;
         case 'Delete': event.preventDefault(); edit(deleteForward(tree.value, anchor.value), 'delete'); return;
         case 'Enter': event.preventDefault(); commit(); surface.value?.blur(); return;
-        case 'Escape': event.preventDefault(); syncFromValue(props.modelValue); surface.value?.blur(); return;
+        case 'Escape': event.preventDefault(); clearSelection(); syncFromValue(props.modelValue); surface.value?.blur(); return;
         default: break;
     }
 
@@ -281,8 +420,41 @@ function onKeydown(event: KeyboardEvent): void {
     }
 }
 
+/** Delete the selected range, optionally typing one character in its place. */
+function replaceSelection(ch: string | null): void {
+    if (!tree.value) return;
+    const range = selection.value;
+    if (!range) return;
+    edit(ch === null ? deleteRange(tree.value, range) : replaceRange(tree.value, range, ch), 'delete');
+}
+
+function moveToSlot(direction: -1 | 1): boolean {
+    if (!tree.value || !anchor.value) return false;
+    const target = nextSlot(tree.value, anchor.value, direction);
+    if (!target) return false;
+    clearSelection();
+    anchor.value = target;
+    hint.value = '';
+    history.breakCoalescing();
+    void nextTick(placeCaret);
+    return true;
+}
+
 function move(horizontal: number, vertical: number): void {
     if (!tree.value || !anchor.value) return;
+    const range = selection.value;
+    if (range && !isEmptyRange(range)) {
+        // Horizontal movement collapses to that end of the range instead of stepping from it.
+        if (horizontal !== 0) {
+            clearSelection();
+            anchor.value = horizontal < 0 ? range.from : range.to;
+            history.breakCoalescing();
+            void nextTick(placeCaret);
+            return;
+        }
+        clearSelection();
+        anchor.value = range.to;
+    }
     anchor.value = horizontal !== 0
         ? moveHorizontal(tree.value, anchor.value, horizontal > 0 ? 1 : -1)
         : moveVertical(tree.value, anchor.value, vertical > 0 ? 1 : -1);
@@ -292,7 +464,25 @@ function move(horizontal: number, vertical: number): void {
     void nextTick(placeCaret);
 }
 
+/** Shift+Arrow: the far end stays, the moving end follows the arrow. */
+function extend(horizontal: number, vertical: number): void {
+    if (!tree.value || !anchor.value) return;
+    const current = selection.value;
+    const from = current ? current.from : anchor.value;
+    const focus = current ? current.to : anchor.value;
+    const next = horizontal !== 0
+        ? moveHorizontal(tree.value, focus, horizontal > 0 ? 1 : -1)
+        : moveVertical(tree.value, focus, vertical > 0 ? 1 : -1);
+    const range = orderedRange(tree.value, from, next);
+    selection.value = range && !isEmptyRange(range) ? range : null;
+    anchor.value = next;
+    hint.value = '';
+    history.breakCoalescing();
+    void nextTick(redraw);
+}
+
 function edit(result: { node: MathNode; anchor: Anchor }, tag: EditTag): void {
+    clearSelection();
     tree.value = result.node;
     anchor.value = result.anchor;
     hint.value = '';
@@ -302,6 +492,7 @@ function edit(result: { node: MathNode; anchor: Anchor }, tag: EditTag): void {
 }
 
 function restore(snapshot: Snapshot): void {
+    clearSelection();
     tree.value = snapshot.node;
     anchor.value = snapshot.anchor;
     paint();
@@ -344,17 +535,34 @@ async function pasteExpression(): Promise<void> {
     edit({ node: parsed.node, anchor: lastAnchor(parsed.node) }, 'paste');
 }
 
-function applyPalette(id: StructureId): void {
+/** One entry point for every button: structure, call, character — or the matrix dialog. */
+function applyEntry(entry: PaletteEntry): void {
+    if (entry.kind === 'dialog') {
+        matrixDialogOpen.value = true;
+        return;
+    }
     if (!tree.value || !anchor.value) return;
-    edit(insertStructure(tree.value, anchor.value, id), 'structure');
+    edit(applyPaletteEntry(tree.value, anchor.value, entry), entry.kind === 'char' ? 'type' : 'structure');
+}
+
+/** The dialog's Insert: close it and flow the chosen shape back through `applyEntry`. */
+function insertMatrix(payload: { rows: number; cols: number }): void {
+    matrixDialogOpen.value = false;
+    applyEntry(matrixEntry(payload.rows, payload.cols));
+    surface.value?.focus();
+}
+
+function applyPalette(id: StructureId): void {
+    const entry = structureEntry(id);
+    if (entry) applyEntry(entry);
 }
 
 function insertSymbol(symbol: string): void {
-    if (!tree.value || !anchor.value) return;
-    edit(applyCharacter(tree.value, anchor.value, symbol), 'type');
+    applyEntry(charEntryFor(symbol));
 }
 
 defineExpose({
+    applyEntry,
     applyPalette,
     insertSymbol,
     getText: (): string => text.value,
@@ -397,7 +605,10 @@ defineExpose({
     font-size: 1.06em;
 }
 
-.cp-math-caret {
+/* `:deep` is required for the caret: it is created imperatively, so it carries no scope id and
+   a plain scoped rule never matched it — it stayed an in-flow block, invisible and over the
+   maths, swallowing the clicks meant for the equation. */
+.cp-math-surface :deep(.cp-math-caret) {
     position: absolute;
     width: 1.5px;
     background: var(--vscode-editorCursor-foreground, #0a66c2);
@@ -410,9 +621,31 @@ defineExpose({
     50% { opacity: 0; }
 }
 
-.cp-math-placeholder {
+.cp-math-surface :deep(.cp-math-placeholder) {
     font-family: var(--vscode-editor-font-family, monospace);
     opacity: 0.75;
+}
+
+/* An unfilled slot: an empty container or an emptied leaf. Rendering it as a box is what makes
+   the caret position visible and gives the pointer something to aim at. */
+.cp-math-surface :deep(.cp-math-slot) {
+    display: inline-block;
+    min-width: 0.62em;
+    min-height: 1.05em;
+    margin: 0 1px;
+    vertical-align: -0.16em;
+    border: 1px dashed var(--vscode-editorCursor-foreground, #0a66c2);
+    border-radius: 2px;
+    opacity: 0.6;
+}
+
+.cp-math-surface.is-focused :deep(.cp-math-slot) {
+    opacity: 0.95;
+}
+
+/* The range is a real DOM selection so the engine paints it; only its colour is ours. */
+.cp-math-surface ::selection {
+    background: var(--vscode-editor-selectionBackground, rgba(10, 102, 194, 0.3));
 }
 
 .cp-math-hint {

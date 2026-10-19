@@ -11,8 +11,31 @@ $RepoRoot    = Resolve-Path (Join-Path $ScriptDir '..\..\..')
 $SyncScript  = Join-Path $RepoRoot 'Calcpad.Web\frontend\vscode-calcpad\scripts\sync-bundled-server.mjs'
 $BinariesDir = Join-Path $ScriptDir 'src-tauri\binaries'
 
-$hostLine = (& rustc -vV | Select-String '^host:').ToString()
-$Triple   = ($hostLine -split '\s+', 2)[1].Trim()
+# The host triple only selects the .NET RID and the apphost filename below, and
+# neither of those involves cargo — so when rustc is not on PATH the triple is
+# derived from the OS instead. That keeps sidecar staging usable in environments
+# where the Rust toolchain is not (yet) installed; `tauri dev` itself still
+# needs cargo to build the app shell.
+$Triple = ''
+if (Get-Command rustc -ErrorAction SilentlyContinue) {
+    $hostLine = (& rustc -vV | Select-String '^host:').ToString()
+    $Triple = ($hostLine -split '\s+', 2)[1].Trim()
+} else {
+    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
+    if ($env:OS -eq 'Windows_NT') {
+        $Triple = 'x86_64-pc-windows-msvc'
+        if ($arch -eq 'arm64') { $Triple = 'aarch64-pc-windows-msvc' }
+    } elseif ($IsLinux) {
+        $Triple = 'x86_64-unknown-linux-gnu'
+        if ($arch -eq 'arm64') { $Triple = 'aarch64-unknown-linux-gnu' }
+    } elseif ($IsMacOS) {
+        $Triple = 'x86_64-apple-darwin'
+        if ($arch -eq 'arm64') { $Triple = 'aarch64-apple-darwin' }
+    }
+    Write-Host '>> rustc not found; host triple derived from the OS'
+}
+
+if (-not $Triple) { throw 'unsupported host' }
 
 switch ($Triple) {
     'x86_64-pc-windows-msvc'    { $Rid = 'win-x64' }

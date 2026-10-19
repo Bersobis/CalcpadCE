@@ -11,7 +11,7 @@ export * from './grammar';
 export type { Token, TokenType, TokenizeResult } from './tokenizer';
 export { parseCalcpad } from './parser';
 export type { ParseResult, ParseError } from './parser';
-export { printCalcpad } from './printer';
+export { printCalcpad, operandBracketed, slotContext, type BracketContext } from './printer';
 export {
     toMathMlString, toMathMlDocument, toMathMlElement, renderMathMl, moDisplay,
     MATHML_NS, PATH_ATTR,
@@ -25,12 +25,25 @@ export {
 export { isFixpoint, classifyEdit, isCommittableText, sameMeaning, type Editability } from './gate';
 export {
     anchorsOf, moveHorizontal, moveVertical, hasEmptySlot, emptySlotPaths,
-    firstAnchor, lastAnchor, type Anchor,
+    firstAnchor, lastAnchor, trailingAnchor, anchorIndex, slotAnchors, nextSlot, sameAnchor, type Anchor,
 } from './caret';
 export {
+    orderedRange, isEmptyRange, rangeLength, deleteRange, replaceRange, wholeRange, tokenRange,
+    type AnchorRange,
+} from './selection';
+export {
     applyCharacter, insertStructure, deleteBackward, deleteForward, STRUCTURES, PALETTE_SYMBOLS,
-    type Structure, type StructureId,
+    type Structure, type StructureId, type StructureOptions,
 } from './insert';
-export { hitTest, anchorRect, type HitTarget, type CaretRect } from './hit-test';
+export {
+    PALETTE_SECTIONS, PALETTE_ENTRIES, applyPaletteEntry, filterPalette, structureEntry,
+    charEntryFor, functionEntriesMissing, matrixEntry,
+    type PaletteEntry, type PaletteSection, type PaletteSectionId,
+} from './palette';
+export { stretchMatrixFences } from './fences';
+export {
+    hitTest, hitCandidates, nearestAnchor, withRowEnd, anchorRect, boxOf, domPointAt,
+    type HitTarget, type HitCandidate, type CaretRect,
+} from './hit-test';
 export { History } from './history';
 export { supportsMathMlCore } from './capability';

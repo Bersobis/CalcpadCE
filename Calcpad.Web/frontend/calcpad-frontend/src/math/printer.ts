@@ -4,14 +4,14 @@
 // only where precedence requires them, and a node that already carries its own brackets is
 // never wrapped twice — the bug that made brackets accumulate one per round-trip.
 
-import { MathElement, MathNode, isElement, isText, leafText } from './model';
+import { ElementName, MathElement, MathNode, isElement, isText, leafText } from './model';
 import { LEVEL, opSpec } from './grammar';
 
 // Lower binds tighter, so an atomic operand is *tighter than everything* and therefore never
 // needs brackets. Using `Infinity` here was the bug that bracketed every literal.
 const ATOMIC = Number.NEGATIVE_INFINITY;
 
-interface BracketContext {
+export interface BracketContext {
     readonly level: number;
     readonly side: 'left' | 'right';
     readonly assoc: 'left' | 'right';
@@ -40,15 +40,15 @@ function print(node: MathNode): string {
         case 'mtext':
             return leafText(node) ?? '';
         case 'mfrac':
-            return printOperand(node.children[0], { level: LEVEL.MULT, side: 'left', assoc: 'left' })
+            return printOperand(node.children[0], slotContext('mfrac', 0)!)
                 + '/' +
-                printOperand(node.children[1], { level: LEVEL.MULT, side: 'right', assoc: 'left' });
+                printOperand(node.children[1], slotContext('mfrac', 1)!);
+        // The exponent is parsed by `parseUnary`, so a prefix minus needs no brackets:
+        // `10^-4` re-parses to the same tree, while `10^(-4)` would come back as a group.
         case 'msup':
-            // The exponent is parsed by `parseUnary`, so a prefix minus needs no brackets:
-            // `10^-4` re-parses to the same tree, while `10^(-4)` would come back as a group.
-            return printOperand(node.children[0], { level: LEVEL.POWER, side: 'left', assoc: 'right' })
+            return printOperand(node.children[0], slotContext('msup', 0)!)
                 + '^' +
-                printOperand(node.children[1], { level: LEVEL.NEG, side: 'right', assoc: 'right' });
+                printOperand(node.children[1], slotContext('msup', 1)!);
         case 'msqrt':
             return `sqrt(${print(node.children[0])})`;
         case 'mroot': {
@@ -127,13 +127,45 @@ function printTable(node: MathElement): string {
 function printOperand(node: MathNode | undefined, ctx: BracketContext): string {
     if (node === undefined) return '';
     if (isEmptyRow(node)) return '';
-    if (isElement(node) && classifyRow(node) === 'delimited') return print(node);
+    const text = print(node);
+    return operandBracketed(node, ctx) ? `(${text})` : text;
+}
+
+/**
+ * Whether an operand is printed with brackets of its own.
+ *
+ * The editor asks the same question: brackets the printer adds as characters must exist as nodes
+ * in the tree, or the printed text re-parses to a grouping the tree does not have.
+ */
+export function operandBracketed(node: MathNode, ctx: BracketContext): boolean {
+    if (isEmptyRow(node)) return false;
+    // A row that already carries its own brackets is never wrapped twice. This is why brackets
+    // stopped accumulating one per round-trip.
+    if (isElement(node) && classifyRow(node) === 'delimited') return false;
     const p = precedence(node);
-    const needs = ctx.side === 'left'
+    return ctx.side === 'left'
         ? (ctx.assoc === 'left' ? p > ctx.level : p >= ctx.level)
         : (ctx.assoc === 'left' ? p >= ctx.level : p > ctx.level);
-    const text = print(node);
-    return needs ? `(${text})` : text;
+}
+
+/**
+ * The operand context of a structure slot, or `null` for a position that is printed raw.
+ *
+ * `msqrt`'s content and `mroot`'s index are delimited by the call syntax itself, and a subscript
+ * is one token by the language, so none of them asks for brackets and none is listed.
+ */
+export function slotContext(name: ElementName, index: number): BracketContext | null {
+    if (name === 'mfrac') {
+        return index === 0
+            ? { level: LEVEL.MULT, side: 'left', assoc: 'left' }
+            : index === 1 ? { level: LEVEL.MULT, side: 'right', assoc: 'left' } : null;
+    }
+    if (name === 'msup') {
+        return index === 0
+            ? { level: LEVEL.POWER, side: 'left', assoc: 'right' }
+            : index === 1 ? { level: LEVEL.NEG, side: 'right', assoc: 'right' } : null;
+    }
+    return null;
 }
 
 /** An unfilled slot has no Calcpad spelling, so it prints as nothing and is held open. */
