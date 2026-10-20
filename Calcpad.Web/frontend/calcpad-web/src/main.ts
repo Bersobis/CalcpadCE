@@ -1422,6 +1422,13 @@ async function bootstrap(): Promise<void> {
             return;
         }
 
+        // F5 pressed inside a preview frame (desktop only).
+        if (data.type === 'previewRefresh') {
+            if (!fromPreview) return;
+            void runRefresh();
+            return;
+        }
+
         // Results -> editor navigation. An 'output' line only makes sense in the unwrapped
         // view when the document has macros/includes, so the pane flips there scrolled to it
         // (the two-step); a 'source' line navigates Monaco directly, and the message's
@@ -2665,6 +2672,12 @@ async function bootstrap(): Promise<void> {
         window.addEventListener('keydown', (e) => {
             // Ctrl+Alt+X — run/refresh (bound here so it fires from any focus).
             if ((e.key === 'x' || e.key === 'X') && e.ctrlKey && e.altKey && !e.shiftKey && !e.metaKey) {
+                e.preventDefault();
+                void runRefresh();
+                return;
+            }
+            // F5 — run/refresh instead of reloading the webview.
+            if (e.key === 'F5' && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {
                 e.preventDefault();
                 void runRefresh();
                 return;
