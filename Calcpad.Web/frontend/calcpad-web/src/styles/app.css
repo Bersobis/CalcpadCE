@@ -465,6 +465,11 @@ select option {
     height: 14px;
 }
 
+.results-sidebar-toggle {
+    flex-shrink: 0;
+    align-self: stretch;
+}
+
 .tab-action:hover {
     background: var(--vscode-toolbar-hoverBackground, rgba(255, 255, 255, 0.1));
     color: var(--vscode-tab-hoverForeground, #ffffff);
@@ -718,11 +723,11 @@ select option {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 12px;
+    padding-inline-start: 12px;
     background: var(--vscode-titleBar-activeBackground, #3c3c3c);
     border-bottom: 1px solid var(--vscode-widget-border);
     font-size: var(--calcpad-font-size-md);
-    min-height: 32px;
+    min-height: 30px;
 }
 
 /* Double-buffered preview: both frames stay visible and painted, one occluding the
