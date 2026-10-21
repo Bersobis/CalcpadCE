@@ -854,7 +854,7 @@ async function updatePreviewContent(panel: vscode.WebviewPanel, content: string,
             </head>
             <body>
                 <h3>Empty Document</h3>
-                <p>Start typing CalcpadCE code to see the preview.</p>
+                <p>Start typing to see the preview.</p>
                 <h4>Formatting Hotkeys</h4>
                 <table>
                     <tr><th>Bold</th><td>Ctrl+B</td></tr>
@@ -1758,11 +1758,11 @@ function schedulePreviewUpdate() {
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('VS Code CalcPad extension is now active!');
-    
+
     try {
         // Store extension context for global access
         extensionContext = context;
-        
+
         // Create output channel for debugging
         outputChannel = new VSCodeLogger(vscode.window.createOutputChannel('CalcpadCE Extension'));
 
@@ -2739,9 +2739,9 @@ export async function activate(context: vscode.ExtensionContext) {
             webviewSourceRegistration,
             installJuliaMonoDisposable
         );
-        
+
         outputChannel.appendLine('CalcPad extension activation completed successfully', 'information');
-        
+
     } catch (error) {
         console.error('CalcPad extension activation failed:', error);
         if (outputChannel) {

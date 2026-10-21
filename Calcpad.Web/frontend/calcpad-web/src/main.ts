@@ -101,7 +101,7 @@ function getEmptyPreviewHtml(theme: 'light' | 'dark'): string {
 </head>
 <body>
     <h3>Empty Document</h3>
-    <p>Start typing CalcpadCE code to see the preview.</p>
+    <p>Start typing to see the preview.</p>
     <h4>Formatting Hotkeys</h4>
     <table>
         <tr><th>Bold</th><td>Ctrl+B</td></tr>
