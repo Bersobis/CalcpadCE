@@ -388,6 +388,6 @@ export interface UiConvertOptions {
     hideErrorLines?: boolean;
     /** Stop the form at the first `#pause` after `pauseAfter`. Only the interactive form steps. */
     stepPauses?: boolean;
-    /** Key of the last `#pause` moved past: null or `"start"` for the first step, `"end"` to run past all of them. */
+    /** Key of the last `#pause` moved past: null or `"start"` for the first step. */
     pauseAfter?: string | null;
 }

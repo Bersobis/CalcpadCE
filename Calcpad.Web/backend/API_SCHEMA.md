@@ -108,7 +108,7 @@ interface CalcpadRequest {
                                 //   return X-Calcpad-Pause (default: false). Requires enableUi;
                                 //   every other render runs past #pause.
   pauseAfter?: string | null;   // Key of the last #pause the user moved past, as returned in
-                                //   X-Calcpad-Pause. null or "start" stops at the first one; "end" never stops.
+                                //   X-Calcpad-Pause. null or "start" stops at the first one.
 
   // Whether this request may run #write/#append. False by default, so a preview refresh does
   // not rewrite the document's output on every keystroke. The front ends resolve their

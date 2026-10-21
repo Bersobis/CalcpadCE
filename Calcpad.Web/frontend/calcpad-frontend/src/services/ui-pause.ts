@@ -1,8 +1,5 @@
 import type { UiPauseState } from '../types/api';
 
-/** `pauseAfter` that runs past every `#pause`. */
-export const PAUSE_AT_END = 'end';
-
 /** Whether a stepped render found any `#pause` to step through. */
 export function hasPauseSteps(state: UiPauseState | null | undefined): boolean {
     return !!state && (state.previous !== null || state.next !== null);
@@ -25,15 +22,10 @@ export class UiPauseStore {
         return this.stateByDocument.get(docKey);
     }
 
-    /** Records a render's result. Reaching the end sticks, so a finished form stays whole. */
+    /** Records a render's result. The position stays on the last pause passed, even at the end. */
     update(docKey: string, state: UiPauseState | undefined): void {
-        if (!state) {
-            this.stateByDocument.delete(docKey);
-            return;
-        }
-        this.stateByDocument.set(docKey, state);
-        if (state.next === null)
-            this.pauseAfterByDocument.set(docKey, PAUSE_AT_END);
+        if (state) this.stateByDocument.set(docKey, state);
+        else this.stateByDocument.delete(docKey);
     }
 
     /** Moves one step. Returns false when there is no step that way. */

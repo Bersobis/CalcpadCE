@@ -167,7 +167,7 @@ export type { ExtractedPlot } from './services/plot-extract';
 export { buildZip } from './services/zip-writer';
 export type { ZipEntry } from './services/zip-writer';
 export { UiOverrideStore, readUiOverrides, writeUiOverrides, extractUiControls, classifyUiOverrides } from './services/ui-overrides';
-export { UiPauseStore, PAUSE_AT_END, hasPauseSteps } from './services/ui-pause';
+export { UiPauseStore, hasPauseSteps } from './services/ui-pause';
 export {
     isCompiledPath,
     inlineImageSources,

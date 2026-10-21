@@ -14,13 +14,12 @@ namespace Calcpad.Core
     public partial class ExpressionParser
     {
         public const string PauseAtStart = "start";
-        public const string PauseAtEnd = "end";
 
         public PauseBehavior PauseMode { get; set; }
 
         /// <summary>
         /// Key of the last #pause the user moved past, for <see cref="PauseBehavior.Step"/>.
-        /// Null or <see cref="PauseAtStart"/> stops at the first one and <see cref="PauseAtEnd"/> never stops.
+        /// Null or <see cref="PauseAtStart"/> stops at the first one.
         /// </summary>
         public string PauseAfter { get; set; }
 
@@ -37,7 +36,6 @@ namespace Calcpad.Core
         private int[] _pauseOrdinals;
         private int[] _pauseAfterKey;
         private int[] _lastPassedPause;
-        private bool _pauseAtEnd;
 
         private void InitializePauseSteps(ReadOnlySpan<char> code, List<int> lines)
         {
@@ -47,8 +45,7 @@ namespace Calcpad.Core
             if (PauseMode != PauseBehavior.Step)
                 return;
 
-            _pauseAtEnd = PauseAfter == PauseAtEnd;
-            _pauseAfterKey = _pauseAtEnd ? null : ParsePauseKey(PauseAfter);
+            _pauseAfterKey = ParsePauseKey(PauseAfter);
             var lineCount = lines.Count - 1;
             _pauseOrdinals = new int[lineCount];
             var ordinal = 0;
@@ -64,7 +61,7 @@ namespace Calcpad.Core
         private KeywordResult StepPause()
         {
             var key = GetPauseKey();
-            if (!_pauseAtEnd && (_pauseAfterKey is null || ComparePauseKeys(key, _pauseAfterKey) > 0))
+            if (_pauseAfterKey is null || ComparePauseKeys(key, _pauseAfterKey) > 0)
             {
                 NextPauseKey = FormatPauseKey(key);
                 return KeywordResult.Break;

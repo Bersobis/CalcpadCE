@@ -438,12 +438,8 @@ Each step is tied to the `#pause` it stops at, so the form stays where it is whi
 - **Loops:** a `#pause` inside a loop stops once per pass. If an input lowers the loop count below the pass you are on, the form stops at the first `#pause` after the loop.
 - **Conditions:** a `#pause` in a branch that is not taken is skipped. If flipping an input moves the branch you are on, the form stops at the next `#pause` that is reached.
 - **Edits:** editing the source while the form is open keeps the current step, unless a `#pause` or a loop is added, removed or moved.
-- **End:** once **Next** reaches the end of the document, the form stays complete even if a later input adds more passes or pauses.
 
-The step is not saved with the values, and the form starts again from the first step when it is reopened.
-
-`#input` was the old way to render an input form at a breakpoint.
-It is deprecated and has no effect; the linter warns about it under `CPD-3420`.
+The step is not saved with the values, so the form starts again from the first step when it is reopened.
 
 ## Diagnostics
 

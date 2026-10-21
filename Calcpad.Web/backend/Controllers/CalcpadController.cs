@@ -955,7 +955,7 @@ namespace Calcpad.Server.Controllers
 
         /// <summary>
         /// Key of the last <c>#pause</c> the user moved past, as returned in <c>X-Calcpad-Pause</c>.
-        /// Null or <c>"start"</c> stops at the first one and <c>"end"</c> never stops.
+        /// Null or <c>"start"</c> stops at the first one.
         /// </summary>
         public string? PauseAfter { get; set; }
 

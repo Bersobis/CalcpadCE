@@ -52,12 +52,16 @@ namespace Calcpad.Tests
         }
 
         [Fact]
-        public void End_RunsPastEveryPause()
+        public void AtEnd_PauseAddedAfterPosition_BecomesNextStep()
         {
-            var p = Render(ThreeSections, ExpressionParser.PauseAtEnd);
-            Assert.Contains("ccc3", p.HtmlResult);
-            Assert.Null(p.NextPauseKey);
-            Assert.Equal("1", p.PreviousPauseKey);
+            const string loop = "#repeat n\nlp = 1\n#pause\n#loop\nend6 = 6";
+            var atEnd = Render("n = 2\n" + loop, "1.2.2");
+            Assert.Contains("end6", atEnd.HtmlResult);
+            Assert.Null(atEnd.NextPauseKey);
+
+            var grown = Render("n = 3\n" + loop, "1.2.2");
+            Assert.DoesNotContain("end6", grown.HtmlResult);
+            Assert.Equal("1.3.2", grown.NextPauseKey);
         }
 
         [Fact]
