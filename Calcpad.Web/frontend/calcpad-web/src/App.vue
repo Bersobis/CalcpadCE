@@ -88,14 +88,13 @@
                   <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2.5" y="2.5" width="11" height="11" rx="1"/><line x1="2.5" y1="8" x2="13.5" y2="8"/></svg>
                 </button>
                 <button
-                  class="tab-action"
-                  :class="{ active: previewVisible }"
+                  v-if="!previewVisible"
+                  class="tab-action results-sidebar-toggle"
                   @click="togglePreview"
-                  :title="previewVisible ? 'Hide the results pane' : 'Show the results pane (Ctrl+P)'"
-                  :aria-label="previewVisible ? 'Hide the results pane' : 'Show the results pane'"
-                  :aria-pressed="previewVisible"
+                  title="Show the results pane (Ctrl+P)"
+                  aria-label="Show the results pane"
                 >
-                  <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2.5" y="2.5" width="11" height="11" rx="1"/><line x1="9" y1="2.5" x2="9" y2="13.5"/><path d="M9.5 3h4v10h-4z" fill="currentColor" stroke="none" opacity="0.5"/></svg>
+                  <SidebarIcon side="right" collapsed />
                 </button>
               </div>
               <button
@@ -115,11 +114,7 @@
                 title="Show the sidebar (Ctrl+Shift+B)"
                 aria-label="Show the sidebar"
               >
-                <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">
-                  <rect x="2.5" y="2.5" width="11" height="11" rx="1"/>
-                  <line x1="6.5" y1="2.5" x2="6.5" y2="13.5"/>
-                  <polyline points="9.5,5.5 12,8 9.5,10.5"/>
-                </svg>
+                <SidebarIcon collapsed />
               </button>
             </div>
           </div>
@@ -358,7 +353,15 @@
             @click="exitUiMode"
             title="Return to the editor"
           >Exit input mode</button>
-          <button v-else class="toolbar-btn" @click="togglePreview">✕</button>
+          <button
+            v-else
+            class="tab-action results-sidebar-toggle"
+            @click="togglePreview"
+            title="Hide the results pane (Ctrl+P)"
+            aria-label="Hide the results pane"
+          >
+            <SidebarIcon side="right" />
+          </button>
         </template>
       </div>
       <!-- One preview iframe per editor group. allow-same-origin is deliberately
@@ -564,6 +567,7 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, watch, onMounted, onBeforeUnmount } from 'vue'
+import SidebarIcon from 'calcpad-frontend/vue/components/SidebarIcon.vue'
 import {
   extractBodyHtml,
   isCompiledPath,
