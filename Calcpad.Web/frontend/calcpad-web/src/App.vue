@@ -1811,6 +1811,13 @@ function injectLineLinks(
     "      e.preventDefault();",
     "      try { window.parent.postMessage({ type: 'previewFindOpen', groupId: FRAME_ID }, '*'); } catch (_e) {}",
     "    }",
+    // Unhandled, F5 here reloads the whole desktop webview.
+    ...(props.isDesktop ? [
+    "    if (e.key === 'F5' && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {",
+    "      e.preventDefault();",
+    "      try { window.parent.postMessage({ type: 'previewRefresh', groupId: FRAME_ID }, '*'); } catch (_e) {}",
+    "    }",
+    ] : []),
     "  });",
     "  var isCodeView = !!document.querySelector('.line-num');",
     "  document.querySelectorAll('a[data-text]').forEach(function(link) {",
