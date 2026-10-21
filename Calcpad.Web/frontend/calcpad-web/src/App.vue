@@ -2059,20 +2059,15 @@ function injectPreviewAgent(
     '  }, true);',
     '',
     // ---- app shortcuts ----
-    // Mirrors main.ts's window keydown handler, which a frame's keys never reach.
-    // Editor-only shortcuts (Bold, headings, ...) are deliberately left out.
-    '  function isAppShortcut(e) {',
-    '    if (!e.ctrlKey || e.metaKey) return false;',
-    "    var k = (e.key || '').toLowerCase();",
-    "    if (k === 'tab') return true;",
-    "    if (e.altKey) return !e.shiftKey && (k === 'x' || k === 'w');",
-    "    if (e.shiftKey) return k === 's' || k === 'b';",
-    "    return k.length === 1 && 'sonptw123456789,\\\\'.indexOf(k) !== -1;",
-    '  }',
+    // Ctrl+keys go to main.ts's window handler, which a frame's keys never reach; it acts
+    // only on app shortcuts. Kept here: select all, find, clipboard, undo/redo.
+    // AltGr reports as Ctrl+Alt, so it is skipped to keep those characters typeable.
+    "  var FRAME_KEYS = 'acfvxyz';",
     "  document.addEventListener('keydown', function(e) {",
-    '    if (!isAppShortcut(e)) return;',
+    "    if (!e.ctrlKey || e.metaKey || e.getModifierState('AltGraph')) return;",
+    "    var k = (e.key || '').toLowerCase();",
+    "    if (k !== 'tab' && (k.length !== 1 || FRAME_KEYS.indexOf(k) !== -1)) return;",
     '    e.preventDefault();',
-    '    e.stopImmediatePropagation();',
     "    send({ type: 'previewShortcut', key: e.key, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, altKey: e.altKey });",
     '  }, true);',
     ] : []),
