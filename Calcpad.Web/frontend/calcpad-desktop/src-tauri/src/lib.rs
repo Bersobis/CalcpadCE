@@ -1335,6 +1335,13 @@ fn build_menu(app: &AppHandle, window_label: &str) -> tauri::Result<Menu<tauri::
         true,
         Some("CmdOrCtrl+Shift+B"),
     )?;
+    let go_to_settings = MenuItem::with_id(
+        app,
+        "go-to-settings",
+        "Go to Settings",
+        true,
+        Some("CmdOrCtrl+,"),
+    )?;
     let toggle_preview = MenuItem::with_id(
         app,
         "toggle-preview",
@@ -1387,6 +1394,7 @@ fn build_menu(app: &AppHandle, window_label: &str) -> tauri::Result<Menu<tauri::
     let view_sep_2 = sep()?;
     let mut view_items: Vec<&dyn IsMenuItem<tauri::Wry>> = vec![
         &toggle_sidebar,
+        &go_to_settings,
         &toggle_preview,
         &toggle_word_wrap,
         &view_sep_1,

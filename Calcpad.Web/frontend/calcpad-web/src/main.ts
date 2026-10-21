@@ -1627,6 +1627,13 @@ async function bootstrap(): Promise<void> {
         switchView?: (id: string) => void;
     };
 
+    // Settings lives in the CalcpadCE view, which the Files view or a collapsed sidebar hides.
+    function openSettings(): void {
+        appInstance.showSidebar();
+        sidebarInstance.switchView?.('calcpad');
+        sidebarInstance.switchTab?.('settings');
+    }
+
     // ---- Result mode and pane layout: restore, then keep persisted ----
     // Installs from before the workspace store kept the mode in the settings extras, under
     // `previewMode` with `wrapped` for what is now `preview`; carry that over once.
@@ -2172,7 +2179,7 @@ async function bootstrap(): Promise<void> {
                 void splitEditor();
             });
             ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Comma, () => {
-                sidebarInstance.switchTab?.('settings');
+                openSettings();
             });
             ed.addCommand(monaco.KeyCode.F5, () => { void runRefresh(); });
             // Clipboard via Tauri's native clipboard API (WebKitGTK workaround).
@@ -2538,6 +2545,10 @@ async function bootstrap(): Promise<void> {
                     appInstance.toggleSidebar();
                     break;
 
+                case 'go-to-settings':
+                    openSettings();
+                    break;
+
                 case 'toggle-preview':
                     appInstance.togglePreview();
                     break;
@@ -2724,7 +2735,7 @@ async function bootstrap(): Promise<void> {
             // Ctrl+, — open Settings tab in sidebar (VS Code convention).
             if (e.key === ',' && !e.shiftKey && !e.altKey) {
                 e.preventDefault();
-                sidebarInstance.switchTab?.('settings');
+                openSettings();
                 return;
             }
             // Ctrl+Shift+B → toggle sidebar (Ctrl+B is reserved for Bold formatting).
