@@ -1489,7 +1489,17 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_log::Builder::default().build())
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                // Suppress Tao's routine debug messages:
+                // "NewEvents emitted without explicit RedrawEventsCleared"
+                // "RedrawEventsCleared emitted without explicit MainEventsCleared"
+                .level_for(
+                    "tao::platform_impl::platform::event_loop::runner",
+                    log::LevelFilter::Info,
+                )
+                .build(),
+        )
         .plugin(tauri_plugin_opener::init())
         // Applies the saved geometry after the window is created, so it wins over the
         // config's `center: true`. StateFlags is spelled out rather than defaulted to
