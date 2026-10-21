@@ -1539,6 +1539,10 @@ function toggleSidebar(): void {
   sidebarVisible.value = !sidebarVisible.value
 }
 
+function showSidebar(): void {
+  sidebarVisible.value = true
+}
+
 const onLayoutChanged = ref<((layout: WorkspaceLayout) => void) | null>(null)
 
 // Watched, not reported per toggle: several controls flip these directly.
@@ -2347,6 +2351,7 @@ defineExpose({
   onRunRequest,
   // panels / preview
   toggleSidebar,
+  showSidebar,
   togglePreview,
   onLayoutChanged,
   setLayout,
