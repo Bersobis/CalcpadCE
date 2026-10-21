@@ -139,8 +139,13 @@ select option {
     border-radius: 2px;
 }
 
-.toolbar-btn:hover {
+.toolbar-btn:hover:not(:disabled) {
     background: var(--vscode-button-secondaryHoverBackground, #4a4d51);
+}
+
+.toolbar-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
 }
 
 .toolbar-btn.active {

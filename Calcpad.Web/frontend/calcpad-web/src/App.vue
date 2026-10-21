@@ -332,6 +332,20 @@
           >Report</button>
         </div>
         <span class="spacer"></span>
+        <span v-if="resultMode === 'ui' && hasPauseSteps(uiPause)" class="preview-mode-group">
+          <button
+            class="toolbar-btn"
+            :disabled="uiPause?.previous == null"
+            @click="onUiPauseStep('previous')"
+            title="Back to the previous #pause"
+          >◀ Previous</button>
+          <button
+            class="toolbar-btn"
+            :disabled="uiPause?.next == null"
+            @click="onUiPauseStep('next')"
+            title="Continue past the next #pause"
+          >Next ▶</button>
+        </span>
         <button
           v-if="uiModeFullscreen"
           class="toolbar-btn"
@@ -578,6 +592,8 @@ import {
   MAX_HTML_MIRROR_CHARS,
   DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT,
   MIN_CONSOLE_MESSAGES_PER_DOCUMENT,
+  hasPauseSteps,
+  type UiPauseState,
   type PreviewScrollState,
   type ServerStatus,
   type DisplayLogLevel,
@@ -611,6 +627,9 @@ const onSaveUiOverridesRequest = ref<(() => void) | null>(null)
 const onExitUiModeRequest = ref<(() => Promise<boolean>) | null>(null)
 // "Print PDF" — the host runs the export.
 const onPrintReportRequest = ref<(() => void) | null>(null)
+// #pause steps of the input form; null when it has none.
+const uiPause = ref<UiPauseState | null>(null)
+const onUiPauseStepRequest = ref<((direction: 'next' | 'previous') => void) | null>(null)
 
 /** UI mode hands the whole window to the input form; only the tab strip stays. */
 const uiModeFullscreen = computed(() => previewVisible.value && resultMode.value === 'ui')
@@ -1643,6 +1662,14 @@ function onPrintReport(): void {
   onPrintReportRequest.value?.()
 }
 
+function setUiPauseState(state: UiPauseState | null): void {
+  uiPause.value = state
+}
+
+function onUiPauseStep(direction: 'next' | 'previous'): void {
+  onUiPauseStepRequest.value?.(direction)
+}
+
 /** Leaves the fullscreen input form for the report view, bringing the editor back. */
 function exitUiMode(): void {
   void setResultMode('report')
@@ -2368,6 +2395,8 @@ defineExpose({
   onSaveUiOverridesRequest,
   onExitUiModeRequest,
   onPrintReportRequest,
+  setUiPauseState,
+  onUiPauseStepRequest,
   setUiPrintHtml,
   isUiPrintVisible,
   onUiPrintToggled,

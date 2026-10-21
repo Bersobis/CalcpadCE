@@ -14,6 +14,7 @@ import {
     serializeMetadataComment,
     buildSourceDefinitionResolver,
     UiOverrideStore,
+    UiPauseStore,
     writeUiOverrides,
     extractUiControls,
     isCompiledPath,
@@ -412,6 +413,8 @@ async function bootstrap(): Promise<void> {
     const uiOverrides = new UiOverrideStore();
     // Documents whose in-memory values have not been written back yet.
     const uiOverridesDirty = new Set<string>();
+    // The #pause step each input form is on.
+    const uiPause = new UiPauseStore();
     // Documents with an unapplied Properties form, reported by the panel.
     const metadataDirty = new Set<string>();
     // Controls each document's last input-form render produced, which is what tells the
@@ -703,7 +706,12 @@ async function bootstrap(): Promise<void> {
             if (overrideMode) syncUiOverrides(group, content);
             // Unwrapped always shows the document as written.
             const ui = overrideMode
-                ? { enableUi: mode === 'ui', uiOverrides: uiOverrides.toRecord(uiDocKeyFor(group)) }
+                ? {
+                    enableUi: mode === 'ui',
+                    uiOverrides: uiOverrides.toRecord(uiDocKeyFor(group)),
+                    stepPauses: mode === 'ui',
+                    pauseAfter: uiPause.pauseAfter(uiDocKeyFor(group)),
+                }
                 : undefined;
             const write = activeBridge.mayWrite(mode === 'report', mode === 'ui');
             result = mode === 'unwrapped'
@@ -740,7 +748,11 @@ async function bootstrap(): Promise<void> {
                 ? await tauriBridge.inlineDocumentImages(result.html, previewImageBudget(group))
                 : result.html;
             const committed = appInstance.setPreviewHtml(group.id, finalHtml, scrollToLine, uiDocKeyFor(group));
-            if (mode === 'ui') uiControls.set(uiDocKeyFor(group), extractUiControls(result.html));
+            if (mode === 'ui') {
+                uiControls.set(uiDocKeyFor(group), extractUiControls(result.html));
+                uiPause.update(uiDocKeyFor(group), result.pause);
+                appInstance.setUiPauseState(uiPause.state(uiDocKeyFor(group)) ?? null);
+            }
             window.dispatchEvent(new MessageEvent('message', {
                 data: { type: 'updateConvertErrors', errors: result.errors },
             }));
@@ -1729,6 +1741,10 @@ async function bootstrap(): Promise<void> {
 
     appInstance.onSaveUiOverridesRequest = () => { void saveUiOverrides(); };
 
+    appInstance.onUiPauseStepRequest = (direction: 'next' | 'previous') => {
+        if (uiPause.step(activeUiDocKey(), direction)) void refreshPreviewFor(activeGroup);
+    };
+
     /**
      * Leaving the input form discards the entered values — they only live in memory
      * until written into the document — so prompt for unwritten ones first. Returns
@@ -1749,6 +1765,8 @@ async function bootstrap(): Promise<void> {
         uiOverrides.clear(docKey);
         uiOverridesDirty.delete(docKey);
         refreshUiDirtyIndicator();
+        uiPause.clear(docKey);
+        appInstance.setUiPauseState(null);
         return true;
     }
 
