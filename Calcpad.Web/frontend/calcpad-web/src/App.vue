@@ -1357,6 +1357,20 @@ function onPreviewWindowMessage(e: MessageEvent): void {
     }
     return
   }
+  // Replayed on the host window, where main.ts binds app shortcuts. Only a focused
+  // frame may send one, so worksheet script can't fire them unprompted.
+  if (data.type === 'previewShortcut') {
+    const focused = document.activeElement
+    if (!(focused instanceof HTMLIFrameElement) || focused.contentWindow !== e.source) return
+    window.dispatchEvent(new KeyboardEvent('keydown', {
+      key: String(data.key ?? ''),
+      ctrlKey: data.ctrlKey === true,
+      shiftKey: data.shiftKey === true,
+      altKey: data.altKey === true,
+      cancelable: true,
+    }))
+    return
+  }
   if (data.type === 'previewClipboardAction') {
     const action = data.action as PreviewClipboardAction
     if (!isRepeatedPreviewClipboard(action)) void runPreviewClipboardAction(frameId, action)
@@ -1951,13 +1965,13 @@ function insertHeadScript(html: string, body: string): string {
 
 /**
  * The frame's half of find-in-preview and the clipboard bridge. Done in the frame so it can
- * keep an opaque origin; from the host it would need `allow-same-origin`. `interceptClipboard`
- * takes Ctrl+C/X/V in the capture phase, ahead of the datagrid library.
+ * keep an opaque origin; from the host it would need `allow-same-origin`. `desktopHost`
+ * takes Ctrl+C/X/V and the app shortcuts in the capture phase, ahead of the datagrid library.
  */
 function injectPreviewAgent(
   html: string,
   frameId: string,
-  interceptClipboard: boolean,
+  desktopHost: boolean,
   scroll: PreviewScrollState | undefined,
 ): string {
   const id = JSON.stringify(frameId)
@@ -2032,7 +2046,7 @@ function injectPreviewAgent(
     "    try { selection = String(window.getSelection() || ''); } catch (_e) {}",
     "    if (selection) send({ type: 'previewClipboardText', text: selection });",
     '  }',
-    ...(interceptClipboard ? [
+    ...(desktopHost ? [
     "  var ACTIONS = { c: 'copy', x: 'cut', v: 'paste' };",
     "  document.addEventListener('keydown', function(e) {",
     '    if ((!e.ctrlKey && !e.metaKey) || e.altKey || e.shiftKey) return;',
@@ -2042,6 +2056,24 @@ function injectPreviewAgent(
     '    e.stopImmediatePropagation();',
     // The host resolves paste text and echoes the action back as cpdClipboardExec.
     "    send({ type: 'previewClipboardAction', action: action });",
+    '  }, true);',
+    '',
+    // ---- app shortcuts ----
+    // Mirrors main.ts's window keydown handler, which a frame's keys never reach.
+    // Editor-only shortcuts (Bold, headings, ...) are deliberately left out.
+    '  function isAppShortcut(e) {',
+    '    if (!e.ctrlKey || e.metaKey) return false;',
+    "    var k = (e.key || '').toLowerCase();",
+    "    if (k === 'tab') return true;",
+    "    if (e.altKey) return !e.shiftKey && (k === 'x' || k === 'w');",
+    "    if (e.shiftKey) return k === 's' || k === 'b';",
+    "    return k.length === 1 && 'sonptw123456789,\\\\'.indexOf(k) !== -1;",
+    '  }',
+    "  document.addEventListener('keydown', function(e) {",
+    '    if (!isAppShortcut(e)) return;',
+    '    e.preventDefault();',
+    '    e.stopImmediatePropagation();',
+    "    send({ type: 'previewShortcut', key: e.key, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, altKey: e.altKey });",
     '  }, true);',
     ] : []),
     '',
