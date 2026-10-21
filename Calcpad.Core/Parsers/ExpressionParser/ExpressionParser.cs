@@ -243,7 +243,7 @@ namespace Calcpad.Core
             finally
             {
                 FlushMarkdown();
-                Finalize();
+                FinalizeOutput();
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -540,7 +540,7 @@ namespace Calcpad.Core
             ResetUiState();
         }
 
-        private void Finalize()
+        private void FinalizeOutput()
         {
             if (NextPauseKey is not null)
                 _sb.Append(Messages.Paused_Click_Next_to_continue);
