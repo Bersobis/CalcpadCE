@@ -33,40 +33,37 @@
             :style="editorGroupStyle(gi)"
             @mousedown="onGroupFocus(group.id)"
           >
-            <!-- Grows taller only once the tabs overflow, to clear the scrollbar. -->
             <div
               v-if="group.tabs.length > 0"
               class="tab-strip"
-              :class="{ 'tab-strip-overflowing': tabStripOverflowIds.has(group.id) }"
-              role="tablist"
-              :ref="el => setTabStripRef(group.id, el)"
               @contextmenu.prevent
             >
-              <div
-                v-for="tab in group.tabs"
-                :key="tab.id"
-                class="tab"
-                :class="{ active: tab.isActive, dirty: tab.dirty }"
-                role="tab"
-                :aria-selected="tab.isActive"
-                :title="tab.filePath || tab.title"
-                @mousedown.left="onTabClick(group.id, tab.id)"
-                @mousedown.middle.prevent="onTabClose(group.id, tab.id)"
-                @contextmenu.prevent="onTabContextMenu($event, group.id, tab.id)"
-              >
-                <span class="tab-title">{{ tab.title }}</span>
-                <span v-if="tab.dirty" class="tab-dirty-dot" :title="'Unsaved changes'">●</span>
-                <button
-                  class="tab-close"
-                  :title="tab.dirty ? 'Close (unsaved changes)' : 'Close'"
-                  @mousedown.stop
-                  @click.stop="onTabClose(group.id, tab.id)"
+              <div class="tab-list" role="tablist" @wheel="onTabListWheel">
+                <div
+                  v-for="tab in group.tabs"
+                  :key="tab.id"
+                  class="tab"
+                  :class="{ active: tab.isActive, dirty: tab.dirty }"
+                  role="tab"
+                  :aria-selected="tab.isActive"
+                  :title="tab.filePath || tab.title"
+                  @mousedown.left="onTabClick(group.id, tab.id)"
+                  @mousedown.middle.prevent="onTabClose(group.id, tab.id)"
+                  @contextmenu.prevent="onTabContextMenu($event, group.id, tab.id)"
                 >
-                  ✕
-                </button>
+                  <span class="tab-title">{{ tab.title }}</span>
+                  <span v-if="tab.dirty" class="tab-dirty-dot" :title="'Unsaved changes'">●</span>
+                  <button
+                    class="tab-close"
+                    :title="tab.dirty ? 'Close (unsaved changes)' : 'Close'"
+                    @mousedown.stop
+                    @click.stop="onTabClose(group.id, tab.id)"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <button class="tab-new" title="New tab (Ctrl+T)" @click="onNewTab(group.id)">+</button>
               </div>
-              <button class="tab-new" title="New tab (Ctrl+T)" @click="onNewTab(group.id)">+</button>
-              <span class="spacer"></span>
               <!-- First group only; the strip is inside the v-for over groups. -->
               <div v-if="gi === 0 && !uiModeFullscreen" class="tab-actions">
                 <button
@@ -717,43 +714,6 @@ function setEditorRef(id: string, el: unknown): void {
   else editorEls.delete(id)
 }
 
-// Which tab strips overflow, so only those grow taller for the scrollbar. A
-// ResizeObserver catches both causes: window resizes and tabs coming and going.
-const tabStripEls = new Map<string, HTMLElement>()
-const tabStripElIds = new WeakMap<Element, string>()
-const tabStripOverflowIds = ref<Set<string>>(new Set())
-let tabStripResizeObserver: ResizeObserver | null = null
-
-function setTabStripOverflow(id: string, overflowing: boolean): void {
-  if (tabStripOverflowIds.value.has(id) === overflowing) return
-  const next = new Set(tabStripOverflowIds.value)
-  if (overflowing) next.add(id)
-  else next.delete(id)
-  tabStripOverflowIds.value = next
-}
-
-function checkTabStripOverflow(id: string): void {
-  const el = tabStripEls.get(id)
-  if (!el) return
-  setTabStripOverflow(id, el.scrollWidth > el.clientWidth + 1)
-}
-
-function setTabStripRef(id: string, el: unknown): void {
-  const prev = tabStripEls.get(id)
-  if (prev && prev !== el) {
-    tabStripResizeObserver?.unobserve(prev)
-    tabStripElIds.delete(prev)
-  }
-  if (el instanceof HTMLElement) {
-    tabStripEls.set(id, el)
-    tabStripElIds.set(el, id)
-    tabStripResizeObserver?.observe(el)
-    checkTabStripOverflow(id)
-  } else {
-    tabStripEls.delete(id)
-    setTabStripOverflow(id, false)
-  }
-}
 function setFrameRef(map: Map<string, FramePair>, id: string, slot: number, el: unknown): void {
   const pair = map.get(id) ?? [null, null] as FramePair
   pair[slot === 0 ? 0 : 1] = el instanceof HTMLIFrameElement ? el : null
@@ -994,6 +954,16 @@ const tabContextMenu = ref<TabContextMenuState | null>(null)
 function setTabs(groupId: string, next: TabUiState[]): void {
   const g = groups.value.find(g => g.id === groupId)
   if (g) g.tabs = next
+}
+
+function onTabListWheel(event: WheelEvent): void {
+  if (event.ctrlKey || event.deltaX !== 0 || event.deltaY === 0) return
+  const tabList = event.currentTarget as HTMLElement
+  if (tabList.scrollWidth <= tabList.clientWidth) return
+  const step = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? tabList.clientHeight
+    : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? tabList.clientWidth : 1
+  event.preventDefault()
+  tabList.scrollLeft += event.deltaY * step * 0.3
 }
 
 function onTabClick(groupId: string, id: string): void {
@@ -2283,22 +2253,12 @@ onMounted(async () => {
   document.addEventListener('mousedown', onDocumentInteractionForTabMenu)
   document.addEventListener('keydown', onDocumentInteractionForTabMenu)
   window.addEventListener('message', onPreviewWindowMessage)
-
-  tabStripResizeObserver = new ResizeObserver(entries => {
-    for (const entry of entries) {
-      const id = tabStripElIds.get(entry.target)
-      if (id) checkTabStripOverflow(id)
-    }
-  })
-  for (const el of tabStripEls.values()) tabStripResizeObserver.observe(el)
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', onDocumentInteractionForTabMenu)
   document.removeEventListener('keydown', onDocumentInteractionForTabMenu)
   window.removeEventListener('message', onPreviewWindowMessage)
-  tabStripResizeObserver?.disconnect()
-  tabStripResizeObserver = null
 })
 
 // ---- In-app confirm dialog ----

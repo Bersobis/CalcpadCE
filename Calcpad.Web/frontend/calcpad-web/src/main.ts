@@ -102,7 +102,7 @@ function getEmptyPreviewHtml(theme: 'light' | 'dark'): string {
 </head>
 <body>
     <h3>Empty Document</h3>
-    <p>Start typing CalcpadCE code to see the preview.</p>
+    <p>Start typing to see the preview.</p>
     <h4>Formatting Hotkeys</h4>
     <table>
         <tr><th>Bold</th><td>Ctrl+B</td></tr>
@@ -852,7 +852,7 @@ async function bootstrap(): Promise<void> {
         // the taskbar; the main window, and the single-window case, stay unmarked.
         const suffix = isPrimaryWindow ? '' : ` (${windowLabel.slice('main-'.length)})`;
         const title = active?.title
-            ? `${active.title} - CalcpadCE ${appVersion}${suffix}`
+            ? `${active.title} – CalcpadCE ${appVersion}${suffix}`
             : `CalcpadCE ${appVersion}${suffix}`;
         document.title = title;
         setNativeTitle?.(title);
