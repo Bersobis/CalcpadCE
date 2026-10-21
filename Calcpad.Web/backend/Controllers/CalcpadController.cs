@@ -127,6 +127,117 @@ namespace Calcpad.Server.Controllers
         }
 
         /// <summary>
+        /// Evaluates a <c>.cdrw</c> sidecar with its own defaults and returns the SVG the
+        /// editor draws, plus every node's evaluated position and whether it is literal.
+        /// </summary>
+        [HttpPost("drawing/parse")]
+        public IActionResult ParseDrawing([FromBody] DrawingRequest request)
+        {
+            try
+            {
+                var result = DrawingService.Parse(request.SourceFilePath, request.Path);
+                return Ok(new DrawingParseResponse
+                {
+                    Name = result.Name,
+                    Svg = result.Svg,
+                    Nodes = result.Nodes.ToDictionary(
+                        pair => pair.Key,
+                        pair => new DrawingNodeDto
+                        {
+                            X = pair.Value.X,
+                            Y = pair.Value.Y,
+                            Driven = pair.Value.Driven,
+                        }),
+                    Warnings = result.Warnings.ToList(),
+                });
+            }
+            catch (DrawingServiceException ex)
+            {
+                return StatusCode(ex.Status, new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError("drawing parse failed", ex);
+                return StatusCode(500, new { error = "Failed to parse the drawing", message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Persists canvas drags: each entry replaces that node's coordinates with the
+        /// literal it was dragged to, so an expression-driven node becomes fixed.
+        /// </summary>
+        [HttpPost("drawing/save")]
+        public IActionResult SaveDrawing([FromBody] DrawingSaveRequest request)
+        {
+            try
+            {
+                var nodes = (request.Nodes ?? new()).ToDictionary(
+                    pair => pair.Key,
+                    pair => new DrawingService.NodePoint(pair.Value.X, pair.Value.Y));
+                var result = DrawingService.Save(request.SourceFilePath, request.Path, nodes);
+                return Ok(new DrawingSaveResponse { Path = result.Path, Updated = result.Updated });
+            }
+            catch (DrawingServiceException ex)
+            {
+                return StatusCode(ex.Status, new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError("drawing save failed", ex);
+                return StatusCode(500, new { error = "Failed to save the drawing", message = ex.Message });
+            }
+        }
+
+        /// <summary>Exports an evaluated sidecar as R2018 ASCII DXF.</summary>
+        [HttpPost("drawing/export-dxf")]
+        public IActionResult ExportDrawingDxf([FromBody] DrawingRequest request)
+        {
+            try
+            {
+                var bytes = DrawingService.ExportDxf(request.SourceFilePath, request.Path);
+                var name = System.IO.Path.GetFileNameWithoutExtension(request.Path) + ".dxf";
+                return File(bytes, "application/dxf", name);
+            }
+            catch (DrawingServiceException ex)
+            {
+                return StatusCode(ex.Status, new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError("drawing dxf export failed", ex);
+                return StatusCode(500, new { error = "Failed to export DXF", message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Converts an uploaded DXF (base64, as the .cpdz endpoints carry bytes) into
+        /// <c>.cdrw</c> text. Geometry is imported literally — no constraints are inferred.
+        /// </summary>
+        [HttpPost("drawing/import-dxf")]
+        public IActionResult ImportDrawingDxf([FromBody] DrawingDxfImportRequest request)
+        {
+            try
+            {
+                using var stream = new MemoryStream(Convert.FromBase64String(request.Data));
+                var result = DrawingService.ImportDxf(stream);
+                return Ok(new DrawingDxfImportResponse
+                {
+                    Cdrw = result.Cdrw,
+                    Warnings = result.Warnings.ToList(),
+                });
+            }
+            catch (FormatException)
+            {
+                return BadRequest(new { error = "Data must be base64-encoded DXF bytes" });
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError("drawing dxf import failed", ex);
+                return BadRequest(new { error = "Not a readable DXF file", message = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Rewrites a worksheet into the self-contained form a compiled <c>.cpdz</c> needs:
         /// macros and includes expanded, <c>#read</c> data inlined, an included file's image
         /// paths made absolute. Reading a data file that isn't there is an error, not a
@@ -992,6 +1103,75 @@ namespace Calcpad.Server.Controllers
     {
         /// <summary>Base64 of the encoded file's bytes.</summary>
         public string Data { get; set; } = string.Empty;
+    }
+
+    public class DrawingRequest
+    {
+        /// <summary>The sidecar path, as the worksheet writes it in <c>$Drawing</c>.</summary>
+        public string Path { get; set; } = string.Empty;
+
+        /// <summary>Worksheet on disk, whose directory the sidecar path is resolved against.</summary>
+        public string? SourceFilePath { get; set; }
+    }
+
+    public class DrawingNodeDto
+    {
+        public double X { get; set; }
+
+        public double Y { get; set; }
+
+        /// <summary>True when either coordinate comes from an expression, not a literal.</summary>
+        public bool Driven { get; set; }
+    }
+
+    public class DrawingParseResponse
+    {
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>Inline SVG of the evaluated drawing.</summary>
+        public string Svg { get; set; } = string.Empty;
+
+        /// <summary>Evaluated node positions, keyed by node id.</summary>
+        public Dictionary<string, DrawingNodeDto> Nodes { get; set; } = new();
+
+        public List<string> Warnings { get; set; } = new();
+    }
+
+    public class DrawingSaveRequest : DrawingRequest
+    {
+        /// <summary>Node coordinates to write, keyed by node id; omitted nodes keep theirs.</summary>
+        public Dictionary<string, DrawingCoordinateDto>? Nodes { get; set; }
+    }
+
+    public class DrawingCoordinateDto
+    {
+        public double X { get; set; }
+
+        public double Y { get; set; }
+    }
+
+    public class DrawingSaveResponse
+    {
+        /// <summary>Absolute path of the sidecar that was rewritten.</summary>
+        public string Path { get; set; } = string.Empty;
+
+        /// <summary>Number of nodes whose coordinates were written.</summary>
+        public int Updated { get; set; }
+    }
+
+    public class DrawingDxfImportRequest
+    {
+        /// <summary>Base64 of the DXF file's raw bytes.</summary>
+        public string Data { get; set; } = string.Empty;
+    }
+
+    public class DrawingDxfImportResponse
+    {
+        /// <summary>The generated .cdrw text.</summary>
+        public string Cdrw { get; set; } = string.Empty;
+
+        /// <summary>Entities the reader skipped, such as unsupported DXF types.</summary>
+        public List<string> Warnings { get; set; } = new();
     }
 
     public class PortableBundleRequest

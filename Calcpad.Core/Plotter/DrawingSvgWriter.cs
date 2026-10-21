@@ -161,7 +161,7 @@ namespace Calcpad.Core
             return "#3c4852";
         }
 
-        private static bool IsLiteral(string raw)
+        internal static bool IsLiteral(string raw)
         {
             var t = raw.TrimEnd();
             if (t.Length > 1 && t.EndsWith("m", StringComparison.Ordinal) &&
