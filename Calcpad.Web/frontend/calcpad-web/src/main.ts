@@ -840,7 +840,7 @@ async function bootstrap(): Promise<void> {
         // the taskbar; the main window, and the single-window case, stay unmarked.
         const suffix = isPrimaryWindow ? '' : ` (${windowLabel.slice('main-'.length)})`;
         const title = active?.title
-            ? `${active.title} - CalcpadCE ${appVersion}${suffix}`
+            ? `${active.title} – CalcpadCE ${appVersion}${suffix}`
             : `CalcpadCE ${appVersion}${suffix}`;
         document.title = title;
         setNativeTitle?.(title);

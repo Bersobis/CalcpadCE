@@ -580,6 +580,7 @@ select option {
  *  - Single click while collapsed to re-expand. */
 .resize-handle {
     width: 4px;
+    margin-inline-end: -4px;
     flex-shrink: 0;
     cursor: col-resize;
     background: transparent;
@@ -593,6 +594,7 @@ select option {
  * give it a subtle activity-bar tint so the user can see where to click. */
 .resize-handle.collapsed {
     width: 8px;
+    margin-inline-end: 0;
     cursor: pointer;
     background: var(--vscode-activityBar-background, #333333);
     border-right: 1px solid var(--vscode-widget-border, #1e1e1e);
