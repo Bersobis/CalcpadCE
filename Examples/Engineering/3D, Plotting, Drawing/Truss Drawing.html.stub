@@ -3,83 +3,83 @@
 <p>A .cdrw sidecar drawing joins the worksheet calculation cycle: worksheet variables feed the drawing declared inputs, and every recalculation redraws the geometry with computed dimensions. </p>
 <p>Edit the values below and the drawing follows. -->
  <h3>Truss with computed dimensions</h3>
- <svg class="drawing" data-drawing-src="Truss Drawing/truss-example.cdrw" style="width:100%;" version="1.1" viewbox="-80 -120 166 243" width="100%" xmlns="http://www.w3.org/2000/svg">
+ <svg class="drawing" data-drawing-src="Truss Drawing/truss-example.cdrw" style="width:100%;" version="1.1" viewbox="-0.8 -1.2 7.6 5.4" width="100%" xmlns="http://www.w3.org/2000/svg">
   <style type="text/css">
-   .drawing text { fill:#3c4852; font-family:'Segoe UI', Sans; paint-order: stroke; stroke:#fdfdfc; stroke-width:4; stroke-linejoin:round; }
+   .drawing text { fill:#3c4852; font-family:'Segoe UI', Sans; paint-order: stroke; stroke:#fdfdfc; stroke-width:0.04; stroke-linejoin:round; }
 .drawing .cdrw-geom line { stroke-linecap: round; }
-.drawing .cdrw-dims line { stroke:#7b8790; stroke-width:1.5; fill:none; }
+.drawing .cdrw-dims line { stroke:#7b8790; stroke-width:0.02; fill:none; }
 .drawing .cdrw-dims text { fill:#7b8790; }
 .drawing .cdrw-callouts text { fill:#56616b; }
 .drawing text.cdrw-title { font-family: Georgia, serif; font-weight:600; fill:#4a5560; }
   </style>
-  <text class="cdrw-title" font-size="34" x="-60" y="-70">Truss Members</text>
-  <text class="cdrw-title" font-size="18" x="-60" y="-40">Gravity load</text>
+  <text class="cdrw-title" font-size="0.34" x="-0.6" y="-0.7">Truss Members</text>
+  <text class="cdrw-title" font-size="0.18" x="-0.6" y="-0.4">Gravity load</text>
   <g class="cdrw-geom">
-   <line #4d6f8f"="" stroke-width="4" x1="0" x2="1" y1="0" y2="1 stroke=">
+   <line #4d6f8f"="" stroke-width="0.04" x1="0" x2="1" y1="0" y2="1 stroke=">
    </line>
-   <line #4d6f8f"="" stroke-width="4" x1="1" x2="2" y1="1" y2="2 stroke=">
+   <line #4d6f8f"="" stroke-width="0.04" x1="1" x2="2" y1="1" y2="2 stroke=">
    </line>
-   <line #4d6f8f"="" stroke-width="4" x1="2" x2="3" y1="2" y2="3 stroke=">
+   <line #4d6f8f"="" stroke-width="0.04" x1="2" x2="3" y1="2" y2="3 stroke=">
    </line>
-   <line #4d6f8f"="" stroke-width="4" x1="3" x2="4" y1="3" y2="2 stroke=">
+   <line #4d6f8f"="" stroke-width="0.04" x1="3" x2="4" y1="3" y2="2 stroke=">
    </line>
-   <line #4d6f8f"="" stroke-width="4" x1="4" x2="5" y1="2" y2="1 stroke=">
+   <line #4d6f8f"="" stroke-width="0.04" x1="4" x2="5" y1="2" y2="1 stroke=">
    </line>
-   <line #4d6f8f"="" stroke-width="4" x1="5" x2="6" y1="1" y2="0 stroke=">
+   <line #4d6f8f"="" stroke-width="0.04" x1="5" x2="6" y1="1" y2="0 stroke=">
    </line>
-   <line #d9683f"="" stroke-width="4" x1="0" x2="1" y1="0" y2="0 stroke=">
+   <line #d9683f"="" stroke-width="0.04" x1="0" x2="1" y1="0" y2="0 stroke=">
    </line>
-   <line #d9683f"="" stroke-width="4" x1="1" x2="2" y1="0" y2="0 stroke=">
+   <line #d9683f"="" stroke-width="0.04" x1="1" x2="2" y1="0" y2="0 stroke=">
    </line>
-   <line #d9683f"="" stroke-width="4" x1="2" x2="3" y1="0" y2="0 stroke=">
+   <line #d9683f"="" stroke-width="0.04" x1="2" x2="3" y1="0" y2="0 stroke=">
    </line>
-   <line #d9683f"="" stroke-width="4" x1="3" x2="4" y1="0" y2="0 stroke=">
+   <line #d9683f"="" stroke-width="0.04" x1="3" x2="4" y1="0" y2="0 stroke=">
    </line>
-   <line #d9683f"="" stroke-width="4" x1="4" x2="5" y1="0" y2="0 stroke=">
+   <line #d9683f"="" stroke-width="0.04" x1="4" x2="5" y1="0" y2="0 stroke=">
    </line>
-   <line #d9683f"="" stroke-width="4" x1="5" x2="6" y1="0" y2="0 stroke=">
+   <line #d9683f"="" stroke-width="0.04" x1="5" x2="6" y1="0" y2="0 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="1" x2="1" y1="0" y2="1 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="1" x2="1" y1="0" y2="1 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="2" x2="2" y1="0" y2="2 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="2" x2="2" y1="0" y2="2 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="3" x2="3" y1="0" y2="3 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="3" x2="3" y1="0" y2="3 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="4" x2="4" y1="0" y2="2 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="4" x2="4" y1="0" y2="2 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="5" x2="5" y1="0" y2="1 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="5" x2="5" y1="0" y2="1 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="1" x2="2" y1="0" y2="2 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="1" x2="2" y1="0" y2="2 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="2" x2="3" y1="0" y2="3 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="2" x2="3" y1="0" y2="3 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="4" x2="3" y1="0" y2="3 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="4" x2="3" y1="0" y2="3 stroke=">
    </line>
-   <line #3c4852"="" stroke-width="4" x1="5" x2="4" y1="0" y2="2 stroke=">
+   <line #3c4852"="" stroke-width="0.04" x1="5" x2="4" y1="0" y2="2 stroke=">
    </line>
-   <circle #fdfdfc"="" cx="0" cy="0" data-driven="false" data-node-id="n1" r="3 fill=" stroke="#3c4852">
+   <circle cx="0" cy="0" data-driven="false" data-node-id="n1" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="1" cy="0" data-driven="true" data-node-id="n2" r="3 fill=" stroke="#3c4852">
+   <circle cx="1" cy="0" data-driven="true" data-node-id="n2" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="2" cy="0" data-driven="true" data-node-id="n3" r="3 fill=" stroke="#3c4852">
+   <circle cx="2" cy="0" data-driven="true" data-node-id="n3" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="3" cy="0" data-driven="true" data-node-id="n4" r="3 fill=" stroke="#3c4852">
+   <circle cx="3" cy="0" data-driven="true" data-node-id="n4" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="4" cy="0" data-driven="true" data-node-id="n5" r="3 fill=" stroke="#3c4852">
+   <circle cx="4" cy="0" data-driven="true" data-node-id="n5" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="5" cy="0" data-driven="true" data-node-id="n6" r="3 fill=" stroke="#3c4852">
+   <circle cx="5" cy="0" data-driven="true" data-node-id="n6" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="6" cy="0" data-driven="true" data-node-id="n7" r="3 fill=" stroke="#3c4852">
+   <circle cx="6" cy="0" data-driven="true" data-node-id="n7" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="1" cy="1" data-driven="true" data-node-id="n8" r="3 fill=" stroke="#3c4852">
+   <circle cx="1" cy="1" data-driven="true" data-node-id="n8" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="2" cy="2" data-driven="true" data-node-id="n9" r="3 fill=" stroke="#3c4852">
+   <circle cx="2" cy="2" data-driven="true" data-node-id="n9" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="3" cy="3" data-driven="true" data-node-id="n10" r="3 fill=" stroke="#3c4852">
+   <circle cx="3" cy="3" data-driven="true" data-node-id="n10" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="4" cy="2" data-driven="true" data-node-id="n11" r="3 fill=" stroke="#3c4852">
+   <circle cx="4" cy="2" data-driven="true" data-node-id="n11" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
-   <circle #fdfdfc"="" cx="5" cy="1" data-driven="true" data-node-id="n12" r="3 fill=" stroke="#3c4852">
+   <circle cx="5" cy="1" data-driven="true" data-node-id="n12" fill="#fdfdfc" r="0.03" stroke="#3c4852">
    </circle>
    <path d="M 0 3 l -8 14 l 16 0 z" data-support="pin" fill="none" stroke="#3c4852">
    </path>
@@ -87,20 +87,20 @@
    </path>
   </g>
   <g class="cdrw-callouts">
-   <text font-size="22" x="-114" y="-10">Top chord</text>
-   <text font-size="13" x="-114" y="10">IN COMPRESSION</text>
-   <text font-size="22" x="-114" y="20">Bottom chord</text>
-   <text font-size="13" x="-114" y="40">IN TENSION</text>
-   <text font-size="22" x="-114" y="50">Web members</text>
+   <text font-size="0.22" x="4.8" y="-0.1">Top chord</text>
+   <text font-size="0.13" x="4.8" y="0.1">IN COMPRESSION</text>
+   <text font-size="0.22" x="4.8" y="0.2">Bottom chord</text>
+   <text font-size="0.13" x="4.8" y="0.4">IN TENSION</text>
+   <text font-size="0.22" x="4.8" y="0.5">Web members</text>
   </g>
   <g class="cdrw-dims">
-   <line 0.5"="" font-size="18" text-anchor="middle" x1="0" x2="1" y="35" y1="43" y2="43/&gt;
+   <line 0.5"="" font-size="0.18" text-anchor="middle" x1="0" x2="1" y="3.32" y1="3.4" y2="3.4/&gt;
 &lt;text x=">
     a = 1.000 m
-    <line 1.5"="" font-size="18" text-anchor="middle" x1="0" x2="3" y="75" y1="83" y2="83/&gt;
+    <line 1.5"="" font-size="0.18" text-anchor="middle" x1="0" x2="3" y="3.72" y1="3.8" y2="3.8/&gt;
 &lt;text x=">
      h = 3.000 m
-     <line 3"="" font-size="18" text-anchor="middle" x1="0" x2="6" y="115" y1="123" y2="123/&gt;
+     <line 3"="" font-size="0.18" text-anchor="middle" x1="0" x2="6" y="4.12" y1="4.2" y2="4.2/&gt;
 &lt;text x=">L = 6.000 m</line>
     </line>
    </line>

@@ -18,6 +18,9 @@ import type {
     CpdzEncodeResponse,
     PortableBundleResult,
     PortablePackageResult,
+    DrawingParseResponse,
+    DrawingSaveResponse,
+    DrawingDxfImportResponse,
 } from '../types/api';
 import type { SnippetsResponse } from '../types/snippets';
 
@@ -294,6 +297,64 @@ export class CalcpadApiClient {
                 return { bundled: [], errors: [error instanceof Error ? error.message : String(error)] };
             }
         })();
+    }
+
+    /**
+     * Evaluate a `.cdrw` drawing sidecar and return the SVG the editor draws, with every
+     * node's position. The server evaluates the geometry — clients never re-implement it.
+     */
+    public async parseDrawing(
+        path: string,
+        sourceFilePath?: string,
+    ): Promise<DrawingParseResponse | null> {
+        return this.post<DrawingParseResponse>(
+            '/api/calcpad/drawing/parse', { path, sourceFilePath }, 'DrawingParse');
+    }
+
+    /**
+     * Persist canvas drags. Each entry replaces that node's coordinates with the literal it
+     * was dragged to, so a previously expression-driven node becomes fixed.
+     */
+    public async saveDrawing(
+        path: string,
+        nodes: Record<string, { x: number; y: number }>,
+        sourceFilePath?: string,
+    ): Promise<DrawingSaveResponse | null> {
+        return this.post<DrawingSaveResponse>(
+            '/api/calcpad/drawing/save', { path, nodes, sourceFilePath }, 'DrawingSave');
+    }
+
+    /** Export an evaluated sidecar as R2018 ASCII DXF, in millimetres. */
+    public async exportDrawingDxf(path: string, sourceFilePath?: string): Promise<Uint8Array | null> {
+        return (async () => {
+            const url = await this.resolveUrl('/api/calcpad/drawing/export-dxf', 'DrawingDxfExport');
+            if (url === null) return null;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: this.jsonHeaders(),
+                    body: JSON.stringify({ path, sourceFilePath }),
+                    signal: AbortSignal.timeout(60000),
+                });
+                if (!response.ok) {
+                    this.logger?.appendLine(`[DrawingDxfExport] Server returned ${response.status}`, 'warning');
+                    return null;
+                }
+                return new Uint8Array(await response.arrayBuffer());
+            } catch (error) {
+                this.logError('DrawingDxfExport', error);
+                return null;
+            }
+        })();
+    }
+
+    /**
+     * Convert DXF bytes into `.cdrw` text. Geometry arrives literally — no constraints are
+     * inferred — and skipped entities are named in `warnings`.
+     */
+    public async importDrawingDxf(data: Uint8Array): Promise<DrawingDxfImportResponse | null> {
+        return this.post<DrawingDxfImportResponse>(
+            '/api/calcpad/drawing/import-dxf', { data: toBase64(data) }, 'DrawingDxfImport');
     }
 
     public async snippets(): Promise<SnippetsResponse | null> {

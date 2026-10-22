@@ -70,6 +70,17 @@ namespace Calcpad.Tests
         }
 
         [Fact]
+        public void Write_NodeMarkersAreWellFormed()
+        {
+            var (model, ev) = Render();
+            var svg = DrawingSvgWriter.Write(model, ev, "x.cdrw");
+            // A radius missing its closing quote swallows the fill attribute and leaves the
+            // marker unrenderable in the browser.
+            Assert.Matches("(?s).*<circle[^>]*\\br=\"[0-9.]+\"\\s[^>]*/>", svg);
+            Assert.DoesNotContain("fill=\"\"", svg, StringComparison.Ordinal);
+        }
+
+        [Fact]
         public void Write_StylesAppliedAsStrokeAttributes()
         {
             var (model, ev) = Render();

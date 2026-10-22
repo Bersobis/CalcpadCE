@@ -27,9 +27,11 @@ namespace Calcpad.Core
               .Append("\" width=\"100%\" style=\"width:100%;\">").AppendLine();
 
             sb.AppendLine("<style type=\"text/css\">");
-            sb.AppendLine(".drawing text { fill:#3c4852; font-family:'Segoe UI', Sans; paint-order: stroke; stroke:#fdfdfc; stroke-width:4; stroke-linejoin:round; }");
+            sb.Append(".drawing text { fill:#3c4852; font-family:'Segoe UI', Sans; paint-order: stroke; stroke:#fdfdfc; stroke-width:")
+              .Append(F(4 * k)).Append("; stroke-linejoin:round; }").AppendLine();
             sb.AppendLine(".drawing .cdrw-geom line { stroke-linecap: round; }");
-            sb.AppendLine(".drawing .cdrw-dims line { stroke:#7b8790; stroke-width:1.5; fill:none; }");
+            sb.Append(".drawing .cdrw-dims line { stroke:#7b8790; stroke-width:")
+              .Append(F(1.5 * k)).Append("; fill:none; }").AppendLine();
             sb.AppendLine(".drawing .cdrw-dims text { fill:#7b8790; }");
             sb.AppendLine(".drawing .cdrw-callouts text { fill:#56616b; }");
             sb.AppendLine(".drawing text.cdrw-title { font-family: Georgia, serif; font-weight:600; fill:#4a5560; }");
@@ -66,7 +68,7 @@ namespace Calcpad.Core
                     continue;
                 var driven = !IsLiteral(node.XRaw) || !IsLiteral(node.YRaw);
                 sb.Append("<circle cx=\"").Append(F(p.X)).Append("\" cy=\"").Append(F(p.Y))
-                  .Append("\" r=\"").Append(F(3 * k))
+                  .Append("\" r=\"").Append(F(3 * k)).Append('"')
                   .AppendAttr("fill", "#fdfdfc")
                   .AppendAttr("stroke", "#3c4852")
                   .AppendAttr("data-node-id", node.Id)
@@ -189,8 +191,15 @@ namespace Calcpad.Core
             return (minX, minY, maxX, maxY);
         }
 
-        private static double Scale((double minX, double minY, double maxX, double maxY) b) =>
-            Math.Max(1.0, (b.maxX - b.minX) / 600);
+        /// <summary>
+        /// One k per 600 user units of span, so type, padding and hairlines keep the same
+        /// proportion whether the drawing is dimensioned in metres or millimetres.
+        /// </summary>
+        private static double Scale((double minX, double minY, double maxX, double maxY) b)
+        {
+            var span = Math.Max(b.maxX - b.minX, b.maxY - b.minY);
+            return span > 0 ? span / 600 : 1.0;
+        }
 
         private static string F(double d) =>
             Math.Round(d, 2).ToString(CultureInfo.InvariantCulture);
