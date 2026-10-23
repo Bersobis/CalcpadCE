@@ -27,8 +27,7 @@
         title="Hide the sidebar (Ctrl+Shift+B)"
         aria-label="Hide the sidebar"
         @click="hideSidebar()"
-        v-html="HIDE_SIDEBAR_ICON"
-      ></button>
+      ><SidebarIcon /></button>
     </div>
 
     <CalcpadFilesTab
@@ -74,8 +73,7 @@
           title="Hide the sidebar (Ctrl+Shift+B)"
           aria-label="Hide the sidebar"
           @click="hideSidebar()"
-          v-html="HIDE_SIDEBAR_ICON"
-        ></button>
+        ><SidebarIcon /></button>
       </div>
     </div>
     </div>
@@ -217,8 +215,41 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CalcpadInsertTab from './CalcpadInsertTab.vue'
 import CalcpadLiveMath from './CalcpadLiveMath.vue'
+import SidebarIcon from './SidebarIcon.vue'
 import CalcpadTocTab from './CalcpadTocTab.vue'
 import CalcpadSettingsTab from './CalcpadSettingsTab.vue'
+import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
+import CalcpadFormattingTab from './CalcpadFormattingTab.vue'
+import CalcpadExportTab from './CalcpadExportTab.vue'
+import CalcpadFilesTab from './CalcpadFilesTab.vue'
+import CalcpadErrorsTab from './CalcpadErrorsTab.vue'
+import CalcpadMetadataTab from './CalcpadMetadataTab.vue'
+import { postMessage } from '../services/messaging'
+import type { MetadataCommentBlock, MetadataCommentData, SettingsValues } from '../../text/metadata-comment'
+import { discardMetadataDraft } from '../metadata-drafts'
+import type { UiDirectiveData } from '../../text/ui-directive'
+import type { UiControl } from '../../services/ui-overrides'
+import type { Tab, InsertItem, Settings, VariablesData, PdfSettings, TocHeading, ThemeInfo, FileNode, VersionConfig } from '../types'
+import { DEFAULT_VERSION_CONFIG } from '../types'
+import type { CalcpadError, ExportVariant } from '../../types/api'
+import type { WriteMode } from '../../types/settings'
+import { coerceWriteMode } from '../../types/settings'
+import { DEFAULT_PDF_SETTINGS } from '../types'
+import {
+  DEFAULT_PREVIEW_SIZE_MB, MIN_PREVIEW_SIZE_MB,
+  DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MIN_CONSOLE_MESSAGES_PER_DOCUMENT,
+} from '../../services/preview-limits'
+import HIDE_SIDEBAR_ICON from './SidebarIcon.vue'
+import CalcpadLiveMath from './CalcpadLiveMath.vue'
+import SidebarIcon from './SidebarIcon.vue'
+import CalcpadTocTab from './CalcpadTocTab.vue'
+import CalcpadSettingsTab from './CalcpadSettingsTab.vue'
+import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
+import CalcpadFormattingTab from './CalcpadFormattingTab.vue'
+import CalcpadExportTab from './CalcpadExportTab.vue'
+import CalcpadFilesTab from './CalcpadFilesTab.vue'
+import CalcpadErrorsTab from './CalcpadErrorsTab.vue'
+import CalcpadMetadataTab from './CalcpadMetadataTab.vue'
 import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
 import CalcpadFormattingTab from './CalcpadFormattingTab.vue'
 import CalcpadExportTab from './CalcpadExportTab.vue'
@@ -272,7 +303,6 @@ const fileTreeRoots = ref<FileNode[]>([])
 // Split icon (two stacked rows) and close icon for the per-pane action button;
 // hide-sidebar collapses the panel itself.
 const SPLIT_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1"/><line x1="2" y1="8" x2="14" y2="8"/></svg>'
-const HIDE_SIDEBAR_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1"/><line x1="6" y1="2" x2="6" y2="14"/><polyline points="11.5,5.5 9,8 11.5,10.5"/></svg>'
 const CLOSE_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>'
 
 // The side panel can be split into two panes, each with its own active tab.

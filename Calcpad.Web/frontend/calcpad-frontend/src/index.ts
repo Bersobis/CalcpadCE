@@ -27,6 +27,7 @@ export type {
     CalcpadErrorSource,
     ConvertResult,
     UiConvertOptions,
+    UiPauseState,
     ExportVariant,
     CpdzDecodeResponse,
     CpdzEncodeResponse,
@@ -86,7 +87,7 @@ export type {
 } from './types/snippets';
 
 // --- API Client --------------------------------------------------------------
-export { CalcpadApiClient, API_TOKEN_HEADER, parseConvertErrorHeader, combineSignals } from './api/client';
+export { CalcpadApiClient, API_TOKEN_HEADER, parseConvertErrorHeader, parseConvertPauseHeader, combineSignals } from './api/client';
 export {
     BROWSER_NOT_FOUND,
     BrowserNotFoundError,
@@ -116,6 +117,8 @@ export {
     SEMANTIC_TOKEN_TYPES,
     TOKEN_TYPE_MAP,
     mapTokenTypeToIndex,
+    SEMANTIC_TOKEN_MODIFIERS,
+    getTokenModifiers,
 } from './services/highlight';
 
 // --- Base64 Truncation -------------------------------------------------------
@@ -166,6 +169,7 @@ export type { ExtractedPlot } from './services/plot-extract';
 export { buildZip } from './services/zip-writer';
 export type { ZipEntry } from './services/zip-writer';
 export { UiOverrideStore, readUiOverrides, writeUiOverrides, extractUiControls, classifyUiOverrides } from './services/ui-overrides';
+export { UiPauseStore, hasPauseSteps } from './services/ui-pause';
 export {
     isCompiledPath,
     inlineImageSources,
@@ -220,6 +224,7 @@ export {
 } from './text/snippet-insert';
 export type { CompletionKind, CompletionData } from './text/completion-format';
 export {
+    completionRangeStart,
     buildParameterSnippet,
     buildParameterizedDoc,
     formatMacroCompletion,

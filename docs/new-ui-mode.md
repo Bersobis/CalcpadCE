@@ -124,7 +124,7 @@ They share the line's JSON properties but are saved and overridden separately.
 
 `keys` and `values` are both required for a drop-down or radio group, and must be the same length.
 The datagrid properties throw an error on any other control.
-`forceUnits` and `allowExpression` will error on a drop-down, radio group or checkbox, which always substitute the whole value from their own `values` anyway.
+`forceUnits` and `allowExpression` will error on a drop-down, radio group or checkbox, which substitute their own `values` anyway.
 
 You don't have to write JSON by hand — the [Properties tab](new-calcpad-panel.md#properties) has a form for it that fills in the fields that apply to the control type it detects.
 
@@ -161,6 +161,7 @@ It implies `forceUnits: false` — a formula cannot carry an appended unit.
 
 `keys` are shown, `values` are substituted.
 A value may carry its own unit, so a drop-down can switch units as well as magnitudes.
+A value without one keeps the unit written in the document, so `"235"` on `f_y = 355MPa` gives `f_y = 235MPa`.
 
 ```text
 #UI {"type": "dropdown", "keys": ["Low", "Medium", "High"], "values": ["1", "2", "3"]} grade = 1
@@ -402,6 +403,44 @@ Inside a loop each pass renders its own control, and each is entered separately:
 	y
 #loop
 ```
+
+## `#pause` in UI mode
+
+The input form recalculates the whole document every time a value changes. 
+Put `#pause` after inputs that come before something slow such as a long loop, a large matrix solve, heavy JavaScript, etc. 
+The form stops there, so editing values stays responsive, and the slow part runs only once the user presses Next.
+
+`#pause` splits the input form into steps.
+The form calculates down to the first `#pause` and stops there.
+**Next** continues to the following one, adding the next section below the ones already shown, and **Previous** steps back.
+Earlier inputs stay on screen and can still be changed.
+
+```calcpad
+#UI x = 2
+#UI n = 1000000
+#pause
+#hide
+s = 0
+#for i = 1 : n
+	s = s + x/i^2
+#loop
+#end hide
+s
+```
+
+The **Next** and **Previous** buttons appear only when the document has at least one `#pause`.
+In the desktop and web app they sit in the toolbar beside **Save values**.
+In VS Code, they are arrows in the input form's title bar (beside the save button).
+
+Outside the input form, `#pause` is ignored and the whole document is calculated.
+
+Each step is tied to the `#pause` it stops at, so the form stays where it is while inputs change:
+
+- **Loops:** a `#pause` inside a loop stops once per pass. If an input lowers the loop count below the pass you are on, the form stops at the first `#pause` after the loop.
+- **Conditions:** a `#pause` in a branch that is not taken is skipped. If flipping an input moves the branch you are on, the form stops at the next `#pause` that is reached.
+- **Edits:** editing the source while the form is open keeps the current step, unless a `#pause` or a loop is added, removed or moved.
+
+The step is not saved with the values, so the form starts again from the first step when it is reopened.
 
 ## Diagnostics
 
