@@ -67,9 +67,7 @@
     </div>
     <div v-else class="tree-view">
       <div class="tree-actions">
-        <button @click="collapseAll" class="collapse-btn">
-          Collapse All
-        </button>
+        <CollapseAllButton @click="collapseAll" />
       </div>
       <div id="tree-container" class="tree-container">
         <!-- Tree structure will be built here -->
@@ -83,6 +81,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
+import CollapseAllButton from './CollapseAllButton.vue'
 import type { InsertItem } from '../types'
 import { replaceParameterPlaceholders } from '../../text/snippet-insert'
 
@@ -648,20 +647,6 @@ watch(
   display: flex;
   justify-content: flex-end;
   margin-bottom: 8px;
-}
-
-.collapse-btn {
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
-  border: none;
-  padding: 4px 8px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: var(--calcpad-font-size-sm);
-}
-
-.collapse-btn:hover {
-  background: var(--vscode-button-hoverBackground);
 }
 
 .tree-container {

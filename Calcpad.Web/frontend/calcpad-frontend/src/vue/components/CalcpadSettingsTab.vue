@@ -7,13 +7,7 @@
         class="search-input"
         placeholder="Search settings..."
       />
-      <button
-        class="toolbar-btn"
-        :title="allCollapsed ? 'Expand all' : 'Collapse all'"
-        @click="setAll(!allCollapsed)"
-      >
-        {{ allCollapsed ? 'Expand All' : 'Collapse All' }}
-      </button>
+      <CollapseAllButton :expand="allCollapsed" @click="setAll(!allCollapsed)" />
     </div>
 
     <div class="settings-container">
@@ -632,6 +626,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed, reactive } from 'vue'
+import CollapseAllButton from './CollapseAllButton.vue'
 import type { WritableComputedRef } from 'vue'
 import type { PdfSettings, Settings, ThemeInfo, VersionConfig } from '../types'
 import { DEFAULT_PDF_SETTINGS, DEFAULT_VERSION_CONFIG } from '../types'
@@ -1285,6 +1280,7 @@ watch(
 
 .settings-toolbar {
   display: flex;
+  align-items: center;
   gap: 6px;
   padding: 12px;
   /* Pinned above .settings-container, which scrolls under it. */
@@ -1307,21 +1303,6 @@ watch(
 .search-input:focus {
   outline: none;
   border-color: var(--vscode-focusBorder);
-}
-
-.toolbar-btn {
-  padding: 6px 10px;
-  background: var(--vscode-button-secondaryBackground);
-  border: 1px solid var(--vscode-button-border);
-  color: var(--vscode-button-secondaryForeground);
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: var(--calcpad-font-size-sm);
-  white-space: nowrap;
-}
-
-.toolbar-btn:hover {
-  background: var(--vscode-button-secondaryHoverBackground);
 }
 
 .settings-container {
