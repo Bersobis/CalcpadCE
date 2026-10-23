@@ -48,7 +48,7 @@
     <div v-else-if="displayItems.length === 0" class="no-items">
       No insert items available
     </div>
-    <div v-else-if="searchTerm" class="search-results">
+    <div v-else-if="searchTerm">
       <div
         v-for="item in displayItems"
         :key="item.tag"
@@ -65,13 +65,13 @@
         </div>
       </div>
     </div>
-    <div v-else class="tree-view">
+    <div v-else>
       <div class="tree-actions">
         <button @click="collapseAll" class="collapse-btn">
           Collapse All
         </button>
       </div>
-      <div id="tree-container" class="tree-container">
+      <div id="tree-container">
         <!-- Tree structure will be built here -->
         <div class="tree-placeholder">
           Loading insert items...
@@ -444,10 +444,7 @@ watch(
 
 <style scoped>
 .insert-tab {
-  padding: 12px 12px 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  padding: 12px;
 }
 
 .search-container {
@@ -597,11 +594,6 @@ watch(
   font-style: italic;
 }
 
-.search-results {
-  flex: 1;
-  overflow-y: auto;
-}
-
 .insert-item {
   padding: 8px;
   margin: 2px 0;
@@ -637,13 +629,6 @@ watch(
   opacity: 0.7;
 }
 
-.tree-view {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
 .tree-actions {
   display: flex;
   justify-content: flex-end;
@@ -662,12 +647,6 @@ watch(
 
 .collapse-btn:hover {
   background: var(--vscode-button-hoverBackground);
-}
-
-.tree-container {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
 }
 
 .tree-placeholder {
