@@ -36,11 +36,23 @@
       </div>
     </div>
 
-    <div class="image-insert-container">
-      <button @click="insertImage" class="image-insert-btn" title="Insert an image from file">
-        Insert Image
-      </button>
+    <div class="insert-container-row">
+      <div class="image-insert-container">
+        <button @click="insertImage" class="image-insert-btn" title="Insert an image from file">
+          Insert Image
+        </button>
+      </div>
+      <div class="matrix-insert-container">
+        <button @click="insertMatrix" class="matrix-insert-btn" title="Insert an empty matrix to fill in">
+          Insert Matrix&hellip;
+        </button>
+      </div>
     </div>
+    <InsertMatrixDialog
+      :open="matrixDialogOpen"
+      @close="onMatrixClose"
+      @insert="onMatrixInsert"
+    />
 
     <div v-if="searchTerm && filteredItems.length === 0" class="no-items">
       No items found for "{{ searchTerm }}"
@@ -85,6 +97,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import type { InsertItem } from '../types'
 import { replaceParameterPlaceholders } from '../../text/snippet-insert'
+import InsertMatrixDialog from './InsertMatrixDialog.vue'
 
 // Props
 interface Props {
@@ -97,11 +110,13 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   insertText: [text: string]
   insertImage: []
+  insertMatrix: [text: string]
 }>()
 
 // State
 const searchTerm = ref('')
 const symbolsPaletteOpen = ref(false)
+const matrixDialogOpen = ref(false)
 // All symbol groups start collapsed; users open them on demand.
 const openSymbolGroups = ref<Set<string>>(new Set())
 
@@ -307,6 +322,18 @@ const buildTooltip = (item: InsertItem): string => {
 // Methods
 const insertImage = () => {
   emit('insertImage')
+}
+
+const insertMatrix = () => {
+  matrixDialogOpen.value = true
+}
+
+const onMatrixInsert = (text: string) => {
+  emit('insertMatrix', text)
+}
+
+const onMatrixClose = () => {
+  matrixDialogOpen.value = false
 }
 
 const insertItem = (item: InsertItem) => {
@@ -571,6 +598,7 @@ watch(
 }
 
 .image-insert-container {
+  flex: 1;
   margin-bottom: 12px;
 }
 
@@ -588,6 +616,33 @@ watch(
 
 .image-insert-btn:hover {
   background: var(--vscode-button-hoverBackground);
+}
+
+.insert-container-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.matrix-insert-container {
+  flex: 1;
+  margin-bottom: 12px;
+}
+
+.matrix-insert-btn {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--calcpad-accent, #3b6ef5);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-md);
+  font-family: var(--vscode-font-family);
+}
+
+.matrix-insert-btn:hover {
+  opacity: 0.9;
 }
 
 .no-items {

@@ -97,6 +97,7 @@
         :insert-items="insertItems"
         @insert-text="handleInsertText"
         @insert-image="handleInsertImage"
+        @insert-matrix="handleInsertMatrix"
       />
       <CalcpadTocTab
         v-else-if="pane.activeTab === 'toc'"
@@ -543,6 +544,13 @@ const handleInsertText = (text: string) => {
 
 const handleInsertImage = () => {
   postMessage({ type: 'insertImage' })
+}
+
+const handleInsertMatrix = (text: string) => {
+  postMessage({
+    type: 'insertText',
+    text
+  })
 }
 
 const handleUpdateSettings = (newSettings: Settings) => {
