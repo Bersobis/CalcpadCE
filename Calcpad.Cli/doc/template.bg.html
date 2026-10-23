@@ -261,7 +261,7 @@
         .dvcs:has(.block):not(.block *) {
             display: inline-block;
             border-left: solid 1pt #80b0e8;
-            padding-left: 0;
+            padding-left: 3pt;
             margin-left: 3pt;
         }
 
@@ -271,6 +271,10 @@
                 color: #90c4f0;
                 margin-left: -4.5pt;
             }
+
+        .dvcs:has(.block) > :first-child {
+            display: none;
+        }
 
         .arr {
             color: #90c4f0;
@@ -748,9 +752,6 @@
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".dvcs:has(.block) > :first-child").forEach(function (el) {
-                el.innerHTML = "&hairsp;";
-            });
             document.querySelectorAll(".roundBox").forEach(function (box) {
                 box.addEventListener("click", function () {
                     var line = document.getElementById("line-" + box.dataset.line);

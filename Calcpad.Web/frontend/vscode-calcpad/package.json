@@ -149,6 +149,12 @@
         "description": "JSON payload of #settings and #UI"
       }
     ],
+    "semanticTokenModifiers": [
+      {
+        "id": "heading",
+        "description": "Comment on a line starting with \", rendered as a heading"
+      }
+    ],
     "semanticTokenScopes": [
       {
         "scopes": {
@@ -283,6 +289,18 @@
         "command": "vscode-calcpad.saveUiValues",
         "title": "CalcpadCE: Save #UI Values to Document",
         "icon": "$(save)"
+      },
+      {
+        "command": "vscode-calcpad.uiPausePrevious",
+        "title": "CalcpadCE: Previous #pause",
+        "icon": "$(arrow-left)",
+        "enablement": "calcpad.uiPauseHasPrevious"
+      },
+      {
+        "command": "vscode-calcpad.uiPauseNext",
+        "title": "CalcpadCE: Next #pause",
+        "icon": "$(arrow-right)",
+        "enablement": "calcpad.uiPauseHasNext"
       },
       {
         "command": "vscode-calcpad.focusPreviewToLine",
@@ -493,6 +511,16 @@
           "command": "vscode-calcpad.saveUiValues",
           "when": "activeWebviewPanelId == htmlPreviewUi",
           "group": "navigation"
+        },
+        {
+          "command": "vscode-calcpad.uiPausePrevious",
+          "when": "calcpad.uiPauseActive && (activeWebviewPanelId == htmlPreviewUi || activeCustomEditorId == calcpad.compiledWorksheet)",
+          "group": "navigation@1"
+        },
+        {
+          "command": "vscode-calcpad.uiPauseNext",
+          "when": "calcpad.uiPauseActive && (activeWebviewPanelId == htmlPreviewUi || activeCustomEditorId == calcpad.compiledWorksheet)",
+          "group": "navigation@2"
         }
       ],
       "webview/context": [
@@ -566,6 +594,14 @@
         {
           "command": "calcpad.refreshDocumentDisconnected",
           "when": "false"
+        },
+        {
+          "command": "vscode-calcpad.uiPausePrevious",
+          "when": "calcpad.uiPauseActive"
+        },
+        {
+          "command": "vscode-calcpad.uiPauseNext",
+          "when": "calcpad.uiPauseActive"
         }
       ],
       "editor/context": [
@@ -773,6 +809,9 @@
         "enabled": true,
         "rules": {
           "comment:calcpad": "#57A64A",
+          "comment.heading:calcpad": {
+            "bold": true
+          },
           "keyword:calcpad": "#FF80FF",
           "operator:calcpad": "#ECC860",
           "bracket:calcpad": "#FF69B4",
@@ -814,6 +853,9 @@
           "enabled": true,
           "rules": {
             "comment:calcpad": "#008000",
+            "comment.heading:calcpad": {
+              "bold": true
+            },
             "keyword:calcpad": "#AF00DB",
             "operator:calcpad": "#8A6A00",
             "bracket:calcpad": "#D6006E",

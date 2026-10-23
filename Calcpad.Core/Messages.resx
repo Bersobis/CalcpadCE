@@ -328,9 +328,9 @@
   <data name="Unexpected_error_0_Please_check_the_expression_consistency" xml:space="preserve">
         <value>Unexpected error: {0} Please check the expression consistency.</value>
     </data>
-  <data name="Paused_Press_F5_to_continue" xml:space="preserve">
-        <value>&lt;p&gt;&lt;span class="err"&gt;Paused!&lt;/span&gt; Press &lt;b&gt;F5&lt;/b&gt; to &lt;a href="#0" data-text="continue"&gt;continue&lt;/a&gt; or &lt;b&gt;Esc&lt;/b&gt; to &lt;a href="#0" data-text="cancel"&gt;cancel&lt;/a&gt;.&lt;/p&gt;</value>
-    </data>
+  <data name="Paused_Click_Next_to_continue" xml:space="preserve">
+    <value>&lt;p class="paused"&gt;Paused: Click Next to Continue&lt;/p&gt;</value>
+  </data>
   <data name="Error_found_on_line" xml:space="preserve">
         <value>&lt;div class="errorHeader"&gt;Found &lt;b&gt;1&lt;/b&gt; error on line:</value>
     </data>
@@ -626,7 +626,7 @@
     <value>#UI '{0}' has {1} entries but the grid has {2} {3}.</value>
   </data>
   <data name="The_UI_0_does_not_apply_to_1" xml:space="preserve">
-    <value>#UI '{0}' does not apply to a {1}, which always replaces the whole value.</value>
+    <value>#UI '{0}' does not apply to a {1}, which substitutes its own values.</value>
   </data>
   <data name="The_UI_datagrid_requires_a_vector_or_matrix_value" xml:space="preserve">
     <value>#UI 'datagrid' requires a vector or matrix value.</value>
