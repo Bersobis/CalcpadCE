@@ -405,7 +405,6 @@
                 @input="updateDarkBackground"
               />
               <button
-                class="reset-inline-btn"
                 title="Reset to default (#1e1e1e)"
                 @click="resetDarkBackground"
               >
@@ -592,7 +591,6 @@
                 @keyup.enter="saveNamedConfig"
               />
               <button
-                class="reset-inline-btn"
                 :disabled="!newConfigName.trim()"
                 @click="saveNamedConfig"
               >
@@ -1389,21 +1387,6 @@ watch(
   flex: 1;
 }
 
-.reset-inline-btn {
-  padding: 6px 10px;
-  background: var(--vscode-button-secondaryBackground);
-  border: 1px solid var(--vscode-button-border);
-  color: var(--vscode-button-secondaryForeground);
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: var(--calcpad-font-size-sm);
-  white-space: nowrap;
-}
-
-.reset-inline-btn:hover {
-  background: var(--vscode-button-secondaryHoverBackground);
-}
-
 .setting-info {
   margin-left: 4px;
   font-size: var(--calcpad-font-size-sm);
@@ -1423,11 +1406,6 @@ watch(
   color: var(--vscode-errorForeground, #f48771);
 }
 
-.reset-inline-btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .settings-actions {
   display: flex;
   gap: 8px;
@@ -1441,33 +1419,11 @@ watch(
 
 .reset-button {
   width: 100%;
-  padding: 8px;
-  background: var(--vscode-button-secondaryBackground);
-  border: 1px solid var(--vscode-button-border);
-  color: var(--vscode-button-secondaryForeground);
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: var(--calcpad-font-size-md);
   margin-top: 16px;
-}
-
-.reset-button:hover {
-  background: var(--vscode-button-secondaryHoverBackground);
 }
 
 .diagnostics-button {
   width: 100%;
-  padding: 6px 10px;
-  background: var(--vscode-button-secondaryBackground);
-  border: 1px solid var(--vscode-button-border);
-  color: var(--vscode-button-secondaryForeground);
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: var(--calcpad-font-size-md);
-}
-
-.diagnostics-button:hover {
-  background: var(--vscode-button-secondaryHoverBackground);
 }
 
 .app-version {

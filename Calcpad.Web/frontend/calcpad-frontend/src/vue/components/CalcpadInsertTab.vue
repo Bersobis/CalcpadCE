@@ -10,7 +10,7 @@
     </div>
 
     <div class="insert-actions">
-      <button type="button" @click="insertImage" class="image-insert-btn" title="Insert an image from file" aria-label="Insert an image from file">
+      <button @click="insertImage" class="icon" title="Insert an image from file" aria-label="Insert an image from file">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="1" />
           <circle cx="5.5" cy="5.5" r="1.5" />
@@ -578,26 +578,6 @@ watch(
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
-}
-
-.image-insert-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  background: transparent;
-  color: var(--vscode-tab-inactiveForeground);
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.image-insert-btn:hover {
-  color: var(--vscode-tab-activeForeground);
 }
 
 .no-items {
