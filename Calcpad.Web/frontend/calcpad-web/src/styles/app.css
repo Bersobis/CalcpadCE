@@ -1,7 +1,11 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+/* Preserve Monaco's native box sizing. */
+:where([class*="monaco"], [class*="monaco"] *) {
+    box-sizing: revert;
 }
 
 html, body, #app {
@@ -173,6 +177,12 @@ select option {
     flex: 1;
     min-width: 0;
     min-height: 0;
+}
+
+.monaco-editor .find-widget {
+    margin-top: 4px;
+    border: 1px solid var(--vscode-widget-border);
+    border-radius: 8px;
 }
 
 /* Floats over the code rather than sitting in the status bar, where it was too easy
