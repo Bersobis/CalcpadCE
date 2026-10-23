@@ -13,11 +13,7 @@
         <input type="checkbox" v-model="editable" />
         <span>Editable</span>
       </label>
-      <label class="cp-live-toggle" title="Typeset output until you click an equation, like Mathcad">
-        <input type="checkbox" v-model="clickToEdit" />
-        <span>Click to edit</span>
-      </label>
-      <span class="cp-live-stats">{{ equationCount }} / {{ regions.length }} lines as maths</span>
+      <span class="cp-live-stats">{{ statsText }}</span>
     </div>
 
     <!-- Docked once above the worksheet and always visible, rather than repeated beside every
@@ -32,26 +28,39 @@
           type="search"
           aria-label="Find Calcpad syntax"
           placeholder="Find syntax — sin, mod, greek, a/b…"
-          :disabled="!activeField"
         />
         <span class="cp-live-palette-count">
           {{ paletteQuery ? `${matchCount} of ${entryCount}` : `${entryCount} buttons` }}
         </span>
       </div>
 
-      <p v-if="!activeField" class="cp-live-palette-hint">{{ paletteHint }}</p>
+      <!-- One line that always says what the buttons will act on: the equation being edited
+           (and which line it is), or the click that makes one. Without it the docked palette
+           looks like it belongs to whatever the pointer last touched. -->
+      <p class="cp-live-palette-status">{{ paletteStatus }}</p>
 
       <div class="cp-live-palette-body">
-        <section v-for="section in visibleSections" :key="section.id" class="cp-live-section" :style="sectionStyle(section)">
-          <h4 class="cp-live-section-title">{{ section.label }}</h4>
-          <div class="cp-live-keys">
+        <section v-for="section in visibleSections" :key="section.id" class="cp-live-section">
+          <!-- Sections collapse: twelve of them, some with two dozen buttons, is more than fits
+               beside the maths at sidebar width. The header carries the count so a collapsed
+               section still says what is inside it. -->
+          <button
+            class="cp-live-section-title"
+            :aria-expanded="!isCollapsed(section.id)"
+            @click="toggleSection(section.id)"
+          >
+            <span class="cp-live-section-chevron" aria-hidden="true">{{ isCollapsed(section.id) ? '▸' : '▾' }}</span>
+            <span class="cp-live-section-label">{{ section.label }}</span>
+            <span class="cp-live-section-count">{{ section.entries.length }}</span>
+          </button>
+          <div v-show="!isCollapsed(section.id)" class="cp-live-keys">
             <button
               v-for="entry in section.entries"
               :key="entry.id"
               class="cp-math-key"
               :title="keyTitle(entry)"
               :aria-label="keyLabel(entry)"
-              :disabled="!activeField"
+              :disabled="!activeTarget"
               @mousedown.prevent
               @click="applyEntry(entry)"
             >{{ entry.label }}</button>
@@ -85,10 +94,7 @@
           :ref="fieldRef(region.startLine)"
           class="cp-live-equation"
           :model-value="lineText(region.startLine)"
-          :editable="true"
           :show-palette="false"
-          :click-to-edit="clickToEdit"
-          :active="!clickToEdit || activeLine === region.startLine"
           @commit="(value) => applyLine(region.startLine, value)"
           @dirty="(value) => emit('dirty', value)"
           @activate="onActivate(region.startLine)"
@@ -101,11 +107,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUpdated, ref, shallowRef } from 'vue';
+import { computed, nextTick, onMounted, onUpdated, ref, shallowRef, watch } from 'vue';
 import CalcpadMathField from './CalcpadMathField.vue';
 import {
-    LineModel, LineRegion, PaletteEntry, PaletteSection, PALETTE_SECTIONS, supportsMathMlCore,
-    filterPalette, stretchMatrixFences, toMathMlDocument,
+    LineModel, LineRegion, PaletteEntry, PaletteSectionId, PALETTE_ENTRIES,
+    PALETTE_SECTIONS, supportsMathMlCore, filterPalette, stretchMatrixFences, toMathMlDocument,
 } from '../../math';
 
 /** The subset of the field's exposed API the shared toolbar drives. */
@@ -129,7 +135,6 @@ const emit = defineEmits<{
 }>();
 
 const editable = ref(props.editableDefault);
-const clickToEdit = ref(false);
 const supported = ref(true);
 
 // The probe is measured once per document, never inferred from a user-agent string.
@@ -154,19 +159,28 @@ const visibleSections = computed(() => filterPalette(PALETTE_SECTIONS, paletteQu
 const matchCount = computed(() =>
     visibleSections.value.reduce((total, section) => total + section.entries.length, 0));
 
-const wizardSectionRank = computed(() =>
-    visibleSections.value.reduce((rank, section, index) =>
-        section.entries.some((entry) => entry.kind === 'dialog') ? index : rank, -1));
+/** Which sections the user folded away. Searching ignores it — see the watcher below. */
+const collapsed = ref(new Set<PaletteSectionId>());
 
-function sectionStyle(section: PaletteSection): Record<string, string> {
-    const index = visibleSections.value.indexOf(section);
-    const rank = wizardSectionRank.value;
-    const isActive = rank >= 0 && index === rank;
-    return {
-        '--wizard-section-index': String(isActive ? index + 1 : 0),
-        'data-wizard-section': String(isActive),
-    };
+function isCollapsed(id: PaletteSectionId): boolean {
+    return collapsed.value.has(id);
 }
+
+function toggleSection(id: PaletteSectionId): void {
+    const next = new Set(collapsed.value);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    collapsed.value = next;
+}
+
+// A match hidden behind a folded header is a match the user cannot see, so typing a query
+// unfolds everything; what was folded stays folded for when the query is cleared.
+watch(paletteQuery, (query) => {
+    if (query.trim() !== '' && collapsed.value.size > 0) collapsed.value = new Set();
+});
+
+const statsText = computed(() =>
+    `${equationCount.value} equation${equationCount.value === 1 ? '' : 's'} of ${regions.value.length} lines`);
 
 const lines = computed(() => props.modelValue.split(/\r\n|\r|\n/));
 
@@ -190,8 +204,7 @@ const equationCount = computed(() => regions.value.filter((r) => r.kind === 'equ
 // button dead in the previous attempt, so the instances are registered by a function ref.
 const fields = new Map<number, FieldApi>();
 const fieldRefs = new Map<number, (instance: unknown) => void>();
-const activeLine = ref<number | null>(null);
-const activeField = shallowRef<FieldApi | null>(null);
+const activeTarget = shallowRef<{ line: number; field: FieldApi } | null>(null);
 
 /**
  * One stable callback per line. An inline arrow would be a new function on every render, and Vue
@@ -207,38 +220,47 @@ function fieldRef(line: number): (instance: unknown) => void {
     return callback;
 }
 
-const paletteHint = computed(() => {
-    if (equationCount.value === 0) return 'The buttons act on the equation you are editing.';
-    return clickToEdit.value
-        ? 'Click an equation to edit it, then use these.'
-        : 'Click into an equation, then use these.';
+/**
+ * The status line under the search box. It names the line the buttons will write into, because
+ * a palette docked above the worksheet otherwise looks like it belongs to whatever the pointer
+ * last touched — and an insert into the wrong equation is an edit the user has to undo.
+ */
+const paletteStatus = computed(() => {
+    const target = activeTarget.value;
+    if (target) {
+        return `Inserting into line ${target.line + 1} — click another equation to retarget.`;
+    }
+    if (equationCount.value === 0) {
+        return 'No equations in this worksheet yet — the buttons act on the equation you are editing.';
+    }
+    return 'Click an equation to edit it, then use these.';
 });
 
 function registerField(line: number, instance: unknown): void {
     if (instance) {
-        fields.set(line, instance as FieldApi);
+        const field = instance as FieldApi;
+        fields.set(line, field);
         // A region can be re-created (its kind changing re-keys it), which re-registers the same
         // line. Refresh the toolbar's target rather than leaving it on the unmounted instance.
-        if (activeLine.value === line) activeField.value = instance as FieldApi;
+        if (activeTarget.value?.line === line) activeTarget.value = { line, field };
         return;
     }
     fields.delete(line);
-    if (activeLine.value === line) {
-        activeLine.value = null;
-        activeField.value = null;
+    if (activeTarget.value?.line === line) {
+        activeTarget.value = null;
     }
 }
 
 function onActivate(line: number): void {
-    activeLine.value = line;
-    activeField.value = fields.get(line) ?? null;
+    const field = fields.get(line);
+    activeTarget.value = field ? { line, field } : null;
 }
 
 function applyEntry(entry: PaletteEntry): void {
-    const field = activeField.value;
-    if (!field) return;
-    field.applyEntry(entry);
-    field.focus();
+    const target = activeTarget.value;
+    if (!target) return;
+    target.field.applyEntry(entry);
+    target.field.focus();
 }
 
 function lineText(index: number): string {
@@ -320,11 +342,6 @@ function staticMarkup(region: LineRegion): string {
     color: var(--vscode-input-placeholderForeground, var(--vscode-disabledForeground));
 }
 
-.cp-live-palette-search:disabled {
-    opacity: 0.5;
-    cursor: default;
-}
-
 .cp-live-palette-count {
     flex: 0 0 auto;
     font-size: var(--calcpad-font-size-sm);
@@ -344,140 +361,60 @@ function staticMarkup(region: LineRegion): string {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    transition: background 0.25s ease;
     border-radius: 6px;
 }
 
-.cp-live-section.is-wizard-section,
-.cph-was-touched .cp-live-section[data-wizard-section] {
-    background: linear-gradient(180deg,
-        var(--calcpad-wizard-glow, rgba(86, 156, 255, 0.18)),
-        transparent 70%);
-    outline: 1.5px dashed var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.55));
-}
-
-.cp-live-section[data-wizard-section] .cp-live-section-title,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-live-section-title {
-    opacity: 1;
-    color: var(--calcpad-wizard-foreground, var(--vscode-foreground));
-    letter-spacing: 0.08em;
-}
-
-.cp-live-section[data-wizard-section] .cp-live-section-title::before,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-live-section-title::before {
-    content: '⚡ ';
-}
-
-.cp-live-section[data-wizard-section] .cp-live-keys,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-live-keys {
-    gap: 4px;
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key {
-    border-radius: 4px;
-    background: var(--calcpad-wizard-button-bg, rgba(86, 156, 255, 0.1));
-    border: 1px solid var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.3));
-    color: var(--calcpad-wizard-foreground, var(--vscode-foreground));
-    cursor: pointer;
-    user-select: none;
-    font-weight: 500;
-    font-size: 0.95em;
-    padding: 4px 8px;
-    min-width: 24px;
-    min-height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    opacity: 0.9;
-    transform: rotateX(0deg);
-    transform-origin: center bottom;
-    perspective: 1000px;
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
-    will-change: transform, opacity, background, border-color, filter, box-shadow;
-    contain: layout style paint;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key:hover,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key:hover {
-    background: var(--calcpad-wizard-button-hover-bg, rgba(86, 156, 255, 0.2));
-    border-color: var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.6));
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-    opacity: 1;
-    transform: translateY(-1px) rotateX(-5deg);
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key:active,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key:active {
-    background: var(--calcpad-wizard-button-active-bg, rgba(86, 156, 255, 0.3));
-    border-color: var(--calcpad-wizard-outline, rgba(86, 156, 255, 1));
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-    opacity: 0.8;
-    transform: rotateX(0deg);
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key:focus,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key:focus {
-    box-shadow: 0 0 0 2px var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.4));
-    border-color: var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.8));
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key:focus-visible,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key:focus-visible {
-    outline: 2px solid var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.8));
-    outline-offset: 1px;
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key::after,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.3));
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key:hover::after,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key:hover::after {
-    border-top-color: var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.6));
-}
-
-.cp-live-section[data-wizard-section] .cp-math-key:first-child,
-.cph-was-touched .cp-live-section[data-wizard-section] .cp-math-key:first-child {
-    animation: cp-wizard-pulse 2s ease-in-out infinite;
-}
-
-@keyframes cp-wizard-pulse {
-    0%, 100% {
-        box-shadow: 0 0 0 0 var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.4));
-    }
-    50% {
-        box-shadow: 0 0 0 4px var(--calcpad-wizard-outline, rgba(86, 156, 255, 0.2));
-    }
-}
-
-.cp-live-section.is-wizard-section .cp-math-key:first-child {
-    animation: cp-wizard-pulse 2s ease-in-out infinite;
-}
-
+/* The section header is the fold control: a full-width button so the whole row is the target,
+   with the count at the far end — a folded section still says what is inside it. */
 .cp-live-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
     margin: 0;
+    padding: 2px 4px;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    color: var(--vscode-foreground);
     font-size: 0.72em;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+}
+
+.cp-live-section-title:hover {
+    background: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.08));
+}
+
+.cp-live-section-title:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder, #0078d4);
+    outline-offset: -1px;
+}
+
+.cp-live-section-chevron {
+    flex: 0 0 auto;
+    width: 0.8em;
+    opacity: 0.7;
+}
+
+.cp-live-section-label {
+    flex: 1 1 auto;
     opacity: 0.6;
+}
+
+.cp-live-section-count {
+    flex: 0 0 auto;
+    padding: 0 5px;
+    border-radius: 8px;
+    background: var(--vscode-button-secondaryBackground, rgba(128, 128, 128, 0.15));
+    color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+    font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .cp-live-keys {
@@ -486,10 +423,11 @@ function staticMarkup(region: LineRegion): string {
     gap: 3px;
 }
 
-.cp-live-palette-hint {
+/* What the buttons act on and where — always present, not only while nothing is targeted. */
+.cp-live-palette-status {
     margin: 0;
     font-size: var(--calcpad-font-size-sm);
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .cp-live-body {

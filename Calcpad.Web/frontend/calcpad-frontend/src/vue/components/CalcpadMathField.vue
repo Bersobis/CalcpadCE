@@ -11,11 +11,11 @@
     <div
       ref="surface"
       class="cp-math-surface"
-      :class="{ 'is-focused': focused, 'is-idle': !isActive }"
+      :class="{ 'is-focused': focused }"
       :tabindex="tabIndex"
       role="math"
       :aria-label="modelValue"
-      :aria-readonly="!isActive"
+      :aria-readonly="!editable"
       @mousedown="onPointerDown"
       @mousemove="onPointerMove"
       @keydown="onKeydown"
@@ -75,18 +75,9 @@ const props = withDefaults(defineProps<{
     editable?: boolean;
     /** Draw the field's own palette below it. Off when the host docks a shared toolbar. */
     showPalette?: boolean;
-    /**
-     * Mathcad-style click-to-edit: the formula is typeset output until it is clicked, and only
-     * the active field takes the caret and the keyboard.
-     */
-    clickToEdit?: boolean;
-    /** With `clickToEdit`, whether this is the field the user is working on. */
-    active?: boolean;
 }>(), {
     editable: true,
     showPalette: true,
-    clickToEdit: false,
-    active: true,
 });
 
 const emit = defineEmits<{
@@ -115,11 +106,7 @@ let dragMoved = false;
 const structures = STRUCTURES;
 const symbols = PALETTE_SYMBOLS;
 
-/** In click-to-edit mode an inactive field is typeset output: no caret, no keyboard, no tab stop. */
-const isActive = computed(() => !props.clickToEdit || props.active);
-// `-1` rather than omitting the attribute: an idle field is still clickable, it just cannot be
-// reached with Tab, so a worksheet of thirty equations is not thirty tab stops.
-const tabIndex = computed(() => (!props.editable ? -1 : isActive.value ? 0 : -1));
+const tabIndex = computed(() => (props.editable ? 0 : -1));
 
 interface Snapshot { node: MathNode; anchor: Anchor }
 const history = new History<Snapshot>(120);
@@ -145,14 +132,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     caretElement = null;
     window.removeEventListener('mouseup', onPointerUp);
-});
-
-// Leaving the active field takes the caret with it, so an idle worksheet shows no cursor at all.
-watch(isActive, (value) => {
-    if (value) return;
-    focused.value = false;
-    clearSelection();
-    if (caretElement) caretElement.style.display = 'none';
 });
 
 watch(() => props.modelValue, (value) => {
@@ -216,7 +195,7 @@ function placeCaret(): void {
     const host = surface.value;
     if (!host || !anchor.value || !caretElement) return;
     // A visible range hides the caret: a cursor inside a highlight reads as two positions.
-    if (!focused.value || !isActive.value || selection.value) {
+    if (!focused.value || selection.value) {
         caretElement.style.display = 'none';
         return;
     }
@@ -292,7 +271,7 @@ function onPointerUp(): void {
 function paintSelection(): void {
     const host = surface.value;
     const range = selection.value;
-    if (!host || !range || !focused.value || !isActive.value) return;
+    if (!host || !range || !focused.value) return;
     const view = host.ownerDocument?.defaultView;
     const start = domPointAt(host, range.from);
     const end = domPointAt(host, range.to);
@@ -319,7 +298,6 @@ function clearSelection(): void {
 
 /** Focus can arrive without a click (Tab, or a host calling `focus()`), so the caret is drawn here too. */
 function onFocus(): void {
-    if (!isActive.value) return;
     focused.value = true;
     void nextTick(placeCaret);
 }
@@ -351,7 +329,7 @@ function commit(): void {
 }
 
 function onKeydown(event: KeyboardEvent): void {
-    if (!props.editable || !isActive.value || !tree.value || !anchor.value) return;
+    if (!props.editable || !tree.value || !anchor.value) return;
     // The dialog owns the keyboard while it is open — a stray keystroke here would land in the
     // equation behind it.
     if (matrixDialogOpen.value) return;
@@ -585,14 +563,6 @@ defineExpose({
     outline: none;
     cursor: text;
     line-height: 1.4;
-}
-
-.cp-math-surface.is-idle {
-    cursor: pointer;
-}
-
-.cp-math-surface.is-idle:hover {
-    background: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.08));
 }
 
 .cp-math-surface.is-focused {

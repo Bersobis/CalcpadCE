@@ -66,3 +66,9 @@ test('every function ref used in a loop is memoised', () => {
         'fieldRef must memoise the callback per line',
     );
 });
+
+test('live math equations are editable by clicking without a mode toggle', () => {
+    const panel = readFileSync(join(COMPONENTS, 'CalcpadLiveMath.vue'), 'utf8');
+    assert.doesNotMatch(panel, /Click to edit|clickToEdit/);
+    assert.doesNotMatch(panel, /:click-to-edit=|:active=/);
+});

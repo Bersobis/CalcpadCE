@@ -138,11 +138,39 @@ test('the matrix dialog can ask for any shape', () => {
     assert.ok(isCommittableText(printed), printed);
 });
 
+test('one-row matrix requests become fillable two-row matrices', () => {
+    const root = tree('a = 1');
+    const result = insertStructure(root, lastAnchor(root), 'matrix', { rows: 1, cols: 3 });
+    assert.equal(countNamed(result.node, 'mtr'), 2, 'one-row matrices are promoted to two rows');
+    assert.equal(countNamed(result.node, 'mtd'), 6, 'the requested column count is preserved');
+
+    const filled = fillEmptySlots(result.node, '7');
+    const printed = printCalcpad(filled);
+    const reparsed = parseCalcpad(printed);
+    assert.ok(reparsed.ok, `the promoted matrix must parse back: ${printed}`);
+    assert.ok(sameTree(filled, reparsed.node!), `the promoted matrix drifted: ${printed}`);
+    assert.ok(isCommittableText(printed), printed);
+});
+
+test('a matrix inserted into a matrix cell stays parseable after filling', () => {
+    const root = tree('a = 1');
+    const outer = insertStructure(root, lastAnchor(root), 'matrix', { rows: 2, cols: 2 });
+    const nested = insertStructure(outer.node, outer.anchor, 'matrix', { rows: 2, cols: 2 });
+    const filled = fillEmptySlots(nested.node, '7');
+    const printed = printCalcpad(filled);
+    const reparsed = parseCalcpad(printed);
+
+    assert.equal(hasEmptySlot(filled), false, printed);
+    assert.ok(reparsed.ok, `a nested matrix must parse back: ${printed}`);
+    assert.ok(sameTree(filled, reparsed.node!), `a nested matrix drifted: ${printed}`);
+    assert.ok(isCommittableText(printed), printed);
+});
+
 test('an impossible matrix size is clamped, not refused', () => {
     const root = tree('a = 1');
     const result = insertStructure(root, lastAnchor(root), 'matrix', { rows: 0, cols: 99 });
-    assert.equal(countNamed(result.node, 'mtr'), 1, 'at least one row');
-    assert.equal(countNamed(result.node, 'mtd'), 16, 'columns clamped to 16');
+    assert.equal(countNamed(result.node, 'mtr'), 2, 'at least two rows');
+    assert.equal(countNamed(result.node, 'mtd'), 32, 'columns clamped to 16 across two rows');
 });
 
 test('deletion removes the character to the left', () => {

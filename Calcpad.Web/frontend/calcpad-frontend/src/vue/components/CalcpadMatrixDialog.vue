@@ -99,9 +99,10 @@ const emit = defineEmits<{
     (e: 'cancel'): void;
 }>();
 
+const MIN_ROWS = 2;
 const MAX = 8;
 const PRESETS = [
-    { rows: 2, cols: 2 }, { rows: 3, cols: 3 }, { rows: 4, cols: 4 }, { rows: 1, cols: 3 },
+    { rows: 2, cols: 2 }, { rows: 3, cols: 3 }, { rows: 4, cols: 4 }, { rows: 2, cols: 3 },
 ] as const;
 
 const size = ref({ rows: 3, cols: 3 });
@@ -109,15 +110,16 @@ const hovering = ref(false);
 const panel = ref<HTMLElement | null>(null);
 
 const cells = computed(() =>
-    Array.from({ length: MAX * MAX }, (_, index) => ({
+    Array.from({ length: (MAX - MIN_ROWS + 1) * MAX }, (_, index) => ({
         index,
-        row: Math.floor(index / MAX),
+        row: Math.floor(index / MAX) + MIN_ROWS - 1,
         col: index % MAX,
     })));
 
 function set(rows: number, cols: number): void {
-    const clamp = (value: number): number => Math.min(MAX, Math.max(1, Math.round(value)));
-    size.value = { rows: clamp(rows), cols: clamp(cols) };
+    const clampRows = (value: number): number => Math.min(MAX, Math.max(MIN_ROWS, Math.round(value)));
+    const clampCols = (value: number): number => Math.min(MAX, Math.max(1, Math.round(value)));
+    size.value = { rows: clampRows(rows), cols: clampCols(cols) };
 }
 
 function bump(axis: 'rows' | 'cols', delta: number): void {

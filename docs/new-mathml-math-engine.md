@@ -272,22 +272,13 @@ is the storage format** — a copy writes the printed expression and a paste par
 interchange format in between. Composition events (`isComposing`) are ignored, so an IME (dead
 keys for Greek, CJK) does not insert both the intermediate and the committed character.
 
-### Click to edit
-
-With **Click to edit** on, a formula is typeset output until it is clicked — the Mathcad and
-MathType model. An idle field takes no caret, ignores the keyboard, and is not a tab stop
-(`tabindex="-1"`, so a worksheet of thirty equations is not thirty tab stops). Clicking promotes
-it, and the previously active one commits on blur. Turning the option off makes every equation
-directly editable, which is what you want when working through a whole sheet.
-
 ### The palette
 
 The palette is docked **once** above the worksheet and always visible, rather than repeated
 beside every equation. That is not a preference: at sidebar width, thirteen structure buttons and
 twenty-four symbols per equation wrap into a column beside every line and bury the maths — the
 mistake the previous attempt made and documented. It sticks to the top so it stays reachable
-while the worksheet scrolls, and it targets whichever equation is being edited, saying
-"Click an equation to edit it" when none is.
+while the worksheet scrolls, and it targets whichever equation was most recently clicked.
 
 The buttons drive the field through its exposed `applyPalette` / `insertSymbol` — the same
 functions its own keyboard and palette use, so the two cannot diverge. They are `disabled` until

@@ -590,7 +590,7 @@ function endsWithValue(node: MathNode): boolean {
 export interface StructureOptions {
     /** Callee for a `call`: the palette's `sin` button needs a name, not the letter `f`. */
     readonly name?: string;
-    /** Shape for a `matrix`, chosen in the dialog; clamped to 1–16 and defaulting to 3×3. */
+    /** Shape for a `matrix`, chosen in the dialog; rows are clamped to 2–16 and columns to 1–16. */
     readonly rows?: number;
     readonly cols?: number;
 }
@@ -656,6 +656,12 @@ function buildStructure(root: MathNode, anchor: Anchor, id: StructureId, options
     if (anchor.kind === 'gap') {
         const container = nodeAtPath(root, anchor.path);
         if (!isElement(container)) return { node: root, anchor };
+        if (container.children.length === 0) {
+            return {
+                node: replaceAtPath(root, anchor.path, finalStructure),
+                anchor: shift(caretInStructure, anchor.path),
+            };
+        }
         const children = container.children.slice();
         children.splice(anchor.index, 0, finalStructure);
         return {
@@ -742,11 +748,13 @@ function structureNode(id: StructureId, base: MathNode | null, options: Structur
                 slot: { kind: 'gap', path: [1], index: 0 },
             };
         case 'matrix': {
-            // The dialog offers 1–8; the clamp keeps a bad caller from building an unfillable wall.
-            const size = (value: number | undefined): number =>
-                Math.min(16, Math.max(1, Math.round(value ?? 3)));
+            // One-row brackets are vectors in Calcpad's grammar, not mtable matrices. Keeping the
+            // minimum at two rows prevents the editor from creating a tree its parser cannot read
+            // back after a cell is filled.
+            const rows = Math.min(16, Math.max(2, Math.round(options.rows ?? 3)));
+            const columns = Math.min(16, Math.max(1, Math.round(options.cols ?? 3)));
             return {
-                structure: matrix(size(options.rows), size(options.cols)),
+                structure: matrix(rows, columns),
                 slot: { kind: 'gap', path: [1, 0, 0, 0], index: 0 },
             };
         }
