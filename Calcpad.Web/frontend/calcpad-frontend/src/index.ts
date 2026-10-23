@@ -338,3 +338,7 @@ export {
     pathRootTokenOptions,
     hasDanglingCloseBrace,
 } from './text/directives';
+
+// --- Math rendering / editing engine -----------------------------------------
+// Calcpad text ⇄ MathML AST ⇄ native MathML / OMML. No LaTeX, no third-party renderer.
+export * as math from './math';

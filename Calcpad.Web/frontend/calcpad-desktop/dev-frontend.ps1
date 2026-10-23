@@ -43,10 +43,18 @@ function Stop-Watchers {
 
 function Start-Watcher([string]$Prefix, [string]$Script, [string]$Log) {
     if (Test-Path $Log) { Remove-Item $Log -Force -ErrorAction SilentlyContinue }
+    # The wrapper is named relative to $ScriptDir, which is also the child's working
+    # directory, so the argument carries no space and needs no quoting.
+    #
+    # Do not "improve" this back to $LocalNpm. Windows PowerShell's
+    # `Start-Process -ArgumentList` drops the quotes around an array element, so an
+    # absolute path arrives at the child as `-File C:\Users\Admin\3D` and a checkout
+    # under a path with a space (…\3D Objects\…) never starts its watcher. Quoting the
+    # element does not help - that is exactly what commit 6cc0f3b4 tried.
     Start-Process -PassThru -WindowStyle Hidden -FilePath 'powershell' `
         -WorkingDirectory $ScriptDir `
         -RedirectStandardOutput $Log -RedirectStandardError "$Log.err" `
-        -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$LocalNpm`"",
+        -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', '.\local-npm.ps1',
                       '--prefix', $Prefix, 'run', $Script
 }
 

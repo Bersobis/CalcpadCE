@@ -126,12 +126,13 @@ function getEmptyPreviewHtml(theme: 'light' | 'dark'): string {
 }
 
 function getSampleContent(): string {
+    // Source form: Calcpad reads `sqrt` and `^`; the radical and superscript are the render.
     return `'CalcpadCE Web Editor
 'Enter your calculations below
 
 a = 3
 b = 4
-c = √(a² + b²)
+c = sqrt(a^2 + b^2)
 `;
 }
 
@@ -974,6 +975,7 @@ async function bootstrap(): Promise<void> {
         let definitionsTimer: ReturnType<typeof setTimeout> | null = null;
         let previewTimer: ReturnType<typeof setTimeout> | null = null;
         let tocTimer: ReturnType<typeof setTimeout> | null = null;
+        let liveMathTimer: ReturnType<typeof setTimeout> | null = null;
         group.disposables.push(
             ed.onDidChangeModelContent(() => {
                 if (definitionsTimer) clearTimeout(definitionsTimer);
@@ -988,6 +990,10 @@ async function bootstrap(): Promise<void> {
                 if (group === activeGroup) {
                     if (tocTimer) clearTimeout(tocTimer);
                     tocTimer = setTimeout(() => activeBridge.refreshHeadings(), 800);
+                    // Keep the Live math panel in step with edits made here, so a commit from
+                    // the panel cannot silently overwrite a line that has since changed.
+                    if (liveMathTimer) clearTimeout(liveMathTimer);
+                    liveMathTimer = setTimeout(() => activeBridge.pushLiveMathDocument(), 800);
                 }
             }),
         );
@@ -1322,6 +1328,26 @@ async function bootstrap(): Promise<void> {
             }]);
         }
         editor.focus();
+    };
+
+    // Live math writes one line back at a time. Routing it through the document model keeps
+    // the worksheet authoritative and leaves the edit on Monaco's own undo stack.
+    activeBridge.onReplaceLine = (line: number, text: string) => {
+        const target = activeGroup.editor;
+        const model = target.getModel();
+        if (!model) return;
+        const lineNumber = line + 1;
+        if (lineNumber < 1 || lineNumber > model.getLineCount()) return;
+        target.executeEdits('calcpad-live-math', [{
+            range: {
+                startLineNumber: lineNumber,
+                startColumn: 1,
+                endLineNumber: lineNumber,
+                endColumn: model.getLineMaxColumn(lineNumber),
+            },
+            text,
+            forceMoveMarkers: true,
+        }]);
     };
 
     // Wire Output panel: intercept console methods to pipe into the panel.
