@@ -11,15 +11,17 @@
 
     <!-- Symbols Palette -->
     <div v-if="symbolGroups.length > 0" class="symbols-palette">
-      <div class="symbols-palette-header" @click="symbolsPaletteOpen = !symbolsPaletteOpen">
+      <div class="symbols-palette-header" title="Symbol Palette" @click="symbolsPaletteOpen = !symbolsPaletteOpen">
         <span class="symbols-palette-arrow" :class="{ open: symbolsPaletteOpen }">&#x25B6;</span>
-        <span class="symbols-palette-title">Symbol Palette</span>
+        <span class="symbols-palette-title" aria-label="Symbol Palette">
+          Symbols: <span class="symbols-palette-examples">α β π Δ Ω x̄ ẋ °</span>
+        </span>
       </div>
       <div v-show="symbolsPaletteOpen" class="symbols-palette-body">
         <div v-for="group in symbolGroups" :key="group.name" class="symbol-group">
-          <div class="symbol-group-header" @click="toggleGroup(group.name)">
+          <div class="symbol-group-header" :title="group.name" @click="toggleGroup(group.name)">
             <span class="symbol-group-arrow" :class="{ open: isGroupOpen(group.name) }">&#x25B6;</span>
-            <span class="symbol-group-label">{{ group.name }}</span>
+            <span class="symbol-group-label" :aria-label="group.name">{{ group.preview }}</span>
           </div>
           <div v-show="isGroupOpen(group.name)" class="symbol-grid">
             <button
@@ -117,6 +119,7 @@ const isGroupOpen = (name: string): boolean => openSymbolGroups.value.has(name)
 // Symbol palette helpers
 interface SymbolGroup {
   name: string
+  preview: string
   items: InsertItem[]
 }
 
@@ -136,12 +139,11 @@ const symbolGroups = computed((): SymbolGroup[] => {
     }
     groups.get(groupName)!.push(item)
   }
-  return Array.from(groups.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([name, items]) => ({
-      name,
-      items: items.sort((a, b) => (a.description || '').localeCompare(b.description || ''))
-    }))
+  return Array.from(groups.entries()).map(([name, items]) => ({
+    name,
+    preview: items.slice(0, 4).map(item => item.tag).join(' '),
+    items
+  }))
 })
 
 // Computed
@@ -343,16 +345,13 @@ const buildTreeStructure = () => {
 const buildTreeStructureRecursive = (data: TreeNode, parentUl: HTMLUListElement, level: number) => {
   if (level >= 5) return // Prevent infinite recursion
 
-  Object.keys(data).sort((a, b) => a.localeCompare(b)).forEach(categoryKey => {
+  Object.keys(data).forEach(categoryKey => {
     const categoryData = data[categoryKey]
 
     if (Array.isArray(categoryData)) {
       const { li, ul } = createTreeSection(categoryKey, level)
 
-      const sorted = [...categoryData].sort((a, b) =>
-        formatDisplayText(a).localeCompare(formatDisplayText(b))
-      )
-      sorted.forEach((item: InsertItem) => {
+      categoryData.forEach((item: InsertItem) => {
         const itemLi = createTreeItem(item)
         ul.appendChild(itemLi)
       })
@@ -486,12 +485,16 @@ watch(
   cursor: pointer;
   background: var(--vscode-sideBar-background);
   font-weight: bold;
-  font-size: var(--calcpad-font-size-md);
+  font-size: var(--calcpad-font-size-sm);
   user-select: none;
 }
 
 .symbols-palette-header:hover {
   background: var(--vscode-list-hoverBackground);
+}
+
+.symbols-palette-examples {
+  font-size: var(--calcpad-font-size-lg);
 }
 
 .symbols-palette-arrow {
@@ -540,6 +543,9 @@ watch(
 
 .symbol-group-label {
   flex: 1;
+  font-size: var(--calcpad-font-size-lg);
+  font-weight: normal;
+  color: var(--vscode-editor-foreground);
 }
 
 .symbol-grid {
