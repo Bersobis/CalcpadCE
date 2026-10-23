@@ -363,6 +363,36 @@ export interface PortablePackageResult {
     errors: string[];
 }
 
+/** A drawing node's evaluated position, and whether an expression put it there. */
+export interface DrawingNode {
+    x: number;
+    y: number;
+    /** True when either coordinate comes from an expression rather than a literal. */
+    driven: boolean;
+}
+
+export interface DrawingParseResponse {
+    name: string;
+    /** Inline SVG, with `data-node-id` / `data-driven` on every node marker. */
+    svg: string;
+    nodes: Record<string, DrawingNode>;
+    warnings: string[];
+}
+
+export interface DrawingSaveResponse {
+    /** Absolute path of the sidecar that was rewritten. */
+    path: string;
+    /** Nodes whose coordinates were written. */
+    updated: number;
+}
+
+export interface DrawingDxfImportResponse {
+    /** The generated .cdrw text. */
+    cdrw: string;
+    /** Entities the reader skipped, such as unsupported DXF types. */
+    warnings: string[];
+}
+
 /**
  * Which rendering an export captures: `report` hides `#pre` and applies the entered `#UI` values
  * (the default everywhere), `preview` is the on-screen rendering, `input` is the `#UI` form

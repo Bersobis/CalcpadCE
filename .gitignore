@@ -399,4 +399,6 @@ package-lock.json
 Calcpad.Web/frontend/vscode-calcpad/THIRD-PARTY-NOTICES.txt
 
 Calcpad.Web/frontend/vscode-calcpad/.package/
+
+# superpowers brainstorm/sdd scratch
 .superpowers/

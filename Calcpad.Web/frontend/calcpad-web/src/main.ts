@@ -284,7 +284,7 @@ async function bootstrap(): Promise<void> {
     (window as any).monaco = monaco;
 
     // Mount the main app layout
-    const app = createApp(App, { isDesktop: isTauri });
+    const app = createApp(App, { isDesktop: isTauri, api: (activeBridge as unknown as EditorBridge).api });
     const appInstance = app.mount('#app') as any;
 
     // Let the bridge prompt via the in-app quick-pick modal (image storage mode).

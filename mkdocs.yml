@@ -51,6 +51,7 @@ nav:
     - Brackets: brackets.md
     - Functions: functions.md
     - Plotting: plotting.md
+    - Parametric Drawings: parametric-drawings.md
     - Numerical Methods: numerical-methods.md
     - Iterative Procedures: iterative-procedures.md
     - Units: units.md
