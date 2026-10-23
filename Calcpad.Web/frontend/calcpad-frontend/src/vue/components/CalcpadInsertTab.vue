@@ -9,6 +9,17 @@
       />
     </div>
 
+    <div class="insert-actions">
+      <button type="button" @click="insertImage" class="image-insert-btn" title="Insert an image from file" aria-label="Insert an image from file">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <rect x="2" y="2" width="12" height="12" rx="1" />
+          <circle cx="5.5" cy="5.5" r="1.5" />
+          <path d="m14 12-4-4-3 3-2-2-3 3" />
+        </svg>
+      </button>
+      <CollapseAllButton v-if="!searchTerm && displayItems.length > 0" @click="collapseAll" />
+    </div>
+
     <!-- Symbols Palette -->
     <div v-if="symbolGroups.length > 0" class="symbols-palette">
       <div class="symbols-palette-header" @click="symbolsPaletteOpen = !symbolsPaletteOpen">
@@ -36,12 +47,6 @@
       </div>
     </div>
 
-    <div class="image-insert-container">
-      <button @click="insertImage" class="image-insert-btn" title="Insert an image from file">
-        Insert Image
-      </button>
-    </div>
-
     <div v-if="searchTerm && filteredItems.length === 0" class="no-items">
       No items found for "{{ searchTerm }}"
     </div>
@@ -66,9 +71,6 @@
       </div>
     </div>
     <div v-else class="tree-view">
-      <div class="tree-actions">
-        <CollapseAllButton @click="collapseAll" />
-      </div>
       <div id="tree-container" class="tree-container">
         <!-- Tree structure will be built here -->
         <div class="tree-placeholder">
@@ -313,6 +315,8 @@ const insertItem = (item: InsertItem) => {
 }
 
 const collapseAll = () => {
+  symbolsPaletteOpen.value = false
+  openSymbolGroups.value.clear()
   const checkboxes = document.querySelectorAll('#tree-container input[type="checkbox"]')
   checkboxes.forEach(checkbox => {
     (checkbox as HTMLInputElement).checked = false
@@ -569,24 +573,31 @@ watch(
   border-color: var(--vscode-focusBorder);
 }
 
-.image-insert-container {
-  margin-bottom: 12px;
+.insert-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 .image-insert-btn {
-  width: 100%;
-  padding: 6px 8px;
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  color: var(--vscode-tab-inactiveForeground);
   border: none;
-  border-radius: 3px;
+  border-radius: 0;
   cursor: pointer;
-  font-size: var(--calcpad-font-size-md);
-  font-family: var(--vscode-font-family);
+  transition: color 0.2s ease;
 }
 
 .image-insert-btn:hover {
-  background: var(--vscode-button-hoverBackground);
+  color: var(--vscode-tab-activeForeground);
 }
 
 .no-items {
@@ -641,12 +652,6 @@ watch(
   min-height: 0;
   display: flex;
   flex-direction: column;
-}
-
-.tree-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
 }
 
 .tree-container {
