@@ -39,7 +39,7 @@ namespace Calcpad.Tests
 
         public double Real => _parser.Real;
         public double Imaginary => _parser.Imaginary;
-        public Complex Complex => _parser.Complex;
+        public System.Numerics.Complex Complex => _parser.Complex;
 
         public override string ToString() => _parser.ResultAsString;
     }

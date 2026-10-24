@@ -134,6 +134,60 @@ select,
   cursor: pointer;
 }
 
+.reset-button {
+  width: 100%;
+  padding: 8px;
+  background: var(--vscode-button-secondaryBackground);
+  border: 1px solid var(--vscode-button-border);
+  color: var(--vscode-button-secondaryForeground);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-md);
+  margin-top: 16px;
+}
+
+.reset-button:hover {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+/* Math palette buttons. Rendered by both the field's inline palette and the Live math toolbar,
+   so the rule lives here rather than being duplicated in each component — the duplication is how
+   the two copies ended up sharing the same defect.
+
+   `color` must be the button's own foreground, never `inherit`. The inherited colour is the
+   sidebar's `--vscode-foreground`, and in the light theme that is #616161 on the
+   `--vscode-button-secondaryBackground` #5f6a79 — a contrast ratio of 1.13:1, so the labels were
+   invisible. The dark theme happened to inherit #d4d4d4 on #3a3d41 (7.36:1), which is why the
+   bug only ever appeared in light. */
+.cp-math-key {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 5px;
+  background: var(--vscode-button-secondaryBackground);
+  border: 1px solid var(--vscode-button-border);
+  border-radius: 3px;
+  color: var(--vscode-button-secondaryForeground);
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-sm);
+}
+
+.cp-math-key:hover:not(:disabled) {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+/* The toolbar is inert until an equation is being edited; say so rather than doing nothing. */
+.cp-math-key:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.cp-math-divider {
+  width: 1px;
+  margin: 0 3px;
+  align-self: stretch;
+  background: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+}
+
 /* Variables tab styles */
 .variables-section {
   margin-bottom: 20px;
@@ -424,77 +478,25 @@ select,
 }
 
 /* Common button styles */
-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: var(--calcpad-font-size-sm);
-  font-family: var(--vscode-font-family);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-button:where(:not(.secondary, .tertiary, .icon)) {
+.btn {
   background: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
   border: none;
   padding: 6px 12px;
   border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-sm);
+  font-family: var(--vscode-font-family);
+  transition: background-color 0.2s ease;
 }
 
-button:where(:not(.secondary, .tertiary, .icon):hover:not(:disabled)) {
+.btn:hover {
   background: var(--vscode-button-hoverBackground);
 }
 
-button.secondary {
-  padding: 6px 14px;
-  background: var(--vscode-button-secondaryBackground);
-  border: none;
-  color: var(--vscode-button-secondaryForeground);
-  border-radius: 2px;
-  font-size: var(--calcpad-font-size-md);
-}
-
-button.secondary:hover {
-  background: var(--vscode-button-secondaryHoverBackground);
-}
-
-button.tertiary {
-  padding: 3px 8px;
-  background: transparent;
-  border: 1px dashed var(--vscode-input-border, var(--vscode-widget-border));
-  color: var(--vscode-foreground);
-  border-radius: 2px;
-}
-
-button.tertiary:hover:not(:disabled) {
-  background: var(--vscode-toolbar-hoverBackground);
-}
-
-button.icon {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  color: var(--vscode-tab-inactiveForeground);
-  border-radius: 0;
-  font-size: var(--calcpad-font-size-md);
-}
-
-button.icon:hover,
-button.icon.active {
-  color: var(--vscode-tab-activeForeground);
-}
-
-button.icon svg {
-  display: block;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Common input styles */

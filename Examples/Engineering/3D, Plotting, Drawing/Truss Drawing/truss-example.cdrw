@@ -1,0 +1,53 @@
+#drawing truss-example
+#input L = ? {12}  m   # Span between supports
+#input h = ? {3}   m   # Rise at the apex
+#input n = ? {6}   -   # Number of panels
+
+#node n1  (0, 0)
+#node n2  (L/n, 0)
+#node n3  (2*L/n, 0)
+#node n4  (3*L/n, 0)
+#node n5  (4*L/n, 0)
+#node n6  (5*L/n, 0)
+#node n7  (L, 0)
+#node n8  (L/n, h/3)
+#node n9  (2*L/n, 2*h/3)
+#node n10 (L/2, h)
+#node n11 (4*L/n, 2*h/3)
+#node n12 (5*L/n, h/3)
+
+#member t1 n1 n8  group=top
+#member t2 n8 n9  group=top
+#member t3 n9 n10 group=top
+#member t4 n10 n11 group=top
+#member t5 n11 n12 group=top
+#member t6 n12 n7 group=top
+#member b1 n1 n2 group=bot
+#member b2 n2 n3 group=bot
+#member b3 n3 n4 group=bot
+#member b4 n4 n5 group=bot
+#member b5 n5 n6 group=bot
+#member b6 n6 n7 group=bot
+#member w1 n2 n8  group=web
+#member w2 n3 n9  group=web
+#member w3 n4 n10 group=web
+#member w4 n5 n11 group=web
+#member w5 n6 n12 group=web
+#member w6 n2 n9  group=web
+#member w7 n3 n10 group=web
+#member w8 n5 n10 group=web
+#member w9 n6 n11 group=web
+
+#annotation group=top label="Top chord" state="In compression"
+#annotation group=bot label="Bottom chord" state="In tension"
+#annotation group=web label="Web members" state=""
+
+#dimension n1→n2  align=below  text="a = {[L/n]:.3f} m"
+#dimension n1→n10 align=left   text="h = {[h]:.3f} m"
+#dimension n1→n7  align=below  text="L = {[L]:.3f} m"
+
+#style top stroke=#4d6f8f width=10
+#style bot stroke=#d9683f width=10
+#style web stroke=#3c4852 width=7
+
+#view title="Truss Members" subtitle="Gravity load" supports=pin,roller

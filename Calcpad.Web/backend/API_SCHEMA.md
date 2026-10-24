@@ -49,6 +49,10 @@ Launches that do not set the variable (a `dotnet run` during development, the sa
 - [POST /cpdz/encode](#post-cpdzencode)
 - [POST /portable/bundle](#post-portablebundle)
 - [POST /portable/package](#post-portablepackage)
+- [POST /drawing/parse](#post-drawingparse)
+- [POST /drawing/save](#post-drawingsave)
+- [POST /drawing/export-dxf](#post-drawingexport-dxf)
+- [POST /drawing/import-dxf](#post-drawingimport-dxf)
 - [GET /snippets](#get-snippets)
 - [Usage Notes](#usage-notes)
 - [Environment Variables](#environment-variables)
@@ -967,6 +971,88 @@ interface PortablePackageResponse {
 ```
 
 **400** when the package cannot be built: `{ error, messages: string[] }`. Two refusals, both naming what to fix — a reference that cannot be read (including one through an undeclared `{project}`/`{library}` root), and two `#write`/`#append` targets that would collapse onto the same file. Two references sharing a file name is not one of them: the flat refs folder renames the second, and any further one, `name-1.ext`, `name-2.ext` and so on instead. Nothing partial is ever returned.
+
+---
+
+## POST /drawing/parse
+
+Evaluate a `.cdrw` drawing sidecar with its own input defaults and return the SVG the editor draws, plus every node's position. Geometry is evaluated in Core — clients never evaluate the drawing's expressions themselves.
+
+**Request:**
+```typescript
+interface DrawingRequest {
+  path: string;              // the sidecar path, as the $Drawing directive writes it
+  sourceFilePath?: string;   // worksheet on disk; the sidecar resolves against its directory
+}
+```
+
+**Response:**
+```typescript
+interface DrawingParseResponse {
+  name: string;
+  svg: string;               // inline SVG, annotated with data-node-id / data-driven
+  nodes: Record<string, { x: number; y: number; driven: boolean }>;
+  warnings: string[];
+}
+```
+
+`driven` is true when either coordinate is an expression rather than a literal, so the editor can refuse to drag it without first unlinking it. **404** when the sidecar is missing, **403** when the path escapes the worksheet's directory, **400** when it is not a `.cdrw` or has parse errors.
+
+---
+
+## POST /drawing/save
+
+Persist canvas drags. Each entry replaces that node's coordinates with the literal it was dragged to, so a previously expression-driven node becomes fixed — that is also how the editor's "unlink" works.
+
+**Request:**
+```typescript
+interface DrawingSaveRequest extends DrawingRequest {
+  nodes: Record<string, { x: number; y: number }>;  // omitted nodes keep their coordinates
+}
+```
+
+**Response:**
+```typescript
+interface DrawingSaveResponse {
+  path: string;              // absolute path of the sidecar that was rewritten
+  updated: number;           // nodes written
+}
+```
+
+The file is re-serialized canonically, so formatting and comments are dropped and the diff is one line per dragged node. **404** for an unknown node id (nothing is written).
+
+---
+
+## POST /drawing/export-dxf
+
+Export an evaluated sidecar as R2018 ASCII DXF in millimetres (`$INSUNITS = 4`). Dimensions are exploded into leader lines and text, since DXF dimensions are not otherwise portable between CAD packages.
+
+**Request:** `DrawingRequest`.
+
+**Response:** the DXF bytes as `application/dxf`, named after the sidecar.
+
+---
+
+## POST /drawing/import-dxf
+
+Convert DXF geometry into `.cdrw` text. `LINE` and `LWPOLYLINE` become literal nodes and members, `TEXT` becomes a callout, and anything else is skipped with a warning. No constraints are inferred — the import is literal, so a dimensioned DXF arrives as plain geometry.
+
+**Request:**
+```typescript
+interface DrawingDxfImportRequest {
+  data: string;              // base64 of the DXF file's raw bytes
+}
+```
+
+**Response:**
+```typescript
+interface DrawingDxfImportResponse {
+  cdrw: string;              // the generated sidecar
+  warnings: string[];        // entities that were skipped
+}
+```
+
+**400** when the bytes are not base64 or not a readable DXF: `{ error, message }`.
 
 ---
 

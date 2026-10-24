@@ -1,35 +1,25 @@
 <template>
   <div class="insert-tab">
-    <CalcpadSearchField
-      v-model="searchTerm"
-      placeholder="Search items..."
-      class="search-container"
-    />
-
-    <div class="insert-actions">
-      <button @click="insertImage" class="icon" title="Insert an image from file" aria-label="Insert an image from file">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
-          <rect x="2" y="2" width="12" height="12" rx="1" />
-          <circle cx="5.5" cy="5.5" r="1.5" />
-          <path d="m14 12-4-4-3 3-2-2-3 3" />
-        </svg>
-      </button>
-      <CollapseAllButton v-if="!searchTerm && displayItems.length > 0" @click="collapseAll" />
+    <div class="search-container">
+      <input
+        v-model="searchTerm"
+        type="text"
+        placeholder="Search items..."
+        class="search-input"
+      />
     </div>
 
     <!-- Symbols Palette -->
     <div v-if="symbolGroups.length > 0" class="symbols-palette">
-      <div class="symbols-palette-header" title="Symbol Palette" @click="symbolsPaletteOpen = !symbolsPaletteOpen">
+      <div class="symbols-palette-header" @click="symbolsPaletteOpen = !symbolsPaletteOpen">
         <span class="symbols-palette-arrow" :class="{ open: symbolsPaletteOpen }">&#x25B6;</span>
-        <span class="symbols-palette-title" aria-label="Symbol Palette">
-          Symbols: <span class="symbols-palette-examples">α β π Δ Ω x̄ ẋ °</span>
-        </span>
+        <span class="symbols-palette-title">Symbol Palette</span>
       </div>
       <div v-show="symbolsPaletteOpen" class="symbols-palette-body">
         <div v-for="group in symbolGroups" :key="group.name" class="symbol-group">
-          <div class="symbol-group-header" :title="group.name" @click="toggleGroup(group.name)">
+          <div class="symbol-group-header" @click="toggleGroup(group.name)">
             <span class="symbol-group-arrow" :class="{ open: isGroupOpen(group.name) }">&#x25B6;</span>
-            <span class="symbol-group-label" :aria-label="group.name">{{ group.preview }}</span>
+            <span class="symbol-group-label">{{ group.name }}</span>
           </div>
           <div v-show="isGroupOpen(group.name)" class="symbol-grid">
             <button
@@ -46,13 +36,31 @@
       </div>
     </div>
 
+    <div class="insert-container-row">
+      <div class="image-insert-container">
+        <button @click="insertImage" class="image-insert-btn" title="Insert an image from file">
+          Insert Image
+        </button>
+      </div>
+      <div class="matrix-insert-container">
+        <button @click="insertMatrix" class="matrix-insert-btn" title="Insert an empty matrix to fill in">
+          Insert Matrix&hellip;
+        </button>
+      </div>
+    </div>
+    <InsertMatrixDialog
+      :open="matrixDialogOpen"
+      @close="onMatrixClose"
+      @insert="onMatrixInsert"
+    />
+
     <div v-if="searchTerm && filteredItems.length === 0" class="no-items">
       No items found for "{{ searchTerm }}"
     </div>
     <div v-else-if="displayItems.length === 0" class="no-items">
       No insert items available
     </div>
-    <div v-else-if="searchTerm">
+    <div v-else-if="searchTerm" class="search-results">
       <div
         v-for="item in displayItems"
         :key="item.tag"
@@ -69,8 +77,13 @@
         </div>
       </div>
     </div>
-    <div v-else>
-      <div id="tree-container">
+    <div v-else class="tree-view">
+      <div class="tree-actions">
+        <button @click="collapseAll" class="collapse-btn">
+          Collapse All
+        </button>
+      </div>
+      <div id="tree-container" class="tree-container">
         <!-- Tree structure will be built here -->
         <div class="tree-placeholder">
           Loading insert items...
@@ -82,10 +95,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
-import CalcpadSearchField from './CalcpadSearchField.vue'
-import CollapseAllButton from './CollapseAllButton.vue'
 import type { InsertItem } from '../types'
 import { replaceParameterPlaceholders } from '../../text/snippet-insert'
+import InsertMatrixDialog from './InsertMatrixDialog.vue'
 
 // Props
 interface Props {
@@ -98,11 +110,13 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   insertText: [text: string]
   insertImage: []
+  insertMatrix: [text: string]
 }>()
 
 // State
 const searchTerm = ref('')
 const symbolsPaletteOpen = ref(false)
+const matrixDialogOpen = ref(false)
 // All symbol groups start collapsed; users open them on demand.
 const openSymbolGroups = ref<Set<string>>(new Set())
 
@@ -118,7 +132,6 @@ const isGroupOpen = (name: string): boolean => openSymbolGroups.value.has(name)
 // Symbol palette helpers
 interface SymbolGroup {
   name: string
-  preview: string
   items: InsertItem[]
 }
 
@@ -138,11 +151,12 @@ const symbolGroups = computed((): SymbolGroup[] => {
     }
     groups.get(groupName)!.push(item)
   }
-  return Array.from(groups.entries()).map(([name, items]) => ({
-    name,
-    preview: items.slice(0, 4).map(item => item.tag).join(' '),
-    items
-  }))
+  return Array.from(groups.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, items]) => ({
+      name,
+      items: items.sort((a, b) => (a.description || '').localeCompare(b.description || ''))
+    }))
 })
 
 // Computed
@@ -310,13 +324,23 @@ const insertImage = () => {
   emit('insertImage')
 }
 
+const insertMatrix = () => {
+  matrixDialogOpen.value = true
+}
+
+const onMatrixInsert = (text: string) => {
+  emit('insertMatrix', text)
+}
+
+const onMatrixClose = () => {
+  matrixDialogOpen.value = false
+}
+
 const insertItem = (item: InsertItem) => {
   emit('insertText', formatInsertText(item))
 }
 
 const collapseAll = () => {
-  symbolsPaletteOpen.value = false
-  openSymbolGroups.value.clear()
   const checkboxes = document.querySelectorAll('#tree-container input[type="checkbox"]')
   checkboxes.forEach(checkbox => {
     (checkbox as HTMLInputElement).checked = false
@@ -346,13 +370,16 @@ const buildTreeStructure = () => {
 const buildTreeStructureRecursive = (data: TreeNode, parentUl: HTMLUListElement, level: number) => {
   if (level >= 5) return // Prevent infinite recursion
 
-  Object.keys(data).forEach(categoryKey => {
+  Object.keys(data).sort((a, b) => a.localeCompare(b)).forEach(categoryKey => {
     const categoryData = data[categoryKey]
 
     if (Array.isArray(categoryData)) {
       const { li, ul } = createTreeSection(categoryKey, level)
 
-      categoryData.forEach((item: InsertItem) => {
+      const sorted = [...categoryData].sort((a, b) =>
+        formatDisplayText(a).localeCompare(formatDisplayText(b))
+      )
+      sorted.forEach((item: InsertItem) => {
         const itemLi = createTreeItem(item)
         ul.appendChild(itemLi)
       })
@@ -444,11 +471,30 @@ watch(
 
 <style scoped>
 .insert-tab {
-  padding: 12px;
+  padding: 12px 12px 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-container {
   margin-bottom: 12px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  color: var(--vscode-input-foreground);
+  border-radius: 3px;
+  font-size: var(--calcpad-font-size-md);
+  font-family: var(--vscode-font-family);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--vscode-focusBorder);
 }
 
 /* Symbols Palette */
@@ -467,16 +513,12 @@ watch(
   cursor: pointer;
   background: var(--vscode-sideBar-background);
   font-weight: bold;
-  font-size: var(--calcpad-font-size-sm);
+  font-size: var(--calcpad-font-size-md);
   user-select: none;
 }
 
 .symbols-palette-header:hover {
   background: var(--vscode-list-hoverBackground);
-}
-
-.symbols-palette-examples {
-  font-size: var(--calcpad-font-size-lg);
 }
 
 .symbols-palette-arrow {
@@ -525,9 +567,6 @@ watch(
 
 .symbol-group-label {
   flex: 1;
-  font-size: var(--calcpad-font-size-lg);
-  font-weight: normal;
-  color: var(--vscode-editor-foreground);
 }
 
 .symbol-grid {
@@ -558,11 +597,52 @@ watch(
   border-color: var(--vscode-focusBorder);
 }
 
-.insert-actions {
+.image-insert-container {
+  flex: 1;
+  margin-bottom: 12px;
+}
+
+.image-insert-btn {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-md);
+  font-family: var(--vscode-font-family);
+}
+
+.image-insert-btn:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+
+.insert-container-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.matrix-insert-container {
+  flex: 1;
+  margin-bottom: 12px;
+}
+
+.matrix-insert-btn {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--calcpad-accent, #3b6ef5);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-md);
+  font-family: var(--vscode-font-family);
+}
+
+.matrix-insert-btn:hover {
+  opacity: 0.9;
 }
 
 .no-items {
@@ -570,6 +650,11 @@ watch(
   text-align: center;
   color: var(--vscode-descriptionForeground);
   font-style: italic;
+}
+
+.search-results {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .insert-item {
@@ -605,6 +690,39 @@ watch(
   color: var(--vscode-descriptionForeground);
   margin-top: 2px;
   opacity: 0.7;
+}
+
+.tree-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tree-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.collapse-btn {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--calcpad-font-size-sm);
+}
+
+.collapse-btn:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+
+.tree-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .tree-placeholder {

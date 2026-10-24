@@ -1,0 +1,10 @@
+'<!-- <h2>Parametric Drawing via $Drawing</h2>
+'A .cdrw sidecar drawing joins the worksheet calculation cycle: worksheet variables feed the drawing declared inputs, and every recalculation redraws the geometry with computed dimensions.
+'Edit the values below and the drawing follows. -->
+#hide
+L_w = 6m
+h_w = 3m
+n_panels = 6
+#show
+'<h3>Truss with computed dimensions</h3>
+$Drawing{ "Truss Drawing/truss-example.cdrw"; L = L_w; h = h_w; n = n_panels }

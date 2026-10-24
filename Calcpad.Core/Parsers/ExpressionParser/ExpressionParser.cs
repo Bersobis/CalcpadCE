@@ -192,7 +192,7 @@ namespace Calcpad.Core
                         continue;
                     }
                     _parser.IsCalculation = _isVal != -1;
-                    if ((textSpan[0] != '$' || !ParsePlot(textSpan)) &&
+                    if ((textSpan[0] != '$' || (!ParsePlot(textSpan) && !ParseDrawing(textSpan))) &&
                         ParseCondition(textSpan, keyword))
                     {
                         List<Token> tokens;
@@ -285,6 +285,38 @@ namespace Calcpad.Core
                     return true;
                 }
                 return false;
+            }
+
+            bool ParseDrawing(ReadOnlySpan<char> s)
+            {
+                if (!s.StartsWith("$drawing", StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                if (_isVisible && IsEnabled())
+                {
+                    try
+                    {
+                        var open = s.IndexOf('{');
+                        var close = -1;
+                        if (open > 0)
+                        {
+                            var relative = s[(open + 1)..].IndexOf('}');
+                            if (relative >= 0)
+                                close = open + relative + 1;
+                        }
+                        if (close < 0)
+                            throw new DrawingExpressionException("The $Drawing directive requires arguments in { }.");
+                        var args = s[(open + 1)..close].ToString();
+                        var svg = DrawingDirective.Render(args, _parser, _pathRoots, SourceDirectory, Settings.IsUs, _calculate);
+                        _sb.Append(InsertAttribute(svg, HtmlId));
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendError(s.ToString(), ex.Message, _currentLine);
+                    }
+                }
+
+                return true;
             }
 
             void ParseMarkdown(List<Token> tokens)

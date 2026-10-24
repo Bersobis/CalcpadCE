@@ -83,11 +83,19 @@
     <!-- `inert` rather than a per-control disabled flag: it takes the whole tab out of
          both pointer and keyboard reach in one attribute, whatever it holds. -->
     <div class="tab-content" :class="{ unavailable: tabUnavailable(pane.activeTab) }" :inert="tabUnavailable(pane.activeTab)">
+      <CalcpadLiveMath
+        v-if="pane.activeTab === 'livemath'"
+        :model-value="liveMathText"
+        @update:model-value="liveMathText = $event"
+        @apply-line="onApplyLiveLine"
+        @dirty="liveMathDirty = $event"
+      />
       <CalcpadInsertTab
-        v-if="pane.activeTab === 'insert'"
+        v-else-if="pane.activeTab === 'insert'"
         :insert-items="insertItems"
         @insert-text="handleInsertText"
         @insert-image="handleInsertImage"
+        @insert-matrix="handleInsertMatrix"
       />
       <CalcpadTocTab
         v-else-if="pane.activeTab === 'toc'"
@@ -206,6 +214,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CalcpadInsertTab from './CalcpadInsertTab.vue'
+import CalcpadLiveMath from './CalcpadLiveMath.vue'
 import SidebarIcon from './SidebarIcon.vue'
 import CalcpadTocTab from './CalcpadTocTab.vue'
 import CalcpadSettingsTab from './CalcpadSettingsTab.vue'
@@ -311,9 +320,17 @@ const metadataBlock = ref<MetadataCommentBlock | null>(null)
 // #UI controls of the last input-form render, null until the host resolves them.
 const uiControls = ref<UiControl[] | null>(null)
 
+// The worksheet text backing the Live math tab. It is a mirror of the host document, pushed
+// on request and refreshed after an edit, never a second source of truth.
+const liveMathText = ref('')
+// Set while a field holds an uncommitted edit. A push from the host is ignored then, so an
+// edit in progress cannot be replaced by the document it has not been written to yet.
+const liveMathDirty = ref(false)
+
 const tabs = computed<Tab[]>(() => {
   const base: Tab[] = [
     { id: 'insert', label: 'Insert' },
+    { id: 'livemath', label: 'Live math' },
     { id: 'toc', label: 'TOC' },
     { id: 'settings', label: 'Settings' },
     { id: 'variables', label: 'Variables' },
@@ -335,7 +352,7 @@ const tabs = computed<Tab[]>(() => {
  * on source have nothing to act on there, so their content is shown inert: TOC, Export
  * and Settings still work, since a filled-in worksheet is still navigated and exported.
  */
-const SOURCE_TABS = ['insert', 'variables', 'formatting', 'errors', 'metadata']
+const SOURCE_TABS = ['insert', 'livemath', 'variables', 'formatting', 'errors', 'metadata']
 const INPUT_MODE_NOTE = 'Unavailable in input mode — this acts on the document source, which the input form does not edit.'
 const inputMode = ref(false)
 const tabUnavailable = (tabId: string) => inputMode.value && SOURCE_TABS.includes(tabId)
@@ -434,6 +451,14 @@ const activateTab = (pane: Pane, tabId: string) => {
     postMessage({ type: 'getVariables' })
   }
 
+  // The Live math tab renders the worksheet itself, so it asks for the current text — and tells
+  // the host whether any pane is showing it, since updates are only pushed while one is.
+  postMessage({ type: 'setLiveMathActive', active: panes.value.some((p) => p.activeTab === 'livemath') })
+  if (tabId === 'livemath') {
+    liveMathDirty.value = false
+    postMessage({ type: 'getLiveMathDocument' })
+  }
+
   // Request headings when switching to TOC tab
   if (tabId === 'toc') {
     tocLoading.value = true
@@ -517,6 +542,13 @@ const handleInsertText = (text: string) => {
 
 const handleInsertImage = () => {
   postMessage({ type: 'insertImage' })
+}
+
+const handleInsertMatrix = (text: string) => {
+  postMessage({
+    type: 'insertText',
+    text
+  })
 }
 
 const handleUpdateSettings = (newSettings: Settings) => {
@@ -843,7 +875,18 @@ const handleMessage = (event: MessageEvent) => {
     case 'focusTab':
       if (typeof message.tab === 'string') switchTab(message.tab)
       break
+    case 'liveMathDocument':
+      if (typeof message.text === 'string' && !liveMathDirty.value) liveMathText.value = message.text
+      break
   }
+}
+
+/**
+ * Write one edited line back to the host document. The tab already re-renders from the text it
+ * pushed, so this is the only mutation path — there is no parallel document to keep in step.
+ */
+function onApplyLiveLine(payload: { line: number; text: string }): void {
+  postMessage({ type: 'applyLiveMathLine', line: payload.line, text: payload.text })
 }
 
 defineExpose({ switchTab, switchView })

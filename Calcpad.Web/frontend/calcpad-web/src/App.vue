@@ -323,6 +323,13 @@
             title="The print layout — #pre hidden, entered #UI values applied"
           >Report</button>
         </div>
+        <button
+          v-for="src in editableDrawings"
+          :key="src"
+          class="toolbar-btn"
+          :title="`Drag the nodes of ${src} — each drop is saved to the sidecar`"
+          @click="openDrawingEditor(src)"
+        >Edit {{ drawingLabel(src) }}</button>
         <span class="spacer"></span>
         <span v-if="resultMode === 'ui' && hasPauseSteps(uiPause)" class="preview-mode-group">
           <button
@@ -499,6 +506,16 @@
       <button v-if="onOpenFullHtmlRequest" class="tab-context-item" @click="onOpenFullHtml">Open Full HTML</button>
     </div>
 
+    <!-- Node dragging; the sidecar is written on every drop, the worksheet never is. -->
+    <DrawingEditor
+      v-if="drawingEditorSource && api"
+      :source="drawingEditorSource"
+      :document-path="activeTabPath"
+      :api="api"
+      @close="drawingEditorSource = null"
+      @saved="onDrawingSaved"
+    />
+
     <!-- HTML modal rather than a native dialog, for web/desktop consistency. -->
     <div v-if="confirmState" class="modal-backdrop" @click.self="resolveConfirm('cancel')">
       <div class="modal-card" role="dialog" aria-modal="true">
@@ -599,9 +616,12 @@ import {
   type ServerStatus,
   type DisplayLogLevel,
 } from 'calcpad-frontend'
+import type { CalcpadApiClient } from 'calcpad-frontend/api/client'
 import type { ResultMode, WorkspaceLayout } from './services/workspace-state'
+import DrawingEditor from './components/DrawingEditor.vue'
 
-const props = withDefaults(defineProps<{ isDesktop?: boolean }>(), { isDesktop: false })
+const props = withDefaults(defineProps<{ isDesktop?: boolean; api?: CalcpadApiClient }>(), { isDesktop: false })
+const api = computed(() => props.api ?? null)
 
 export interface ProblemItem {
   severity: number
@@ -676,6 +696,53 @@ const activeTabIsCompiled = computed(() => {
 })
 function resultModeAvailable(mode: ResultMode): boolean {
   return !activeTabIsCompiled.value || COMPILED_RESULT_MODES.includes(mode)
+}
+
+// ---- drawings: the editor affordance follows what the rendered report contains ----
+const activeTabPath = computed(() => activeGroup.value?.tabs.find(t => t.isActive)?.filePath ?? null)
+const drawingSourcesByGroup = ref<Record<string, string[]>>({})
+const drawingEditorSource = ref<string | null>(null)
+/**
+ * A relative sidecar needs the saved tab's directory to resolve against; an absolute one
+ * stands on its own, which is how a browser-hosted workspace can still edit a drawing.
+ */
+const editableDrawings = computed(() =>
+  (drawingSourcesByGroup.value[activeGroupId.value] ?? [])
+    .filter(src => activeTabPath.value !== null || /^(?:[a-z]:[\\/]|[/\\]{2}|\/)/i.test(src)),
+)
+
+const DRAWING_SOURCE_ATTR = /data-drawing-src="([^"]*)"/g
+
+function readDrawingSources(html: string): string[] {
+  const sources: string[] = []
+  for (const match of html.matchAll(DRAWING_SOURCE_ATTR)) {
+    const source = decodeAttribute(match[1])
+    if (source && !sources.includes(source)) sources.push(source)
+  }
+  return sources
+}
+
+function decodeAttribute(value: string): string {
+  return value
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+}
+
+function drawingLabel(source: string): string {
+  const name = source.split(/[\\/]/).pop() ?? source
+  return name.replace(/\.cdrw$/i, '')
+}
+
+function openDrawingEditor(source: string): void {
+  drawingEditorSource.value = source
+}
+
+/** The drawing on disk changed, so the report beside it is stale. */
+function onDrawingSaved(): void {
+  onRunRequest.value?.()
 }
 const problems = computed(() => activeGroup.value?.problems ?? [])
 const errorCount = computed(() => activeGroup.value?.errorCount ?? 0)
@@ -1744,6 +1811,7 @@ function setPreviewHtml(groupId: string, html: string, scrollToLine?: number, do
   out = injectPreviewConsole(out, groupId)
   out = injectUiPosition(out, groupId)
   previewHtmlByGroup.set(groupId, html)
+  drawingSourcesByGroup.value = { ...drawingSourcesByGroup.value, [groupId]: readDrawingSources(html) }
   setPreviewHtmlOutput(groupId, html)
   return commitToBuffer(groupId, out)
 }

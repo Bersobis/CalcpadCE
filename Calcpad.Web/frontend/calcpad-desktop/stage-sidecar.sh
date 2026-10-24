@@ -20,7 +20,22 @@ REPO_ROOT=$(cd "$SCRIPT_DIR/../../.." && pwd)
 SYNC_SCRIPT="$REPO_ROOT/Calcpad.Web/frontend/vscode-calcpad/scripts/sync-bundled-server.mjs"
 BINARIES_DIR="$SCRIPT_DIR/src-tauri/binaries"
 
-TRIPLE=$(rustc -vV | awk '/^host:/ {print $2}')
+# The host triple only selects the .NET RID and the apphost filename below, and
+# neither of those involves cargo — so when rustc is not on PATH the triple is
+# derived from the OS instead. That keeps sidecar staging usable in environments
+# where the Rust toolchain is not (yet) installed; `tauri dev` itself still
+# needs cargo to build the app shell.
+TRIPLE=$(rustc -vV 2>/dev/null | awk '/^host:/ {print $2}')
+if [ -z "$TRIPLE" ]; then
+    case "$(uname -s)-$(uname -m)" in
+        Linux-x86_64)   TRIPLE=x86_64-unknown-linux-gnu ;;
+        Linux-aarch64)  TRIPLE=aarch64-unknown-linux-gnu ;;
+        Darwin-x86_64)  TRIPLE=x86_64-apple-darwin ;;
+        Darwin-arm64)   TRIPLE=aarch64-apple-darwin ;;
+        *) echo "unsupported host: $(uname -s)-$(uname -m)" >&2; exit 1 ;;
+    esac
+    echo ">> rustc not found; host triple derived from the OS"
+fi
 
 case "$TRIPLE" in
     x86_64-unknown-linux-gnu)   RID="linux-x64" ;;

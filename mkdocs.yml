@@ -51,6 +51,7 @@ nav:
     - Brackets: brackets.md
     - Functions: functions.md
     - Plotting: plotting.md
+    - Parametric Drawings: parametric-drawings.md
     - Numerical Methods: numerical-methods.md
     - Iterative Procedures: iterative-procedures.md
     - Units: units.md
@@ -62,6 +63,8 @@ nav:
     - VS Code Extension: new-vscode-extension.md
     - Desktop App: new-desktop-app.md
     - The CalcpadCE Editor: new-calcpadce-editor.md
+    - The Math Engine: new-mathml-math-engine.md
+    - Live Editor Interaction: new-live-editor-interaction.md
     - The CalcpadCE Panel: new-calcpad-panel.md
     - Settings: new-settings.md
     - Exports: new-exports.md
