@@ -239,38 +239,6 @@ import {
   DEFAULT_PREVIEW_SIZE_MB, MIN_PREVIEW_SIZE_MB,
   DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MIN_CONSOLE_MESSAGES_PER_DOCUMENT,
 } from '../../services/preview-limits'
-import HIDE_SIDEBAR_ICON from './SidebarIcon.vue'
-import CalcpadLiveMath from './CalcpadLiveMath.vue'
-import SidebarIcon from './SidebarIcon.vue'
-import CalcpadTocTab from './CalcpadTocTab.vue'
-import CalcpadSettingsTab from './CalcpadSettingsTab.vue'
-import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
-import CalcpadFormattingTab from './CalcpadFormattingTab.vue'
-import CalcpadExportTab from './CalcpadExportTab.vue'
-import CalcpadFilesTab from './CalcpadFilesTab.vue'
-import CalcpadErrorsTab from './CalcpadErrorsTab.vue'
-import CalcpadMetadataTab from './CalcpadMetadataTab.vue'
-import CalcpadVariablesTab from './CalcpadVariablesTab.vue'
-import CalcpadFormattingTab from './CalcpadFormattingTab.vue'
-import CalcpadExportTab from './CalcpadExportTab.vue'
-import CalcpadFilesTab from './CalcpadFilesTab.vue'
-import CalcpadErrorsTab from './CalcpadErrorsTab.vue'
-import CalcpadMetadataTab from './CalcpadMetadataTab.vue'
-import { postMessage } from '../services/messaging'
-import type { MetadataCommentBlock, MetadataCommentData, SettingsValues } from '../../text/metadata-comment'
-import { discardMetadataDraft } from '../metadata-drafts'
-import type { UiDirectiveData } from '../../text/ui-directive'
-import type { UiControl } from '../../services/ui-overrides'
-import type { Tab, InsertItem, Settings, VariablesData, PdfSettings, TocHeading, ThemeInfo, FileNode, VersionConfig } from '../types'
-import { DEFAULT_VERSION_CONFIG } from '../types'
-import type { CalcpadError, ExportVariant } from '../../types/api'
-import type { WriteMode } from '../../types/settings'
-import { coerceWriteMode } from '../../types/settings'
-import { DEFAULT_PDF_SETTINGS } from '../types'
-import {
-  DEFAULT_PREVIEW_SIZE_MB, MIN_PREVIEW_SIZE_MB,
-  DEFAULT_CONSOLE_MESSAGES_PER_DOCUMENT, MIN_CONSOLE_MESSAGES_PER_DOCUMENT,
-} from '../../services/preview-limits'
 
 // Props
 interface Props {
